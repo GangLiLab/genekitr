@@ -1,6 +1,21 @@
-match_org <- function(org = c('Hs','Mm')){
+match_org <- function(org,
+                      dir,
+                      ...){
   
-  org <- match.arg(org)
+  # org <- match.arg(org ,several.ok = T)
+  
+  if(length(org) >1 ){
+    for(x in org){
+      .search_db(x,dir)
+    }
+  }else{
+    .search_db(x,dir)
+  }
+
+}
+
+
+.search_db <- function(org, dir ){
   
   eg2symbol=toTable(eval(parse(text = paste0('org.',org,'.egSYMBOL'))))
   eg2name=toTable(eval(parse(text = paste0('org.',org,'.egGENENAME'))))
@@ -35,11 +50,7 @@ match_org <- function(org = c('Hs','Mm')){
                           stringsAsFactors = F
   ) 
   
-  if(!file.exists(paste0('../result/',org,'_all_gene_bioconductor.html'))){
-    file=paste0('../result/',org,'_all_gene_bioconductor.html')
-    y <- DT::datatable(gene_info,escape = F,rownames=F)
-    DT::saveWidget(y,file)
-  }
- 
-  
+  file=paste0(dir,org,'_all_gene_bioconductor.html')
+  y <- DT::datatable(gene_info,escape = F,rownames=F)
+  DT::saveWidget(y,file)
 }

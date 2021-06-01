@@ -28,9 +28,8 @@ use `org.db`
 ```{r}
 source('../code/match_orgdb.R')
 
-match_org(org = 'Hs')
+match_org(org = c('Hs','Mm') ,dir = '../result/')
 
-match_org(org = 'Mm')
 ```
 
 
