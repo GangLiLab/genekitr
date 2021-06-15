@@ -3,16 +3,17 @@
 ##'
 
 GenesOrg <- function(id,
-                     org = c('Mm','Hg')
+                     org = c('Mm','Hs'),
                      dir = tempdir(),
                       ...){
   stopifnot(
     is.character(id),
-    org %in% c("hg", "mm")
+    org %in% c("Mm", "Hs")
   )
   
   # load org data
-  require()
+  # org = 'Hs'
+  require(paste0('org.',org,'.eg.db'), character.only = TRUE)
   
 
 }
