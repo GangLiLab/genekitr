@@ -1,8 +1,21 @@
 ##' Annotate gene info using org.db
 ##'
-##'
+##' @param id gene id "symbol" or "entrezid".
+##' @param org species.
+##' @param html_result result saved as html or xlsx.
+##' @param dir result directory.
+##' @return a dataframe including gene info.
+##' @importFrom dplyr rename mutate all_of %>%
+##' @importFrom msa msa msaClustalW
+##' @importFrom Biostrings readAAStringSet
+##' @importFrom stringr str_extract regex str_detect str_sub str_count
+##' @export
+##' @examples
+##' \dontrun{
+##' GenfoOrg(id,org = 'Mm',html_result = TRUE, dir = '~/Downloads')
+##' }
 
-GenesOrg <- function(id,
+GenfoOrg <- function(id,
                      org = c('Mm','Hs'),
                      html_result = TRUE,
                      dir = tempdir(),
@@ -68,6 +81,5 @@ GenesOrg <- function(id,
   }
   
 }
-
 
 
