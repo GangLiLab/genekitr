@@ -42,26 +42,26 @@ GenesOrg <- function(id,
       ##  target="_blank" 
     }
     
-    gene_info=data.frame(   symbols=symbols,
-                            geneIds=createLink(paste0("http://www.ncbi.nlm.nih.gov/gene/",geneIds),geneIds),
-                            uniprotIds = ifelse(is.na(uniprotIds),'no_uniprot_id',
+    gene_info=data.frame(symbols=symbols,
+                         geneIds=createLink(paste0("http://www.ncbi.nlm.nih.gov/gene/",geneIds),geneIds),
+                         uniprotIds = ifelse(is.na(uniprotIds),'no_uniprot_id',
                                                 createLink(paste0("https://www.uniprot.org/uniprot/",uniprotIds),uniprotIds)),
-                            geneNames=geneNames,
-                            geneAlias=geneAlias,
-                            stringsAsFactors = F
+                         geneNames=geneNames,
+                         geneAlias=geneAlias,
+                         stringsAsFactors = F
     ) 
     
     file=paste0(dir,'/',org,'_gene_orgdb.html')
     y <- DT::datatable(gene_info,escape = F,rownames=F)
     DT::saveWidget(y,file)
   }else{
-    gene_info=data.frame(   symbols=symbols,
-                            geneIds=paste0("http://www.ncbi.nlm.nih.gov/gene/",geneIds),
-                            uniprotIds = ifelse(is.na(uniprotIds),'no_uniprot_id',
+    gene_info=data.frame(symbols=symbols,
+                         geneIds=paste0("http://www.ncbi.nlm.nih.gov/gene/",geneIds),
+                         uniprotIds = ifelse(is.na(uniprotIds),'no_uniprot_id',
                                                 paste0("https://www.uniprot.org/uniprot/",uniprotIds)),
-                            geneNames=geneNames,
-                            geneAlias=geneAlias,
-                            stringsAsFactors = F
+                         geneNames=geneNames,
+                         geneAlias=geneAlias,
+                         stringsAsFactors = F
     ) 
     
     rio::export(gene_info,file = paste0(dir,'/',org,'_gene_orgdb.xlsx'))
