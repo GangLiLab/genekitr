@@ -4,9 +4,10 @@
 ##' @param org species "mm" or "hs".
 ##' @param html_result result saved as html or xlsx.
 ##' @param destdir result directory.
-##' @return a dataframe including gene info.
+##' @return a dataframe or html of gene info.
 ##' @importFrom DT datatable saveWidget
 ##' @importFrom rio export
+##'  @importFrom stringr str_to_title
 ##' @export
 ##' @examples
 ##' \dontrun{

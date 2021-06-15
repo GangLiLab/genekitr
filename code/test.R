@@ -8,7 +8,7 @@ Gal3st2b
 Bloc1s1') 
 id=str_split(id,"\n")[[1]]
 
-genOrgInfo(id, org = 'mm', html_result = F, destdir = '~/Downloads/')
+genInfoOrg(id, org = 'mm', html_result = F, destdir = '~/Downloads/')
 
 
 
