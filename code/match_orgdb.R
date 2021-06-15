@@ -1,16 +1,19 @@
-match_org <- function(org,
-                      dir,
+##' Annotate gene info using org.db
+##'
+##'
+
+GenesOrg <- function(id,
+                     org = c('Mm','Hg')
+                     dir = tempdir(),
                       ...){
+  stopifnot(
+    is.character(id),
+    org %in% c("hg", "mm")
+  )
   
-  # org <- match.arg(org ,several.ok = T)
+  # load org data
+  require()
   
-  if(length(org) >1 ){
-    for(x in org){
-      .search_db(x,dir)
-    }
-  }else{
-    .search_db(x,dir)
-  }
 
 }
 
