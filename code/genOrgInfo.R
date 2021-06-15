@@ -1,7 +1,7 @@
 ##' Get gene info using org.db
 ##'
 ##' @param id gene id "symbol" or "entrezid".
-##' @param org species.
+##' @param org species "mm" or "hs".
 ##' @param html_result result saved as html or xlsx.
 ##' @param destdir result directory.
 ##' @return a dataframe including gene info.
@@ -10,20 +10,22 @@
 ##' @export
 ##' @examples
 ##' \dontrun{
-##' genOrgInfo(id,org = 'Mm',html_result = TRUE, dir = '~/Downloads')
+##' genOrgInfo(id,org = 'mm',html_result = TRUE, dir = '~/Downloads')
 ##' }
 
 genOrgInfo <- function(id,
-                       org = c("Mm", "Hs"),
+                       org = c("mm", "hs"),
                        html_result = TRUE,
                        destdir = tempdir(),
                        ...) {
   stopifnot(
     is.logical(html_result),
     is.character(id),
-    org %in% c("Mm", "Hs")
+    org %in% c("mm", "hs")
   )
 
+  org = str_to_title(org) 
+  
   # load org data
   require(paste0("org.", org, ".eg.db"), character.only = TRUE)
   # get org data
