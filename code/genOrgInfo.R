@@ -46,7 +46,7 @@ genOrgInfo <- function(id,
     geneIds <- id
     symbols <- eg2symbol[match(geneIds, eg2symbol$gene_id), "symbol"]
   }
-
+  geneIds[which(is.na(geneIds))]='NA' 
   geneNames <- eg2name[match(geneIds, eg2name$gene_id), "gene_name"]
   geneAlias <- sapply(geneIds, function(x) {
     ifelse(is.null(eg2alis_list[[x]]), "no_alias", eg2alis_list[[x]])
