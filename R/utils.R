@@ -31,6 +31,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name){
 
   ## if needs to add hyperlink
   check = apply(sheet_dat, 2, function(x){ any(stringr::str_detect(x,'http'))})
+  check[is.na(check)]=FALSE
   if(any(check)){
     sub_dat = sheet_dat[,check]
 
