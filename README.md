@@ -51,8 +51,8 @@ genPubmed(id, keywords = 'stem cell AND epithelial', field = 'tiab')
 ```R
 library(openxlsx)
 wb <- createWorkbook()
-wb <- expo_sheet(wb, sheet_name = 'genInfo',sheet_dat = test1) %>% 
-  expo_sheet(., sheet_name = 'genPub',sheet_dat = test2)
+wb <- expo_sheet(wb, sheet_dat = test1, sheet_name = .nm(test1)) %>% 
+  expo_sheet(., sheet_dat = test2, sheet_name = .nm(test2)) %>% 
 saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 ```
 
