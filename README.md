@@ -53,7 +53,7 @@ expo_sheet(wb, sheet_name = 'genInfo',sheet_dat = genInfo(id, org = 'mm')) %>%
 saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081258.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-082350.png)
 
 
 
