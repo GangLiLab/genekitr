@@ -16,8 +16,8 @@ test1 = genInfo(id, org = 'mm')
 test2=genPubmed(id, keywords = 'stem cell', field = 'tiab')
 
 wb <- createWorkbook()
-wb=expo_sheet(wb, sheet_name = 'genInfo',sheet_dat = genInfo(id, org = 'mm')) %>% 
-  expo_sheet(., sheet_name = 'genPub',sheet_dat = pub)
+wb=expo_sheet(wb, sheet_name = 'genInfo',sheet_dat = test1) %>% 
+  expo_sheet(., sheet_name = 'genPub',sheet_dat = test2)
 
 saveWorkbook(wb, "~/Downloads/test3.xlsx", overwrite = T)
 
