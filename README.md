@@ -33,6 +33,9 @@ rownames of `test1` are entrez ID
 ```R
 test2=genPubmed(id, keywords = 'stem cell', field = 'tiab')
 # Search example: Ticam2 [TIAB] AND stem cell [TIAB] 
+
+# or use much specific keyword
+genPubmed(id, keywords = 'stem cell AND epithelial', field = 'tiab')
 ```
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081925.png)

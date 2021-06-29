@@ -1,0 +1,17 @@
+Package: AnnoGenes
+Type: Package
+Title: Annotate genes related information
+Version: 0.1.0
+Author: Yunze Liu
+Maintainer: Yunze Liu <jieandze1314@gmail.com>
+Description: Annotate genes related information
+License: MIT
+Encoding: UTF-8
+LazyData: true
+Imports: 
+    dplyr,
+    stringr,
+    easyPubMed,
+    tidyr,
+    rentrez,
+    openxlsx
