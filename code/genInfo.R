@@ -7,18 +7,19 @@
 ##' @return a dataframe or html of gene info.
 ##' @importFrom DT datatable saveWidget
 ##' @importFrom rio export
-##'  @importFrom stringr str_to_title
+##' @importFrom stringr str_to_title
 ##' @export
 ##' @examples
 ##' \dontrun{
-##' genOrgInfo(id,org = 'mm',html_result = TRUE, dir = '~/Downloads')
+##' genInfo(id,org = 'mm',html_result = TRUE, dir = '~/Downloads')
 ##' }
 
-genOrgInfo <- function(id,
+genInfo <- function(id,
                        org = c("mm", "hs"),
                        html_result = TRUE,
                        destdir = tempdir(),
                        ...) {
+  #--- args ---#
   stopifnot(
     is.logical(html_result),
     is.character(id),
@@ -27,6 +28,7 @@ genOrgInfo <- function(id,
 
   org = str_to_title(org) 
   
+  #--- code ---#
   # load org data
   require(paste0("org.", org, ".eg.db"), character.only = TRUE)
   # get org data
