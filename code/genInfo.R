@@ -2,8 +2,6 @@
 ##'
 ##' @param id gene id "symbol" or "entrezid".
 ##' @param org species "mm" or "hs".
-##' @param html_result result saved as html or xlsx.
-##' @param destdir result directory.
 ##' @return a dataframe or html of gene info.
 ##' @importFrom DT datatable saveWidget
 ##' @importFrom rio export
@@ -11,17 +9,16 @@
 ##' @export
 ##' @examples
 ##' \dontrun{
-##' genInfo(id,org = 'mm',html_result = TRUE, dir = '~/Downloads')
+##' genInfo(id,org = 'mm')
 ##' }
 
 genInfo <- function(id,
-                       org = c("mm", "hs"),
-                       html_result = TRUE,
-                       destdir = tempdir(),
+                    org = c("mm", "hs"),
+                       # html_result = TRUE,
+                       # destdir = tempdir(),
                        ...) {
   #--- args ---#
   stopifnot(
-    is.logical(html_result),
     is.character(id),
     org %in% c("mm", "hs")
   )
@@ -55,39 +52,17 @@ genInfo <- function(id,
   })
   uniprotIds <- eg2uniprot[match(geneIds, eg2uniprot$gene_id), "uniprot_id"]
 
-
-  if (html_result) {
-    createLink <- function(base, val) {
-      sprintf('<a href="%s" class="btn btn-link" target="_blank" >%s</a>', base, val)
-      ##  target="_blank"
-    }
-
-    gene_info <- data.frame(
-      symbols = symbols,
-      geneIds = createLink(paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds), geneIds),
-      uniprotIds = ifelse(is.na(uniprotIds), "no_uniprot_id",
-        createLink(paste0("https://www.uniprot.org/uniprot/", uniprotIds), uniprotIds)
-      ),
-      geneNames = geneNames,
-      geneAlias = geneAlias,
-      stringsAsFactors = F
-    )
-
-    file <- paste0(destdir, "/", org, "_gene_orgdb.html")
-    dt <- DT::datatable(gene_info, escape = F, rownames = F)
-    DT::saveWidget(dt, file)
-  } else {
-    gene_info <- data.frame(
-      symbols = symbols,
-      geneIds = paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds),
-      uniprotIds = ifelse(is.na(uniprotIds), "no_uniprot_id",
-        paste0("https://www.uniprot.org/uniprot/", uniprotIds)
-      ),
-      geneNames = geneNames,
-      geneAlias = geneAlias,
-      stringsAsFactors = F
-    )
-
-    rio::export(gene_info, file = paste0(destdir, "/", org, "_gene_orgdb.xlsx"))
-  }
+  gene_info <- data.frame(
+    symbols = symbols,
+    geneIds = paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds),
+    uniprotIds = ifelse(is.na(uniprotIds), "no_uniprot_id",
+                        paste0("https://www.uniprot.org/uniprot/", uniprotIds)
+    ),
+    geneNames = geneNames,
+    geneAlias = geneAlias,
+    stringsAsFactors = F
+  )
+  
+  invisible(gene_info)
+  
 }

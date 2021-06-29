@@ -1,4 +1,4 @@
-# utilities to search
+# utilities to AnnoGenes
 
 ##' @title Show NCBI database searchable name
 ##' @param db a character vector. Can be "pubmed" or one or more of `rentrez::entrez_dbs()` result.
@@ -19,6 +19,39 @@ showNCBI <- function(db = "pubmed") {
   } # nocov end
   return(res)
 }
+
+
+# export result into different sheets
+expo_sheet <- function(wb, sheet_name, sheet_dat){
+  addWorksheet(wb, sheet_name)
+  writeData(wb,sheet = sheet_name, x = sheet_dat)
+  
+  ## if needs to add hyperlink
+  check = apply(sheet_dat, 2, function(x){ any(stringr::str_detect(x,'http'))})
+  if(any(check)){
+    sub_dat = sheet_dat[,check]
+    
+    for(i in 1:nrow(sheet_dat)) {
+      for(n in which(check)){
+        if(sheet_dat[i,n] != 'NA' & sheet_dat[i,n] != 'no_uniprot_id'){
+          sheet_datd_link = paste0("HYPERLINK(\"",sheet_dat[i,n],"\", \"",sheet_dat[i,n],"\")")
+          writeFormula(wb, sheet =sheet_name, startRow = i+1, startCol = n, x = sheet_datd_link)
+        }
+      }
+    }
+  }
+  
+  ## styling sheet
+  headerStyle <- createStyle(textDecoration = "Bold")
+  addStyle(wb, sheet= sheet_name,style = headerStyle, rows = 1, cols = seq_len(ncol(sheet_dat)), gridExpand = TRUE)
+  setColWidths(wb, sheet= sheet_name, cols = seq_len(ncol(sheet_dat)), widths = "auto")
+  
+  invisible(wb)
+}
+
+
+
+
 
 
 

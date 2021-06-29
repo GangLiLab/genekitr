@@ -1,5 +1,9 @@
+rm(list = ls())
+options(stringsAsFactors = F)
+
 library(stringr)
 library(dplyr)
+library(openxlsx)
 id =c('Ticam2
 Arhgap33os
 Insl3
@@ -8,11 +12,14 @@ Gal3st2b
 Bloc1s1') 
 id=str_split(id,"\n")[[1]]
 
-genInfo(id, org = 'mm', html_result = F, destdir = '~/Downloads/')
+test1 = genInfo(id, org = 'mm')
+test2=genPubmed(id, keywords = 'stem cell', field = 'tiab')
 
-res3=genPubmed(id, keywords = 'stem cell', field = 'tiab')
+wb <- createWorkbook()
+wb=expo_sheet(wb, sheet_name = 'genInfo',sheet_dat = genInfo(id, org = 'mm')) %>% 
+  expo_sheet(., sheet_name = 'genPub',sheet_dat = pub)
 
-
+saveWorkbook(wb, "~/Downloads/test3.xlsx", overwrite = T)
 
 
 
