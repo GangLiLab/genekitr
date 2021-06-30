@@ -27,7 +27,6 @@ showNCBI <- function(db = "pubmed") {
 ##' @param sheet_dat dataframe added to sheet.
 ##' @param sheet_name name of added dataframe.
 ##' @return a worksheet including many dataframes.
-##' @importFrom rentrez entrez_db_searchable
 ##' @importFrom stringr str_detect
 ##' @importFrom openxlsx addWorksheet writeData writeFormula createStyle addStyle setColWidths
 ##' @export
