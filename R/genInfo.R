@@ -43,23 +43,23 @@ genInfo <- function(id,
     geneIds <- id
     symbols <- eg2symbol[match(geneIds, eg2symbol$gene_id), "symbol"]
   }
-  # geneIds[which(is.na(geneIds))]='NA'
+  geneIds[which(is.na(geneIds))]='NA'
   geneNames <- eg2name[match(geneIds, eg2name$gene_id), "gene_name"]
   geneAlias <- sapply(geneIds, function(x) {
     ifelse(is.null(eg2alis_list[[x]]), "no_alias", eg2alis_list[[x]])
   })
+
+
   uniprotIds <- eg2uniprot[match(geneIds, eg2uniprot$gene_id), "uniprot_id"]
 
   gene_info <- data.frame(
-    symbols = symbols,
-    geneIds = ifelse(is.na(geneIds), "no_gene_id",
-      paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds)
-    ),
+    symbols = ifelse(is.na(symbols), "no_gene_symbol",symbols),
+    geneIds = ifelse(geneIds=='NA', "no_gene_id",
+                     paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds)),
     uniprotIds = ifelse(is.na(uniprotIds), "no_uniprot_id",
-      paste0("https://www.uniprot.org/uniprot/", uniprotIds)
-    ),
-    geneNames = geneNames,
-    geneAlias = geneAlias,
+                        paste0("https://www.uniprot.org/uniprot/", uniprotIds)),
+    geneNames = ifelse(is.na(geneNames), "no_gene_name",geneNames),
+    geneAlias = ifelse(is.na(geneAlias), "no_gene_alias",geneAlias),
     stringsAsFactors = F
   )
 
