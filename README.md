@@ -1,6 +1,14 @@
 # Annotate genes 
 
 > This tool annotates genes with alias, symbol, full name, function also related papers.
+> 目的就是：将与基因ID相关的内容整合在一起，并且能直接导出为一个excel的多个sheets（后期考虑加入网页版）
+
+### Features
+
+- genecards虽然全，但是搜索数量有限制
+- 我们整合了基因信息、相关的文献信息、基因相关的GO、KEGG（如果能提供对应的logFC，还能做GSEA；如果能提供表达矩阵，还能做GSVA）
+
+
 
 ### Let's do it!
 
