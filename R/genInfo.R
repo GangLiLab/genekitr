@@ -15,13 +15,13 @@ genInfo <- function(id,
                     ...) {
   #--- args ---#
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
-  
+
   stopifnot(
     is.character(id),
     org %in% c("mm", "hs")
   )
 
-  org = str_to_title(org)
+  org <- str_to_title(org)
 
   #--- code ---#
   # load org data
@@ -36,14 +36,14 @@ genInfo <- function(id,
   eg2uniprot <- toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))
 
   # id could be SYMBOL or EntrezID
-  if (id[1] %in% eg2symbol$symbol) {
+  if (any(id %in% eg2symbol$symbol)) {
     symbols <- id
     geneIds <- eg2symbol[match(symbols, eg2symbol$symbol), "gene_id"]
   } else {
     geneIds <- id
     symbols <- eg2symbol[match(geneIds, eg2symbol$gene_id), "symbol"]
   }
-  geneIds[which(is.na(geneIds))]='NA'
+  # geneIds[which(is.na(geneIds))]='NA'
   geneNames <- eg2name[match(geneIds, eg2name$gene_id), "gene_name"]
   geneAlias <- sapply(geneIds, function(x) {
     ifelse(is.null(eg2alis_list[[x]]), "no_alias", eg2alis_list[[x]])
@@ -52,15 +52,17 @@ genInfo <- function(id,
 
   gene_info <- data.frame(
     symbols = symbols,
-    geneIds = paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds),
+    geneIds = ifelse(is.na(geneIds), "no_gene_id",
+      paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds)
+    ),
     uniprotIds = ifelse(is.na(uniprotIds), "no_uniprot_id",
-                        paste0("https://www.uniprot.org/uniprot/", uniprotIds)
+      paste0("https://www.uniprot.org/uniprot/", uniprotIds)
     ),
     geneNames = geneNames,
     geneAlias = geneAlias,
     stringsAsFactors = F
   )
 
-  invisible(gene_info)
 
+  invisible(gene_info)
 }
