@@ -25,7 +25,7 @@ genInfo <- function(id,
 
   #--- code ---#
   # load org data
-  require(paste0("org.", org, ".eg.db"), character.only = TRUE)
+  suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
   # get org data
   eg2symbol <- toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
   eg2name <- toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
