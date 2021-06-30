@@ -14,4 +14,6 @@ Imports:
     easyPubMed,
     tidyr,
     rentrez,
-    openxlsx
+    openxlsx,
+    org.Mm.eg.db,
+    org.Hg.eg.db
