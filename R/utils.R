@@ -4,8 +4,6 @@
 ##' @param db a character vector. Can be "pubmed" or one or more of `rentrez::entrez_dbs()` result.
 ##' @return a dataframe including search keyword and information.
 ##' @importFrom rentrez entrez_db_searchable
-##' @importFrom stringr str_detect
-##' @importFrom openxlsx addWorksheet writeData writeFormula createStyle addStyle setColWidths
 ##' @export
 ##' @examples
 ##' \donttest{
@@ -24,7 +22,19 @@ showNCBI <- function(db = "pubmed") {
 }
 
 
-# export result into different sheets
+##' export result into different sheets
+##' @param wb worksheet from `createWorkbook()`.
+##' @param sheet_dat dataframe added to sheet.
+##' @param sheet_name name of added dataframe.
+##' @return a worksheet including many dataframes.
+##' @importFrom rentrez entrez_db_searchable
+##' @importFrom stringr str_detect
+##' @importFrom openxlsx addWorksheet writeData writeFormula createStyle addStyle setColWidths
+##' @export
+##' @examples
+##' \donttest{
+##' expo_sheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
+##' }
 expo_sheet <- function(wb, sheet_dat, sheet_name){
   addWorksheet(wb, sheet_name)
   writeData(wb,sheet = sheet_name, x = sheet_dat)
@@ -54,7 +64,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name){
 }
 
 
-.nm <- function(x) deparse(substitute(x))
+# .nm <- function(x) deparse(substitute(x))
 
 
 
