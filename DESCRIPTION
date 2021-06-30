@@ -16,4 +16,4 @@ Imports:
     rentrez,
     openxlsx,
     org.Mm.eg.db,
-    org.Hg.eg.db
+    org.Hs.eg.db
