@@ -2,13 +2,21 @@
 
 > This tool annotates genes with alias, symbol, full name, function also related papers.
 >
-> 目的就是：将与基因ID相关的内容整合在一起，并且能直接导出为一个excel的多个sheets（后期考虑加入网页版）
+> 目的就是：与基因id相关的操作（如转换、可视化交集等）、分析（如富集分析），都可以加进来（后期考虑加入网页版）
 
 ### Features
 
-- genecards虽然全，但是搜索数量有限制
-- 我们整合了基因信息、相关的文献信息、基因相关的GO、KEGG（如果能提供对应的logFC，还能做GSEA；如果能提供表达矩阵，还能做GSVA）
-- 每个操作都能独立得到数据框或者plot，然后可以作为不同的sheets同时放进一个excel中
+- genecards虽然全，但是搜索数量有限制，于是整合了基因信息 =>`genInfo`
+- 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
+- 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
+- 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `getMsigdb +  genGSEA`
+- 
+
+### Plans
+
+- ~~图片也能导入excel（后期再看看这个有没有意义）~~
+- 基因的GO、KEGG注释【over-representation analysis (ORA)】
+- 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
 
 
@@ -52,6 +60,19 @@ genPubmed(id, keywords = 'stem cell AND epithelial', field = 'tiab')
 
 
 
+#### Method3: GSEA
+
+```R
+# 加载示例数据
+data(geneList, package="DOSE")
+# 获得msigdb的gene set
+msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
+# 直接进行gsea
+egmt <- genGSEA(genelist = geneList,geneset = msigdb)
+# 如果是extrez id，可以用下面的函数将id变成symbol
+egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
+```
+
 
 
 ### Exporting result is very easy!
@@ -69,9 +90,4 @@ saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-082350.png)
 
 
-
-### Plans
-
-- plot can also save into excel
-- 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
