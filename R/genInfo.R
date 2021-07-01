@@ -16,53 +16,56 @@ genInfo <- function(id,
   #--- args ---#
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 
+  org = match.arg(org)
   stopifnot(
     is.character(id),
     org %in% c("mm", "hs")
   )
-
-  org <- str_to_title(org)
+  org <- stringr::str_to_title(org)
 
   #--- code ---#
   # load org data
   suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
   # get org data
-  eg2symbol <- toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  eg2name <- toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
-  eg2alias <- toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG"))))
-  eg2alis_list <- lapply(split(eg2alias, eg2alias$gene_id), function(x) {
+  orgSymbol <- toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  orgName <- toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
+  orgAlias <- toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG"))))
+  orgAlias_list <- lapply(split(orgAlias, orgAlias$gene_id), function(x) {
     paste0(x[, 2], collapse = ";")
   })
-  eg2uniprot <- toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))
+  orgUniprot <- toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))
 
   # id could be SYMBOL or EntrezID
-  if (any(id %in% eg2symbol$symbol)) {
+  if (any(id %in% orgSymbol$symbol)) {
     symbols <- id
-    geneIds <- eg2symbol[match(symbols, eg2symbol$symbol), "gene_id"]
+    geneIds <- orgSymbol[match(symbols, orgSymbol$symbol), "gene_id"]
   } else {
     geneIds <- id
-    symbols <- eg2symbol[match(geneIds, eg2symbol$gene_id), "symbol"]
+    symbols <- orgSymbol[match(geneIds, orgSymbol$gene_id), "symbol"]
   }
-  geneIds[which(is.na(geneIds))]='NA'
-  geneNames <- eg2name[match(geneIds, eg2name$gene_id), "gene_name"]
+
+  if(all(is.na(symbols))){
+    stop('No result...\nmaybe choose the wrong species...')
+  }
+  geneNames <- orgName[match(geneIds, orgName$gene_id), "gene_name"]
   geneAlias <- sapply(geneIds, function(x) {
-    ifelse(is.null(eg2alis_list[[x]]), "no_alias", eg2alis_list[[x]])
+    ifelse(is.null(orgAlias_list[[x]]), NA, orgAlias_list[[x]])
   })
 
 
-  uniprotIds <- eg2uniprot[match(geneIds, eg2uniprot$gene_id), "uniprot_id"]
+  uniprotIds <- orgUniprot[match(geneIds, orgUniprot$gene_id), "uniprot_id"]
 
   gene_info <- data.frame(
-    symbols = ifelse(is.na(symbols), "no_gene_symbol",symbols),
-    geneIds = ifelse(geneIds=='NA', "no_gene_id",
+    symbols = ifelse(is.na(symbols), NA,symbols),
+    geneIds = ifelse(!geneIds%in%orgSymbol$gene_id, NA,
                      paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds)),
-    uniprotIds = ifelse(is.na(uniprotIds), "no_uniprot_id",
+    uniprotIds = ifelse(is.na(uniprotIds), NA,
                         paste0("https://www.uniprot.org/uniprot/", uniprotIds)),
-    geneNames = ifelse(is.na(geneNames), "no_gene_name",geneNames),
-    geneAlias = ifelse(is.na(geneAlias), "no_gene_alias",geneAlias),
+    geneNames = ifelse(is.na(geneNames), NA,geneNames),
+    geneAlias = ifelse(is.na(geneAlias), NA,geneAlias),
     stringsAsFactors = F
   )
 
 
-  invisible(gene_info)
+  return(gene_info)
 }

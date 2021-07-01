@@ -1,12 +1,14 @@
 # Annotate genes 
 
 > This tool annotates genes with alias, symbol, full name, function also related papers.
+>
 > 目的就是：将与基因ID相关的内容整合在一起，并且能直接导出为一个excel的多个sheets（后期考虑加入网页版）
 
 ### Features
 
 - genecards虽然全，但是搜索数量有限制
 - 我们整合了基因信息、相关的文献信息、基因相关的GO、KEGG（如果能提供对应的logFC，还能做GSEA；如果能提供表达矩阵，还能做GSVA）
+- 每个操作都能独立得到数据框或者plot，然后可以作为不同的sheets同时放进一个excel中
 
 
 
@@ -71,4 +73,5 @@ saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 ### Plans
 
 - plot can also save into excel
+- 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 

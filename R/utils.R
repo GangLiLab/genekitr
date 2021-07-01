@@ -21,6 +21,39 @@ showNCBI <- function(db = "pubmed") {
   return(res)
 }
 
+##' @title Get Msigdb database term and gene information
+##' @inheritParams genGSEA
+##' @return a dataframe of 2 columns with term and gene.
+##' @importFrom stringr str_split
+##' @importFrom dplyr %>% distinct arrange select
+##' @importFrom stringi stri_remove_empty_na
+##' @export
+##' @examples
+##' \donttest{
+##' showNCBI("pubmed")
+##' }
+getMsigdb <- function(species,
+                      category,
+                      subcategory,
+                      ...) {
+
+  msigdb <- msigdbr(species, category, subcategory) %>%
+    dplyr::select(., c("gs_name","gene_symbol","entrez_gene")) %>%
+    as.data.frame()
+
+  invisible(msigdb)
+
+}
+
+msigdb_species_data <- function() {
+  utils::data(list="msig_species", package="AnnoGenes")
+  get("msig_species", envir = .GlobalEnv)
+}
+msigdb_category_data <- function() {
+  utils::data(list="msig_category", package="AnnoGenes")
+  get("msig_category", envir = .GlobalEnv)
+}
+
 
 ##' export result into different sheets
 ##' @param wb worksheet from `createWorkbook()`.
@@ -79,4 +112,4 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 }
 
 
-# .nm <- function(x) deparse(substitute(x))
+
