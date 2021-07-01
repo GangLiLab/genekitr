@@ -6,23 +6,20 @@ source('./R/genGSEA.R')
 source('./R/utils.R')
 source('./R/genInfo.R')
 
-msigdb <- getMsigdb(org='human', category='C5',subcategory='C5')
-
-
-sublist=head(geneList,100)
-names(sublist) = genInfo(names(sublist), org = 'hs') %>%
-  dplyr::pull(symbol)
-
-msigdb_category_data()
-
-egmt <- genGSEA(genelist = sublist, species = 'human',
-        category = 'C5',subcategory='CP:KEGG' ,
-        pvalueCutoff=1,minGSSize = 5,maxGSSize = 5000)
+data(geneList, package="DOSE")
+msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
+egmt <- genGSEA(genelist = geneList,geneset = msigdb)
 head(egmt)
+egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
+head(egmt2)
 
-gene <- names(geneList)[abs(geneList) > 2]
 
-egmt <- enricher(gene, TERM2GENE=msigdb)
+sublist = geneList[1:1000]
+names(sublist) = genInfo(names(sublist), org = 'hs') %>%dplyr::pull(symbol)
+msigdb <- getMsigdb(org='human', category='C2',subcategory = 'CP:BIOCARTA')
+egmt3 <- genGSEA(genelist = sublist,geneset = msigdb)
+head(egmt3)
+
 
 ## 来自：https://support.bioconductor.org/p/122496/
 # 意思是：GSEA需要利用全部的基因集（附带logFC）进行分析【当然我们的函数支持symbol或entrez】；

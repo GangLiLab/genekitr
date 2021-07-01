@@ -25,7 +25,7 @@ showNCBI <- function(db = "pubmed") {
 ##' @param org organism name from `msigdb_org_data()`.
 ##' @param category MSigDB collection abbreviation, C1 to C8 and H.
 ##' @param subcategory MSigDB sub-collection abbreviation, such as REACTOME or BP.
-##' @return a dataframe of 2 columns with term and gene.
+##' @return a dataframe of 3 columns with term, entrez and symbol name.
 ##' @importFrom stringr str_split
 ##' @importFrom dplyr %>% filter pull
 ##' @importFrom stringi stri_remove_empty_na
@@ -46,7 +46,7 @@ getMsigdb <- function(org,
                   stringr::str_split(msig_org[,2],', ',simplify = T) %>%
                     as.character() %>%
                     stringi::stri_remove_empty_na())
-  if (!org %in% all_org) stop("choose a valid org...")
+  if (!org %in% all_org) stop("Choose a valid organism!\n\n",paste0(all_org,' | '))
 
   # category
   if(! category %in% c('C1','C2','C3','C4','C5','C6','C7','C8','H')){
