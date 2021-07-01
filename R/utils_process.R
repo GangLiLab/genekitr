@@ -21,8 +21,6 @@ showNCBI <- function(db = "pubmed") {
   return(res)
 }
 
-
-
 ##' export result into different sheets
 ##' @param wb worksheet from `createWorkbook()`.
 ##' @param sheet_dat dataframe added to sheet.
@@ -78,6 +76,24 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 
   invisible(wb)
 }
+
+
+# to define gene type: entrezid, ensembl or symbol
+gentype <- function(id, org){
+  org <- stringr::str_to_title(org)
+  orgSymbol <- toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  orgENSEMBL <- toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  if (any(id %in% orgSymbol$symbol)) {
+    c("SYMBOL")
+  } else if(any(id %in% orgENSEMBL$ensembl_id)){
+    c("ENSEMBL")
+  }else{
+    c("ENTREZID")
+  }
+}
+
+
+
 
 
 
