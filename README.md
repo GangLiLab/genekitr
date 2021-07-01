@@ -10,12 +10,12 @@
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
 - 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `getMsigdb +  genGSEA`
-- 
+- 有了基因id，就能做GO分析 => `genGO`
 
 ### Plans
 
 - ~~图片也能导入excel（后期再看看这个有没有意义）~~
-- 基因的GO、KEGG注释【over-representation analysis (ORA)】
+- 基因的KEGG注释【over-representation analysis (ORA)】
 - 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
 
