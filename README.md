@@ -75,6 +75,15 @@ egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 
 
 
+#### Method4: GO
+
+```R
+data(geneList, package="DOSE")
+id = names(geneList)[1:100]
+ego = genGO(id, org = 'human',ont = 'CC',pvalueCutoff = 0.05,qvalueCutoff = 0.2)
+head(ego)
+```
+
 ### This package is very easy!
 
 - support pipe ` %>% ` 
