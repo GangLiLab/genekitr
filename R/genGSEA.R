@@ -1,4 +1,4 @@
-##' GSEA for a genelist with logFC
+##' GSEA for a genelist with decreasing logFC value
 ##'
 ##' @param genelist order ranked genelist in decreasing order, gene can be entrez or symbol.
 ##' @param geneset  gene set collections from `getMsigdb()`.
@@ -11,7 +11,10 @@
 ##' @export
 ##' @examples
 ##' \dontrun{
-##'
+##' data(geneList, package="DOSE")
+##' msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
+##' egmt <- genGSEA(genelist = geneList,geneset = msigdb)
+##' egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 ##' }
 genGSEA <- function(genelist,
                     geneset,

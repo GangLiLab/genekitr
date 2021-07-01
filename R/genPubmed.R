@@ -23,7 +23,7 @@ genPubmed <- function(id,
     is.character(keywords)
   )
 
-  field <- toupper(field)
+  field %<>% toupper
 
   data <- showNCBI("pubmed")
   if (field %in% data$Name) {

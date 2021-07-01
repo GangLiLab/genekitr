@@ -11,16 +11,19 @@
 ##' }
 
 genInfo <- function(id,
-                    org = c("mm", "hs"),
+                    org,
                     ...) {
   #--- args ---#
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
+  stopifnot(is.character(id))
 
-  org = match.arg(org)
-  stopifnot(
-    is.character(id),
-    org %in% c("mm", "hs")
-  )
+  org = match.arg(org) %>% mapBiocOrg
+  if(!org %in% biocOrg_data() %>% dplyr::pull(short_name)){
+    stop('Check organism name! \n USE FULL NAME: ',
+         paste0(biocOrg_data() %>% dplyr::pull(full_name),' | '),
+         '\n OR USE SHORT NAME: ',
+         paste0(biocOrg_data() %>% dplyr::pull(short_name),' | '))
+  }
   org <- stringr::str_to_title(org)
 
   #--- code ---#
