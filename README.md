@@ -87,7 +87,7 @@ wb <- expo_sheet(wb, sheet_dat = test1, sheet_name = 'genInfo') %>%
 saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-01-071253.png)
+<img src='man/figures/example1.png' align="below" />
 
 
 
