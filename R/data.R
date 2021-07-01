@@ -3,12 +3,12 @@
 #'
 #'
 #' @name Datasets
-#' @aliases msig_species
+#' @aliases msig_org
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(msig_species)
-#' str(msig_category)
+#' data(msig_org)
+#' str(msig_org)
 NULL
 
 #' Datasets
