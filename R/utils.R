@@ -119,13 +119,13 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
   check <- apply(sheet_dat, 2, function(x) {
     any(stringr::str_detect(x, "http"))
   })
-  check[is.na(check)] <- FALSE
+  # check[is.na(check)] <- FALSE
   if (any(check)) {
     sub_dat <- sheet_dat[, check]
 
     for (i in 1:nrow(sheet_dat)) {
       for (n in which(check)) {
-        if (sheet_dat[i, n] != "no_gene_id" & sheet_dat[i, n] != "no_uniprot_id") {
+        if (! is.na(sheet_dat[i, n]) & !is.na(sheet_dat[i, n] )) {
           sheet_datd_link <- paste0("HYPERLINK(\"", sheet_dat[i, n], "\", \"", sheet_dat[i, n], "\")")
           writeFormula(wb, sheet = sheet_name, startRow = i + 1, startCol = n, x = sheet_datd_link)
         }
