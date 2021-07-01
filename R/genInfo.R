@@ -56,7 +56,8 @@ genInfo <- function(id,
   uniprotIds <- orgUniprot[match(geneIds, orgUniprot$gene_id), "uniprot_id"]
 
   gene_info <- data.frame(
-    symbols = ifelse(is.na(symbols), NA,symbols),
+    entrez = ifelse(!geneIds%in%orgSymbol$gene_id, NA,geneIds),
+    symbol = ifelse(is.na(symbols), NA,symbols),
     geneIds = ifelse(!geneIds%in%orgSymbol$gene_id, NA,
                      paste0("http://www.ncbi.nlm.nih.gov/gene/", geneIds)),
     uniprotIds = ifelse(is.na(uniprotIds), NA,
