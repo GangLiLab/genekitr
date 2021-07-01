@@ -75,7 +75,7 @@ egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 
 
 
-### Exporting result is very easy!
+### This package is very easy!
 
 - support pipe ` %>% ` 
 
@@ -91,3 +91,6 @@ saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 
 
 
+- `genInfo` vs `bitr`
+
+  <img src='man/figures/example2.png' align="below" />
