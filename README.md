@@ -142,15 +142,13 @@ gkeg <- genKEGG(ids, org = 'human')
 symbol = mapId(id = names(geneList)[100:300], from = 'entrez', to = 'symbol',org='hs', return_dat = F)
 head(symbol)
 # "CDH3"   "TROAP"  "CRISP3" "CDKN3"  "PRDX4"  "GNLY"  
+
 keg_raw <- genKEGG(test, org = 'hs', readable = F)
 keg_readable <- genKEGG(test, org = 'hs', readable = T)
+# 默认支持readable 参数，结果以symbol name展示。差别就是：
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-085231.png)
-
-- 默认支持`readable  ` 参数，结果以symbol name展示。差别就是：
-
-  ![image-20210702174030869](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-094031.png)
+![image-20210702174030869](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-094031.png)
 
 
 

@@ -11,5 +11,6 @@ head(gkeg)
 # if we use symbol gene as input:
 test = mapId(id = names(geneList)[100:300], from = 'entrez', to = 'symbol',org='hs', return_dat = F)
 head(test)
-gkeg <- genKEGG(test, org = 'hs', readable = T)
-head(gkeg)
+keg_raw <- genKEGG(test, org = 'hs', readable = F)
+keg_readable <- genKEGG(test, org = 'hs', readable = T)
+
