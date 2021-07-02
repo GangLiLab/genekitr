@@ -4,7 +4,7 @@
 >
 > 目的就是：与基因id相关的操作（如转换、可视化交集等）、分析（如富集分析），都可以加进来（后期考虑加入网页版）
 
-### Features
+## Features
 
 - genecards虽然全，但是搜索数量有限制，于是整合了基因信息 =>`genInfo`
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
@@ -13,14 +13,14 @@
 - 有了基因id，就能做GO分析 => `genGO`
 - 有了基因id，就能做KEGG分析 => `genKEGG`
 
-### Plans
+## Plans
 
 - ~~图片也能导入excel（后期再看看这个有没有意义）~~
 - 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
 - genInfo增加基因位置，并且支持多个不同版本的基因组
 
-### Let's do it!
+## Let's do it!
 
 #### example gene id
 
@@ -164,7 +164,7 @@ keg <- genKEGG(mm_id, org = 'mouse', readable = T, pvalueCutoff = 1, qvalueCutof
 
 
 
-### This package is very easy!
+## This package is very easy to use!
 
 - support pipe ` %>% ` 
 
