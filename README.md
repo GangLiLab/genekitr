@@ -77,6 +77,8 @@ egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 
 #### Method4: GO
 
+函数需要用到物种的`org.db`，如果没有相关物种注释包，函数内部的`auto_install()` 会帮助下载👍
+
 ```R
 data(geneList, package="DOSE")
 id = names(geneList)[1:100]
