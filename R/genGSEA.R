@@ -24,6 +24,7 @@ genGSEA <- function(genelist,
                     ...){
 
   #--- args ---#
+  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   options(warn=-1)
   stopifnot(
     is.data.frame(geneset),

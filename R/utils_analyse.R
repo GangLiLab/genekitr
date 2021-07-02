@@ -19,6 +19,7 @@ getMsigdb <- function(org,
                       ...) {
 
   #--- args ---#
+  options(warn=-1)
   # org
   msig_org <- msigdb_org_data()
   all_org = c(msig_org[,1],
@@ -68,21 +69,25 @@ getMsigdb <- function(org,
 
 }
 
+# get msigdb org
 msigdb_org_data <- function() {
   utils::data(list="msig_org", package="AnnoGenes")
   get("msig_org", envir = .GlobalEnv)
 }
+
+# get msigdb category
 msigdb_category_data <- function() {
   utils::data(list="msig_category", package="AnnoGenes")
   get("msig_category", envir = .GlobalEnv)
 }
 
-biocOrg_data <- function() {
+# get bioconductor org name
+biocOrg_name <- function() {
   utils::data(list="map_biocOrg", package="AnnoGenes")
   get("map_biocOrg", envir = .GlobalEnv)
 }
 
-
+# rename bioconductor org
 mapBiocOrg <- function(organism) {
   # support organisms: http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
   # just extract org.db
@@ -123,3 +128,18 @@ mapBiocOrg <- function(organism) {
   }
   return(org)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

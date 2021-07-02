@@ -4,6 +4,7 @@
 ##' @param org species "mm" or "hs".
 ##' @return a dataframe of gene info.
 ##' @importFrom stringr str_to_title
+##' @importFrom AnnotationDbi toTable
 ##' @export
 ##' @examples
 ##' \dontrun{

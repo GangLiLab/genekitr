@@ -1,7 +1,7 @@
-##' GO enrichment analysis for a genelist
+##' GO enrichment analysis for gene id
 ##'
 ##' @param id a gene vector which can be entrez, ensembl or symbol.
-##' @param org  organism name from `biocOrg_data()`.
+##' @param org  organism name from `biocOrg_name()`.
 ##' @param ont  One of "BP", "MF", and "CC" subontologies, or "ALL" for all three.
 ##' @param readable logical to output as gene symbol, default is TRUE.
 ##' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
@@ -11,8 +11,10 @@
 ##' @param maxGSSize maximal size of each geneSet for analyzing, default is 500.
 ##' @param universe background genes. If missing, the orgdb all gene list will be used as background.
 ##' @return a dataframe of gene info.
-##' @importFrom dplyr select
-##' @importFrom clusterProfiler GSEA
+##' @importFrom dplyr pull
+##' @importFrom stringr str_to_title
+##' @importFrom clusterProfiler enrichGO
+##' @importFrom DOSE setReadable
 ##' @export
 ##' @examples
 ##' \dontrun{
@@ -34,29 +36,42 @@ genGO <- function(id,
                   ...){
 
   #--- args ---#
+  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
+  options(warn=-1)
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  org = mapBiocOrg(org)
-  if(!org %in% (biocOrg_data() %>% dplyr::pull(short_name))){
+  org_bk = org
+  org = mapBiocOrg(tolower(org))
+  if(! (org %in% (biocOrg_data() %>% dplyr::pull(short_name)) |
+        org %in% (biocOrg_data() %>% dplyr::pull(full_name))) ){
     stop('Check organism name! \n USE FULL NAME: ',
          paste0(biocOrg_data() %>% dplyr::pull(full_name),' | '),
          '\n OR USE SHORT NAME: ',
          paste0(biocOrg_data() %>% dplyr::pull(short_name),' | '))
   }
   org <- stringr::str_to_title(org)
-  keyType = gentype(id, org)
 
-  #--- codes ---#
   pkg=paste0("org.", org, ".eg.db")
-  if (!requireNamespace(pkg, quietly = TRUE)) stop("Package ",pkg," is required!")
+  if (!requireNamespace(pkg, quietly = TRUE)) auto_install(pkg)
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 
-  ego <- enrichGO(gene = id, OrgDb = pkg, keyType = keyType, ont = ont,
-                  pvalueCutoff, pAdjustMethod,universe, qvalueCutoff,
-                  minGSSize,maxGSSize )
+
+  keyType = .gentype(id, org)
+  if(! keyType %in% c('SYMBOL','ENSEMBL','ENTREZID')) {
+    stop('Gene id type should be one of: SYMBOL, ENSEMBL and ENTREZID')
+  }
+
+  if(! .orgtype(id,org)) stop('Gene id is not matched with organism: ', org_bk, ' !')
+
+  #--- codes ---#
+  ego <- suppressMessages(
+    clusterProfiler::enrichGO(gene = id, OrgDb = pkg, keyType = keyType, ont = ont,
+                              pvalueCutoff, pAdjustMethod,universe, qvalueCutoff,
+                              minGSSize,maxGSSize )
+  )
   if( readable | keyType != 'SYMBOL'){
-    ego <- setReadable(ego, OrgDb = pkg)
+    ego <- DOSE::setReadable(ego, OrgDb = pkg)
   }
 
   return(ego)

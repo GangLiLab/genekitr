@@ -79,10 +79,11 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 
 
 # to define gene type: entrezid, ensembl or symbol
-gentype <- function(id, org){
+.gentype <- function(id, org){
   org <- stringr::str_to_title(org)
-  orgSymbol <- toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  orgENSEMBL <- toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
+  orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
   if (any(id %in% orgSymbol$symbol)) {
     c("SYMBOL")
   } else if(any(id %in% orgENSEMBL$ensembl_id)){
@@ -92,8 +93,59 @@ gentype <- function(id, org){
   }
 }
 
+# to define if the gene ids in this org
+.orgtype <- function(id, org){
+  org <- stringr::str_to_title(org)
+  suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
+  keytype = .gentype(id,org)
 
+  orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  if(keytype == "ENTREZID"){
+    ifelse(any(id%in%orgSymbol$gene_id),TRUE,FALSE)
+  }else if(keytype == "SYMBOL"){
+    ifelse(any(id%in%orgSymbol$symbol),TRUE,FALSE)
+  }else{
+    orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+    ifelse(any(id%in%orgENSEMBL$ensembl_id),TRUE,FALSE)
+  }
+}
 
+# auto-install packages
+auto_install <- function(pkg){
+  options(warn=-1)
 
+  # check first time
+  ret <- suppressPackageStartupMessages(
+    sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+  )
+  missing_pkgs <- names(ret[!ret])
+  if (length(missing_pkgs) > 0) {
+    warning("The following packages are not installed: \n",
+            paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
+            immediate. = TRUE
+    )
+    message("\nTry installing via Bioconductor...\n")
 
+    suppressMessages(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE))
+
+    # check again
+    ret <- suppressPackageStartupMessages(
+      sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+    )
+    missing_pkgs <- names(ret[!ret])
+    if (length(missing_pkgs) > 0) {
+      message("Try installing via CRAN...\n")
+      suppressWarnings(install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
+    }
+
+    # the end
+    ret <- suppressPackageStartupMessages(
+      sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+    )
+    missing_pkgs <- names(ret[!ret])
+    if (length(missing_pkgs) > 0) {
+      message("Maybe you should check the package name or try devtools::install_github()\n")
+    }
+  }
+}
 

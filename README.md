@@ -18,7 +18,7 @@
 - 基因的KEGG注释【over-representation analysis (ORA)】
 - 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
-
+- genInfo增加基因位置，并且支持多个不同版本的基因组
 
 ### Let's do it!
 
