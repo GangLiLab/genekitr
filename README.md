@@ -121,6 +121,9 @@ tmp=as.data.frame(ego)
 - user can choose output dataframe or not, using `return_dat`
 
 ```R
+# 以下三种均可
+mapId(id = ids, from = 'entrez', to = 'symbol',org='hs', return_dat = T)
+mapId(id = ids, from = 'entrez', to = 'symbol',org='hg', return_dat = T)
 mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
 ```
 
