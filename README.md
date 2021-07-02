@@ -89,7 +89,28 @@ tmp=as.data.frame(ego)
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-035433.png)
 
+**不知道物种名称？别怕！**
 
+```R
+> biocOrg_name()
+    full_name short_name
+1   anopheles         ag
+2      bovine         bt
+3        worm         ce
+4      canine         cf
+5         fly         dm
+6   zebrafish         dr
+7    ecolik12      eck12
+8  ecolisakai    ecSakai
+9     chicken         gg
+10      human         hs
+11      mouse         mm
+12     rhesus        mmu
+13      chipm         pt
+14        rat         rn
+15        pig         ss
+16    xenopus         xl
+```
 
 ### This package is very easy!
 
