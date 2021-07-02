@@ -93,7 +93,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
   }
 }
 
-# to define if the gene ids in this org
+# gene id in this org or not (return a logical)
 .orgtype <- function(id, org){
   org <- stringr::str_to_title(org)
   suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
