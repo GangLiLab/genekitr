@@ -73,7 +73,7 @@ egmt <- genGSEA(genelist = geneList,geneset = msigdb)
 egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 ```
 
-
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-100533.png)
 
 #### Method4: GO
 

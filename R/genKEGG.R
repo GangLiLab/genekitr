@@ -9,8 +9,19 @@
 ##' @param minGSSize numberic of minimal size of each geneSet for analyzing, default is 10.
 ##' @param maxGSSize numberic of maximal size of each geneSet for analyzing, default is 500.
 ##' @param universe background genes. If missing, the orgdb all gene list will be used as background.
-##'
-##'
+##' @return a dataframe of gene info.
+##' @importFrom dplyr pull
+##' @importFrom stringr str_to_title
+##' @importFrom clusterProfiler enrichGO
+##' @importFrom DOSE setReadable
+##' @export
+##' @examples
+##' \dontrun{
+##' data(geneList, package="DOSE")
+##' id = names(geneList)[1:100]
+##' keg <- genKEGG(id, org = 'human')
+##' head(keg)
+##' }
 genKEGG <- function(id,
                     org,
                     readable = TRUE,

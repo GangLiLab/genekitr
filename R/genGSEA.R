@@ -14,10 +14,10 @@
 ##' data(geneList, package="DOSE")
 ##' msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
 ##' egmt <- genGSEA(genelist = geneList,geneset = msigdb)
-##' egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 ##' }
 genGSEA <- function(genelist,
                     geneset,
+                    readable = TRUE,
                     minGSSize = 10,
                     maxGSSize = 500,
                     pvalueCutoff = 0.05,
@@ -47,6 +47,8 @@ genGSEA <- function(genelist,
   }
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist, TERM2GENE=geneset, pvalueCutoff, verbose=F))
+
+
 
   return(egmt)
 
