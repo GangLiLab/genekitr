@@ -28,11 +28,12 @@ genKEGG <- function(id,
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
+  org.bk = org
   org = mapKeggOrg(tolower(org))
   keyType = .gentype(id, org)
   if(! keyType %in% c('ENTREZID') ) {
     message(paste0(keyType), ' gene will be mapped to entrez id')
-    trans_id = mapId(id,tolower(keyType),'entrezid',org)
+    trans_id = mapId(id,tolower(keyType),'entrezid',org.bk)
   }else{
     trans_id = id
   }
@@ -49,7 +50,7 @@ genKEGG <- function(id,
                                 maxGSSize = maxGSSize )
   )
 
-  biocOrg = mapBiocOrg(tolower(org))
+  biocOrg = mapBiocOrg(tolower(org.bk))
   pkg=paste0("org.", biocOrg, ".eg.db")
   if( readable ){
     keg <- DOSE::setReadable(keg, OrgDb = pkg, keyType = 'ENTREZID')
