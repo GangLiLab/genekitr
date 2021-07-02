@@ -134,7 +134,6 @@ mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
 #### Method6: KEGG
 
 ```R
-data(geneList, package="DOSE")
 ids = names(geneList)[1:100]
 gkeg <- genKEGG(ids, org = 'human')
 # 或者 gkeg <- genKEGG(ids, org = 'hs') 或者 gkeg <- genKEGG(ids, org = 'hg')
@@ -143,11 +142,15 @@ gkeg <- genKEGG(ids, org = 'human')
 symbol = mapId(id = names(geneList)[100:300], from = 'entrez', to = 'symbol',org='hs', return_dat = F)
 head(symbol)
 # "CDH3"   "TROAP"  "CRISP3" "CDKN3"  "PRDX4"  "GNLY"  
-gkeg <- genKEGG(symbol, org = 'hs')
-head(gkeg)
+keg_raw <- genKEGG(test, org = 'hs', readable = F)
+keg_readable <- genKEGG(test, org = 'hs', readable = T)
 ```
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-085231.png)
+
+- 默认支持`readable  ` 参数，结果以symbol name展示。差别就是：
+
+  ![image-20210702174030869](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-094031.png)
 
 
 

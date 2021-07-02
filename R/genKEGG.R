@@ -13,7 +13,7 @@
 ##'
 genKEGG <- function(id,
                     org,
-                    # readable = TRUE,
+                    readable = TRUE,
                     pAdjustMethod = "BH",
                     pvalueCutoff  = 0.05,
                     qvalueCutoff  = 0.1,
@@ -48,6 +48,12 @@ genKEGG <- function(id,
                                 minGSSize = minGSSize,
                                 maxGSSize = maxGSSize )
   )
+
+  biocOrg = mapBiocOrg(tolower(org))
+  pkg=paste0("org.", biocOrg, ".eg.db")
+  if( readable ){
+    keg <- DOSE::setReadable(keg, OrgDb = pkg, keyType = 'ENTREZID')
+  }
 
   return(keg)
 

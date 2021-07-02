@@ -44,6 +44,7 @@ genGO <- function(id,
   org_bk = org
   org = mapBiocOrg(tolower(org))
   .load_orgdb(org)
+  pkg=paste0("org.", org, ".eg.db")
 
   keyType = .gentype(id, org)
   if(! keyType %in% c('SYMBOL','ENSEMBL','ENTREZID')) {
