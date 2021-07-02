@@ -69,73 +69,132 @@ getMsigdb <- function(org,
 
 }
 
-# get msigdb org
+#---  get msigdb org ---#
 msigdb_org_data <- function() {
   utils::data(list="msig_org", package="AnnoGenes")
   get("msig_org", envir = .GlobalEnv)
 }
 
-# get msigdb category
+#---  get msigdb category ---#
 msigdb_category_data <- function() {
   utils::data(list="msig_category", package="AnnoGenes")
   get("msig_category", envir = .GlobalEnv)
 }
 
-# get bioconductor org name
+#--- get bioc org name ---#
 biocOrg_name <- function() {
   utils::data(list="map_biocOrg", package="AnnoGenes")
   get("map_biocOrg", envir = .GlobalEnv)
 }
 
-# rename bioconductor org
+#---  map bioc org fullname to shortname ---#
 mapBiocOrg <- function(organism) {
+  organism = tolower(organism)
+  if (organism == "hg" | organism == "human" | organism == "hsa" |  organism == "hs") organism = 'hs'
+  if (organism == "mm" | organism == "mouse") organism = 'mm'
+
   # support organisms: http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
-  # just extract org.db
-  if (organism == "anopheles") {
-    org <- "ag"
-  } else if (organism == "bovine") {
-    org <- "bt"
-  } else if (organism == "worm") {
-    org <- "ce"
-  } else if (organism == "canine") {
-    org <- "cf"
-  } else if (organism == "fly") {
-    org <- "dm"
-  } else if (organism == "zebrafish") {
-    org <- "dr"
-  } else if (organism == "ecolik12") {
-    org <- "ecK12"
-  } else if (organism == "ecolisakai") {
-    org <- "ecSakai"
-  } else if (organism == "chicken") {
-    org <- "gg"
-  } else if (organism == "human") {
-    org <- "hs"
-  } else if (organism == "mouse") {
-    org <- "mm"
-  } else if (organism == "rhesus") {
-    org <- "mmu"
-  } else if (organism == "chipm") {
-    org <- "pt"
-  } else if (organism == "rat") {
-    org <- "rn"
-  } else if (organism == "pig") {
-    org <- "ss"
-  } else if (organism == "xenopus") {
-    org <- "xl"
-  } else {
-    org <- organism
+  biocorg = biocOrg_name()
+
+  if( organism %in% biocorg$short_name ){
+    org = organism
+  }else if(organism %in% biocorg$full_name){
+    org = biocorg %>% dplyr::filter(full_name == organism) %>% dplyr::pull(short_name)
+  }else{
+    stop('Check organism name! \n USE FULL NAME: ',
+         paste0(biocOrg_name() %>% dplyr::pull(full_name),' | '),
+         '\n OR USE SHORT NAME: ',
+         paste0(biocOrg_name() %>% dplyr::pull(short_name),' | '))
   }
+
+  org <- stringr::str_to_title(org)
+  return(org)
+}
+
+#---  get kegg org name ---#
+keggOrg_name <- function() {
+  utils::data(list="map_keggOrg", package="AnnoGenes")
+  get("map_keggOrg", envir = .GlobalEnv)
+}
+
+#--- map kegg org fullname to shortname ---#
+mapKeggOrg <- function(organism){
+  organism = tolower(organism)
+  if (organism == "hg" | organism == "human" | organism == "hs") organism = 'hsa'
+  if (organism == "mm" | organism == "mouse") organism = 'mmu'
+
+  # some common name happens to be same with kegg short name
+  is.common = ifelse(organism %in% c("rat","cow","dog"), TRUE, FALSE)
+
+  # support organisms: https://www.genome.jp/kegg/catalog/org_list.html
+  kgorg = keggOrg_name()
+  if( (organism %in% kgorg$short_name && !is.common ) ){
+    org = organism
+  }else if ( nchar(organism) >= 3 ){
+    out = kgorg[grepl(paste0('(\\b',organism,'\\b)'), kgorg$full_name),]
+    if(nrow(out) > 1 ){
+      stop('\nPlease choose the SHORT NAME from below: \n',
+           paste0(utils::capture.output(print.data.frame(out,row.names = FALSE)), collapse = '\n') )
+    }else if ( nrow(out) == 1){
+      org = out$short_name
+    }else{
+      stop('\nCheck the organism name again!')
+    }
+  }else{
+    out = kgorg[grepl(paste0('^',organism,''), kgorg$short_name),]
+    if( nrow(out) != 0){
+      stop('\nPlease choose the SHORT NAME from below: \n',
+           paste0(utils::capture.output(print.data.frame(out,row.names = FALSE)), collapse = '\n') )
+    } else if ( nrow(out) == 1){
+      org = out$short_name
+    } else{
+      stop('\nCheck the organism name again!')
+    }
+  }
+
   return(org)
 }
 
 
+#--- gene id map ---#
+# support: entrez, symbol and ensembl
+mapId <- function(id, from, to, org, return_dat = FALSE){
 
 
+  if (to == "entrez" ) to = 'entrezid'
+  if (from == "entrez" ) from = 'entrezid'
 
+  if( tolower(from) %in% c('symbol','entrezid','ensembl') &&
+      tolower(to) %in% c('symbol','entrezid','ensembl') ){
 
+    org = mapBiocOrg(tolower(org))
+    .load_orgdb(org)
+    symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+    ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+    merge_dat = merge(symbol_dat, ensem_dat ,by = 'gene_id', all.x  = T)
+    colnames(merge_dat)  = c('entrezid','symbol','ensembl')
+    newdat <- merge_dat %>%
+      dplyr::select(c(from,to)) %>%
+      dplyr::filter(.[,1] %in% id)
+    new_id =  newdat %>% dplyr::pull(2) %>% unique() %>% na.omit() %>% as.character()
 
+    percen = paste(round(100*length(new_id)/length(unique(id)), 2), "%", sep="")
+    if(length(new_id) > length(unique(id))){
+      message(percen,' genes are mapped from ',from, ' to ', to,'\n',
+              'maybe one ', from, ' gene mapps many ', to)
+    } else {message(percen,' genes are mapped from ',from, ' to ', to)}
 
+    if(return_dat){
+      res = newdat
+    }else{
+      res = new_id
+    }
+  }else{
+    stop('\nChoose from and to type from: \nsymbol | entrezid | ensembl')
+  }
+
+  return(res)
+}
 
 
 

@@ -112,6 +112,20 @@ tmp=as.data.frame(ego)
 16    xenopus         xl
 ```
 
+
+
+#### Method5: map gene id
+
+- `org` support many from `biocOrg_name()`
+
+- user can choose output dataframe or not, using `return_dat`
+
+```R
+mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
+```
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-083549.png)
+
 ### This package is very easy!
 
 - support pipe ` %>% ` 

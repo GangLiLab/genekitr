@@ -78,8 +78,11 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 }
 
 
-# to define gene type: entrezid, ensembl or symbol
+#---  to define gene type: entrezid, ensembl or symbol ---#
 .gentype <- function(id, org){
+  if(nchar(org) > 2){
+    org = substr(org,1,nchar(org)-1)
+  }
   org <- stringr::str_to_title(org)
   suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
   orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
@@ -93,8 +96,11 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
   }
 }
 
-# gene id in this org or not (return a logical)
-.orgtype <- function(id, org){
+#---  gene id in this org or not (return a logical) ---#
+.genInorg <- function(id, org){
+  if(nchar(org) > 2){
+    org = substr(org,1,nchar(org)-1)
+  }
   org <- stringr::str_to_title(org)
   suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
   keytype = .gentype(id,org)
@@ -110,7 +116,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
   }
 }
 
-# auto-install packages
+#---  auto-install packages ---#
 auto_install <- function(pkg){
   options(warn=-1)
 
@@ -148,4 +154,14 @@ auto_install <- function(pkg){
     }
   }
 }
+
+#--- load org.db ---#
+.load_orgdb <- function(org){
+  org = mapBiocOrg(tolower(org))
+  pkg=paste0("org.", org, ".eg.db")
+  if (!requireNamespace(pkg, quietly = TRUE)) auto_install(pkg)
+  suppressPackageStartupMessages(require(pkg, character.only = TRUE))
+}
+
+
 

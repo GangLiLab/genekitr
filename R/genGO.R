@@ -43,32 +43,24 @@ genGO <- function(id,
 
   org_bk = org
   org = mapBiocOrg(tolower(org))
-  if(! (org %in% (biocOrg_name() %>% dplyr::pull(short_name)) |
-        org %in% (biocOrg_name() %>% dplyr::pull(full_name))) ){
-    stop('Check organism name! \n USE FULL NAME: ',
-         paste0(biocOrg_name() %>% dplyr::pull(full_name),' | '),
-         '\n OR USE SHORT NAME: ',
-         paste0(biocOrg_name() %>% dplyr::pull(short_name),' | '))
-  }
-  org <- stringr::str_to_title(org)
-
-  pkg=paste0("org.", org, ".eg.db")
-  if (!requireNamespace(pkg, quietly = TRUE)) auto_install(pkg)
-  suppressPackageStartupMessages(require(pkg, character.only = TRUE))
-
+  .load_orgdb(org)
 
   keyType = .gentype(id, org)
   if(! keyType %in% c('SYMBOL','ENSEMBL','ENTREZID')) {
     stop('Gene id type should be one of: SYMBOL, ENSEMBL and ENTREZID')
   }
 
-  if(! .orgtype(id,org)) stop('Gene id is not matched with organism: ', org_bk, ' !')
+  if(! .genInorg(id,org) ) stop('Gene id is not matched with organism: ', org_bk, ' !')
 
   #--- codes ---#
   ego <- suppressMessages(
     clusterProfiler::enrichGO(gene = id, OrgDb = pkg, keyType = keyType, ont = toupper(ont),
-                              pvalueCutoff, pAdjustMethod,universe, qvalueCutoff,
-                              minGSSize,maxGSSize )
+                              pvalueCutoff = pvalueCutoff,
+                              pAdjustMethod = pAdjustMethod,
+                              universe = universe,
+                              qvalueCutoff = qvalueCutoff,
+                              minGSSize = minGSSize,
+                              maxGSSize  = maxGSSize)
   )
   if( readable | keyType != 'SYMBOL'){
     ego <- DOSE::setReadable(ego, OrgDb = pkg)
