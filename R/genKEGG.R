@@ -32,7 +32,9 @@ genKEGG <- function(id,
   keyType = .gentype(id, org)
   if(! keyType %in% c('ENTREZID') ) {
     message(paste0(keyType), ' gene will be mapped to entrez id')
-    trans_id = mapId(id,keyType,'entrezid',org)
+    trans_id = mapId(id,tolower(keyType),'entrezid',org)
+  }else{
+    trans_id = id
   }
 
 
@@ -48,8 +50,5 @@ genKEGG <- function(id,
   )
 
   return(keg)
-
-
-
 
 }

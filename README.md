@@ -11,11 +11,11 @@
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
 - 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `getMsigdb +  genGSEA`
 - 有了基因id，就能做GO分析 => `genGO`
+- 有了基因id，就能做KEGG分析 => `genKEGG`
 
 ### Plans
 
 - ~~图片也能导入excel（后期再看看这个有没有意义）~~
-- 基因的KEGG注释【over-representation analysis (ORA)】
 - 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
 - genInfo增加基因位置，并且支持多个不同版本的基因组
@@ -128,6 +128,28 @@ mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
 ```
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-083549.png)
+
+
+
+#### Method6: KEGG
+
+```R
+data(geneList, package="DOSE")
+ids = names(geneList)[1:100]
+gkeg <- genKEGG(ids, org = 'human')
+# 或者 gkeg <- genKEGG(ids, org = 'hs') 或者 gkeg <- genKEGG(ids, org = 'hg')
+
+# 当然直接给symbol或者ensembl 都是可以的，比如使用symbol id
+symbol = mapId(id = names(geneList)[100:300], from = 'entrez', to = 'symbol',org='hs', return_dat = F)
+head(symbol)
+# "CDH3"   "TROAP"  "CRISP3" "CDKN3"  "PRDX4"  "GNLY"  
+gkeg <- genKEGG(symbol, org = 'hs')
+head(gkeg)
+```
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-085231.png)
+
+
 
 ### This package is very easy!
 

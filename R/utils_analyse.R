@@ -160,7 +160,6 @@ mapKeggOrg <- function(organism){
 # support: entrez, symbol and ensembl
 mapId <- function(id, from, to, org, return_dat = FALSE){
 
-
   if (to == "entrez" ) to = 'entrezid'
   if (from == "entrez" ) from = 'entrezid'
 
@@ -189,10 +188,10 @@ mapId <- function(id, from, to, org, return_dat = FALSE){
     }else{
       res = new_id
     }
+
   }else{
     stop('\nChoose from and to type from: \nsymbol | entrezid | ensembl')
   }
-
   return(res)
 }
 

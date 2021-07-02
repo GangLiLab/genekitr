@@ -2,9 +2,14 @@ rm(list=ls())
 library(dplyr)
 library(AnnoGenes)
 data(geneList, package="DOSE")
-ids = names(geneList)[1:10]
+ids = names(geneList)[1:100]
+gkeg <- genKEGG(ids, org = 'hg')
 
-mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = F)
+# mapId(id = ids, from = 'entrez', to = 'symbol',org='hg', return_dat = T)
+# mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
 
-gkeg <- genKEGG(ids, org = 'human')
+# if we use symbol gene as input:
+test = mapId(id = names(geneList)[100:300], from = 'entrez', to = 'symbol',org='hs', return_dat = F)
+head(test)
+gkeg <- genKEGG(test, org = 'hs')
 head(gkeg)
