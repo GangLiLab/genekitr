@@ -1,5 +1,3 @@
-# AnnoGenes utilities for plotting
-
 #---GO & KEGG enrichment  dotplot--#
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c('GeneRatio','Count','FoldEnrich'),
@@ -20,8 +18,8 @@ plotEnrichDot <- function(enrich_df,
                 ifelse(xlab_type == 'GeneRatio', "Gene Ratio", "Count"))
 
   # Panther GO result
-  check = enrich_df %>% dplyr::pull(1) %>% stringr::str_detect('.*\\(GO')
-  if(any(check)){
+  check_panther = enrich_df %>% dplyr::pull(1) %>% stringr::str_detect('.*\\(GO')
+  if(any(check_panther)){
     enrich_df <- enrich_df %>%
       dplyr::rename('Description' = names(.)[1]) %>%
       dplyr::rename('Count' = names(.)[3]) %>%
@@ -44,10 +42,11 @@ plotEnrichDot <- function(enrich_df,
       dplyr::mutate(Description = factor(.$Description,levels = .$Description,ordered = T))
   }
 
+  #--- plot ---#
   ggplot(enrich_df,aes(x = eval(parse(text = xlab_type)),y = Description))+
     geom_point(aes(color =  eval(parse(text = legend_by)),
                    size = Count))+
-    scale_color_gradient(low = "red", high = "green")+
+    scale_color_gradient(low = "red", high = "blue")+
     xlab(xlab)+
     theme_bw()+
     guides( color = guide_colorbar(reverse = TRUE))+

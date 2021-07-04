@@ -13,7 +13,10 @@
 - 有了基因id，就能做GO分析 => `genGO ` 
 - 有了基因id，就能做KEGG分析 => `genKEGG`
   - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment` ，方便后面不同的作图需求
-- 
+- 作图函数
+  - 气泡图 => `plotEnrichDot `
+
+
 
 ## Plans
 
@@ -21,6 +24,8 @@
 - 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 
 - genInfo增加基因位置，并且支持多个不同版本的基因组
+
+
 
 ## Let's do it!
 
@@ -35,8 +40,6 @@ Gal3st2b
 Bloc1s1') 
 mm_id=str_split(mm_id,"\n")[[1]]
 ```
-
-
 
 #### Method1: gene alias, full name
 
@@ -59,8 +62,6 @@ genPubmed(mm_id, keywords = 'stem cell AND epithelial', field = 'tiab')
 ```
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081925.png)
-
-
 
 #### Method3: GSEA
 
@@ -154,9 +155,7 @@ keg_readable <- genKEGG(test, org = 'hs', readable = T)
 
 
 
-换个物种试试~ 因此，**拿任意物种的symbol、entrez、ensembl基因，给函数投食即可**
-
-不需要再提前进行id转换了
+换个物种试试~理论上，**拿任意物种的symbol、entrez、ensembl基因，给函数投食即可**。不需要再提前进行id转换了
 
 ```R
 > head(id)
@@ -174,8 +173,14 @@ keg <- genKEGG(mm_id, org = 'mouse', readable = T, pvalueCutoff = 1, qvalueCutof
 - Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
 
 ```R
-plotEnrichDot(test, xlab_type = 'FoldEnrich', legend_by = 'qvalue',show_item = 20)
+plotEnrichDot(ego, xlab_type = 'FoldEnrich', legend_by = 'qvalue',show_item = 20)
 ```
+
+
+
+
+
+
 
 
 
