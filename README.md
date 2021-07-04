@@ -166,6 +166,21 @@ keg <- genKEGG(mm_id, org = 'mouse', readable = T, pvalueCutoff = 1, qvalueCutof
 
 
 
+## Now it's plotting time!
+
+#### Enrichment dotplot
+
+- support every dataframe including GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
+- Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
+
+```R
+plotEnrichDot(test, xlab_type = 'FoldEnrich', legend_by = 'qvalue',show_item = 20)
+```
+
+
+
+
+
 ## This package is very easy to use!
 
 - support pipe ` %>% ` 
