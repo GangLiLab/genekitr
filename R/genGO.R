@@ -67,6 +67,7 @@ genGO <- function(id,
     ego <- DOSE::setReadable(ego, OrgDb = pkg)
   }
 
-  return(ego)
+  new_ego = ego %>% as.data.frame() %>% calcFoldEnrich()
+  return(new_ego)
 
 }

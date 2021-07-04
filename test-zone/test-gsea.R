@@ -2,10 +2,6 @@ rm(list = ls())
 data(geneList, package="DOSE")
 head(geneList)
 
-source('./R/genGSEA.R')
-source('./R/utils.R')
-source('./R/genInfo.R')
-
 data(geneList, package="DOSE")
 msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
 egmt <- genGSEA(genelist = geneList,geneset = msigdb)

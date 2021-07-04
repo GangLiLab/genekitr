@@ -20,6 +20,8 @@ getMsigdb <- function(org,
 
   #--- args ---#
   options(warn=-1)
+  if (!requireNamespace('msigdbr', quietly = TRUE)) auto_install('msigdbr')
+
   # org
   msig_org <- msigdb_org_data()
   all_org = c(msig_org[,1],
@@ -195,8 +197,19 @@ mapId <- function(id, from, to, org, return_dat = FALSE){
   return(res)
 }
 
+#---calc fold enrichment ---#
+calcFoldEnrich <- function(df){
+  if( any(grepl('[gene|bg]ratio',tolower(colnames(df)))) ){
+    check_gr = which(grepl('.*gene.*ratio',tolower(colnames(df))))
+    check_bg = which(grepl('.*bg*ratio',tolower(colnames(df))))
+    to_calc =  paste0('(',df[,check_gr],')/(',df[,check_bg],')')
 
+    df <- df %>%
+      dplyr::mutate(FoldEnrich = sapply(to_calc, function(x)eval(parse(text = x)) ))
+  }
+  return(df)
 
+}
 
 
 

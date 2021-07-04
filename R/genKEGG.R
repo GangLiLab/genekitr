@@ -67,6 +67,7 @@ genKEGG <- function(id,
     keg <- DOSE::setReadable(keg, OrgDb = pkg, keyType = 'ENTREZID')
   }
 
-  return(keg)
+  new_keg = keg %>% as.data.frame() %>% calcFoldEnrich()
+  return(new_keg)
 
 }
