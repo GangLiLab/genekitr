@@ -78,7 +78,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 }
 
 
-#---  to define gene type: entrezid, ensembl or symbol ---#
+#---   define gene type: entrezid, ensembl or symbol ---#
 .gentype <- function(id, org){
   if(nchar(org) > 2){
     org = substr(org,1,nchar(org)-1)
@@ -163,5 +163,53 @@ auto_install <- function(pkg){
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
 
+#---check   enrichment data colname---#
+# 'GeneRatio','Count','FoldEnrich'
+.check_colname <- setClass(
+  "check_colname",
+  representation = representation(
+    enrich_df = "data.frame",
+    check_type = "character"
+  )
+)
+check_colname <- function(enrich_df, check_type){
+  remove <- c("\\(", "\\)", " ",'-')
+  to_check = stringr::str_remove_all(tolower(colnames(enrich_df)), paste(remove, collapse = "|"))
+  if(check_type %in% c('GeneRatio','Count','FoldEnrich')){
+    check_first = any(grepl( tolower(check_type),  to_check))
+    check_again = sapply(tolower(c('GeneRatio','Count','FoldEnrich')),
+                         function(x) any(grepl(x , to_check)))
+    if( check_first  ){
+      check_type  = check_type
+    }else if (any(check_again)){
+      message('User defined check_type: "',check_type,'" is not included in enrich_df')
+      check_type  = c('GeneRatio','Count','FoldEnrich')[check_again]
+      message('Found ',length(check_type),' matched: ',paste(check_type,collapse = ', '),' and auto changed to: "',check_type[1],'"')
+      check_type = check_type[1]
+    }else{
+      stop("Not found any colname of: 'GeneRatio','Count','FoldEnrich'")
+    }
+  }else if(check_type %in% c('pvalue','p.adjust','qvalue')){
+    check_first = any(grepl( tolower(check_type),  to_check))
+    check_again = sapply(c('pvalue','p.adjust|fdr','qvalue'),
+           function(x) any(grepl(x , to_check)))
+    if( check_first  ){
+      check_type  = check_type
+    }else if (any(check_again)){
+      message('User defined check_type: "',check_type,'" is not included in enrich_df')
+      check_type  = c('pvalue','p.adjust','qvalue')[check_legend_again]
+      message('Found ',length(check_type),' matched: ',paste(check_type,collapse = ', '),' and auto changed to: "',check_type[1],'"')
+      check_type = check_type[1]
+    }else{
+      stop("Not found any colname of: 'GeneRatio','Count','FoldEnrich'")
+    }
+  }else{
+    stop('Check argument name again!')
+  }
+  colnames(enrich_df)[grepl(tolower(check_type),  to_check)] = check_type
 
-
+  .check_first(
+    enrich_df = enrich_df,
+    check_type = check_type
+  )
+}

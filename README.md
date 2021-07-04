@@ -10,8 +10,10 @@
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
 - 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `getMsigdb +  genGSEA`
-- 有了基因id，就能做GO分析 => `genGO`
+- 有了基因id，就能做GO分析 => `genGO ` 
 - 有了基因id，就能做KEGG分析 => `genKEGG`
+  - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment` ，方便后面不同的作图需求
+- 
 
 ## Plans
 
