@@ -1,3 +1,5 @@
+# AnnoGenes utilities for plotting
+
 ##' ggplot theme
 ##'
 ##' @title plot_theme
@@ -37,7 +39,7 @@ plot_theme <- function(main_text_size=14,
     )
 }
 
-# wrap text if too long
+#--- wrap text if too long ---#
 text_wraper <- function(width) {
   function(x) {
     lapply(strwrap(x, width = width, simplify = FALSE), paste, collapse="\n")
