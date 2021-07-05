@@ -4,6 +4,15 @@
 >
 > 目的就是：与基因id相关的操作（如转换、可视化交集等）、分析（如富集分析），都可以加进来（后期考虑加入网页版）
 
+## Table of Contents
+
+-   [Installation](#installation)
+-   [Features](#features)
+-   [Plans](#plans)
+-   [Let's mining data!](#lets_mining_data)
+-   [Let's plot!](#lets_plot)
+-   [Tips](#tips)
+
 ## Installation
 
 You can also install devel version of **AnnoGenes** from github with:
@@ -50,7 +59,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 
 
-## Let's do it!
+## Let's mining data!
 
 #### example gene id
 
@@ -185,9 +194,9 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 
 
 
-## Now it's plotting time!
+## Let's plot!
 
-#### Enrichment dotplot `plotEnrichDot ` 
+#### P1: Enrichment dotplot =>  `plotEnrichDot ` 
 
 - support dataframes with GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
 - Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
@@ -222,7 +231,7 @@ p1+p2
 
 
 
-## This package is very easy to use!
+## Tips ~
 
 - support pipe ` %>% ` 
 
