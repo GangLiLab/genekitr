@@ -40,8 +40,10 @@ plotEnrichDot <- function(enrich_df,
 
 
   #--- codes ---#
-  xlab = ifelse(xlab_type == 'FoldEnrich', "Fold Enrichment",
+  xlab_title = ifelse(xlab_type == 'FoldEnrich', "Fold Enrichment",
                 ifelse(xlab_type == 'GeneRatio', "Gene Ratio", "Count"))
+  legend_title = ifelse(legend_by == 'pvalue', "Pvalue",
+                       ifelse(legend_by == 'p.adjust', "P.adjust", "FDR"))
 
   # Panther GO result
   check_panther = enrich_df %>% dplyr::pull(1) %>% stringr::str_detect('.*\\(GO')
@@ -72,21 +74,22 @@ plotEnrichDot <- function(enrich_df,
   p <- ggplot(enrich_df,aes(x = eval(parse(text = xlab_type)),y = Description))+
     geom_point(aes(color =  eval(parse(text = legend_by)),
                    size = Count))+
-    scale_color_gradient(low = "red", high = "blue")+
-    xlab(xlab)+
+    # scale_color_gradient(low = "red", high = "blue")+
+    scale_color_continuous(low="red", high="blue", name = legend_title,
+                           guide=guide_colorbar(reverse=TRUE),
+                           labels = function(x) format(x,scientific = T))+
+    xlab(xlab_title)+
     plot_theme(text_size = text_size )+
     xlim(xleft,xright)+
-    guides( color = guide_colorbar(reverse = TRUE))+
     labs(color = legend_by)
 
-
+  # hide background grid line
   if(remove_grid){
     p <- p + theme(
       # panel.border = element_blank(),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank())
   }
-
 
   return(p)
 }

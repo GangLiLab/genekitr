@@ -14,7 +14,7 @@
 - 有了基因id，就能做KEGG分析 => `genKEGG`
   - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment` ，方便后面不同的作图需求
 - 作图函数
-  - 气泡图 => `plotEnrichDot `
+  - 气泡图 => `plotEnrichDot ` ： 可以选择xlim范围 、是否显示网格线（`remove_grid`）
 
 
 
