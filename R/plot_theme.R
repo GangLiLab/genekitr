@@ -15,7 +15,7 @@
 ##' @importFrom ggplot2 margin
 ##' @examples
 ##' library(ggplot2)
-##' qplot(1:10) + plot_theme()
+##' ggplot(mtcars,aes(x=mpg)) + geom_histogram(binwidth=5) + plot_theme()
 ##' @export
 plot_theme <- function(text_size=14) {
   theme_bw()+

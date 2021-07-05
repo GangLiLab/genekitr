@@ -17,7 +17,7 @@
 ##' @export
 ##' @examples
 ##' \dontrun{
-##' plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',show_item = 10,text_size = 10)
+##' plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',show_item = 10,remove_grid = T)
 ##' }
 
 
@@ -25,6 +25,8 @@ plotEnrichDot <- function(enrich_df,
                           xlab_type = c('GeneRatio','Count','FoldEnrich'),
                           legend_by = c("pvalue", "p.adjust", "qvalue"),
                           show_item = 10,
+                          low_color = 'red',
+                          high_color = 'blue',
                           xleft = 0,
                           xright = NA,
                           text_size = 10,
@@ -74,8 +76,7 @@ plotEnrichDot <- function(enrich_df,
   p <- ggplot(enrich_df,aes(x = eval(parse(text = xlab_type)),y = Description))+
     geom_point(aes(color =  eval(parse(text = legend_by)),
                    size = Count))+
-    # scale_color_gradient(low = "red", high = "blue")+
-    scale_color_continuous(low="red", high="blue", name = legend_title,
+    scale_color_continuous(low=low_color, high=high_color, name = legend_title,
                            guide=guide_colorbar(reverse=TRUE),
                            labels = function(x) format(x,scientific = T))+
     xlab(xlab_title)+

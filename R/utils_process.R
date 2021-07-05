@@ -163,7 +163,7 @@ auto_install <- function(pkg){
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
 
-#---check   enrichment data colname---#
+#---check enrichment data colname---#
 # 'GeneRatio','Count','FoldEnrich'
 .check_colname <- function(enrich_df, x){
   remove <- c("\\(", "\\)", " ",'-')
