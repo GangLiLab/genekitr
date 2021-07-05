@@ -12,20 +12,23 @@
 - 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `getMsigdb +  genGSEA`
 - 有了基因id，就能做GO分析 => `genGO ` 
 - 有了基因id，就能做KEGG分析 => `genKEGG`
-  - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment` ，方便后面不同的作图需求
-- 作图函数
-  - 气泡图 => `plotEnrichDot ` ： 可以选择xlim范围 、是否显示网格线（`remove_grid`）
+  - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment`
+- **作图函数**
+  - 气泡图 => `plotEnrichDot ` 
+    - 可以选择xlim范围 、是否显示网格线（`remove_grid`）
 
 
 
 ## Plans
 
-- ~~图片也能导入excel（后期再看看这个有没有意义）~~
-- 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
+- [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
+- [ ] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
+- [ ] genInfo增加基因位置，并且支持多个不同版本的基因组
+- [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 
-- genInfo增加基因位置，并且支持多个不同版本的基因组
 
-- 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）
+
+
 
 ## Let's do it!
 
@@ -170,24 +173,31 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 #### Enrichment dotplot
 
 - support every dataframe including GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
+
 - Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
-- 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点
+
+- 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点、折叠y轴title、
+
+  边框和刻度线宽度
 
 ```R
-p1=plotEnrichDot(ego, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
+p1 = plotEnrichDot(test, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
               show_item = 15, main_text_size = 14,legend_text_size = 10,
               low_color = 'red', high_color = 'blue',
-              xleft = 0, font_type = 'Arial', remove_grid = T)
+              xleft = 0, font_type = 'Arial', remove_grid = T,
+              wrap_width = 30,border_thick = 3 )
 
 p2=plotEnrichDot(ego, xlab_type =  'GeneRatio', legend_by = 'p.adjust',
                  show_item = 10, main_text_size = 14,legend_text_size = 10,
                  low_color = 'orange', high_color = 'green',
-                 xleft = 0, font_type = 'Times New Roman', remove_grid = F)
+                 xleft = 0, font_type = 'Times New Roman', remove_grid = F,
+                 wrap_width = NULL ,border_thick = 1)
 
+library(patchwork)
 p1+p2
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-05-035843.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-05-054512.png)
 
 
 

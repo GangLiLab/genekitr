@@ -9,13 +9,16 @@
 ##' @param main_text_size numeric, specify the plot text size.
 ##' @param font_type character, specify the plot text font family, example "Times New Roman", "Arial".
 ##' @param remove_grid logical, remove background grid lines, default is FALSE.
-##' @return ggplot object.
+##' @param wrap_width numeric, wrap text longer than this number.
+##' @param border_thick numeric, border thickness in mm.
+##' @return ggplot object
 ##' @importFrom dplyr pull
 ##' @importFrom ggplot2 ggplot
 ##' @importFrom stringr str_to_title
 ##' @importFrom clusterProfiler enrichGO
 ##' @importFrom DOSE setReadable
 ##' @export
+##' @author Yunze Liu
 ##' @examples
 ##' \dontrun{
 ##' plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',show_item = 10,remove_grid = T)
@@ -25,15 +28,16 @@
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c('GeneRatio','Count','FoldEnrich'),
                           legend_by = c("pvalue", "p.adjust", "qvalue"),
-                          show_item = 10,
                           low_color = 'red',
                           high_color = 'blue',
-                          xleft = 0,
-                          xright = NA,
+                          font_type = 'Arial',
+                          show_item = 10,
+                          xleft = 0, xright = NA,
                           main_text_size = 10,
                           legend_text_size = 8,
-                          font_type = 'Arial',
+                          border_thick = 1,
                           remove_grid = FALSE,
+                          wrap_width = NULL,
                           ...){
   #--- args ---#
   stopifnot(is.numeric(show_item))
@@ -83,7 +87,7 @@ plotEnrichDot <- function(enrich_df,
                            guide=guide_colorbar(reverse=TRUE),
                            labels = function(x) format(x,scientific = T))+
     xlab(xlab_title)+
-    plot_theme(main_text_size, legend_text_size, font_type )+
+    plot_theme(main_text_size, legend_text_size, font_type, border_thick )+
     xlim(xleft,xright)+
     labs(color = legend_by)
 
@@ -93,6 +97,10 @@ plotEnrichDot <- function(enrich_df,
       # panel.border = element_blank(),
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank())
+  }
+  # wrap long text
+  if(!is.null(wrap_width) & is.numeric(wrap_width)){
+    p <- p + scale_y_discrete(labels = text_wraper(wrap_width))
   }
 
   return(p)
