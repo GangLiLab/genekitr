@@ -9,8 +9,8 @@
 -   [Installation](#installation)
 -   [Features](#features)
 -   [Plans](#plans)
--   [Let's mining data!](#Let's mining data!)
--   [Let's plot!](#Let's plot!)
+-   [Let's mining data!](#mining-data!)
+-   [Let's plot!](#plot)
 -   [Tips](#tips)
 
 ## Installation
