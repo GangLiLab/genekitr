@@ -1,11 +1,9 @@
 ##' ggplot theme
 ##'
 ##' @title plot_theme
-##' @param font.size font size
-##' @param xleft x axis left limit
-##' @param xright x axis right limit
-##' @param yleft y axis left limit
-##' @param yright y axis right limit
+##' @param main_text_size numeric, main text font size.
+##' @param legend_text_size numeric, legend text font size.
+##' @param font_type font family.
 ##' @return ggplot theme
 ##' @importFrom ggplot2 theme_bw
 ##' @importFrom ggplot2 xlim
@@ -17,16 +15,20 @@
 ##' library(ggplot2)
 ##' ggplot(mtcars,aes(x=mpg)) + geom_histogram(binwidth=5) + plot_theme()
 ##' @export
-plot_theme <- function(text_size=14) {
+plot_theme <- function(main_text_size=14,
+                       legend_text_size=10,
+                       font_type = 'Arial',
+                       ...) {
   theme_bw()+
-    theme(axis.text.x = element_text(colour = "black",
-                                     size = text_size, vjust =1 ),
-          axis.text.y = element_text(colour = "black",
-                                     size = text_size, hjust =1 ),
-          axis.title = element_text(margin=margin(10, 5, 0, 0),
-                                    color = "black",
-                                    size = text_size),
-          axis.title.y = element_text(angle=90)
+    theme(axis.text.x = element_text(color = "black", size = main_text_size,
+                                     vjust =1 ,family = font_type),
+          axis.text.y = element_text(color = "black", size = main_text_size,
+                                     hjust =1 ,family = font_type),
+          axis.title.x = element_text(color = "black", size = main_text_size, margin=margin(8, 6, 0, 0),
+                                      family = font_type),
+          axis.title.y = element_text(angle=90, size = main_text_size, family = font_type),
+          legend.title=element_text(color = "black", size = legend_text_size, family = font_type),
+          legend.text=element_text(color = "black", size = legend_text_size, family = font_type)
     )
 }
 

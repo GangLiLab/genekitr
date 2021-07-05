@@ -6,7 +6,8 @@
 ##' @param show_item numeric, select top N rows to show.
 ##' @param xleft numeric, specify the x-axis left limit, default is 0.
 ##' @param xright numeric, specify the x-axis right limit, default is NA.
-##' @param text_size numeric, specify the plot text size.
+##' @param main_text_size numeric, specify the plot text size.
+##' @param font_type character, specify the plot text font family, example "Times New Roman", "Arial".
 ##' @param remove_grid logical, remove background grid lines, default is FALSE.
 ##' @return ggplot object.
 ##' @importFrom dplyr pull
@@ -29,7 +30,9 @@ plotEnrichDot <- function(enrich_df,
                           high_color = 'blue',
                           xleft = 0,
                           xright = NA,
-                          text_size = 10,
+                          main_text_size = 10,
+                          legend_text_size = 8,
+                          font_type = 'Arial',
                           remove_grid = FALSE,
                           ...){
   #--- args ---#
@@ -80,7 +83,7 @@ plotEnrichDot <- function(enrich_df,
                            guide=guide_colorbar(reverse=TRUE),
                            labels = function(x) format(x,scientific = T))+
     xlab(xlab_title)+
-    plot_theme(text_size = text_size )+
+    plot_theme(main_text_size, legend_text_size, font_type )+
     xlim(xleft,xright)+
     labs(color = legend_by)
 

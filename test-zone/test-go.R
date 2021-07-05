@@ -8,5 +8,6 @@ ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1
 head(ego)
 
 plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',
-              show_item = 10, text_size = 10, low_color = 'orange', high_color = 'green',
-              xleft = 0, remove_grid = F)
+              show_item = 15, main_text_size = 14,legend_text_size = 8,
+              low_color = 'orange', high_color = 'purple',
+              xleft = 0, font_type = 'Arial', remove_grid = F)
