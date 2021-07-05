@@ -132,26 +132,23 @@ auto_install <- function(pkg){
     )
     message("\nTry installing via Bioconductor...\n")
 
-    suppressMessages(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE))
+    mod = try(suppressMessages(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE)),silent = T)
 
-    # check again
-    ret <- suppressPackageStartupMessages(
-      sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-    )
-    missing_pkgs <- names(ret[!ret])
-    if (length(missing_pkgs) > 0) {
-      message("Try installing via CRAN...\n")
-      suppressWarnings(install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
+    if(isTRUE(class(mod)=="try-error")) {
+      # check again
+      ret <- suppressPackageStartupMessages(
+        sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+      )
+      missing_pkgs <- names(ret[!ret])
+      if (length(missing_pkgs) > 0) {
+        message("Try installing via CRAN...\n")
+        mod =try(suppressWarnings(install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE)),silent = T)
+      }else{
+        stop("\nMaybe you should check the package name or try devtools::install_github()")
+      }
     }
-
-    # the end
-    ret <- suppressPackageStartupMessages(
-      sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-    )
-    missing_pkgs <- names(ret[!ret])
-    if (length(missing_pkgs) > 0) {
-      message("Maybe you should check the package name or try devtools::install_github()\n")
-    }
+  }else{
+    message(sapply(pkg, function(x) paste0('The package ',x, ' exist...\n')))
   }
 }
 
