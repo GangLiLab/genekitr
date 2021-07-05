@@ -21,16 +21,19 @@
 ##' @author Yunze Liu
 ##' @examples
 ##' \dontrun{
+##' data(geneList, package="DOSE")
+##' id = names(geneList)[1:100]
+##' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
 ##' plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',show_item = 10,remove_grid = T)
 ##' }
 
 
 plotEnrichDot <- function(enrich_df,
-                          xlab_type = c('GeneRatio','Count','FoldEnrich'),
+                          xlab_type = c("GeneRatio", "Count", "FoldEnrich"),
                           legend_by = c("pvalue", "p.adjust", "qvalue"),
-                          low_color = 'red',
-                          high_color = 'blue',
-                          font_type = 'Arial',
+                          low_color = "red",
+                          high_color = "blue",
+                          font_type = "Arial",
                           show_item = 10,
                           xleft = 0, xright = NA,
                           main_text_size = 10,
@@ -38,68 +41,78 @@ plotEnrichDot <- function(enrich_df,
                           border_thick = 1,
                           remove_grid = FALSE,
                           wrap_width = NULL,
-                          ...){
+                          ...) {
   #--- args ---#
   stopifnot(is.numeric(show_item))
-  xlab_type = match.arg(xlab_type)
-  legend_by = match.arg(legend_by)
+  xlab_type <- match.arg(xlab_type)
+  legend_by <- match.arg(legend_by)
 
-  enrich_df_bk1 = .check_colname(enrich_df, xlab_type)
-  enrich_df = .check_colname(enrich_df_bk1, legend_by)
+  enrich_df_bk1 <- .check_colname(enrich_df, xlab_type)
+  enrich_df <- .check_colname(enrich_df_bk1, legend_by)
 
 
   #--- codes ---#
-  xlab_title = ifelse(xlab_type == 'FoldEnrich', "Fold Enrichment",
-                ifelse(xlab_type == 'GeneRatio', "Gene Ratio", "Count"))
-  legend_title = ifelse(legend_by == 'pvalue', "Pvalue",
-                       ifelse(legend_by == 'p.adjust', "P.adjust", "FDR"))
+  xlab_title <- ifelse(xlab_type == "FoldEnrich", "Fold Enrichment",
+    ifelse(xlab_type == "GeneRatio", "Gene Ratio", "Count")
+  )
+  legend_title <- ifelse(legend_by == "pvalue", "Pvalue",
+    ifelse(legend_by == "p.adjust", "P.adjust", "FDR")
+  )
 
   # Panther GO result
-  check_panther = enrich_df %>% dplyr::pull(1) %>% stringr::str_detect('.*\\(GO')
-  if(any(check_panther)){
+  check_panther <- enrich_df %>%
+    dplyr::pull(1) %>%
+    stringr::str_detect(".*\\(GO")
+  if (any(check_panther)) {
     enrich_df <- enrich_df %>%
-      dplyr::rename('Description' = names(.)[1]) %>%
-      dplyr::rename('Count' = names(.)[3]) %>%
+      dplyr::rename("Description" = names(.)[1]) %>%
+      dplyr::rename("Count" = names(.)[3]) %>%
       dplyr::mutate(Description = stringr::str_to_sentence(.$Description) %>%
-                      stringr::str_replace_all(., 'go:','GO:'))
-
-  }else{
+        stringr::str_replace_all(., "go:", "GO:"))
+  } else {
     # clusterP  GO result
     enrich_df <- enrich_df %>%
       dplyr::mutate(Description = stringr::str_to_sentence(.$Description)) %>%
-      dplyr::mutate(GeneRatio = sapply(.$GeneRatio, function(x)eval(parse(text = x))))
+      dplyr::mutate(GeneRatio = sapply(.$GeneRatio, function(x) eval(parse(text = x))))
   }
 
-  if(show_item <= nrow(enrich_df)){
-    enrich_df <- enrich_df %>% dplyr::arrange(eval(parse(text = xlab_type))) %>%
-      dplyr::mutate(Description = factor(.$Description,levels = .$Description,ordered = T)) %>%
-      dplyr::slice_head(.,n=show_item)
-  }else{
-    enrich_df <- enrich_df %>% dplyr::arrange(eval(parse(text = xlab_type))) %>%
-      dplyr::mutate(Description = factor(.$Description,levels = .$Description,ordered = T))
+  if (show_item <= nrow(enrich_df)) {
+    enrich_df <- enrich_df %>%
+      dplyr::arrange(eval(parse(text = xlab_type))) %>%
+      dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T)) %>%
+      dplyr::slice_head(., n = show_item)
+  } else {
+    enrich_df <- enrich_df %>%
+      dplyr::arrange(eval(parse(text = xlab_type))) %>%
+      dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T))
   }
 
   #--- plot ---#
-  p <- ggplot(enrich_df,aes(x = eval(parse(text = xlab_type)),y = Description))+
-    geom_point(aes(color =  eval(parse(text = legend_by)),
-                   size = Count))+
-    scale_color_continuous(low=low_color, high=high_color, name = legend_title,
-                           guide=guide_colorbar(reverse=TRUE),
-                           labels = function(x) format(x,scientific = T))+
-    xlab(xlab_title)+
-    plot_theme(main_text_size, legend_text_size, font_type, border_thick )+
-    xlim(xleft,xright)+
+  p <- ggplot(enrich_df, aes(x = eval(parse(text = xlab_type)), y = Description)) +
+    geom_point(aes(
+      color = eval(parse(text = legend_by)),
+      size = Count
+    )) +
+    scale_color_continuous(
+      low = low_color, high = high_color, name = legend_title,
+      guide = guide_colorbar(reverse = TRUE),
+      labels = function(x) format(x, scientific = T)
+    ) +
+    xlab(xlab_title) +
+    plot_theme(main_text_size, legend_text_size, font_type, border_thick) +
+    xlim(xleft, xright) +
     labs(color = legend_by)
 
   # hide background grid line
-  if(remove_grid){
+  if (remove_grid) {
     p <- p + theme(
       # panel.border = element_blank(),
       panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank())
+      panel.grid.minor = element_blank()
+    )
   }
   # wrap long text
-  if(!is.null(wrap_width) & is.numeric(wrap_width)){
+  if (!is.null(wrap_width) & is.numeric(wrap_width)) {
     p <- p + scale_y_discrete(labels = text_wraper(wrap_width))
   }
 

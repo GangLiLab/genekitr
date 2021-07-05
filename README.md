@@ -27,6 +27,7 @@
 - [ ] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 - [ ] genInfo增加基因位置，并且支持多个不同版本的基因组；可以整合orgdb中的所有信息；另外biomart也可以考虑整合进来
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
+- [ ] 设置自己的示例数据，like：`data(geneList, package="DOSE")`
 
 
 
