@@ -14,8 +14,10 @@
 - 有了基因id，就能做KEGG分析 => `genKEGG`
   - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment`
 - **作图函数**
+
   - 气泡图 => `plotEnrichDot ` 
-    - 可以选择xlim范围 、是否显示网格线（`remove_grid`）
+
+    
 
 
 
@@ -23,7 +25,7 @@
 
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
 - [ ] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
-- [ ] genInfo增加基因位置，并且支持多个不同版本的基因组
+- [ ] genInfo增加基因位置，并且支持多个不同版本的基因组；可以整合orgdb中的所有信息；另外biomart也可以考虑整合进来
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 
 
@@ -170,9 +172,9 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 
 ## Now it's plotting time!
 
-#### Enrichment dotplot
+#### Enrichment dotplot `plotEnrichDot ` 
 
-- support every dataframe including GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
+- support dataframes with GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
 - Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
 - 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点、折叠y轴title、边框和刻度线宽度
 
@@ -221,6 +223,6 @@ saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 
 
 
-- `genInfo` vs `bitr`
+- `genInfo` vs `bitr`  （后续`genInfo`可以扩展更多）
 
   <img src='man/figures/example2.png' align="below" />
