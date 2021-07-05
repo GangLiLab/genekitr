@@ -142,9 +142,12 @@ auto_install <- function(pkg){
       missing_pkgs <- names(ret[!ret])
       if (length(missing_pkgs) > 0) {
         message("Try installing via CRAN...\n")
-        mod =try(suppressWarnings(install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE)),silent = T)
-      }else{
-        stop("\nMaybe you should check the package name or try devtools::install_github()")
+        mod2 =try(suppressWarnings(install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE)),silent = T)
+        if(is.null(mod2)){
+          stop("Maybe you should check the package name ",
+               paste(missing_pkgs,collapse = ', '),
+               " or try devtools::install_github()")
+        }
       }
     }
   }else{
