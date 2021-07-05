@@ -177,12 +177,14 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 - 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点、折叠y轴title、边框和刻度线宽度
 
 ```R
+# test dataframe was from GeneOntology web result
 p1 = plotEnrichDot(test, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
               show_item = 15, main_text_size = 14,legend_text_size = 10,
               low_color = 'red', high_color = 'blue',
               xleft = 0, font_type = 'Arial', remove_grid = T,
               wrap_width = 30,border_thick = 3 )
 
+# ego dataframe was from clusterP result
 p2=plotEnrichDot(ego, xlab_type =  'GeneRatio', legend_by = 'p.adjust',
                  show_item = 10, main_text_size = 14,legend_text_size = 10,
                  low_color = 'orange', high_color = 'green',
