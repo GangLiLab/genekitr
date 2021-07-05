@@ -25,7 +25,7 @@
 
 - genInfo增加基因位置，并且支持多个不同版本的基因组
 
-
+- 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）
 
 ## Let's do it!
 
@@ -171,12 +171,23 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 
 - support every dataframe including GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
 - Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
+- 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点
 
 ```R
-plotEnrichDot(ego, xlab_type = 'FoldEnrich', legend_by = 'qvalue',show_item = 20)
+p1=plotEnrichDot(ego, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
+              show_item = 15, main_text_size = 14,legend_text_size = 10,
+              low_color = 'red', high_color = 'blue',
+              xleft = 0, font_type = 'Arial', remove_grid = T)
+
+p2=plotEnrichDot(ego, xlab_type =  'GeneRatio', legend_by = 'p.adjust',
+                 show_item = 10, main_text_size = 14,legend_text_size = 10,
+                 low_color = 'orange', high_color = 'green',
+                 xleft = 0, font_type = 'Times New Roman', remove_grid = F)
+
+p1+p2
 ```
 
-
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-05-035843.png)
 
 
 
