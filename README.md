@@ -4,6 +4,23 @@
 >
 > 目的就是：与基因id相关的操作（如转换、可视化交集等）、分析（如富集分析），都可以加进来（后期考虑加入网页版）
 
+## Installation
+
+You can also install devel version of **AnnoGenes** from github with:
+
+``` r
+# install.packages("remotes")
+remotes::install_github("GangLiLab/AnnoGenes")
+```
+
+If you want to build vignette in local, please add two options:
+
+``` r
+remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependencies = TRUE)
+```
+
+
+
 ## Features
 
 - genecards虽然全，但是搜索数量有限制，于是整合了基因信息 =>`genInfo`
