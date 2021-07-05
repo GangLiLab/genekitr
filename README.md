@@ -9,8 +9,8 @@
 -   [Installation](#installation)
 -   [Features](#features)
 -   [Plans](#plans)
--   [Let's mining data!](#lets_mining_data)
--   [Let's plot!](#lets_plot)
+-   [Let's mining data!](#Let's mining data!)
+-   [Let's plot!](#Let's plot!)
 -   [Tips](#tips)
 
 ## Installation
@@ -231,7 +231,7 @@ p1+p2
 
 
 
-## Tips ~
+## Tips
 
 - support pipe ` %>% ` 
 
