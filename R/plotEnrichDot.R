@@ -7,6 +7,7 @@
 ##' @param xleft numeric, specify the x-axis left limit, default is 0.
 ##' @param xright numeric, specify the x-axis right limit, default is NA.
 ##' @param text_size numeric, specify the plot text size.
+##' @param remove_grid logical, remove background grid lines, default is FALSE.
 ##' @return ggplot object.
 ##' @importFrom dplyr pull
 ##' @importFrom ggplot2 ggplot
@@ -27,6 +28,7 @@ plotEnrichDot <- function(enrich_df,
                           xleft = 0,
                           xright = NA,
                           text_size = 10,
+                          remove_grid = FALSE,
                           ...){
   #--- args ---#
   stopifnot(is.numeric(show_item))
@@ -67,7 +69,7 @@ plotEnrichDot <- function(enrich_df,
   }
 
   #--- plot ---#
-  ggplot(enrich_df,aes(x = eval(parse(text = xlab_type)),y = Description))+
+  p <- ggplot(enrich_df,aes(x = eval(parse(text = xlab_type)),y = Description))+
     geom_point(aes(color =  eval(parse(text = legend_by)),
                    size = Count))+
     scale_color_gradient(low = "red", high = "blue")+
@@ -77,4 +79,14 @@ plotEnrichDot <- function(enrich_df,
     guides( color = guide_colorbar(reverse = TRUE))+
     labs(color = legend_by)
 
+
+  if(remove_grid){
+    p <- p + theme(
+      # panel.border = element_blank(),
+      panel.grid.major = element_blank(),
+      panel.grid.minor = element_blank())
+  }
+
+
+  return(p)
 }
