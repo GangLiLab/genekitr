@@ -1,8 +1,32 @@
-#---GO & KEGG enrichment  dotplot--#
+##' Dotplot for enrichment analysis
+##'
+##' @param enrich_df dataframe of enrichment analysis result .
+##' @param xlab_type x-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
+##' @param legend_by stats legend type, one of "pvalue", "p.adjust", "qvalue".
+##' @param show_item numeric, select top N rows to show.
+##' @param xleft numeric, specify the x-axis left limit, default is 0.
+##' @param xright numeric, specify the x-axis right limit, default is NA.
+##' @param text_size numeric, specify the plot text size.
+##' @return ggplot object.
+##' @importFrom dplyr pull
+##' @importFrom ggplot2 ggplot
+##' @importFrom stringr str_to_title
+##' @importFrom clusterProfiler enrichGO
+##' @importFrom DOSE setReadable
+##' @export
+##' @examples
+##' \dontrun{
+##' plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',show_item = 10,text_size = 10)
+##' }
+
+
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c('GeneRatio','Count','FoldEnrich'),
                           legend_by = c("pvalue", "p.adjust", "qvalue"),
                           show_item = 10,
+                          xleft = 0,
+                          xright = NA,
+                          text_size = 10,
                           ...){
   #--- args ---#
   stopifnot(is.numeric(show_item))
@@ -48,7 +72,8 @@ plotEnrichDot <- function(enrich_df,
                    size = Count))+
     scale_color_gradient(low = "red", high = "blue")+
     xlab(xlab)+
-    theme_bw()+
+    plot_theme(text_size = text_size )+
+    xlim(xleft,xright)+
     guides( color = guide_colorbar(reverse = TRUE))+
     labs(color = legend_by)
 

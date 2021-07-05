@@ -85,7 +85,7 @@ egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
 ```R
 data(geneList, package="DOSE")
 id = names(geneList)[1:100]
-ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,readable = T)
+ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
 head(ego)
 tmp=as.data.frame(ego)
 ```
@@ -146,8 +146,8 @@ symbol = mapId(id = ids, from = 'entrez', to = 'symbol',org='hs', return_dat = F
 head(symbol)
 # "CDH3"   "TROAP"  "CRISP3" "CDKN3"  "PRDX4"  "GNLY"  
 
-keg_raw <- genKEGG(test, org = 'hs', readable = F)
-keg_readable <- genKEGG(test, org = 'hs', readable = T)
+keg_raw <- genKEGG(test, org = 'hs', use_symbol = F)
+keg_readable <- genKEGG(test, org = 'hs', use_symbol = T)
 # 默认支持readable 参数，结果以symbol name展示。差别就是：
 ```
 
@@ -160,7 +160,7 @@ keg_readable <- genKEGG(test, org = 'hs', readable = T)
 ```R
 > head(id)
 [1] "Adora1"    "Insl3"    "AF067061"      "Alpk1"         "Arhgap20"      "B020004J07Rik" "Bmp6"
-keg <- genKEGG(mm_id, org = 'mouse', readable = T, pvalueCutoff = 1, qvalueCutoff = 1, maxGSSize = 3000)
+keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCutoff = 1, maxGSSize = 3000)
 ```
 
 

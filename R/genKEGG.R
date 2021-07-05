@@ -1,8 +1,8 @@
-##' KEGG enrichment analysis for gene id
+##' Gene enrichment of KEGG analysis
 ##'
 ##' @param id a vector of entrez gene.
 ##' @param org  character of organism name which can test by `mapKeggOrg()`.
-##' @param readable logical to output as gene symbol, default is TRUE.
+##' @param use_symbol logical to output as gene symbol, default is TRUE.
 ##' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
 ##' @param pvalueCutoff numberic of adjusted pvalue cutoff, default is 0.05.
 ##' @param qvalueCutoff numberic of adjusted pvalue cutoff, default is 0.1.
@@ -24,7 +24,7 @@
 ##' }
 genKEGG <- function(id,
                     org,
-                    readable = TRUE,
+                    use_symbol = TRUE,
                     pAdjustMethod = "BH",
                     pvalueCutoff  = 0.05,
                     qvalueCutoff  = 0.1,
@@ -63,7 +63,7 @@ genKEGG <- function(id,
 
   biocOrg = mapBiocOrg(tolower(org.bk))
   pkg=paste0("org.", biocOrg, ".eg.db")
-  if( readable ){
+  if( use_symbol ){
     keg <- DOSE::setReadable(keg, OrgDb = pkg, keyType = 'ENTREZID')
   }
 

@@ -1,9 +1,9 @@
-##' GO enrichment analysis for gene id
+##' Gene enrichment of GO analysis
 ##'
 ##' @param id a gene vector which can be entrez, ensembl or symbol.
 ##' @param org  organism name from `biocOrg_name()`.
 ##' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all three.
-##' @param readable logical to output as gene symbol, default is TRUE.
+##' @param use_symbol logical to output as gene symbol, default is TRUE.
 ##' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
 ##' @param pvalueCutoff adjusted pvalue cutoff, default is 0.05.
 ##' @param qvalueCutoff adjusted pvalue cutoff, default is 0.1.
@@ -20,13 +20,13 @@
 ##' \dontrun{
 ##' data(geneList, package="DOSE")
 ##' id = names(geneList)[1:100]
-##' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,readable = T)
+##' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
 ##' head(ego)
 ##' }
 genGO <- function(id,
                   org,
                   ont,
-                  readable = TRUE,
+                  use_symbol = TRUE,
                   pAdjustMethod = "BH",
                   pvalueCutoff  = 0.05,
                   qvalueCutoff  = 0.1,
@@ -63,7 +63,7 @@ genGO <- function(id,
                               minGSSize = minGSSize,
                               maxGSSize  = maxGSSize)
   )
-  if( readable | keyType != 'SYMBOL'){
+  if( use_symbol){
     ego <- DOSE::setReadable(ego, OrgDb = pkg)
   }
 
