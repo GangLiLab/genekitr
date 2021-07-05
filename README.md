@@ -144,17 +144,13 @@ mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
 
 ```R
 ids = names(geneList)[1:100]
-gkeg <- genKEGG(ids, org = 'human')
-# 或者 gkeg <- genKEGG(ids, org = 'hs') 或者 gkeg <- genKEGG(ids, org = 'hg')
+gkeg <- genKEGG(ids, org = 'human') 
+# org可以是common name（如human、mouse），也可以是hg、hs等常见的称呼
 
-# 当然直接给symbol或者ensembl 都是可以的，比如使用symbol id
-symbol = mapId(id = ids, from = 'entrez', to = 'symbol',org='hs', return_dat = F)
-head(symbol)
-# "CDH3"   "TROAP"  "CRISP3" "CDKN3"  "PRDX4"  "GNLY"  
-
+# 默认支持readable 参数，结果以symbol name展示
 keg_raw <- genKEGG(test, org = 'hs', use_symbol = F)
 keg_readable <- genKEGG(test, org = 'hs', use_symbol = T)
-# 默认支持readable 参数，结果以symbol name展示。差别就是：
+# 差别就是：
 ```
 
 ![image-20210702174030869](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-094031.png)
@@ -164,7 +160,8 @@ keg_readable <- genKEGG(test, org = 'hs', use_symbol = T)
 换个物种试试~理论上，**拿任意物种的symbol、entrez、ensembl基因，给函数投食即可**。不需要再提前进行id转换了
 
 ```R
-> head(id)
+# 小鼠基因为例
+head(id)
 [1] "Adora1"    "Insl3"    "AF067061"      "Alpk1"         "Arhgap20"      "B020004J07Rik" "Bmp6"
 keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCutoff = 1, maxGSSize = 3000)
 ```

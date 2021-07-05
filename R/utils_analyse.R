@@ -5,8 +5,10 @@
 ##' @param category MSigDB collection abbreviation, C1 to C8 and H.
 ##' @param subcategory MSigDB sub-collection abbreviation, such as REACTOME or BP.
 ##' @return a dataframe of 3 columns with term, entrez and symbol name.
+##' @importFrom msigdbr msigdbr
 ##' @importFrom stringr str_split
-##' @importFrom dplyr %>% filter pull
+##' @importFrom utils data
+##' @importFrom dplyr %>% filter pull select
 ##' @importFrom stringi stri_remove_empty_na
 ##' @export
 ##' @examples
@@ -63,7 +65,7 @@ getMsigdb <- function(org,
   }
 
   #--- codes ---#
-  msigdb <- msigdbr(org, category, subcategory) %>%
+  msigdb <- msigdbr::msigdbr(org, category, subcategory) %>%
     dplyr::select(., c("gs_name","gene_symbol","entrez_gene")) %>%
     as.data.frame()
 
