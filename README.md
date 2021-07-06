@@ -43,6 +43,8 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
   - 气泡图 => `plotEnrichDot ` 
 
+  - 交集韦恩图 =>`plotVenn` 
+
     
 
 
