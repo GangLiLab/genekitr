@@ -8,14 +8,17 @@
 ##' @param text_size text size, default is 1.
 ##' @param remove_grid logical, remove circle or grid lines, default is FALSE.
 ##' @return ggplot object
-##' @importFrom futile.logger  flog.threshold ERROR
-##' @importFrom VennDiagram  venn.diagram
-##' @importFrom RColorBrewer  brewer.pal
-##' @importFrom cowplot  as_grob
-##' @importFrom ggplotify  as.ggplot
-##' @importFrom scales  alpha
-##' @importFrom stats  setNames
-##' @importFrom ggupset  scale_x_upset  scale_y_continuous
+##' @importFrom futile.logger flog.threshold ERROR
+##' @importFrom VennDiagram venn.diagram
+##' @importFrom RColorBrewerbrewer.pal
+##' @importFrom cowplot as_grob
+##' @importFrom ggplotify as.ggplot
+##' @importFrom scales alpha
+##' @importFrom stats setNames
+##' @importFrom dplyr as_tibble filter select group_by summarize
+##' @importFrom tidyr gather
+##' @importFrom ggplot2 ggplot
+##' @importFrom ggupset scale_x_upset  scale_y_continuous
 ##' @export
 ##' @examples
 ##' \dontrun{
@@ -35,69 +38,68 @@ plotVenn <- function(venn_list,
                      color = NULL,
                      alpha_degree = 0.3,
                      border_thick = 1,
-                     text_size =1,
+                     text_size = 1,
                      remove_grid = FALSE,
-                     ...){
+                     ...) {
 
   #--- args ---#
   stopifnot(is.list(venn_list))
   # if gene list too long, use upset plot
-  use_venn <- ifelse(length(venn_list) <= 4, TRUE,FALSE)
+  use_venn <- ifelse(length(venn_list) <= 4, TRUE, FALSE)
 
   #--- codes ---#
-  if(use_venn){
+  if (use_venn) {
     # suppress venn.diagram log
     futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
 
     # choose color
-    if( is.null(color) | length(color) != length(venn_list) ){
+    if (is.null(color) | length(color) != length(venn_list)) {
       message("Color length should be same with venn_list, auto assign colors...")
       color <- RColorBrewer::brewer.pal(length(venn_list), "Set1")
     }
 
     # hide background grid line
-    if(remove_grid) border_thick = 0
+    if (remove_grid) border_thick <- 0
 
-    p = VennDiagram::venn.diagram(
+    p <- VennDiagram::venn.diagram(
       x = venn_list,
-      filename=NULL,
+      filename = NULL,
       category.names = names(venn_list),
-      output=TRUE,
+      output = TRUE,
       cat.cex = text_size,
       main.cex = text_size,
       cex = text_size,
       lwd = border_thick,
-      col=color,
-      cat.col=color,
-      fill = sapply(color, function(x) scales::alpha(x,alpha_degree))
+      col = color,
+      cat.col = color,
+      fill = sapply(color, function(x) scales::alpha(x, alpha_degree))
     ) %>%
       cowplot::as_grob() %>%
       ggplotify::as.ggplot()
+  } else {
+    # use ggupset
+    # https://github.com/const-ae/ggupset
 
-
-  }else{
-  # use ggupset
-  # https://github.com/const-ae/ggupset
-
-    if(text_size < 10) {
-      message('Text size is too low, auto set: text_size=10 ...')
-      text_size = 10
+    if (text_size < 10) {
+      message("Text size is too low, auto set: text_size=10 ...")
+      text_size <- 10
     }
-    p=sapply(venn_list, function(x) unique(unlist(venn_list)) %in% x) %>%
-      t() %>% as.data.frame() %>%
-      stats::setNames(.,unique(unlist(venn_list))) %>%
+    p <- sapply(venn_list, function(x) unique(unlist(venn_list)) %in% x) %>%
+      t() %>%
+      as.data.frame() %>%
+      stats::setNames(., unique(unlist(venn_list))) %>%
       as.matrix() %>%
-      as_tibble(rownames = "sets") %>%
-      gather(item, type, -sets) %>%
-      filter(type)%>%
-      select(- type) %>%
-      group_by(item) %>%
-      summarize(sets = list(sets)) %>%
+      dplyr::as_tibble(rownames = "sets") %>%
+      tidyr::gather(item, type, -sets) %>%
+      dplyr::filter(type) %>%
+      dplyr::select(-type) %>%
+      dplyr::group_by(item) %>%
+      dplyr::summarize(sets = list(sets)) %>%
       ggplot(aes(x = sets)) +
       geom_bar() +
-      geom_text(stat='count', aes(label=after_stat(count)), vjust=-1, size = 3) +
-      ggupset::scale_x_upset(name = "")+
-      ggupset::scale_y_continuous(name = "")+
+      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
+      ggupset::scale_x_upset(name = "") +
+      ggupset::scale_y_continuous(name = "") +
       plot_theme(border_thick = border_thick, main_text_size = text_size)
 
     # hide background grid line
@@ -108,9 +110,7 @@ plotVenn <- function(venn_list,
         panel.grid.minor = element_blank()
       )
     }
-
   }
 
   return(p)
 }
-
