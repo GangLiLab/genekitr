@@ -11,6 +11,7 @@
 ##' @return a dataframe of gene info.
 ##' @importFrom dplyr select
 ##' @importFrom clusterProfiler GSEA
+##' @importFrom DOSE setReadable
 ##' @export
 ##' @examples
 ##' \dontrun{

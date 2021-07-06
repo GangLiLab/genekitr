@@ -279,7 +279,7 @@ library(patchwork)
 library(openxlsx)
 wb <- createWorkbook()
 wb <- expo_sheet(wb, sheet_dat = test1, sheet_name = 'genInfo') %>% 
-  expo_sheet(., sheet_dat = test2, sheet_name = 'genPub') %>% 
+  expo_sheet(., sheet_dat = test2, sheet_name = 'genPub')
 saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 ```
 
@@ -290,3 +290,14 @@ saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 - `genInfo` vs `bitr`  （后续`genInfo`可以扩展更多）
 
   <img src='man/figures/example2.png' align="below" />
+
+
+
+## References
+
+### Things about GSEA
+
+- https://www.biostars.org/p/132575/
+- https://www.biostars.org/p/367191/
+- https://www.gsea-msigdb.org/gsea/doc/GSEAUserGuideFrame.html
+

@@ -59,7 +59,7 @@ plotEnrichDot <- function(enrich_df,
     ifelse(legend_by == "p.adjust", "P.adjust", "FDR")
   )
 
-  # Panther GO result
+  # Panther enrichment result
   check_panther <- enrich_df %>%
     dplyr::pull(1) %>%
     stringr::str_detect(".*\\(GO")
@@ -70,7 +70,7 @@ plotEnrichDot <- function(enrich_df,
       dplyr::mutate(Description = stringr::str_to_sentence(.$Description) %>%
         stringr::str_replace_all(., "go:", "GO:"))
   } else {
-    # clusterP  GO result
+    # clusterP enrichment result
     enrich_df <- enrich_df %>%
       dplyr::mutate(Description = stringr::str_to_sentence(.$Description)) %>%
       dplyr::mutate(GeneRatio = sapply(.$GeneRatio, function(x) eval(parse(text = x))))
