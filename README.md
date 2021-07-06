@@ -35,7 +35,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - genecards虽然全，但是搜索数量有限制，于是整合了基因信息 =>`genInfo`
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
-- 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `getMsigdb +  genGSEA`
+- 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `genGSEA`
 - 有了基因id，就能做GO分析 => `genGO ` 
 - 有了基因id，就能做KEGG分析 => `genKEGG`
   - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment`
@@ -99,22 +99,33 @@ genPubmed(mm_id, keywords = 'stem cell AND epithelial', field = 'tiab')
 
 #### Method3: GSEA
 
+- ~~之前的操作~~
+
+  ```R
+  # 加载示例数据
+  data(geneList, package="DOSE")
+  # 获得msigdb的gene set
+  msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
+  # 直接进行gsea
+  egmt <- genGSEA(genelist = geneList,geneset = msigdb)
+  # 如果是extrez id，可以用下面的函数将id变成symbol
+  egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
+  ```
+
+- 目前已经将`getMsigdb` 整合进`genGSEA `， 和GO、KEGG一样，提供一个物种名称即可，比如人类可以是`human/hs/hsa/hg`
+
 ```R
 # 加载示例数据
 data(geneList, package="DOSE")
-# 获得msigdb的gene set
-msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
 # 直接进行gsea
-egmt <- genGSEA(genelist = geneList,geneset = msigdb)
-# 如果是extrez id，可以用下面的函数将id变成symbol
-egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
+genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD',use_symbol = F)
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-100533.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-06-073517.png)
 
 #### Method4: GO
 
-函数需要用到物种的`org.db`，如果没有相关物种注释包，函数内部的`auto_install()` 会帮助下载👍
+- 函数需要用到物种的`org.db`，**如果没有相关物种注释包**，函数内部的`auto_install()` 会帮助下载👍
 
 ```R
 data(geneList, package="DOSE")
@@ -129,24 +140,24 @@ tmp=as.data.frame(ego)
 **不知道物种名称？别怕！**
 
 ```R
-> biocOrg_name()
-    full_name short_name
-1   anopheles         ag
-2      bovine         bt
-3        worm         ce
-4      canine         cf
-5         fly         dm
-6   zebrafish         dr
-7    ecolik12      eck12
-8  ecolisakai    ecSakai
-9     chicken         gg
-10      human         hs
-11      mouse         mm
-12     rhesus        mmu
-13      chipm         pt
-14        rat         rn
-15        pig         ss
-16    xenopus         xl
+biocOrg_name()
+# full_name short_name
+# 1   anopheles         ag
+# 2      bovine         bt
+# 3        worm         ce
+# 4      canine         cf
+# 5         fly         dm
+# 6   zebrafish         dr
+# 7    ecolik12      eck12
+# 8  ecolisakai    ecSakai
+# 9     chicken         gg
+# 10      human         hs
+# 11      mouse         mm
+# 12     rhesus        mmu
+# 13      chipm         pt
+# 14        rat         rn
+# 15        pig         ss
+# 16    xenopus         xl
 ```
 
 
