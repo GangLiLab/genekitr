@@ -23,6 +23,9 @@ getMsigdb <- function(org,
   #--- args ---#
   options(warn=-1)
   if (!requireNamespace('msigdbr', quietly = TRUE)) auto_install('msigdbr')
+  org = tolower(org)
+  if (org == "hg" | org == "hsa" |  org == "hs") org = 'human'
+  if (org == "mm" | org == "mmu") org = 'mouse'
 
   # org
   msig_org <- msigdb_org_data()
@@ -48,21 +51,17 @@ getMsigdb <- function(org,
     dplyr::filter(gs_cat==category) %>%
     dplyr::pull(gs_subcat)
 
-  if( is.null(subcategory)){
+  if( is.null(subcategory) ){
     if(som_sub == ''){
-      message(paste0(category,' has no subcategory...'))
+      message(paste0(category,' has no subcategory, continue...'))
       subcategory = ''
     }else{
       stop("choose a valid subcategory for ",category,"...\n",paste0(som_sub,' | '))
     }
-  }else if(! subcategory %in% all_sub){
-    if(som_sub == ''){
-      message(paste0(category,' has no subcategory...'))
-      subcategory = ''
-    }else{
-      stop("choose a valid subcategory for ",category,"...\n",paste0(som_sub,' | '))
-    }
+  }else if(! subcategory %in% som_sub ){
+    stop("choose a valid subcategory for ",category,"...\n",paste0(som_sub,' | '))
   }
+
 
   #--- codes ---#
   msigdb <- msigdbr::msigdbr(org, category, subcategory) %>%
@@ -164,8 +163,8 @@ mapKeggOrg <- function(organism){
 # support: entrez, symbol and ensembl
 mapId <- function(id, from, to, org, return_dat = FALSE){
 
-  if (to == "entrez" ) to = 'entrezid'
-  if (from == "entrez" ) from = 'entrezid'
+  if (tolower(to) == "entrez" ) to = 'entrezid'
+  if (tolower(from) == "entrez" ) from = 'entrezid'
 
   if( tolower(from) %in% c('symbol','entrezid','ensembl') &&
       tolower(to) %in% c('symbol','entrezid','ensembl') ){

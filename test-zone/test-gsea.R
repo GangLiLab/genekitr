@@ -1,21 +1,9 @@
 rm(list = ls())
-library(msigdbr)
+library(AnnoGenes)
 data(geneList, package="DOSE")
 head(geneList)
-
-data(geneList, package="DOSE")
-msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
-egmt <- genGSEA(genelist = geneList,geneset = msigdb)
-head(egmt)
-egmt2 <- DOSE::setReadable(egmt, OrgDb = org.Hs.eg.db, keyType = 'ENTREZID')
-head(egmt2)
-
-
-sublist = geneList[1:1000]
-names(sublist) = genInfo(names(sublist), org = 'hs') %>%dplyr::pull(symbol)
-msigdb <- getMsigdb(org='human', category='C2',subcategory = 'CP:BIOCARTA')
-egmt3 <- genGSEA(genelist = sublist,geneset = msigdb)
-head(egmt3)
+egmt1 <- genGSEA(genelist = geneList,org = 'human', category='C2',subcategory = 'CP:BIOCARTA',use_symbol = F)
+egmt2 <- genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'MIR:MIRDB',use_symbol = T)
 
 
 ## 来自：https://support.bioconductor.org/p/122496/
