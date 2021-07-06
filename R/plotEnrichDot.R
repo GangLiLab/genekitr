@@ -30,7 +30,7 @@
 
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c("GeneRatio", "Count", "FoldEnrich"),
-                          legend_by = c("pvalue", "p.adjust", "qvalue"),
+                          legend_by = c("p.adjust", "pvalue", "qvalue"),
                           low_color = "red",
                           high_color = "blue",
                           font_type = "Arial",
