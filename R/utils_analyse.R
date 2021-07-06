@@ -24,7 +24,7 @@ getMsigdb <- function(org,
   options(warn=-1)
   if (!requireNamespace('msigdbr', quietly = TRUE)) auto_install('msigdbr')
   org = tolower(org)
-  if (org == "hg" | org == "hsa" |  org == "hs") org = 'human'
+  if (org == "hg" | org == "hsa" |  org == "hs" | org == 'homo sapiens') org = 'human'
   if (org == "mm" | org == "mmu") org = 'mouse'
 
   # org
@@ -33,7 +33,7 @@ getMsigdb <- function(org,
               stringr::str_split(msig_org[,2],', ',simplify = T) %>%
                 as.character() %>%
                 stringi::stri_remove_empty_na())
-  if (!org %in% all_org) stop("Choose a valid organism!\n\n",paste0(all_org,' | '))
+  if (!org %in% tolower(all_org)) stop("Choose a valid organism!\n\n",paste0(all_org,' | '))
 
   # category
   if(! category %in% c('C1','C2','C3','C4','C5','C6','C7','C8','H')){
