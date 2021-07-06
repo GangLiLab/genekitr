@@ -225,7 +225,33 @@ p1+p2
 
 
 
+#### P2: Venn plot =>  `plotVenn ` 
 
+- 如果venn_list的长度大于4，那就默认使用`UpSet plot`；否则使用常规的venn plot
+- venn plot可以调整：透明度、字体大小、边框粗细/有无、颜色
+- upset plot可以调整：字体大小、边框粗细、内部网格线
+
+```R
+set1 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+set2 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+set3 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+set4 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+set5 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+
+sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
+la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3, gset4 = set4, gset5 = set5 )
+
+p1= plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = .3, border_thick = 1)
+p2 = plotVenn(sm_gene_list,text_size = 2,alpha_degree = 1,remove_grid = T, color = ggsci::pal_lancet()(3))
+p3 = plotVenn(la_gene_list,text_size = 10, border_thick = 2,remove_grid = T)
+
+library(patchwork)
+(p1+p2)/p3
+```
+
+
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-06-034726.png)
 
 
 
