@@ -1,4 +1,4 @@
-##' Venn plot for gene id list
+##' Venn plot for list of genes
 ##' If venn list length is over 4, use UpSet plot
 ##'
 ##' @param venn_list a group list of genes or others to plot venn
