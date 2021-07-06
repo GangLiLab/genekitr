@@ -17,7 +17,7 @@
 ##' @importFrom stats setNames
 ##' @importFrom dplyr as_tibble filter select group_by summarize
 ##' @importFrom tidyr gather
-##' @importFrom ggplot2 ggplot
+##' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme element_blank
 ##' @importFrom ggupset scale_x_upset  scale_y_continuous
 ##' @export
 ##' @examples

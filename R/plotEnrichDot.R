@@ -13,7 +13,7 @@
 ##' @param border_thick numeric, border thickness in mm.
 ##' @return ggplot object
 ##' @importFrom dplyr pull
-##' @importFrom ggplot2 ggplot
+##' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme guide_colorbar scale_y_discrete element_blank
 ##' @importFrom stringr str_to_title
 ##' @importFrom clusterProfiler enrichGO
 ##' @importFrom DOSE setReadable
