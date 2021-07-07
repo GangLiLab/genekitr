@@ -154,6 +154,7 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
   if (tolower(trans_to) == "entrez" | tolower(trans_to) == "entrezid") trans_to = 'entrezid'
   if (tolower(trans_to) == "ensemblid" | tolower(trans_to) == "ens" |
       tolower(trans_to) == "ensemb" ) trans_to = 'ensembl'
+  if (tolower(trans_to) == "sym" ) trans_to = 'symbol'
 
   if(!tolower(trans_to) %in% c('symbol','entrezid','ensembl')){
     stop('\nChoose trans_to argument from: \nsymbol | entrezid | ensembl ')
