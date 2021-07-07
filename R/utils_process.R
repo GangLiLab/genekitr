@@ -92,8 +92,10 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
     c("SYMBOL")
   } else if(any(id %in% orgENSEMBL$ensembl_id)){
     c("ENSEMBL")
-  }else{
+  }else if (any(id %in% orgENSEMBL$gene_id)){
     c("ENTREZID")
+  }else{
+    stop('Choose wrong organism!')
   }
 }
 
@@ -253,7 +255,9 @@ auto_install <- function(pkg){
       dplyr::relocate(symbol, ensembl,.before =  everything())
 
     entrz = transId(id = dat$ensembl, trans_to = 'entrez',org, return_dat = T)
-    new_dat = merge(entrz, dat, by = 'ensembl', all.y = T)
+    new_dat = merge(entrz, dat, by = 'ensembl', all.y = T)%>%
+      dplyr::relocate(entrezid,.before = everything()) %>%
+      dplyr::arrange(entrezid)
 
     assign(paste0(org,'_gtf'), new_dat)
     save(list=paste0(org,'_gtf'), file=rda_file)

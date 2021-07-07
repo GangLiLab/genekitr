@@ -97,9 +97,7 @@ rownames of `test1` are entrez ID
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081721.png)
 
-新增了：human、mouse、rat的GTF信息
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-090106.png)
 
 #### Method2: search pubmed 
 
@@ -180,7 +178,7 @@ biocOrg_name()
 
 #### Method5: transform gene id
 
-- `org` support many from `biocOrg_name()`
+- `org` support many from `biocOrg_name()` : human, mouse and  rat support fast and full gene annotation
 - user can choose output dataframe or not, using `return_dat`
 - user **DO NOT need** to specify the input gene type
 
@@ -189,14 +187,14 @@ library(AnnoGenes)
 data(geneList, package = 'DOSE')
 ids = names(geneList)[1:10]
 transId(id = ids, trans_to = 'symbol',org='hs', return_dat = T)
-transId(id = ids, trans_to = 'symbol',org='human', return_dat = F)
 transId(id = ids, trans_to = 'ens',org='human', return_dat = F)
 
 # 如果选择物种不对，会提示报错
-transId(id = ids, trans_to = 'symbol',org='mouse', return_dat = F)
+transId(id = ids, trans_to = 'sym',org='human', return_dat = F)
+
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-034302.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-103504.png)
 
 
 

@@ -150,30 +150,39 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
   org.bk = org
   org = mapBiocOrg(tolower(org))
   keytype = .gentype(id, org)
-  .load_orgdb(org)
-  symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  colnames(symbol_dat) = c('entrezid','symbol')
-  ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
-  colnames(ensem_dat) = c('entrezid','ensembl')
-
-  from = tolower(keytype)
-  if(from == 'ensembl'){
-    if(!any(id %in% ensem_dat[,from])){
-      stop('IDs are not matched with specified organism: ',org.bk)
-    }
-  }else{
-    if(!any(id %in% symbol_dat[,from])){
-      stop('IDs are not matched with specified organism: ',org.bk)
-    }
-  }
-
 
   if (tolower(trans_to) == "entrez" | tolower(trans_to) == "entrezid") trans_to = 'entrezid'
-  if (tolower(trans_to) == "ensemblid" | tolower(trans_to) == "ens" |  tolower(trans_to) == "ensemb" ) trans_to = 'ensembl'
+  if (tolower(trans_to) == "ensemblid" | tolower(trans_to) == "ens" |
+      tolower(trans_to) == "ensemb" ) trans_to = 'ensembl'
 
   if(!tolower(trans_to) %in% c('symbol','entrezid','ensembl')){
-    stop('\nChoose trans_to argument from: \nsymbol | entrezid | ensembl !')
+    stop('\nChoose trans_to argument from: \nsymbol | entrezid | ensembl ')
+  }
+
+  if(tolower(keytype) == trans_to) stop('trans_to argument cannot be the same type with gene id!')
+  # if org is one of human, mouse, rat
+  # we could use much faster way to get id
+  if(org %in% c('Hs', 'Mm' ,'Rn')){
+    transId2(id, trans_to, org, return_dat)
   }else{
+    .load_orgdb(org)
+    symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+    colnames(symbol_dat) = c('entrezid','symbol')
+    ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+    colnames(ensem_dat) = c('entrezid','ensembl')
+
+    from = tolower(keytype)
+    if(from == 'ensembl'){
+      if(!any(id %in% ensem_dat[,from])){
+        stop('IDs are not matched with specified organism: ',org.bk)
+      }
+    }else{
+      if(!any(id %in% symbol_dat[,from])){
+        stop('IDs are not matched with specified organism: ',org.bk)
+      }
+    }
+
+  # others species use the common method (use org.db)
     merge_dat = merge(symbol_dat, ensem_dat ,by = 'entrezid', all.x  = T)
     newdat <- merge_dat %>%
       dplyr::select(c(all_of(from),all_of(trans_to))) %>%
@@ -181,6 +190,7 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
       dplyr::distinct()
 
     new_id =  newdat %>% dplyr::pull(2) %>% unique() %>% na.omit() %>% as.character()
+
     percen = paste(round(100*length(new_id)/length(unique(id)), 2), "%", sep="")
     if(length(new_id) > length(unique(id))){
       message(percen,' genes are mapped from ',from, ' to ', trans_to,'\n',
@@ -188,17 +198,38 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
     } else {
       message(percen,' genes are mapped from ',from, ' to ', trans_to)
     }
-
-    if(return_dat){
-      res = newdat
-    }else{
-      res = new_id
-    }
-
   }
 
+  if(return_dat){
+    res = newdat
+  }else{
+    res = new_id
+  }
   return(res)
 }
+
+transId2 <- function(id, trans_to, org, return_dat){
+  options(warn = -1)
+  if (org == "Hs" ) org = 'human'
+  if (org == "Mm" ) org = 'mouse'
+  if (org == "Rn" ) org = 'rat'
+
+  gtf = eval(parse(text = paste0(org,'_gtf')))
+  newdat = gtf %>%
+    dplyr::filter(eval(parse(text = tolower(keytype))) %in% id)
+  new_id = newdat %>% dplyr::pull(eval(parse(text = tolower(trans_to))))
+
+  from = tolower(keytype)
+  percen = paste(round(100*length(new_id)/length(unique(id)), 2), "%", sep="")
+  if(length(new_id) > length(unique(id))){
+    message(percen,' genes are mapped from ',from, ' to ', trans_to,'\n',
+            'maybe one ', from, ' gene mapps many ', trans_to)
+  } else {
+    message(percen,' genes are mapped from ',from, ' to ', trans_to)
+  }
+}
+
+
 
 #---calc fold enrichment ---#
 calcFoldEnrich <- function(df){
