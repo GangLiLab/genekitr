@@ -236,7 +236,8 @@ auto_install <- function(pkg){
   rda_file = paste0(path,'/',organism,'_V',ensembl_version,'_gtf.rda')
   gtf_fle = list.files(path, pattern = stringr::str_to_title(organism), full.names = T)
 
-  command = paste0("wget -c -np -nd -R 'index.html*' -A '",stringr::str_to_title(organism),".*.",ensembl_version,".gtf.gz'",
+  command = paste0("wget -c -r -nd -np -R 'index.html*' -A '",
+                   stringr::str_to_title(organism),".*.",ensembl_version,".gtf.gz'",
                    " ftp://ftp.ensembl.org/pub/current_gtf/", organism,"/")
 
   #--- codes ---#

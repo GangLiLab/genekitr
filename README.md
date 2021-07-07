@@ -34,6 +34,8 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - genecards虽然全，但是搜索数量有限制，于是整合了Ensembl数据库中的基因信息 =>`genInfo`
 
+  - 与ensembl的GTF保持同步，目前更新到V104
+
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
