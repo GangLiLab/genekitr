@@ -226,11 +226,11 @@ auto_install <- function(pkg){
   if (org == "hg" | org == "human" | org == "hs" | org == "hsa") organism = 'homo_sapiens'
   if (org == "mm" | org == "mouse" ) organism = 'mus_musculus'
   if (org == "rn" | org == "rat" ) organism = 'rattus_norvegicus'
-  if (org == "dm" | org == "fly" ) organism = 'drosophila_melanogaster'
-  if (org == "dre"| org == "dr" | org == "zebrafish" ) organism = 'danio_rerio'
+  # if (org == "dm" | org == "fly" ) organism = 'drosophila_melanogaster'
+  # if (org == "dre"| org == "dr" | org == "zebrafish" ) organism = 'danio_rerio'
 
   if(! organism %in% c('homo_sapiens','mus_musculus','rattus_norvegicus','drosophila_melanogaster','danio_rerio')){
-    stop("For now we support species from:\n homo_sapiens | mus_musculus | rattus_norvegicus | drosophila_melanogaster | danio_rerio ")
+    stop("For now we support species from:\n homo_sapiens | mus_musculus | rattus_norvegicus ")
   }
 
   rda_file = paste0(path,'/',organism,'_V',ensembl_version,'_gtf.rda')

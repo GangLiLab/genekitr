@@ -34,7 +34,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - genecards虽然全，但是搜索数量有限制，于是整合了Ensembl数据库中的基因信息 =>`genInfo`
 
-  - 与ensembl的GTF保持同步，目前更新到V104
+  - 与ensembl的GTF保持同步，目前更新到v104
 
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
@@ -94,6 +94,10 @@ test1 = genInfo(mm_id, org = 'mm')
 rownames of `test1` are entrez ID
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081721.png)
+
+新增了：human、mouse、rat的GTF信息
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-090106.png)
 
 #### Method2: search pubmed 
 

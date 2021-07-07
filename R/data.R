@@ -48,7 +48,39 @@ NULL
 #' str(keggOrg_name)
 NULL
 
+#' Datasets
+#' ensembl gtf annotation data homo_sapiens_V104_gtf
+#'
+#' @name Datasets
+#' @aliases homo_sapiens_V104_gtf
+#' @docType data
+#' @keywords datasets
+#' @examples
+#' data(homo_sapiens_V104_gtf)
+NULL
 
+#' Datasets
+#' ensembl gtf annotation data mus_musculus_V104_gtf
+#'
+#' @name Datasets
+#' @aliases mus_musculus_V104_gtf
+#' @docType data
+#' @keywords datasets
+#' @examples
+#' data(mus_musculus_V104_gtf)
+NULL
+
+
+#' Datasets
+#' ensembl gtf annotation data rattus_norvegicus_V104_gtf
+#'
+#' @name Datasets
+#' @aliases rattus_norvegicus_V104_gtf
+#' @docType data
+#' @keywords datasets
+#' @examples
+#' data(rattus_norvegicus_V104_gtf)
+NULL
 
 
 

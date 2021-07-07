@@ -158,6 +158,19 @@ mapKeggOrg <- function(organism){
   return(org)
 }
 
+#--- get ensembl gtf ---#
+human_gtf <- function() {
+  utils::data(list="data/homo_sapiens_V104_gtf.rda", package="AnnoGenes")
+  get("human_gtf", envir = .GlobalEnv)
+}
+mouse_gtf <- function() {
+  utils::data(list="data/mus_musculus_V104_gtf.rda", package="AnnoGenes")
+  get("mouse_gtf", envir = .GlobalEnv)
+}
+rat_gtf <- function() {
+  utils::data(list="data/rattus_norvegicus_V104_gtf.rda", package="AnnoGenes")
+  get("rat_gtf", envir = .GlobalEnv)
+}
 
 #--- transform gene id  ---#
 transId <- function(id, trans_to, org, return_dat = FALSE){
