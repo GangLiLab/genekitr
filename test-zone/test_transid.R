@@ -9,4 +9,7 @@ transId(id = ids, trans_to = 'ens',org='human', return_dat = F)
 transId(id = ids, trans_to = 'symbol',org='mouse', return_dat = F)
 
 ids =c('ENSG00000260179','ENSG00000234396','ENSG00000225972')
-transId(id = ids, trans_to = 'symbol',org='hs', return_dat = T)
+human_gtf %>% filter(ensembl %in% ids) %>%
+  select(ensembl,symbol)
+
+x = transId(id = human_gtf$ensembl, trans_to = 'entrez',org='hs', return_dat = T)

@@ -252,7 +252,10 @@ auto_install <- function(pkg){
       dplyr::rename(chr = seqnames) %>%
       dplyr::relocate(symbol, ensembl,.before =  everything())
 
-    assign(paste0(org,'_gtf'), dat)
+    entrz = transId(id = dat$ensembl, trans_to = 'entrez',org, return_dat = T)
+    new_dat = merge(entrz, dat, by = 'ensembl', all.y = T)
+
+    assign(paste0(org,'_gtf'), new_dat)
     save(list=paste0(org,'_gtf'), file=rda_file)
 
   }
