@@ -63,7 +63,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
 - [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
-- [x] genInfo增加基因位置，整合了ensembl的GTF
+- [x] genInfo增加基因位置
 - [ ] 基因id支持多个不同版本的基因组 => 可以参考`liftover`
 - [ ] 基因id与biomart的融合
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
