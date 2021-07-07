@@ -173,19 +173,22 @@ biocOrg_name()
 #### Method5: transform gene id
 
 - `org` support many from `biocOrg_name()`
-
 - user can choose output dataframe or not, using `return_dat`
+- user **DO NOT need** to specify the input gene type
 
 ```R
 library(AnnoGenes)
+data(geneList, package = 'DOSE')
 ids = names(geneList)[1:10]
-# 以下三种均可
-transId(id = ids, trans_to = 'symbol',org='hg', return_dat = T)
 transId(id = ids, trans_to = 'symbol',org='hs', return_dat = T)
 transId(id = ids, trans_to = 'symbol',org='human', return_dat = F)
+transId(id = ids, trans_to = 'ens',org='human', return_dat = F)
+
+# 如果选择物种不对，会提示报错
+transId(id = ids, trans_to = 'symbol',org='mouse', return_dat = F)
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-032426.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-034302.png)
 
 
 

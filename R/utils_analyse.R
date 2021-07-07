@@ -162,23 +162,27 @@ mapKeggOrg <- function(organism){
 #--- transform gene id  ---#
 transId <- function(id, trans_to, org, return_dat = FALSE){
   options(warn = -1)
+  org.bk = org
   org = mapBiocOrg(tolower(org))
   keytype = .gentype(id, org)
   .load_orgdb(org)
   symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  colnames(symbol_dat) = c('entrezid','symbol')
   ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  colnames(ensem_dat) = c('entrezid','ensembl')
 
-  from = ifelse( any(id %in% symbol_dat[,1]),'entrezid',
-                 ifelse(any(id %in% symbol_dat[,2]), 'symbol','ensembl'))
+  from = tolower(keytype)
+  if(!any(id %in% symbol_dat[,from])){
+    stop('IDs are not matched with specified organism: ',org.bk)
+  }
 
   if (tolower(trans_to) == "entrez" | tolower(trans_to) == "entrezid") trans_to = 'entrezid'
-  if (tolower(trans_to) == "ensemblid" ) trans_to = 'ensembl'
+  if (tolower(trans_to) == "ensemblid" | tolower(trans_to) == "ens" |  tolower(trans_to) == "ensemb" ) trans_to = 'ensembl'
 
   if(!tolower(trans_to) %in% c('symbol','entrezid','ensembl')){
     stop('\nChoose trans_to argument from: \nsymbol | entrezid | ensembl !')
   }else{
-    merge_dat = merge(symbol_dat, ensem_dat ,by = 'gene_id', all.x  = T)
-    colnames(merge_dat)  = c('entrezid','symbol','ensembl')
+    merge_dat = merge(symbol_dat, ensem_dat ,by = 'entrezid', all.x  = T)
     newdat <- merge_dat %>%
       dplyr::select(c(all_of(from),all_of(trans_to))) %>%
       dplyr::filter(.[,1] %in% id) %>%
