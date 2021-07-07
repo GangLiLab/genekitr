@@ -159,32 +159,38 @@ mapKeggOrg <- function(organism){
 }
 
 
-#--- gene id map ---#
-# support: entrez, symbol and ensembl
-mapId <- function(id, from, to, org, return_dat = FALSE){
+#--- transform gene id  ---#
+transId <- function(id, trans_to, org, return_dat = FALSE){
+  options(warn = -1)
+  org = mapBiocOrg(tolower(org))
+  keytype = .gentype(id, org)
+  .load_orgdb(org)
+  symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
 
-  if (tolower(to) == "entrez" ) to = 'entrezid'
-  if (tolower(from) == "entrez" ) from = 'entrezid'
+  from = ifelse( any(id %in% symbol_dat[,1]),'entrezid',
+                 ifelse(any(id %in% symbol_dat[,2]), 'symbol','ensembl'))
 
-  if( tolower(from) %in% c('symbol','entrezid','ensembl') &&
-      tolower(to) %in% c('symbol','entrezid','ensembl') ){
+  if (tolower(trans_to) == "entrez" | tolower(trans_to) == "entrezid") trans_to = 'entrezid'
+  if (tolower(trans_to) == "ensemblid" ) trans_to = 'ensembl'
 
-    org = mapBiocOrg(tolower(org))
-    .load_orgdb(org)
-    symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-    ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  if(!tolower(trans_to) %in% c('symbol','entrezid','ensembl')){
+    stop('\nChoose trans_to argument from: \nsymbol | entrezid | ensembl !')
+  }else{
     merge_dat = merge(symbol_dat, ensem_dat ,by = 'gene_id', all.x  = T)
     colnames(merge_dat)  = c('entrezid','symbol','ensembl')
     newdat <- merge_dat %>%
-      dplyr::select(c(from,to)) %>%
-      dplyr::filter(.[,1] %in% id)
+      dplyr::select(c(all_of(from),all_of(trans_to))) %>%
+      dplyr::filter(.[,1] %in% id) %>%
+      dplyr::distinct()
     new_id =  newdat %>% dplyr::pull(2) %>% unique() %>% na.omit() %>% as.character()
-
     percen = paste(round(100*length(new_id)/length(unique(id)), 2), "%", sep="")
     if(length(new_id) > length(unique(id))){
-      message(percen,' genes are mapped from ',from, ' to ', to,'\n',
-              'maybe one ', from, ' gene mapps many ', to)
-    } else {message(percen,' genes are mapped from ',from, ' to ', to)}
+      message(percen,' genes are mapped from ',from, ' to ', trans_to,'\n',
+              'maybe one ', from, ' gene mapps many ', trans_to)
+    } else {
+      message(percen,' genes are mapped from ',from, ' to ', trans_to)
+    }
 
     if(return_dat){
       res = newdat
@@ -192,9 +198,8 @@ mapId <- function(id, from, to, org, return_dat = FALSE){
       res = new_id
     }
 
-  }else{
-    stop('\nChoose from and to type from: \nsymbol | entrezid | ensembl')
   }
+
   return(res)
 }
 

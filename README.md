@@ -33,12 +33,20 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ## Features
 
 - genecards虽然全，但是搜索数量有限制，于是整合了基因信息 =>`genInfo`
+
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
+
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
+
+- 基因ID转换 => `transId`  
+
 - 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `genGSEA`
+
 - 有了基因id，就能做GO分析 => `genGO ` 
+
 - 有了基因id，就能做KEGG分析 => `genKEGG`
   - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment`
+  
 - **作图函数**
 
   - 气泡图 => `plotEnrichDot ` 
@@ -162,20 +170,22 @@ biocOrg_name()
 
 
 
-#### Method5: map gene id
+#### Method5: transform gene id
 
 - `org` support many from `biocOrg_name()`
 
 - user can choose output dataframe or not, using `return_dat`
 
 ```R
+library(AnnoGenes)
+ids = names(geneList)[1:10]
 # 以下三种均可
-mapId(id = ids, from = 'entrez', to = 'symbol',org='hs', return_dat = T)
-mapId(id = ids, from = 'entrez', to = 'symbol',org='hg', return_dat = T)
-mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
+transId(id = ids, trans_to = 'symbol',org='hg', return_dat = T)
+transId(id = ids, trans_to = 'symbol',org='hs', return_dat = T)
+transId(id = ids, trans_to = 'symbol',org='human', return_dat = F)
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-083549.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-032426.png)
 
 
 

@@ -80,6 +80,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 
 #---   define gene type: entrezid, ensembl or symbol ---#
 .gentype <- function(id, org){
+  org = mapBiocOrg(org)
   if(nchar(org) > 2){
     org = substr(org,1,nchar(org)-1)
   }
@@ -163,6 +164,7 @@ auto_install <- function(pkg){
 
 #--- load org.db ---#
 .load_orgdb <- function(org){
+  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   org = mapBiocOrg(tolower(org))
   pkg=paste0("org.", org, ".eg.db")
   if (!requireNamespace(pkg, quietly = TRUE)) auto_install(pkg)

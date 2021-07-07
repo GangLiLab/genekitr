@@ -63,6 +63,11 @@ genGO <- function(id,
                               minGSSize = minGSSize,
                               maxGSSize  = maxGSSize)
   )
+
+  if(nrow(as.data.frame(ego)) == 0){
+    stop('No GO terms enriched ...')
+  }
+
   if( use_symbol){
     ego <- DOSE::setReadable(ego, OrgDb = pkg)
   }
