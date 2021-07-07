@@ -86,8 +86,8 @@ msigdb_category_data <- function() {
 
 #--- get bioc org name ---#
 biocOrg_name <- function() {
-  utils::data(list="map_biocOrg", package="AnnoGenes")
-  get("map_biocOrg", envir = .GlobalEnv)
+  utils::data(list="biocOrg_name", package="AnnoGenes")
+  get("biocOrg_name", envir = .GlobalEnv)
 }
 
 #---  map bioc org fullname to shortname ---#
@@ -116,8 +116,8 @@ mapBiocOrg <- function(organism) {
 
 #---  get kegg org name ---#
 keggOrg_name <- function() {
-  utils::data(list="map_keggOrg", package="AnnoGenes")
-  get("map_keggOrg", envir = .GlobalEnv)
+  utils::data(list="keggOrg_name", package="AnnoGenes")
+  get("keggOrg_name", envir = .GlobalEnv)
 }
 
 #--- map kegg org fullname to shortname ---#
@@ -172,9 +172,16 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
   colnames(ensem_dat) = c('entrezid','ensembl')
 
   from = tolower(keytype)
-  if(!any(id %in% symbol_dat[,from])){
-    stop('IDs are not matched with specified organism: ',org.bk)
+  if(from == 'ensembl'){
+    if(!any(id %in% ensem_dat[,from])){
+      stop('IDs are not matched with specified organism: ',org.bk)
+    }
+  }else{
+    if(!any(id %in% symbol_dat[,from])){
+      stop('IDs are not matched with specified organism: ',org.bk)
+    }
   }
+
 
   if (tolower(trans_to) == "entrez" | tolower(trans_to) == "entrezid") trans_to = 'entrezid'
   if (tolower(trans_to) == "ensemblid" | tolower(trans_to) == "ens" |  tolower(trans_to) == "ensemb" ) trans_to = 'ensembl'
@@ -187,6 +194,7 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
       dplyr::select(c(all_of(from),all_of(trans_to))) %>%
       dplyr::filter(.[,1] %in% id) %>%
       dplyr::distinct()
+
     new_id =  newdat %>% dplyr::pull(2) %>% unique() %>% na.omit() %>% as.character()
     percen = paste(round(100*length(new_id)/length(unique(id)), 2), "%", sep="")
     if(length(new_id) > length(unique(id))){

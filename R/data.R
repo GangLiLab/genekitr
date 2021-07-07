@@ -14,7 +14,6 @@ NULL
 #' Datasets
 #' msig_category contains msigdb category information
 #'
-#'
 #' @name Datasets
 #' @aliases msig_category
 #' @docType data
@@ -25,29 +24,28 @@ NULL
 NULL
 
 #' Datasets
-#' get organism name from bioconductor
-#'
+#' biocOrg_name contains organism name of bioconductor
 #'
 #' @name Datasets
-#' @aliases map_biocOrg
+#' @aliases biocOrg_name
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(map_biocOrg)
-#' str(map_biocOrg)
+#' data(biocOrg_name)
+#' str(biocOrg_name)
 NULL
 
 #' Datasets
-#' get organism name from kegg
+#' keggOrg_name contains organism name of KEGG
 #' https://www.genome.jp/kegg/catalog/org_list.html
 #'
 #' @name Datasets
-#' @aliases map_keggOrg
+#' @aliases keggOrg_name
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(map_keggOrg)
-#' str(map_keggOrg)
+#' data(keggOrg_name)
+#' str(keggOrg_name)
 NULL
 
 

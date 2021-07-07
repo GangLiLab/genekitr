@@ -32,7 +32,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ## Features
 
-- genecards虽然全，但是搜索数量有限制，于是整合了基因信息 =>`genInfo`
+- genecards虽然全，但是搜索数量有限制，于是整合了Ensembl数据库中的基因信息 =>`genInfo`
 
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
@@ -60,10 +60,10 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ## Plans
 
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
-- [ ] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
+- [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 - [ ] genInfo增加基因位置，并且支持多个不同版本的基因组；可以整合orgdb中的所有信息；另外biomart也可以考虑整合进来
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
-- [ ] 设置自己的示例数据，like：`data(geneList, package="DOSE")`
+- [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
 
 
 

@@ -217,7 +217,45 @@ auto_install <- function(pkg){
 }
 
 
+#--- get ensembl gtf ---#
+# current ensembl version: 104
+.get_ensembl_gtf <- function(org, ensembl_version = '104', path = 'data'){
+  #--- args ---#
 
+  # For now supports common research species
+  if (org == "hg" | org == "human" | org == "hs" | org == "hsa") organism = 'homo_sapiens'
+  if (org == "mm" | org == "mouse" ) organism = 'mus_musculus'
+  if (org == "rn" | org == "rat" ) organism = 'rattus_norvegicus'
+  if (org == "dm" | org == "fly" ) organism = 'drosophila_melanogaster'
+  if (org == "dre"| org == "dr" | org == "zebrafish" ) organism = 'danio_rerio'
+
+  if(! organism %in% c('homo_sapiens','mus_musculus','rattus_norvegicus','drosophila_melanogaster','danio_rerio')){
+    stop("For now we support species from:\n homo_sapiens | mus_musculus | rattus_norvegicus | drosophila_melanogaster | danio_rerio ")
+  }
+
+  rda_file = paste0(path,'/',organism,'_V',ensembl_version,'_gtf.rda')
+  gtf_fle = list.files(path, pattern = stringr::str_to_title(organism), full.names = T)
+
+  command = paste0("wget -c -np -nd -R 'index.html*' -A '",stringr::str_to_title(organism),".*.",ensembl_version,".gtf.gz'",
+                   " ftp://ftp.ensembl.org/pub/current_gtf/", organism,"/")
+
+  #--- codes ---#
+  if(!file.exists(rda_file)){
+    system(command)
+    dat = rtracklayer::import(gtf_fle) %>%
+      as.data.frame() %>%
+      dplyr::filter(type == 'gene')%>%
+      dplyr::select(-c(15:ncol(.),ends_with('source'),'score','phase','gene_version')) %>%
+      dplyr::rename(ensembl = gene_id) %>%
+      dplyr::rename(symbol = gene_name) %>%
+      dplyr::rename(chr = seqnames) %>%
+      dplyr::relocate(symbol, ensembl,.before =  everything())
+
+    assign(paste0(org,'_gtf'), dat)
+    save(list=paste0(org,'_gtf'), file=rda_file)
+
+  }
+}
 
 
 

@@ -1,6 +1,6 @@
 ##' Get gene info using org.db
 ##'
-##' @param id gene id "symbol" or "entrezid".
+##' @param id gene id.
 ##' @param org species "mm" or "hs".
 ##' @return a dataframe of gene info.
 ##' @importFrom stringr str_to_title
