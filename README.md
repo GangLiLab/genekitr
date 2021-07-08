@@ -68,6 +68,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - [ ] 基因id与biomart的融合
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 - [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
+- [ ] `auto_install`增加镜像选择
 
 
 
