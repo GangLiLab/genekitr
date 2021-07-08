@@ -72,6 +72,10 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 
 
+## DEBUG
+
+- [ ] `genGO`的use_symbol参数不管用
+
 
 
 ## Let's mining data!
