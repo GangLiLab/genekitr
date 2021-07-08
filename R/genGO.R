@@ -1,7 +1,7 @@
 ##' Gene enrichment of GO analysis
 ##'
 ##' @param id a gene vector which can be entrez, ensembl or symbol.
-##' @param org  organism name from `biocOrg_name()`.
+##' @param org  organism name from `biocOrg_name`.
 ##' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all three.
 ##' @param use_symbol logical to output as gene symbol, default is TRUE.
 ##' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".

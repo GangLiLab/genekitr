@@ -15,7 +15,7 @@
 ##' @importFrom ggplotify as.ggplot
 ##' @importFrom scales alpha
 ##' @importFrom stats setNames
-##' @importFrom dplyr as_tibble filter select group_by summarize
+##' @importFrom dplyr as_tibble filter select group_by summarize %>%
 ##' @importFrom tidyr gather
 ##' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme element_blank
 ##' @importFrom ggupset scale_x_upset  scale_y_continuous
@@ -55,7 +55,12 @@ plotVenn <- function(venn_list,
     # choose color
     if (is.null(color) | length(color) != length(venn_list)) {
       message("Color length should be same with venn_list, auto assign colors...")
-      color <- RColorBrewer::brewer.pal(length(venn_list), "Set1")
+      if(length(venn_list) !=2){
+        color <- RColorBrewer::brewer.pal(length(venn_list), "Set1")
+      }else{
+        color <- ggsci::pal_lancet()(2)
+      }
+
     }
 
     # hide background grid line

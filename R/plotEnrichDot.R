@@ -35,7 +35,7 @@ plotEnrichDot <- function(enrich_df,
                           high_color = "blue",
                           font_type = "Arial",
                           show_item = 10,
-                          xleft = 0, xright = NA,
+                          # xleft = 0, xright = NA,
                           main_text_size = 10,
                           legend_text_size = 8,
                           border_thick = 1,
@@ -100,7 +100,7 @@ plotEnrichDot <- function(enrich_df,
     ) +
     xlab(xlab_title) +
     plot_theme(main_text_size, legend_text_size, font_type, border_thick) +
-    xlim(xleft, xright) +
+    # xlim(xleft, xright) +
     labs(color = legend_by)
 
   # hide background grid line

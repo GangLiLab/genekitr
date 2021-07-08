@@ -5,7 +5,9 @@ library(AnnoGenes)
 data(geneList, package="DOSE")
 id = names(geneList)[1:500]
 
-ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
+transId(id, trans_to = 'symbol',org = 'human')
+
+ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = F)
 head(ego)
 
 p1 = plotEnrichDot(test, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
