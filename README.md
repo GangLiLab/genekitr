@@ -74,7 +74,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ## DEBUG
 
-- [ ] `genGO`的use_symbol参数不管用
+- [x] `genGO`的use_symbol参数不管用 （原因：如果提供的已经是symbol，那么就忽略了这个参数）
 
 
 

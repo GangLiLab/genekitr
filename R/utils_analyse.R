@@ -217,7 +217,7 @@ transId2 <- function(id, trans_to, org, return_dat){
 
   gtf = eval(parse(text = paste0(org,'_gtf')))
   newdat = gtf %>%
-    dplyr::filter(eval(parse(text = tolower(keytype))) %in% id)
+    dplyr::filter(.,eval(parse(text = tolower(keytype))) %in% id)
   new_id = newdat %>% dplyr::pull(eval(parse(text = tolower(trans_to))))
 
   from = tolower(keytype)

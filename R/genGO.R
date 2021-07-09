@@ -69,7 +69,10 @@ genGO <- function(id,
   }
 
   if( use_symbol){
-    ego <- DOSE::setReadable(ego, OrgDb = pkg)
+    biocOrg = mapBiocOrg(tolower(org.bk))
+    pkg=paste0("org.", biocOrg, ".eg.db")
+    keyType = .gentype(names(genelist), biocOrg)
+    egmt <- DOSE::setReadable(egmt, OrgDb = pkg, keyType)
   }
 
   new_ego = ego %>% as.data.frame() %>% calcFoldEnrich()
