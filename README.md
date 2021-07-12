@@ -11,7 +11,7 @@
 -   [Plans](#plans)
 -   [Let's mining data!](#lets-mining-data)
 -   [Let's plot!](#lets-plot)
--   [Tips](#tips)
+-   [Supplement](#supplement)
 
 ## Installation
 
@@ -244,6 +244,10 @@ transId(id, trans_to = 'sym',org='mouse', return_dat = F)
 # Error in .gentype(id, org) : Wrong organism! 
 ```
 
+Compare `AnnoGenes::transId` and `clusterProfiler::bitr`
+
+![](man/figures/example8.png)
+
 
 
 #### Method 6: KEGG
@@ -356,7 +360,7 @@ p4 = plotVenn(la_gene_list,use_venn = F,
 
 
 
-## Tips
+## Supplement
 
 - support pipe ` %>% ` 
 
@@ -372,9 +376,7 @@ saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
 
 
 
-- `genInfo` vs `bitr`  （后续`genInfo`可以扩展更多）
 
-  <img src='man/figures/example2.png' align="below" />
 
 
 
