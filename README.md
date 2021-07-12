@@ -32,30 +32,33 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ## Features
 
+#### 信息获取 (Search)
+
 - genecards虽然全，但是搜索数量有限制，于是整合了Ensembl数据库中的基因信息 =>`genInfo`
 
   - 与ensembl的GTF保持同步，目前更新到v104
-
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
-- 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
+#### 数据整理与转换（Tidy & Trans）
 
 - 基因ID转换 => `transId`  
 
+#### 数据分析（Analyse）
+
 - 有了基因的id和对应的logFC（需要排序好），就可以做GSEA => `genGSEA`
-
 - 有了基因id，就能做GO分析 => `genGO ` 
-
 - 有了基因id，就能做KEGG分析 => `genKEGG`
-  - 得到的富集分析`GO & KEGG`的结果为数据框，并且新增一列：`FoldEnrich`
-  
-- **作图函数**
+  - 自己拿基因去做富集分析结果为数据框，并且新增一列：`FoldEnrich`
+  - 拿网页结果，依然可以调整为特定格式 => `as.enrichdat`
 
-  - 气泡图 => `plotEnrichDot ` 
+#### 可视化（Visualize）
 
-  - 交集韦恩图 =>`plotVenn` 
+- 气泡图 => `plotEnrichDot ` 
+- 交集韦恩图 =>`plotVenn` 
 
-    
+#### 导出结果
+
+- 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
 
 
 
@@ -63,13 +66,13 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 - [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
-- [ ] genInfo增加基因位置
+- [ ] `genInfo`增加基因位置
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 - [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
 - [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
 - [ ] `auto_install`增加镜像选择
-- [ ] 基因id支持多个不同版本的基因组 => 可以参考`liftover`
-- [ ] 基因id与biomart的融合
+- [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
+- [ ] `genInfo`与biomart的融合
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
 
 
