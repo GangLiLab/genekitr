@@ -239,7 +239,7 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 - 目前可以将大多数富集分析结果转换为作图需要的数据框：`as.enrichdat` 
   - 支持R包：clusterP
   - 支持网页：[panther](http://geneontology.org/)、
-- 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点、折叠y轴title、边框和刻度线宽度
+- 支持定义主图和legend的字体及大小；是否去除网格线、文字、图例；自定义渐变色的顶部和底部颜色；设定x轴起点；折叠y轴title；边框和刻度线宽度
 
 ```R
 # First, feed any dataframe result to enrichDat 

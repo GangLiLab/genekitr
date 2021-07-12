@@ -135,16 +135,17 @@ plotEnrichDot <- function(enrich_df,
 
 
 
+##' Adjust dataframe for enrichment plot
+##' make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
+##'
+##' @param enrich_df dataframe of enrichment analysis result .
+##' @return dataframe
+##' @importFrom dplyr %>% mutate
+##' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme guide_colorbar scale_y_discrete element_blank
+##' @export
+##' @author Yunze Liu
 
-#---check enrichment data colname---#
-# make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
 as.enrichdat <- function(enrich_df){
-
-  # example dat
-  # enrich_df = test
-  # enrich_df = ego
-  # enrich_df =  dat_lst[[3]]
-  # enrich_df = egmt1
 
   ## get lower case colnames
   remove <- c("\\(", "\\)", " ",'-','_')
