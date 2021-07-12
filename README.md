@@ -281,26 +281,31 @@ wrap_plots(list(p1,p2,p3,p4))+ plot_layout(ncol = 2) +
 - upset plot可以调整：字体大小、边框粗细、内部网格线
 
 ```R
+library(AnnoGenes)
+library(dplyr)
+library(patchwork)
+
 set1 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
 set2 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
 set3 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
 set4 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
 set5 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
 
+two_gene_list = list(gset1 = set1, gset2 = set2)
 sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
 la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3, gset4 = set4, gset5 = set5 )
 
-p1= plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = .3, border_thick = 1)
-p2 = plotVenn(sm_gene_list,text_size = 2,alpha_degree = 1,remove_grid = T, color = ggsci::pal_lancet()(3))
-p3 = plotVenn(la_gene_list,text_size = 10, border_thick = 2,remove_grid = T)
+p1 = plotVenn(two_gene_list, alpha_degree = 1, border_thick = 0)
 
-library(patchwork)
-(p1+p2)/p3
+p2= plotVenn(sm_gene_list,alpha_degree = .3, border_thick = 1)
+p3 = plotVenn(sm_gene_list,text_size = 2,alpha_degree = 1,
+              remove_grid = T, color = ggsci::pal_lancet()(3))
+p4 = plotVenn(la_gene_list,text_size = 10, border_thick = 2,remove_grid = T)
+
+(p1+p2+p3)/p4
 ```
 
-
-
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-06-034726.png)
+![](man/figures/example4.png)
 
 
 

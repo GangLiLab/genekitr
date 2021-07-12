@@ -104,7 +104,7 @@ plotVenn <- function(venn_list,
       geom_bar() +
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
       ggupset::scale_x_upset(name = "") +
-      ggupset::scale_y_continuous(name = "") +
+      ggplot2::scale_y_continuous(name = "") +
       plot_theme(border_thick = border_thick, main_text_size = text_size)
 
     # hide background grid line
