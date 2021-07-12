@@ -3,16 +3,16 @@
 ##' @param enrich_df dataframe of enrichment analysis result .
 ##' @param xlab_type x-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
 ##' @param legend_by stats legend type, one of "pvalue", "p.adjust", "qvalue".
+##' @param remove_grid logical, remove background grid lines, default is FALSE.
+##' @param remove_text logical, remove all text, default is FALSE.
+##' @param remove_grid logical, remove legend, default is FALSE.
 ##' @param show_item numeric, select top N rows to show.
-##' @param xleft numeric, specify the x-axis left limit, default is 0.
-##' @param xright numeric, specify the x-axis right limit, default is NA.
 ##' @param main_text_size numeric, specify the plot text size.
 ##' @param font_type character, specify the plot text font family, example "Times New Roman", "Arial".
-##' @param remove_grid logical, remove background grid lines, default is FALSE.
 ##' @param wrap_width numeric, wrap text longer than this number.
 ##' @param border_thick numeric, border thickness in mm.
 ##' @return ggplot object
-##' @importFrom dplyr pull
+##' @importFrom dplyr pull %>% arrange mutate slice_head
 ##' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme guide_colorbar scale_y_discrete element_blank
 ##' @importFrom stringr str_to_title
 ##' @importFrom clusterProfiler enrichGO
@@ -23,14 +23,19 @@
 ##' \dontrun{
 ##' data(geneList, package="DOSE")
 ##' id = names(geneList)[1:100]
-##' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
-##' plotEnrichDot(ego,xlab_type =  'FoldEnrich', legend_by = 'qvalue',show_item = 10,remove_grid = T)
+##' ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
+##' ego = as.enrichDat(ego)
+##' plotEnrichDot(ego)
 ##' }
 
 
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
                           legend_by = c("p.adjust", "pvalue", "qvalue"),
+                          border_thick = 1,
+                          remove_grid = FALSE,
+                          remove_text = FALSE,
+                          remove_legend = FALSE,
                           low_color = "red",
                           high_color = "blue",
                           font_type = "Arial",
@@ -38,8 +43,6 @@ plotEnrichDot <- function(enrich_df,
                           # xleft = 0, xright = NA,
                           main_text_size = 10,
                           legend_text_size = 8,
-                          border_thick = 1,
-                          remove_grid = FALSE,
                           wrap_width = NULL,
                           ...) {
   #--- args ---#
@@ -102,6 +105,25 @@ plotEnrichDot <- function(enrich_df,
       panel.grid.minor = element_blank()
     )
   }
+
+  # hide axis text
+  if (remove_text) {
+    p <- p + theme(
+      # panel.border = element_blank(),
+      axis.text.x=element_blank(),
+      axis.text.y=element_blank(),
+      axis.title.x=element_blank(),
+      axis.title.y=element_blank(),
+    )
+  }
+
+  # hide legend
+  if (remove_legend) {
+    p <- p + theme(
+      legend.position = "none"
+    )
+  }
+
   # wrap long text
   if (!is.null(wrap_width) & is.numeric(wrap_width)) {
     p <- p + scale_y_discrete(labels = text_wraper(wrap_width))

@@ -10,7 +10,7 @@ transId(id, trans_to = 'symbol',org = 'human')
 ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = F)
 head(ego)
 
-
+test = rio::import('~/Downloads/GO_analysis_EGR1_05.xlsx')
 p1 = plotEnrichDot(test, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
               show_item = 15, main_text_size = 14,legend_text_size = 10,
               low_color = 'red', high_color = 'blue',

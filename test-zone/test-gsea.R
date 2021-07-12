@@ -2,7 +2,7 @@ rm(list = ls())
 library(AnnoGenes)
 data(geneList, package="DOSE")
 head(geneList)
-egmt1 <- genGSEA(genelist = geneList,org = 'hs', category='C2',subcategory = 'CP:BIOCARTA',use_symbol = F)
+egmt1 <- genGSEA(genelist = geneList,org = 'hs', category='C5',subcategory = 'GO:MF',use_symbol = F)
 egmt2 <- genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'MIR:MIRDB',use_symbol = T)
 
 

@@ -247,7 +247,7 @@ test = as.enrichDat(test)
 ego = as.enrichDat(ego)
 
 # Second, easy plot
-p1 = plotEnrichDot(test)
+p1 = plotEnrichDot(test,legend_by = 'qvalue'))
 p2 = plotEnrichDot(ego)
 
 # Third, if you want to change more on plot...
