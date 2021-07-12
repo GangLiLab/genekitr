@@ -211,7 +211,7 @@ transId(id, trans_to = 'symbol',org='hs', return_dat = T)
 If there are some ID could not transform to another type (like "type error ID", "entrez ID has no symbol/ensembl"), the output will show as NA, while keep the same order with the input
 
 ```R
-# the id "23215326" and "344263475" is fake, while "1","2" and "45" is real
+# the id "23215326", "344263475" and "45" are fake, while "1" and "2" are real
 fake_id = c(id,'23215326','1','2','344263475','45')
 
 res = transId(fake_id, trans_to = 'sym',org='human', return_dat = T)
