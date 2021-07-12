@@ -270,7 +270,7 @@ wrap_plots(list(p1,p2,p3,p4))+ plot_layout(ncol = 2) +
   plot_annotation(tag_levels = 'a')
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-12-085856.png)
+![](man/figures/example3.png)
 
 
 
