@@ -256,7 +256,7 @@ keg_readable <- genKEGG(test, org = 'hs', use_symbol = T)
 # 差别就是：
 ```
 
-![image-20210702174030869](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-094031.png)
+![](man/figures/example7.png)
 
 
 
