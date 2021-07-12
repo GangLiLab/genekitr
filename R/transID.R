@@ -1,4 +1,4 @@
-##' transform gene id among symbpl, entrezid and ensembl
+##' transform gene id among symbol, entrezid and ensembl
 ##' @param id character of gene ids.
 ##' @param trans_to transform to which type, one of symbol, entrezid and ensembl.
 ##' @param org organism name from `biocOrg_name`.
