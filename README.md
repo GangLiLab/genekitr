@@ -300,7 +300,9 @@ p1 = plotVenn(two_gene_list, alpha_degree = 1, border_thick = 0)
 p2= plotVenn(sm_gene_list,alpha_degree = .3, border_thick = 1)
 p3 = plotVenn(sm_gene_list,text_size = 2,alpha_degree = 1,
               remove_grid = T, color = ggsci::pal_lancet()(3))
-p4 = plotVenn(la_gene_list,text_size = 10, border_thick = 2,remove_grid = T)
+
+p4 = plotVenn(la_gene_list,use_venn = F,
+              text_size = 10, border_thick = 2,remove_grid = T)
 
 (p1+p2+p3)/p4
 ```

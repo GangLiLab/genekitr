@@ -6,7 +6,8 @@
 ##' @param alpha_degree alpha transparency of each circle's area, default is 0.3.
 ##' @param border_thick thickness of each circle, default is 1.
 ##' @param text_size text size, default is 1.
-##' @param remove_grid logical, remove circle or grid lines, default is FALSE.
+##' @param remove_grid logical, remove circle or grid lines, default is `FALSE`.
+##' @param use_venn logical, use venn to plot, default is `TRUE`, the other option is upsetplot for large list.
 ##' @return ggplot object
 ##' @importFrom futile.logger flog.threshold ERROR
 ##' @importFrom VennDiagram venn.diagram
@@ -30,7 +31,8 @@
 ##' sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
 ##' la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3, gset4 = set4, gset5 = set5 )
 ##' plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = 1,remove_grid = T,color = ggsci::pal_lancet()(3))
-##' plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,remove_grid = T)
+##' plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,
+##' remove_grid = T, use_venn = F)
 ##'
 ##' }
 
@@ -40,12 +42,13 @@ plotVenn <- function(venn_list,
                      border_thick = 1,
                      text_size = 1,
                      remove_grid = FALSE,
+                     use_venn = TRUE,
                      ...) {
 
   #--- args ---#
   stopifnot(is.list(venn_list))
   # if gene list too long, use upset plot
-  use_venn <- ifelse(length(venn_list) <= 4, TRUE, FALSE)
+  # use_venn <- ifelse(length(venn_list) <= 4, TRUE, FALSE)
 
   #--- codes ---#
   if (use_venn) {
