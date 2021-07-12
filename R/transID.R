@@ -54,7 +54,7 @@ trans_hsmmrn <- function(id, trans_to, org, return_dat = FALSE){
   #--- codes ---#
   gtf = eval(parse(text = paste0(org,'_gtf')))
   newdat = gtf %>%
-    dplyr::filter(eval(parse(text = from)) %in% id  )
+    dplyr::filter(eval(parse(text = from)) %in% id  ) %>%
     dplyr::arrange(match(.[,from], id)) %>%
     dplyr::relocate(all_of(from),all_of(trans_to) , .before = everything())
   new_id = newdat %>% dplyr::pull(eval(parse(text = tolower(trans_to))))
