@@ -173,51 +173,6 @@ auto_install <- function(pkg){
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
 
-#---check enrichment data colname---#
-# 'GeneRatio','Count','FoldEnrich'
-.check_colname <- function(enrich_df, x){
-  remove <- c("\\(", "\\)", " ",'-')
-  to_check = stringr::str_remove_all(tolower(colnames(enrich_df)), paste(remove, collapse = "|"))
-  xlabs = c('GeneRatio','Count','FoldEnrich')
-  legends = c('pvalue','p.adjust','qvalue')
-  # to search xlab type
-
-  if(x %in% xlabs){
-    avail_opt = sapply(tolower(xlabs), function(n) any(grepl(n , to_check)))
-
-    if( any(grepl( tolower(x),  to_check)) ){
-      colnames(enrich_df)[grepl(tolower(x),  to_check)]  = x
-    }else if( any(avail_opt) ){
-      stop('\n"',x,'" was not found in enrich_df colnames',
-           '\nMaybe could try other options: ', paste(xlabs[avail_opt],collapse = ', '))
-    }else{
-      stop("Not found any colname of: 'GeneRatio','Count','FoldEnrich'")
-    }
-
-    #  to search legend type
-    # Q-values are the name given to the adjusted p-values found using an optimised FDR approach.
-    # p.adjust has other methods, like "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr"
-  }else if(x %in% legends){
-    if(any(grepl('fdr',  to_check))) colnames(enrich_df)[grepl('fdr',  to_check)]  = 'qvalue'
-    to_check = stringr::str_remove_all(tolower(colnames(enrich_df)), paste(remove, collapse = "|"))
-    avail_opt2 = sapply(legends, function(n) any(grepl(n , to_check)))
-
-    if( any(grepl( tolower(x),  to_check)) ){
-      colnames(enrich_df)[grepl(x,  to_check)]  = x
-    }else if( any(avail_opt2) ){
-      stop('\n"',x,'" was not found in enrich_df colnames',
-           '\nMaybe could try other options: ', paste(legends[avail_opt2],collapse = ', '))
-    }else{
-      stop("Not found any colname of: 'pvalue','p.adjust','qvalue|fdr'")
-    }
-
-  }else{
-    stop('Check input argument again!')
-  }
-
-  return(enrich_df)
-}
-
 
 #--- get ensembl gtf ---#
 # current ensembl version: 104
