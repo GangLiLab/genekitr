@@ -29,7 +29,7 @@
 
 
 plotEnrichDot <- function(enrich_df,
-                          xlab_type = c("GeneRatio", "Count", "FoldEnrich"),
+                          xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
                           legend_by = c("p.adjust", "pvalue", "qvalue"),
                           low_color = "red",
                           high_color = "blue",
@@ -116,7 +116,7 @@ plotEnrichDot <- function(enrich_df,
 
 #---check enrichment data colname---#
 # make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
-as.enrichdat <- function(enrich_df, x){
+as.enrichdat <- function(enrich_df){
 
   # example dat
   # enrich_df = test
@@ -185,6 +185,7 @@ as.enrichdat <- function(enrich_df, x){
   ## find GeneRatio col
   if(any(grepl('generatio', to_check))){
     colnames(enrich_df)[grepl('generatio', to_check)] = 'GeneRatio'
+    enrich_df = enrich_df %>% dplyr::mutate(GeneRatio = sapply(.$GeneRatio, function(x) eval(parse(text = x))))
   }else{
     # gsea
     if(any(grepl('setsize', to_check))){

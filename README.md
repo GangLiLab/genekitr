@@ -47,7 +47,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - 有了基因id，就能做GO分析 => `genGO ` 
 
 - 有了基因id，就能做KEGG分析 => `genKEGG`
-  - 默认富集分析`GO & KEGG`的结果为数据框，并且增加一列：`FoldEnrichment`
+  - 得到的富集分析`GO & KEGG`的结果为数据框，并且新增一列：`FoldEnrich`
   
 - **作图函数**
 
@@ -64,7 +64,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 - [x] genInfo增加基因位置
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
-- [ ] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.dotplot`
+- [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
 - [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
 - [ ] `auto_install`增加镜像选择
 - [ ] 基因id支持多个不同版本的基因组 => 可以参考`liftover`
@@ -197,7 +197,6 @@ transId(id = ids, trans_to = 'ens',org='human', return_dat = F)
 
 # 如果选择物种不对，会提示报错
 transId(id = ids, trans_to = 'sym',org='human', return_dat = F)
-
 ```
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-103504.png)
@@ -236,31 +235,42 @@ keg <- genKEGG(mm_id, org = 'mouse', use_symbol = T, pvalueCutoff = 1, qvalueCut
 
 #### P1: Enrichment dotplot =>  `plotEnrichDot ` 
 
-- support dataframes with GO term, pvalue/qvalue/p.adjust, GeneRatio/Count/FoldEnrichment 
-- 默认按照 `GeneRatio + p.adjust`
-- Not only for result from R packages like `clusterProfiler` , but also for web analysis result like `panther ` from [Gene Ontology Resource](http://geneontology.org/) 
+- 默认按照 `FoldEnrich + p.adjust`
+- 目前可以将大多数富集分析结果转换为作图需要的数据框：`as.enrichdat` 
+  - 支持R包：clusterP
+  - 支持网页：[panther](http://geneontology.org/)、
 - 支持定义主图和legend的字体及大小、是否去除网格线、自定义渐变色的顶部和底部颜色、设定x轴起点、折叠y轴title、边框和刻度线宽度
 
 ```R
-# test dataframe was from GeneOntology web result
-p1 = plotEnrichDot(test, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
+# First, feed any dataframe result to enrichDat 
+test = as.enrichDat(test)
+ego = as.enrichDat(ego)
+
+# Second, easy plot
+p1 = plotEnrichDot(test)
+p2 = plotEnrichDot(ego)
+
+# Third, if you want to change more on plot...
+# test dataframe was from GeneOntology panther web result
+p3 = plotEnrichDot(test, xlab_type =  'FoldEnrich', legend_by = 'qvalue',
               show_item = 15, main_text_size = 14,legend_text_size = 10,
               low_color = 'red', high_color = 'blue',
               xleft = 0, font_type = 'Arial', remove_grid = T,
               wrap_width = 30,border_thick = 3 )
 
 # ego dataframe was from clusterP result
-p2=plotEnrichDot(ego, xlab_type =  'GeneRatio', legend_by = 'p.adjust',
+p4=plotEnrichDot(ego, xlab_type =  'GeneRatio', legend_by = 'p.adjust',
                  show_item = 10, main_text_size = 14,legend_text_size = 10,
                  low_color = 'orange', high_color = 'green',
                  xleft = 0, font_type = 'Times New Roman', remove_grid = F,
                  wrap_width = NULL ,border_thick = 1)
 
 library(patchwork)
-p1+p2
+wrap_plots(list(p1,p2,p3,p4))+ plot_layout(ncol = 2) + 
+  plot_annotation(tag_levels = 'a')
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-05-054512.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-12-085856.png)
 
 
 
