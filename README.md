@@ -56,7 +56,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - 气泡图 => `plotEnrichDot ` 
 - 交集韦恩图 =>`plotVenn` 
 
-#### 导出结果
+#### 导出结果 (Export)
 
 - 每个操作都能得到一个数据框，可以继续探索，也可以作为不同的sheets导出到同一个excel => `expo_sheet`
 
