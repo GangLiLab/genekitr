@@ -95,7 +95,7 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
   }else if (any(id %in% orgENSEMBL$gene_id)){
     c("ENTREZID")
   }else{
-    stop('Choose wrong organism!')
+    stop('Wrong organism!')
   }
 }
 

@@ -6,6 +6,7 @@
 ##' @return a character or dataframe of transformed ids.
 ##' @importFrom dplyr %>% filter pull select distinct arrange all_of
 ##' @importFrom AnnotationDbi toTable
+##' @importFrom tibble add_row
 ##' @export
 ##' @examples
 ##' \donttest{
@@ -18,6 +19,7 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   org.bk = org
   org = mapBiocOrg(tolower(org))
+  .load_orgdb(org)
   keytype = .gentype(id, org)
 
   if (tolower(trans_to) == "entrez" | tolower(trans_to) == "etrez") trans_to = 'entrezid'
@@ -32,61 +34,11 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
   if(tolower(keytype) == trans_to) stop('The argument "trans_to" cannot be the same type with gene id!')
 
   #--- codes ---#
-  # ispecies of human, mouse, rat could use ensembl gtf result
-  if(org %in% c('Hs', 'Mm' ,'Rn')){
-    res = trans_hsmmrn(id, trans_to, org, return_dat)
-  }else{
-    # others species could use the orgdb result
-    res = trans_others(id, trans_to, org, return_dat)
-  }
-
-  return(res)
-}
-
-
-trans_hsmmrn <- function(id, trans_to, org, return_dat = FALSE){
-  #--- args ---#
-  options(warn = -1)
-  if (org == "Hs" ) org = 'human'
-  if (org == "Mm" ) org = 'mouse'
-  if (org == "Rn" ) org = 'rat'
-
-  #--- codes ---#
-  gtf = eval(parse(text = paste0(org,'_gtf')))
-  newdat = gtf %>%
-    dplyr::filter(eval(parse(text = from)) %in% id  ) %>%
-    dplyr::arrange(match(.[,from], id)) %>%
-    dplyr::relocate(all_of(from),all_of(trans_to) , .before = everything())
-  new_id = newdat %>% dplyr::pull(eval(parse(text = tolower(trans_to))))
-
-  percen = paste(round(100*length(as.character(na.omit(new_id)))/length(unique(id)), 2), "%", sep="")
-  if(length(new_id) > length(unique(id))){
-    message(percen,' genes are mapped from ',from, ' to ', trans_to,'\n',
-            'maybe one ', from, ' gene mapps many ', trans_to)
-  } else {
-    message(percen,' genes are mapped from ',from, ' to ', trans_to)
-  }
-
-  if(return_dat){
-    res1 = newdat
-  }else{
-    res1 = new_id
-  }
-
-  invisible(res1)
-}
-
-trans_others <- function(id, trans_to, org, return_dat = FALSE){
-  #--- args ---#
-  options(warn = -1)
-  .load_orgdb(org)
-  keytype = .gentype(id, org)
 
   symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
   colnames(symbol_dat) = c('entrezid','symbol')
   ensem_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
   colnames(ensem_dat) = c('entrezid','ensembl')
-
   from = tolower(keytype)
   if(from == 'ensembl'){
     if(!any(id %in% ensem_dat[,from])){
@@ -98,13 +50,28 @@ trans_others <- function(id, trans_to, org, return_dat = FALSE){
     }
   }
 
-  #--- codes ---#
+
   merge_dat = merge(symbol_dat, ensem_dat ,by = 'entrezid', all  = T)
   newdat <- merge_dat %>%
     dplyr::select(c(all_of(from),all_of(trans_to))) %>%
     dplyr::filter(.[,1] %in% id) %>%
     dplyr::distinct() %>%
     dplyr::arrange(match(.[,1], id))
+
+  if(length(id) == nrow(newdat)){
+    newdat = newdat
+  }else{
+    # if some ids are not found in org.db, maybe spell wrong
+    check = which(!id %in% newdat[,1])
+    i = 1
+    while (i <= length(check) ) {
+      newdat = newdat %>% tibble::add_row(!!from := id[check[i]],
+                                          !! trans_to := NA,
+                                          .before = check[i])
+      i = i+1
+    }
+
+  }
 
   new_id =  newdat %>% dplyr::pull(2) %>% as.character()
 
@@ -117,10 +84,45 @@ trans_others <- function(id, trans_to, org, return_dat = FALSE){
   }
 
   if(return_dat){
-    res2 = newdat
+    res = newdat
   }else{
-    res2 = new_id
+    res = new_id
   }
 
-  invisible(res2)
+  return(res)
 }
+
+
+# trans_hsmmrn <- function(id, trans_to, org, return_dat = FALSE){
+#   #--- args ---#
+#   options(warn = -1)
+#   if (org == "Hs" ) org = 'human'
+#   if (org == "Mm" ) org = 'mouse'
+#   if (org == "Rn" ) org = 'rat'
+#
+#   #--- codes ---#
+#   gtf = eval(parse(text = paste0(org,'_gtf')))
+#   newdat = gtf %>%
+#     dplyr::filter(eval(parse(text = from)) %in% id  ) %>%
+#     dplyr::arrange(match(.[,from], id)) %>%
+#     dplyr::relocate(all_of(from),all_of(trans_to) , .before = everything())
+#   new_id = newdat %>% dplyr::pull(eval(parse(text = tolower(trans_to))))
+#
+#   percen = paste(round(100*length(as.character(na.omit(new_id)))/length(unique(id)), 2), "%", sep="")
+#   if(length(new_id) > length(unique(id))){
+#     message(percen,' genes are mapped from ',from, ' to ', trans_to,'\n',
+#             'maybe one ', from, ' gene mapps many ', trans_to)
+#   } else {
+#     message(percen,' genes are mapped from ',from, ' to ', trans_to)
+#   }
+#
+#   if(return_dat){
+#     res1 = newdat
+#   }else{
+#     res1 = new_id
+#   }
+#
+#   invisible(res1)
+# }
+
+

@@ -62,7 +62,8 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ## Plans
 
 - [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
-- [x] genInfo增加基因位置
+- [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
+- [ ] genInfo增加基因位置
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 - [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
 - [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
@@ -81,7 +82,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ## Let's mining data!
 
-#### example gene id
+#### Example gene ID
 
 ```R
 mm_id =c('Ticam2
@@ -93,7 +94,7 @@ Bloc1s1')
 mm_id=str_split(mm_id,"\n")[[1]]
 ```
 
-#### Method1: gene alias, full name
+#### Method 1: Gene alias, full name
 
 ```R
 test1 = genInfo(mm_id, org = 'mm')
@@ -105,7 +106,7 @@ rownames of `test1` are entrez ID
 
 
 
-#### Method2: search pubmed 
+#### Method 2: Search pubmed 
 
 ```R
 test2=genPubmed(mm_id, keywords = 'stem cell', field = 'tiab')
@@ -117,7 +118,7 @@ genPubmed(mm_id, keywords = 'stem cell AND epithelial', field = 'tiab')
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081925.png)
 
-#### Method3: GSEA
+#### Method 3: GSEA
 
 - ~~之前的操作~~
 
@@ -143,7 +144,7 @@ genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-06-073517.png)
 
-#### Method4: GO
+#### Method 4: GO
 
 - 函数需要用到物种的`org.db`，**如果没有相关物种注释包**，函数内部的`auto_install()` 会帮助下载👍
 
@@ -182,28 +183,67 @@ biocOrg_name()
 
 
 
-#### Method5: transform gene id
+#### Method 5: Transform gene id
 
-- `org` support many from `biocOrg_name()` : human, mouse and  rat support fast and full gene annotation
-- user can choose output dataframe or not, using `return_dat`
-- user **DO NOT need** to specify the input gene type
+- `org` support many species from `biocOrg_name()` 
+  - support common name (e.g. `human/hs/hg`, `mouse/mm`, `dm/fly`) ...
+- user can choose output dataframe or not => using `return_dat`
+- **AUTO detect** input gene id type
 
 ```R
 library(AnnoGenes)
 data(geneList, package = 'DOSE')
-ids = names(geneList)[1:10]
-transId(id = ids, trans_to = 'symbol',org='hs', return_dat = T)
-transId(id = ids, trans_to = 'ens',org='human', return_dat = F)
+id = names(geneList)[1:5]
+id
+# "4312"  "8318"  "10874" "55143" "55388"
 
-# 如果选择物种不对，会提示报错
-transId(id = ids, trans_to = 'sym',org='human', return_dat = F)
+## trans ID is very easy!
+transId(id, trans_to = 'symbol',org='hs', return_dat = T)
+# 100% genes are mapped from entrezid to symbol
+# entrezid symbol
+#  4312   MMP1
+#  8318  CDC45
+# 10874    NMU
+# 55143  CDCA8
+# 55388  MCM10
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-07-103504.png)
+If there are some ID could not transform to another type (like "type error ID", "entrez ID has no symbol/ensembl"), the output will show as NA, while keep the same order with the input
+
+```R
+# the id "23215326" and "344263475" is fake, while "1","2" and "45" is real
+fake_id = c(id,'23215326','1','2','344263475','45')
+
+res = transId(fake_id, trans_to = 'sym',org='human', return_dat = T)
+
+## input and output order is identical, even there are many NAs!
+identical(fake_id, res$entrezid)
+```
+
+![](man/figures/example5.png)
 
 
 
-#### Method6: KEGG
+Also, transform from symbol to entrez or ensembl is very easy...
+
+```R
+transId(na.omit(res$symbol), trans_to = 'ens',org='hs', return_dat = T)
+transId(na.omit(res$symbol), trans_to = 'entrez',org='hg', return_dat = T)
+```
+
+![](man/figures/example6.png)
+
+However, if user provides wrong orgnism, the function will report error...
+
+```R
+## try to trans human id to symbol, but choose wrong org (mouse)
+transId(id, trans_to = 'sym',org='mouse', return_dat = F)
+# Error in .gentype(id, org) : Wrong organism! 
+```
+
+
+
+#### Method 6: KEGG
 
 ```R
 ids = names(geneList)[1:100]
