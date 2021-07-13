@@ -67,7 +67,7 @@ genInfo <- function(id,
   all_alias = alias_dat %>% dplyr::pull(gene_alias) %>% stringr::str_split(.,';') %>%
     unlist() %>% unique()
 
-  # first to decide: input name is alias
+  # first to decide: if input name is alias
   if( any( !id %in% all[,keytype] & id %in% all_alias) ){
     check = which( !id %in% all[,keytype] & id %in% all_alias)
     i = 1
@@ -79,7 +79,7 @@ genInfo <- function(id,
       i = i+1
     }
 
-    # then to decide: input id is wrong
+    # then to decide: if input id is wrong
     if (any( !id %in% all[,keytype] & !id %in% all_alias) ){
       check = which(  !id %in% all[,keytype] & !id %in% all_alias )
       tmp = data.frame(rep(NA,ncol(gene_info))) %>% t() %>% as.data.frame() %>%
