@@ -90,6 +90,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ##### 导出结果 (Export)
 
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
+- [ ] 想到一个R包名称：`genepedia` （看看以后会不会使用它）
 
 
 
