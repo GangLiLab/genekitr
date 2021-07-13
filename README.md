@@ -66,6 +66,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ##### 信息获取 (Search)
 
+- [ ] `genInfo` 的`orgdb`数据根据每个物种保存为rda，以便快速加载
 - [ ] `genInfo`增加基因位置
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 - [ ] `genInfo`与biomart的融合
