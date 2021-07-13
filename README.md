@@ -34,7 +34,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 #### 信息获取 (Search)
 
-- genecards虽然全，但是搜索数量有限制，于是整合了Ensembl数据库中的基因信息 => `genInfo`
+- genecards虽然全，但是搜索数量有限制，于是整合了Ensembl 数据库和 `orgdb`中的基因信息 => `genInfo`
 
   - 与Ensembl数据库保持同步，目前更新到v104
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
@@ -112,15 +112,17 @@ Bloc1s1')
 mm_id=str_split(mm_id,"\n")[[1]]
 ```
 
-#### Method 1: Gene alias, full name
+#### Method 1: All things about gene ID
 
 ```R
-test1 = genInfo(mm_id, org = 'mm')
+# in this example, BCC7 is the alias of TP53; SXHFJG is a fake name
+id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53"  )
+genInfo(id, org = 'human')
 ```
 
 rownames of `test1` are entrez ID
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-06-29-081721.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-13-145933.png)
 
 
 
