@@ -64,15 +64,30 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ## Plans
 
-- [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
-- [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
+##### 信息获取 (Search)
+
 - [ ] `genInfo`增加基因位置
-- [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
-- [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
-- [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
-- [ ] `auto_install`增加镜像选择
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 - [ ] `genInfo`与biomart的融合
+- [ ] 可以增加基因以及对应蛋白的序列
+- [ ] `auto_install`增加镜像选择
+
+##### 数据整理与转换（Tidy & Trans）
+
+- [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
+
+##### 数据分析（Analyse）
+
+- [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
+
+##### 可视化（Visualize）
+
+- [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
+- [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
+- [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
+
+##### 导出结果 (Export)
+
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
 
 
