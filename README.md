@@ -115,6 +115,9 @@ mm_id=str_split(mm_id,"\n")[[1]]
 
 #### Method 1: All things about gene ID
 
+- **AUTO** detect orgnism name (e.g. `human/hs/hg`  is fine)
+- **AUTO** detect duplicate ID, ID alias or wrong spelled ID
+
 ```R
 # in this example, BCC7 is the alias of TP53; SXHFJG is a fake name
 id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53"  )
