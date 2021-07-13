@@ -20,6 +20,11 @@ transId(na.omit(res$symbol), trans_to = 'entrez',org='hs', return_dat = T)
 transId(id, trans_to = 'sym',org='mouse', return_dat = F)
 
 # transId vs bitr
+fake_id
+transId(fake_id, trans_to = 'sym',org='human', return_dat = T)
+clusterProfiler::bitr(fake_id, fromType = 'ENTREZID',
+                      toType = 'SYMBOL', OrgDb = org.Hs.eg.db)
+
 
 #--- fly id ---#
 # auto_install('org.Dm.eg.db')

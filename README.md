@@ -137,6 +137,7 @@ genPubmed(mm_id, keywords = 'stem cell AND epithelial', field = 'tiab')
   ```
 
 - 目前已经将`getMsigdb` 整合进`genGSEA `， 和GO、KEGG一样，提供一个物种名称即可，比如人类可以是`human/hs/hsa/hg`
+  并且和GO、KEGG一样，增加了`use_symbol`参数
 
 ```R
 # 加载示例数据

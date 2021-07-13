@@ -78,7 +78,8 @@ transId <- function(id, trans_to, org, return_dat = FALSE){
   percen = paste(round(100*length(as.character(na.omit(new_id)))/length(unique(id)), 2), "%", sep="")
   if(length(new_id) > length(unique(id))){
     message(percen,' genes are mapped from ',from, ' to ', trans_to,'\n',
-            'maybe one ', from, ' gene mapps many ', trans_to)
+            'maybe one ', from, ' gene maps many ', trans_to, ' id\n',
+            'try remove duplicate using "transId(...) %>% distinct(.[1])" ')
   } else {
     message(percen,' genes are mapped from ',from, ' to ', trans_to)
   }
