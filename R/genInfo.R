@@ -86,5 +86,8 @@ genInfo <- function(id,
       }
     }
   }
+
+  gene_info = gene_info %>% dplyr::arrange(match(eval(parse(text = keytype)), id))
+
   return(gene_info)
 }
