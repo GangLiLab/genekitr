@@ -118,6 +118,7 @@ mm_id=str_split(mm_id,"\n")[[1]]
 
 - **AUTO** detect orgnism name (e.g. `human/hs/hg`  is fine)
   - support 12 organisms (maybe more in the future...)
+  - use `biocAnno(org)`  to get data
 - **AUTO** detect duplicate ID, ID alias or wrong spelled ID
 
 ```R

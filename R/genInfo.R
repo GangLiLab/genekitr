@@ -28,14 +28,14 @@ genInfo <- function(id,
   }
 
   #--- code ---#
-
+  all = biocAnno(org)
   gene_info <- all %>%
     dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
     dplyr::arrange(match(eval(parse(text = keytype)), id)) %>%
-    dplyr::relocate(keytype,.before = everything())
+    dplyr::relocate(all_of(keytype),.before = everything())
 
   # if some ids are spelled wrong or the name is an alias
-  all_alias = alias_dat %>% dplyr::pull(gene_alias) %>% stringr::str_split(.,';') %>%
+  all_alias = all %>% dplyr::pull(gene_alias) %>% stringr::str_split(.,';') %>%
     unlist() %>% unique()
 
   # first to decide: if input name is alias
