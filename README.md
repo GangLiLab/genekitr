@@ -120,14 +120,13 @@ mm_id=str_split(mm_id,"\n")[[1]]
   - support 12 organisms (maybe more in the future...)
   - use `biocAnno(org)`  to get data
 - **AUTO** detect duplicate ID, ID alias or wrong spelled ID
+- Make sure the input order is identical with the output
 
 ```R
 # in this example, BCC7 is the alias of TP53; SXHFJG is a fake name
 id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53"  )
 genInfo(id, org = 'human')
 ```
-
-rownames of `test1` are entrez ID
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-13-145933.png)
 
