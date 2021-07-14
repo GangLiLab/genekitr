@@ -24,9 +24,10 @@ Insl3
 Myo15
 Gal3st2b
 Bloc1s1
-TP53')
+TP53
+Gcn5l1')
 mm_id=stringr::str_split(mm_id,"\n")[[1]]
-genInfo(mm_id,org = 'mouse')
+x = genInfo(mm_id,org = 'mouse')
 
 
 # change organism: dm fly

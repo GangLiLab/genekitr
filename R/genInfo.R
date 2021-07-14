@@ -38,10 +38,39 @@ genInfo <- function(id,
 
   # if some ids are spelled wrong or the name is an alias
   all_alias = all %>% dplyr::pull(gene_alias) %>% stringr::str_split(.,';') %>%
-    unlist() %>% unique()
-  # first to check: if input id is wrong
+    unlist() %>% unique() %>% stringr::str_remove_all(' ')
+
   if(any(!id %in% all[,keytype])){
-    check = which( !id %in% all[,keytype])
+    if(keytype == 'symbol'){
+      # first to check: if input id is wrong
+      check = which( !id %in% all[,keytype] & !id %in% all_alias )
+      tmp = data.frame(rep(NA,ncol(gene_info))) %>% t() %>% as.data.frame() %>%
+        stats::setNames(.,colnames(gene_info))
+      rownames(tmp) = '1'
+
+      i = 1
+      while (i <= length(check) ) {
+        gene_info = gene_info %>%
+          tibble::add_row(tmp,
+                          .before = check[i])
+        gene_info[check,1] = id[check]
+
+        i = i+1
+      }
+
+      # then check: if input id is alias
+      check = which( !id %in% all[,keytype] & id %in% all_alias )
+      i = 1
+      while (i <= length(check) ) {
+        gene_info = gene_info %>%
+          tibble::add_row(all[mapply(grepl, paste0('\\b',id[check],'\\b'), all$gene_alias),],
+                          .before = check[i])
+        gene_info[check,1] = id[check]
+        i = i+1
+      }
+    } else {
+    # only check: if input id is wrong
+    check = which( !id %in% all[,keytype] )
     tmp = data.frame(rep(NA,ncol(gene_info))) %>% t() %>% as.data.frame() %>%
       stats::setNames(.,colnames(gene_info))
     rownames(tmp) = '1'
@@ -54,21 +83,8 @@ genInfo <- function(id,
       gene_info[check,1] = id[check]
 
       i = i+1
-    }
-    if(keytype == 'symbol'){
-      # then check: if input id is alias
-      check = which( id %in% all_alias )
-      i = 1
-      while (i <= length(check) ) {
-        gene_info = gene_info %>%
-          tibble::add_row(all[mapply(grepl, paste0('\\b',id[check],'\\b'), all$gene_alias),],
-                          .before = check[i])
-        gene_info[check,1] = id[check]
-        i = i+1
       }
     }
-
   }
-
   return(gene_info)
 }
