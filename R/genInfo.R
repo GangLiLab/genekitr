@@ -28,35 +28,6 @@ genInfo <- function(id,
   }
 
   #--- code ---#
-  # keytypes(org.Hs.eg.db)
-  # first get main id data (entrez, symbol, ensembl, uniprot)
-  symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  ensembl_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
-  uniprot_dat <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))%>%
-    split(., .$gene_id) %>%
-    lapply(., function(x) {
-      paste0(x[, 2], collapse = "; ")
-    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
-    dplyr::mutate(gene_id = rownames(.)) %>%
-    dplyr::rename( uniprot = V1) %>%
-    dplyr::select(gene_id,uniprot)
-
-  # then get gene name and alias
-  name_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
-  alias_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
-    split(., .$gene_id) %>%
-    lapply(., function(x) {
-      paste0(x[, 2], collapse = "; ")
-    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
-    dplyr::mutate(gene_id = rownames(.)) %>%
-    dplyr::rename( gene_alias = V1) %>%
-    dplyr::select(gene_id,gene_alias)
-
-  all = Reduce(function(x, y)
-    merge(x, y, all=TRUE),
-    list(symbol_dat, ensembl_dat, uniprot_dat,name_dat,alias_dat )) %>%
-    dplyr::rename(entrezid = gene_id) %>%
-    dplyr::rename(ensembl = ensembl_id)
 
   gene_info <- all %>%
     dplyr::filter(eval(parse(text = keytype)) %in% id) %>%

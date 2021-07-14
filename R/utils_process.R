@@ -173,10 +173,9 @@ auto_install <- function(pkg){
   suppressPackageStartupMessages(require(pkg, character.only = TRUE))
 }
 
-
-#--- get ensembl gtf ---#
+#--- get ensembl annotation ---#
 # current ensembl version: 104
-.get_ensembl_gtf <- function(org, ensembl_version = '104', path = 'data'){
+.get_ensembl_anno <- function(org, ensembl_version = '104', path = 'data'){
   #--- args ---#
 
   # For now supports common research species
@@ -219,6 +218,66 @@ auto_install <- function(pkg){
 
   }
 }
+
+
+#--- get bioconductor annotation ---#
+if(F){
+  gsub('eck12|ecSakai|ss|xl','',biocOrg_name$short_name) %>%
+    stringi::stri_remove_empty_na() %>%
+    for(i in .){
+      # i = biocOrg_name$short_name[1]
+      if(!file.exists(paste0('data/',stringr::str_to_title(i),'_bioc_anno.rda'))){
+        x = .get_bioc_anno(i)
+        assign(paste0(stringr::str_to_title(i),'_bioc_anno'), x)
+        save(list = paste0(stringr::str_to_title(i),'_bioc_anno'),
+             file = paste0('data/',stringr::str_to_title(i),'_bioc_anno.rda'))
+      }
+    }
+}
+
+.get_bioc_anno <- function(org){
+  org = mapBiocOrg(tolower(org))
+  .load_orgdb(org)
+
+  # keytypes(org.Hs.eg.db)
+  # first get main id data (entrez, symbol, ensembl, uniprot)
+  symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  ensembl_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  uniprot_dat <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))%>%
+    split(., .$gene_id) %>%
+    lapply(., function(x) {
+      paste0(x[, 2], collapse = "; ")
+    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
+    dplyr::mutate(gene_id = rownames(.)) %>%
+    dplyr::rename( uniprot = V1) %>%
+    dplyr::select(gene_id,uniprot)
+
+  # then get gene name and alias
+  name_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
+  alias_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
+    split(., .$gene_id) %>%
+    lapply(., function(x) {
+      paste0(x[, 2], collapse = "; ")
+    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
+    dplyr::mutate(gene_id = rownames(.)) %>%
+    dplyr::rename( gene_alias = V1) %>%
+    dplyr::select(gene_id,gene_alias)
+
+  all = Reduce(function(x, y)
+    merge(x, y, all=TRUE),
+    list(symbol_dat, ensembl_dat, uniprot_dat,name_dat,alias_dat )) %>%
+    dplyr::rename(entrezid = gene_id) %>%
+    dplyr::rename(ensembl = ensembl_id)
+
+  return(all)
+
+}
+
+
+
+
+
+
 
 
 

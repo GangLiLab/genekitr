@@ -66,7 +66,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 ##### 信息获取 (Search)
 
-- [ ] `genInfo` 的`orgdb`数据根据每个物种保存为rda，以便快速加载
+- [x] `genInfo` 的`orgdb`数据根据每个物种保存为rda，以便快速加载【总共支持12种bioconductor org】
 - [ ] `genInfo`增加基因位置
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 - [ ] `genInfo`与biomart的融合
@@ -117,7 +117,7 @@ mm_id=str_split(mm_id,"\n")[[1]]
 #### Method 1: All things about gene ID
 
 - **AUTO** detect orgnism name (e.g. `human/hs/hg`  is fine)
-  - support 20 organisms (maybe more...)
+  - support 12 organisms (maybe more in the future...)
 - **AUTO** detect duplicate ID, ID alias or wrong spelled ID
 
 ```R

@@ -16,7 +16,7 @@ keggOrg_name <- function() {
   get("keggOrg_name", envir = .GlobalEnv)
 }
 
-#--- get ensembl gtf ---#
+#--- get ensembl anno ---#
 human_gtf <- function() {
   utils::data(list="data/homo_sapiens_V104_gtf.rda", package="AnnoGenes")
   get("human_gtf", envir = .GlobalEnv)
@@ -29,3 +29,13 @@ rat_gtf <- function() {
   utils::data(list="data/rattus_norvegicus_V104_gtf.rda", package="AnnoGenes")
   get("rat_gtf", envir = .GlobalEnv)
 }
+
+#--- get bioconductor anno ---#
+biocAnno <- function(org){
+  org = mapBiocOrg(tolower(org))
+  utils::data(list=paste0('data/',org,'_bioc_anno.rda'), package="AnnoGenes")
+  get(paste0(org,'_bioc_anno'), envir = .GlobalEnv)
+}
+
+
+
