@@ -1,0 +1,8 @@
+﻿common_name,latin_full_name,latin_short_name,bioc_name,kegg_name
+human,homo sapiens,hsapiens,hs,hsa
+mouse,mus musculus,mmusculus,mm,mmu
+rat,rattus norvegicus,rnorvegicus,rn,rno
+pig,sus scrofa,sscrofa,ss,ssc
+chicken,gallus gallus,ggallus,gg,gga
+zebrafish,danio rerio,drerio,dr,dre
+fly,drosophila melanogaster,dmelanogaster,dm,dme

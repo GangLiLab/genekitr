@@ -219,6 +219,35 @@ auto_install <- function(pkg){
   }
 }
 
+#--- get biomart alias ---#
+.get_biomrt_alias <- function(org){
+  org = tolower(org)
+  if (org == "hg" | org == "human" | org == "hsa" |  org == "hs") organism = 'hsapiens'
+  if (org == "mm" | org == "mouse" ) organism = 'mmusculus'
+  if (org == "rn" | org == "rat" ) organism = 'rnorvegicus'
+
+  biomart_alias = getBM( attributes = c("external_gene_name",'external_synonym','uniprot_gn_symbol'),
+                         mart = useMart("ensembl",
+                                        dataset = paste0(organism,"_gene_ensembl"),
+                                        host = "asia.ensembl.org")) %>%
+    split(., .$external_gene_name) %>%
+    lapply(., function(x) {
+      paste0(x[, 2],collapse = "; ")
+    })  %>%
+    do.call(rbind,.) %>%
+    as.data.frame() %>%
+    dplyr::mutate(symbol = rownames(.)) %>%
+    dplyr::rename(uniq_symbol = V1) %>%
+    dplyr::select(symbol, uniq_symbol) %>%
+    within(., uniq_symbol <- lapply(stringr::str_split(.[,'uniq_symbol'],'; '),
+                                    function(x){
+                                      unique(x) %>% paste0(.,collapse = '; ')}) %>% unlist())
+
+  return(biomart_alias)
+
+}
+
+
 
 #--- get bioconductor annotation ---#
 if(F){
@@ -254,14 +283,16 @@ if(F){
 
   # then get gene name and alias
   name_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
-  alias_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
-    split(., .$gene_id) %>%
-    lapply(., function(x) {
-      paste0(x[, 2], collapse = "; ")
-    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
-    dplyr::mutate(gene_id = rownames(.)) %>%
-    dplyr::rename( gene_alias = V1) %>%
-    dplyr::select(gene_id,gene_alias)
+  symbol_ids = symbol_dat %>% dplyr::pull(symbol) %>% unique()
+  alias_dat = .get_biomrt_alias(org)
+  # alias_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
+  #   split(., .$gene_id) %>%
+  #   lapply(., function(x) {
+  #     paste0(x[, 2], collapse = "; ")
+  #   })  %>% do.call(rbind,.) %>% as.data.frame() %>%
+  #   dplyr::mutate(gene_id = rownames(.)) %>%
+  #   dplyr::rename( gene_alias = V1) %>%
+  #   dplyr::select(gene_id,gene_alias)
 
   all = Reduce(function(x, y)
     merge(x, y, all=TRUE),
