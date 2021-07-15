@@ -42,6 +42,16 @@ biomart_alias = getBM( values = unique(all$symbol),
 
 
 # get all symbols
+library(biomaRt)
+organism = 'hsapiens'
+bmt = getBM( attributes = c("ensembl_gene_id",'chromosome_name','start_position','end_position','strand',
+                      'percentage_gene_gc_content','gene_biotype','transcript_count'),
+       mart = useMart("ensembl",
+                      dataset = paste0(organism,"_gene_ensembl"),
+                      host = "asia.ensembl.org")) %>%
+  data.table::setnames(., old =colnames(.),
+           new = c('ensembl','chr','start','end','strand','gc_content','gene_biotype','transcript_count')) %>%
+  dplyr::mutate(width = (end - start + 1))
 
-
+colnames(bmt)
 

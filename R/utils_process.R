@@ -220,6 +220,7 @@ auto_install <- function(pkg){
 }
 
 #--- get biomart alias ---#
+# alias info processing is complex than other info
 .get_biomrt_alias <- function(org){
   org = tolower(org)
   if (org == "hg" | org == "human" | org == "hsa" |  org == "hs") organism = 'hsapiens'
@@ -248,7 +249,24 @@ auto_install <- function(pkg){
 
 }
 
+# support add-in via changing attributes
+.get_biomrt_other <- function(org){
+  org = tolower(org)
+  if (org == "hg" | org == "human" | org == "hsa" |  org == "hs") organism = 'hsapiens'
+  if (org == "mm" | org == "mouse" ) organism = 'mmusculus'
+  if (org == "rn" | org == "rat" ) organism = 'rnorvegicus'
 
+  biomart_other = getBM( attributes = c("ensembl_gene_id",'chromosome_name','start_position','end_position','strand',
+                                        'percentage_gene_gc_content','gene_biotype','transcript_count'),
+                         mart = useMart("ensembl",
+                                        dataset = paste0(organism,"_gene_ensembl"),
+                                        host = "asia.ensembl.org")) %>%
+    data.table::setnames(., old =colnames(.),
+                         new = c('ensembl','chr','start','end','strand','gc_content','gene_biotype','transcript_count')) %>%
+    dplyr::mutate(width = (end - start + 1)) %>%
+    dplyr::relocate(width, .after = end)
+  return(biomart_other)
+}
 
 #--- get bioconductor annotation ---#
 if(F){
@@ -285,6 +303,7 @@ if(F){
   # then get gene name and alias
   name_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
   biomart_alias = .get_biomrt_alias(org)
+  biomart_other = .get_biomrt_other(org)
   ncbi_alias = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
     split(., .$gene_id) %>%
     lapply(., function(x) {
@@ -302,8 +321,10 @@ if(F){
     dplyr::rename(ensembl = ensembl_id) %>%
     merge(., biomart_alias, by='symbol',all.x=TRUE,all.y=FALSE) %>%
     # if add more from biomart, just add here...
+    merge(., biomart_other, by='ensembl',all.x=TRUE,all.y=FALSE) %>%
     dplyr::relocate(entrezid,.before = everything()) %>%
-    dplyr::arrange(entrezid)
+    dplyr::arrange(entrezid) %>%
+    dplyr::relocate(chr,start,end,width,strand, .after = uniprot)
 
 
   return(all)

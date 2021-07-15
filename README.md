@@ -36,7 +36,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - genecards虽然全，但是搜索数量有限制，于是整合了Ensembl 数据库和 `orgdb`中的基因信息 => `genInfo`
 
-  - 与Ensembl数据库保持同步，目前更新到v104
+  - 与Ensembl数据库保持同步，目前更新到v104 
   - 做了`biomart`的数据接口，可以扩展其中各种数据（序列数据由于太长，不支持该函数直接显示；会有相应的序列函数去获取）
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
@@ -77,7 +77,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
   不过这两个我都加入了`genInfo`中，分别是`ensembl_alias` 和`ncbi_alias` 
 
-- [ ] `genInfo`增加基因位置
+- [x] `genInfo`增加基因位置 【之前通过下载分析GTF，但现在用`biomart`接口更快更方便】
 
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 
@@ -111,6 +111,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ## DEBUG
 
 - [x] `genGO`的use_symbol参数不管用 （原因：如果提供的已经是symbol，那么就忽略了这个参数）
+- [ ] `genInfo` 如果有symbol对应不到ncbi的name，那么就找ncbi 和 ensembl alias的对应
 
 
 
