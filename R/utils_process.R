@@ -300,6 +300,7 @@ if(F){
     dplyr::rename(entrezid = gene_id) %>%
     dplyr::rename(ensembl = ensembl_id) %>%
     merge(., biomart_alias, by='symbol',all.x=TRUE,all.y=FALSE) %>%
+    # if add more from biomart, just add here...
     dplyr::relocate(entrezid,.before = everything()) %>%
     dplyr::arrange(entrezid)
 
