@@ -226,6 +226,7 @@ auto_install <- function(pkg){
   if (org == "mm" | org == "mouse" ) organism = 'mmusculus'
   if (org == "rn" | org == "rat" ) organism = 'rnorvegicus'
 
+  # Here, we created dataframe of gene symbol with alias
   biomart_alias = getBM( attributes = c("external_gene_name",'external_synonym','uniprot_gn_symbol'),
                          mart = useMart("ensembl",
                                         dataset = paste0(organism,"_gene_ensembl"),
@@ -237,9 +238,9 @@ auto_install <- function(pkg){
     do.call(rbind,.) %>%
     as.data.frame() %>%
     dplyr::mutate(symbol = rownames(.)) %>%
-    dplyr::rename(uniq_symbol = V1) %>%
-    dplyr::select(symbol, uniq_symbol) %>%
-    within(., uniq_symbol <- lapply(stringr::str_split(.[,'uniq_symbol'],'; '),
+    dplyr::rename(ensembl_alias = V1) %>%
+    dplyr::select(symbol, ensembl_alias) %>%
+    within(., ensembl_alias <- lapply(stringr::str_split(.[,'ensembl_alias'],'; '),
                                     function(x){
                                       unique(x) %>% paste0(.,collapse = '; ')}) %>% unlist())
 
@@ -283,22 +284,25 @@ if(F){
 
   # then get gene name and alias
   name_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
-  symbol_ids = symbol_dat %>% dplyr::pull(symbol) %>% unique()
-  alias_dat = .get_biomrt_alias(org)
-  # alias_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
-  #   split(., .$gene_id) %>%
-  #   lapply(., function(x) {
-  #     paste0(x[, 2], collapse = "; ")
-  #   })  %>% do.call(rbind,.) %>% as.data.frame() %>%
-  #   dplyr::mutate(gene_id = rownames(.)) %>%
-  #   dplyr::rename( gene_alias = V1) %>%
-  #   dplyr::select(gene_id,gene_alias)
+  biomart_alias = .get_biomrt_alias(org)
+  ncbi_alias = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
+    split(., .$gene_id) %>%
+    lapply(., function(x) {
+      paste0(x[, 2], collapse = "; ")
+    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
+    dplyr::mutate(gene_id = rownames(.)) %>%
+    dplyr::rename( ncbi_alias = V1) %>%
+    dplyr::select(gene_id,ncbi_alias)
 
   all = Reduce(function(x, y)
     merge(x, y, all=TRUE),
-    list(symbol_dat, ensembl_dat, uniprot_dat,name_dat,alias_dat )) %>%
+    list(symbol_dat, ensembl_dat, uniprot_dat,name_dat,ncbi_alias )) %>%
     dplyr::rename(entrezid = gene_id) %>%
-    dplyr::rename(ensembl = ensembl_id)
+    dplyr::rename(ensembl = ensembl_id) %>%
+    merge(., biomart_alias, by='symbol',all.x=TRUE,all.y=FALSE) %>%
+    dplyr::relocate(entrezid,.before = everything()) %>%
+    dplyr::arrange(entrezid)
+
 
   return(all)
 
