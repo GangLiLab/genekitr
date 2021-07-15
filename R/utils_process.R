@@ -288,6 +288,7 @@ if(F){
   ncbi_alias = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
     split(., .$gene_id) %>%
     lapply(., function(x) {
+      x = x[-nrow(x),]
       paste0(x[, 2], collapse = "; ")
     })  %>% do.call(rbind,.) %>% as.data.frame() %>%
     dplyr::mutate(gene_id = rownames(.)) %>%
