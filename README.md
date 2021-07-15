@@ -75,15 +75,15 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
   同时也发现**一个很有趣的事情**：标准命名人类的HGNC和小鼠的MGI都是以Ensembl数据库中的alias为准，而genecards用的是ncbi gene数据库的alias，为啥呢？其实看它们的创建国就知道了：GeneCards，是由以色列威兹曼研究院和美国Lifemap 生物科技有限公司；HGNC是EBI和剑桥大学联合；MGI是Jackson Lab，位于美国，但它比较倾向于Ensembl
 
-- [ ] 不过这两个我都加入了`genInfo`中，分别是`ensembl_alias` 和`ncbi_alias` 
+  不过这两个我都加入了`genInfo`中，分别是`ensembl_alias` 和`ncbi_alias` 
 
 - [ ] `genInfo`增加基因位置
 
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 
-- [ ] `genInfo`与biomart的融合
+- [x] `genInfo`与biomart的融合
 
-- [ ] 可以增加基因以及对应蛋白的序列
+- [ ] 可以增加基因以及对应蛋白的序列 => `genSeq` ?
 
 - [ ] `auto_install`增加镜像选择
 
