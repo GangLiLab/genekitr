@@ -67,7 +67,8 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ##### 信息获取 (Search)
 
 - [x] `genInfo` 的`orgdb`数据根据每个物种保存为rda，以便快速加载【总共支持12种bioconductor org】
-- [ ] `genInfo` 如果输入gene alias，那么直接替换为标准的symbol，并且把该alias放在alias列中【可以尝试借助biomart中的alias】
+- [x] `genInfo` 如果输入gene alias，那么直接替换为标准的symbol，并且把该alias放在alias列中【可以尝试借助biomart中的alias】
+  【用biomart的alias替换orgdb的alias（因为orgdb的alias采用的是ncbi gene数据库中的，存在大量冗余）】
 - [ ] `genInfo`增加基因位置
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 - [ ] `genInfo`与biomart的融合
