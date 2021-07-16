@@ -1,27 +1,27 @@
-##' Gene enrichment of KEGG analysis
-##'
-##' @param id a vector of entrez gene.
-##' @param org  character of organism name which can test by `mapKeggOrg()`.
-##' @param use_symbol logical to output as gene symbol, default is TRUE.
-##' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
-##' @param pvalueCutoff numberic of adjusted pvalue cutoff, default is 0.05.
-##' @param qvalueCutoff numberic of adjusted pvalue cutoff, default is 0.1.
-##' @param minGSSize numberic of minimal size of each geneSet for analyzing, default is 10.
-##' @param maxGSSize numberic of maximal size of each geneSet for analyzing, default is 500.
-##' @param universe background genes. If missing, the orgdb all gene list will be used as background.
-##' @return a dataframe of gene info.
-##' @importFrom dplyr pull
-##' @importFrom stringr str_to_title
-##' @importFrom clusterProfiler enrichGO
-##' @importFrom DOSE setReadable
-##' @export
-##' @examples
-##' \dontrun{
-##' data(geneList, package="DOSE")
-##' id = names(geneList)[1:100]
-##' keg <- genKEGG(id, org = 'human')
-##' head(keg)
-##' }
+#' Gene enrichment of KEGG analysis
+#'
+#' @param id a vector of entrez gene.
+#' @param org  character of organism name which can test by `mapKeggOrg()`.
+#' @param use_symbol logical to output as gene symbol, default is TRUE.
+#' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
+#' @param pvalueCutoff numberic of adjusted pvalue cutoff, default is 0.05.
+#' @param qvalueCutoff numberic of adjusted pvalue cutoff, default is 0.1.
+#' @param minGSSize numberic of minimal size of each geneSet for analyzing, default is 10.
+#' @param maxGSSize numberic of maximal size of each geneSet for analyzing, default is 500.
+#' @param universe background genes. If missing, the orgdb all gene list will be used as background.
+#' @return a dataframe of gene info.
+#' @importFrom dplyr pull
+#' @importFrom stringr str_to_title
+#' @importFrom clusterProfiler enrichGO
+#' @importFrom DOSE setReadable
+#' @export
+#' @examples
+#' \dontrun{
+#' data(geneList, package="DOSE")
+#' id = names(geneList)[1:100]
+#' keg <- genKEGG(id, org = 'human')
+#' head(keg)
+#' }
 genKEGG <- function(id,
                     org,
                     use_symbol = TRUE,

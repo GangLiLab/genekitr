@@ -1,18 +1,18 @@
-##' Get gene related pubmed paper record
-##'
-##' @param id gene "symbol".
-##' @param keywords species "mm" or "hs".
-##' @param field pubmed field from `showNCBI('pubmed')`, default is "ALL".
-##' @return a dataframe of pubmed paper records of genes.
-##' @importFrom easyPubMed get_pubmed_ids fetch_pubmed_data table_articles_byAuth
-##' @importFrom tidyr unite
-##' @importFrom dplyr select mutate relocate everything %>%
-##' @export
-##' @examples
-##' \dontrun{
-##' x = genPubmed(id = c("Cyp2c23","Fhit","Gal3st2b","Gbp4"), keywords = 'stem cell', field = 'tiab')
-##' }
-##'
+#' Get gene related pubmed paper record
+#'
+#' @param id gene "symbol".
+#' @param keywords species "mm" or "hs".
+#' @param field pubmed field from `showNCBI('pubmed')`, default is "ALL".
+#' @return a dataframe of pubmed paper records of genes.
+#' @importFrom easyPubMed get_pubmed_ids fetch_pubmed_data table_articles_byAuth
+#' @importFrom tidyr unite
+#' @importFrom dplyr select mutate relocate everything %>%
+#' @export
+#' @examples
+#' \dontrun{
+#' x = genPubmed(id = c("Cyp2c23","Fhit","Gal3st2b","Gbp4"), keywords = 'stem cell', field = 'tiab')
+#' }
+#'
 genPubmed <- function(id,
                       keywords,
                       field = "ALL",

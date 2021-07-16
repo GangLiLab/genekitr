@@ -1,17 +1,17 @@
-##' transform gene id among symbol, entrezid and ensembl
-##' @param id character of gene ids.
-##' @param trans_to transform to which type, one of symbol, entrezid and ensembl.
-##' @param org organism name from `biocOrg_name`.
-##' @param return_dat logical, default is `TRUE`, return a dataframe of transformed ids.
-##' @return a character or dataframe of transformed ids.
-##' @importFrom dplyr %>% filter pull select distinct arrange all_of
-##' @importFrom AnnotationDbi toTable
-##' @importFrom tibble add_row
-##' @export
-##' @examples
-##' \donttest{
-##' msigdb <- getMsigdb(org='human', category='C5',subcategory='GO:CC')
-##' }
+#' transform gene id among symbol, entrezid and ensembl
+#' @param id character of gene ids.
+#' @param trans_to transform to which type, one of symbol, entrezid and ensembl.
+#' @param org organism name from `biocOrg_name`.
+#' @param return_dat logical, default is `TRUE`, return a dataframe of transformed ids.
+#' @return a character or dataframe of transformed ids.
+#' @importFrom dplyr %>% filter pull select distinct arrange all_of
+#' @importFrom AnnotationDbi toTable
+#' @importFrom tibble add_row
+#' @export
+#' @examples
+#' \donttest{
+#' msigdb <- getMsigdb(org='human', category='C5',subcategory='GO:CC')
+#' }
 transId <- function(id, trans_to, org, return_dat = FALSE){
 
   #--- args ---#

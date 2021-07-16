@@ -1,20 +1,20 @@
 # AnnoGenes utilities for analysing
 
-##' @title Get Msigdb database term and gene information
-##' @param org organism name from `msigdb_org_data()`.
-##' @param category MSigDB collection abbreviation, C1 to C8 and H.
-##' @param subcategory MSigDB sub-collection abbreviation, such as REACTOME or BP.
-##' @return a dataframe of 3 columns with term, entrez and symbol name.
-##' @importFrom msigdbr msigdbr
-##' @importFrom stringr str_split
-##' @importFrom utils data
-##' @importFrom dplyr %>% filter pull select
-##' @importFrom stringi stri_remove_empty_na
-##' @export
-##' @examples
-##' \donttest{
-##' msigdb <- getMsigdb(org='human', category='C5',subcategory='GO:CC')
-##' }
+#' @title Get Msigdb database term and gene information
+#' @param org organism name from `msigdb_org_data()`.
+#' @param category MSigDB collection abbreviation, C1 to C8 and H.
+#' @param subcategory MSigDB sub-collection abbreviation, such as REACTOME or BP.
+#' @return a dataframe of 3 columns with term, entrez and symbol name.
+#' @importFrom msigdbr msigdbr
+#' @importFrom stringr str_split
+#' @importFrom utils data
+#' @importFrom dplyr %>% filter pull select
+#' @importFrom stringi stri_remove_empty_na
+#' @export
+#' @examples
+#' \donttest{
+#' msigdb <- getMsigdb(org='human', category='C5',subcategory='GO:CC')
+#' }
 getMsigdb <- function(org,
                       category = c('C1','C2','C3','C4','C5','C6','C7','C8','H'),
                       subcategory=NULL,

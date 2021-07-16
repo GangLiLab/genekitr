@@ -1,16 +1,16 @@
-##' Get gene info using org.db
-##'
-##' @param id gene id.
-##' @param org species name from `biocOrg_name()`.
-##' @return a dataframe of gene info.
-##' @importFrom stringr str_detect
-##' @importFrom magrittr set_rownames
-##' @importFrom dplyr  %>% filter arrange relocate pull select mutate case_when
-##' @export
-##' @examples
-##' \dontrun{
-##' x = genInfo(id= c("Cyp2c23","Fhit","Gal3st2b","Gbp4"), org = 'mm')
-##' }
+#' Get gene info using org.db
+#'
+#' @param id gene id.
+#' @param org species name from `biocOrg_name()`.
+#' @return a dataframe of gene info.
+#' @importFrom stringr str_detect
+#' @importFrom magrittr set_rownames
+#' @importFrom dplyr  %>% filter arrange relocate pull select mutate case_when
+#' @export
+#' @examples
+#' \donttest{
+#' x = genInfo(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"), org = 'mm')
+#' }
 
 genInfo <- function(id,
                     org,

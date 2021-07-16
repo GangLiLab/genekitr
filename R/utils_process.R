@@ -1,14 +1,14 @@
 # AnnoGenes utilities for processing
 
-##' @title Show NCBI database searchable name
-##' @param db a character vector. Can be "pubmed" or one or more of `rentrez::entrez_dbs()` result.
-##' @return a dataframe including search keyword and information.
-##' @importFrom rentrez entrez_db_searchable
-##' @export
-##' @examples
-##' \donttest{
-##' showNCBI("pubmed")
-##' }
+#' @title Show NCBI database searchable name
+#' @param db a character vector. Can be "pubmed" or one or more of `rentrez::entrez_dbs()` result.
+#' @return a dataframe including search keyword and information.
+#' @importFrom rentrez entrez_db_searchable
+#' @export
+#' @examples
+#' \donttest{
+#' showNCBI("pubmed")
+#' }
 showNCBI <- function(db = "pubmed") {
   # suppress binding notes
   fields <- rentrez::entrez_db_searchable(db)
@@ -21,18 +21,18 @@ showNCBI <- function(db = "pubmed") {
   return(res)
 }
 
-##' export result into different sheets
-##' @param wb worksheet from `createWorkbook()`.
-##' @param sheet_dat dataframe added to sheet.
-##' @param sheet_name name of added dataframe.
-##' @return a worksheet including many dataframes.
-##' @importFrom stringr str_detect
-##' @importFrom openxlsx addWorksheet writeData writeFormula createStyle addStyle setColWidths
-##' @export
-##' @examples
-##' \donttest{
-##' expo_sheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
-##' }
+#' export result into different sheets
+#' @param wb worksheet from `createWorkbook()`.
+#' @param sheet_dat dataframe added to sheet.
+#' @param sheet_name name of added dataframe.
+#' @return a worksheet including many dataframes.
+#' @importFrom stringr str_detect
+#' @importFrom openxlsx addWorksheet writeData writeFormula createStyle addStyle setColWidths
+#' @export
+#' @examples
+#' \donttest{
+#' expo_sheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
+#' }
 expo_sheet <- function(wb, sheet_dat, sheet_name) {
   addWorksheet(wb, sheet_name)
   writeData(wb, sheet = sheet_name, x = sheet_dat)

@@ -1,40 +1,40 @@
-##' Venn plot for list of genes
-##' If venn list length is over 4, use UpSet plot
-##'
-##' @param venn_list a group list of genes or others to plot venn
-##' @param color colors for venn_list, default is NULL.
-##' @param alpha_degree alpha transparency of each circle's area, default is 0.3.
-##' @param border_thick thickness of each circle, default is 1.
-##' @param text_size text size, default is 1.
-##' @param remove_grid logical, remove circle or grid lines, default is `FALSE`.
-##' @param use_venn logical, use venn to plot, default is `TRUE`, the other option is upsetplot for large list.
-##' @return ggplot object
-##' @importFrom futile.logger flog.threshold ERROR
-##' @importFrom VennDiagram venn.diagram
-##' @importFrom RColorBrewerbrewer.pal
-##' @importFrom cowplot as_grob
-##' @importFrom ggplotify as.ggplot
-##' @importFrom scales alpha
-##' @importFrom stats setNames
-##' @importFrom dplyr as_tibble filter select group_by summarize %>%
-##' @importFrom tidyr gather
-##' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme element_blank
-##' @importFrom ggupset scale_x_upset  scale_y_continuous
-##' @export
-##' @examples
-##' \dontrun{
-##' set1 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
-##' set2 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
-##' set3 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
-##' set4 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
-##' set5 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
-##' sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
-##' la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3, gset4 = set4, gset5 = set5 )
-##' plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = 1,remove_grid = T,color = ggsci::pal_lancet()(3))
-##' plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,
-##' remove_grid = T, use_venn = F)
-##'
-##' }
+#' Venn plot for list of genes
+#' If venn list length is over 4, use UpSet plot
+#'
+#' @param venn_list a group list of genes or others to plot venn
+#' @param color colors for venn_list, default is NULL.
+#' @param alpha_degree alpha transparency of each circle's area, default is 0.3.
+#' @param border_thick thickness of each circle, default is 1.
+#' @param text_size text size, default is 1.
+#' @param remove_grid logical, remove circle or grid lines, default is `FALSE`.
+#' @param use_venn logical, use venn to plot, default is `TRUE`, the other option is upsetplot for large list.
+#' @return ggplot object
+#' @importFrom futile.logger flog.threshold ERROR
+#' @importFrom VennDiagram venn.diagram
+#' @importFrom RColorBrewerbrewer.pal
+#' @importFrom cowplot as_grob
+#' @importFrom ggplotify as.ggplot
+#' @importFrom scales alpha
+#' @importFrom stats setNames
+#' @importFrom dplyr as_tibble filter select group_by summarize %>%
+#' @importFrom tidyr gather
+#' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme element_blank
+#' @importFrom ggupset scale_x_upset  scale_y_continuous
+#' @export
+#' @examples
+#' \dontrun{
+#' set1 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+#' set2 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+#' set3 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+#' set4 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+#' set5 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
+#' sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
+#' la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3, gset4 = set4, gset5 = set5 )
+#' plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = 1,remove_grid = T,color = ggsci::pal_lancet()(3))
+#' plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,
+#' remove_grid = T, use_venn = F)
+#'
+#' }
 
 plotVenn <- function(venn_list,
                      color = NULL,

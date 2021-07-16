@@ -1,23 +1,23 @@
-##' GSEA for a genelist with decreasing logFC value
-##'
-##' @param genelist order ranked genelist in decreasing order, gene can be entrez or symbol.
-##' @param org organism name from `msigdb_org_data()`.
-##' @param category MSigDB collection abbreviation, C1 to C8 and H.
-##' @param subcategory MSigDB sub-collection abbreviation, such as REACTOME or BP.
-##' @param use_symbol logical to output as gene symbol, default is TRUE.
-##' @param minGSSize minimal size of each geneSet for analyzing, default is 10.
-##' @param maxGSSize maximal size of each geneSet for analyzing, default is 500.
-##' @param pvalueCutoff adjusted pvalue cutoff, default is 0.05.
-##' @return a dataframe of gene info.
-##' @importFrom dplyr select
-##' @importFrom clusterProfiler GSEA
-##' @importFrom DOSE setReadable
-##' @export
-##' @examples
-##' \dontrun{
-##' data(geneList, package="DOSE")
-##' genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD',use_symbol = F)
-##' }
+#' GSEA for a genelist with decreasing logFC value
+#'
+#' @param genelist order ranked genelist in decreasing order, gene can be entrez or symbol.
+#' @param org organism name from `msigdb_org_data()`.
+#' @param category MSigDB collection abbreviation, C1 to C8 and H.
+#' @param subcategory MSigDB sub-collection abbreviation, such as REACTOME or BP.
+#' @param use_symbol logical to output as gene symbol, default is TRUE.
+#' @param minGSSize minimal size of each geneSet for analyzing, default is 10.
+#' @param maxGSSize maximal size of each geneSet for analyzing, default is 500.
+#' @param pvalueCutoff adjusted pvalue cutoff, default is 0.05.
+#' @return a dataframe of gene info.
+#' @importFrom dplyr select
+#' @importFrom clusterProfiler GSEA
+#' @importFrom DOSE setReadable
+#' @export
+#' @examples
+#' \dontrun{
+#' data(geneList, package="DOSE")
+#' genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD',use_symbol = F)
+#' }
 genGSEA <- function(genelist,
                     org,
                     category = c('C1','C2','C3','C4','C5','C6','C7','C8','H'),

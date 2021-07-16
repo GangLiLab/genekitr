@@ -18,3 +18,4 @@ Imports:
     org.Mm.eg.db,
     org.Hs.eg.db,
     ggplot2
+RoxygenNote: 7.1.1
