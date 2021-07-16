@@ -110,6 +110,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ## DEBUG
 
 - [x] `genGO`的use_symbol参数不管用 （原因：如果提供的已经是symbol，那么就忽略了这个参数）
+- [x] 函数正常使用，但是帮助文档出不来（原因：写完函数忘记`devtools::document()` ，跳过这一步直接刷新包就会导致文档没更新）
 
 
 
