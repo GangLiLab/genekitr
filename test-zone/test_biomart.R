@@ -1,4 +1,5 @@
 library(biomaRt)
+library(dplyr)
 ensembl <- useMart("ensembl",host = "asia.ensembl.org")
 listDatasets(ensembl) %>% dplyr::pull(1) %>% stringr::str_remove_all('_gene_ensembl')
 
@@ -41,17 +42,23 @@ biomart_alias = getBM( values = unique(all$symbol),
   dplyr::arrange(match(symbol, mm_id))
 
 
-# get all symbols
+# get other info
 library(biomaRt)
 organism = 'hsapiens'
-bmt = getBM( attributes = c("ensembl_gene_id",'chromosome_name','start_position','end_position','strand',
-                      'percentage_gene_gc_content','gene_biotype','transcript_count'),
+bmt = getBM( attributes = c("entrezgene_id","external_gene_name","ensembl_gene_id",
+                            'chromosome_name','start_position','end_position','strand',
+                      "uniprot_gn_symbol","entrezgene_description",'percentage_gene_gc_content',
+                      'gene_biotype','transcript_count'),
        mart = useMart("ensembl",
                       dataset = paste0(organism,"_gene_ensembl"),
                       host = "asia.ensembl.org")) %>%
   data.table::setnames(., old =colnames(.),
            new = c('ensembl','chr','start','end','strand','gc_content','gene_biotype','transcript_count')) %>%
-  dplyr::mutate(width = (end - start + 1))
+  dplyr::mutate(width = (end - start + 1)) %>%
+  dplyr::relocate(width, .after = end)%>%
+  dplyr::relocate(chr,start,end,width,strand, .after = uniprot)
 
-colnames(bmt)
+
+
+
 

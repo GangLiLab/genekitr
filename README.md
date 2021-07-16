@@ -69,19 +69,17 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - [x] `genInfo` 的`orgdb`数据根据每个物种保存为rda，以便快速加载【总共支持12种bioconductor org】
 
-- [x] `genInfo` 如果输入gene alias，那么直接替换为标准的symbol，并且把该alias放在alias列中【可以尝试借助biomart中的alias】
-
-  【用biomart的alias替换orgdb的alias（因为orgdb的alias采用的是ncbi gene数据库中的，存在大量冗余）】
-
-  同时也发现**一个很有趣的事情**：标准命名人类的HGNC和小鼠的MGI都是以Ensembl数据库中的alias为准，而genecards用的是ncbi gene数据库的alias，为啥呢？其实看它们的创建国就知道了：GeneCards，是由以色列威兹曼研究院和美国Lifemap 生物科技有限公司；HGNC是EBI和剑桥大学联合；MGI是Jackson Lab，位于美国，但它比较倾向于Ensembl
-
-  不过这两个我都加入了`genInfo`中，分别是`ensembl_alias` 和`ncbi_alias` 
+- [ ] `genInfo` 输入name是gene alias：如果有对应的symbol，那么symbol列就写输入的name，其他列用标准symbol对应的列；如果没有对应的alias，那么其他列就是NA
 
 - [x] `genInfo`增加基因位置 【之前通过下载分析GTF，但现在用`biomart`接口更快更方便】
 
 - [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
 
 - [x] `genInfo`与biomart的融合
+
+  同时也发现**一个很有趣的事情**：标准命名人类的HGNC和小鼠的MGI都是以Ensembl数据库中的alias为准，而genecards用的是ncbi gene数据库的alias，为啥呢？其实看它们的创建国就知道了：GeneCards，是由以色列威兹曼研究院和美国Lifemap 生物科技有限公司；HGNC是EBI和剑桥大学联合；MGI是Jackson Lab，位于美国，但它比较倾向于Ensembl
+
+  不过这两个我都加入了`genInfo`中，分别是`ensembl_alias` 和`ncbi_alias` 
 
 - [ ] 可以增加基因以及对应蛋白的序列 => `genSeq` ?
 
