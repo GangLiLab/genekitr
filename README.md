@@ -37,7 +37,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - genecards虽然全，但是搜索数量有限制，于是整合了Ensembl 数据库和 `orgdb`中的基因信息 => `genInfo`
 
   - 与Ensembl数据库保持同步，做了`biomart`的数据接口，可以扩展其中各种数据（序列数据由于太长，不支持该函数直接显示；会有相应的序列函数去获取）
-  - 如果有gene alias，会匹配对应的标准symbol
+  - 基因id 100%的匹配，没有对应返回NA；存在alias的返回标准symbol name
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
 #### 数据整理与转换（Tidy & Trans）
@@ -88,7 +88,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ##### 数据整理与转换（Tidy & Trans）
 
 - [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
-- [ ] 从`genInfo`的结果中提取转换后的id
+- [ ] 从`genInfo`的结果中提取转换后的id，可以更快更准确
 
 ##### 数据分析（Analyse）
 

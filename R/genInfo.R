@@ -3,10 +3,9 @@
 ##' @param id gene id.
 ##' @param org species name from `biocOrg_name()`.
 ##' @return a dataframe of gene info.
-##' @importFrom stringr str_split
-##' @importFrom tibble add_row
-##' @importFrom stats setNames
-##' @importFrom dplyr  %>% filter arrange relocate pull
+##' @importFrom stringr str_detect
+##' @importFrom magrittr set_rownames
+##' @importFrom dplyr  %>% filter arrange relocate pull select mutate case_when
 ##' @export
 ##' @examples
 ##' \dontrun{
@@ -42,7 +41,7 @@ genInfo <- function(id,
       dplyr::select(-input_id)
   }else{
     gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
-      dplyr::mutate(symbol = case_when(input_id%in%all$symbol ~ input_id)) %>%
+      dplyr::mutate(symbol = dplyr::case_when(input_id%in%all$symbol ~ input_id)) %>%
       dplyr::relocate(symbol, .after = input_id) %>%
       dplyr::distinct() %>%
       magrittr::set_rownames(.$input_id) %>%
