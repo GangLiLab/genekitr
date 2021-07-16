@@ -44,6 +44,7 @@ genInfo <- function(id,
     gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
       dplyr::mutate(symbol = case_when(input_id%in%all$symbol ~ input_id)) %>%
       dplyr::relocate(symbol, .after = input_id) %>%
+      dplyr::distinct() %>%
       magrittr::set_rownames(.$input_id) %>%
       dplyr::select(-input_id)
 

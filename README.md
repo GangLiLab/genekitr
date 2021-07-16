@@ -148,8 +148,8 @@ Next, let's test mouse id:
 # here, some mouse id are not standard name, like histone genes (H1-0, H1-1...)
 # but we can still get matched standard symbol name
 # Besides, we add two fakegenes to test the robustness
-mm_id = c("Gtpbp4", "Gtpbp8", "Gtse1" , "Gys1","H1-0", "H1-1" ,"H1-2" ,"H1-3" ,"H1-4",
-          "H1-5" ,"H1-6","H2ac21","H2ax","H2az2")
+mm_id = c("Gtpbp4", "Gtpbp8", "Gtse1" , "Gys1","H1-0", "H1-1" ,"H1-2" ,"H1-3" ,"Fakegene1","H1-4",
+          "H1-5" ,"H1-6","H2ac21","H2ax","H2az2","Fakegene2")
 genInfo(mm_id, org = 'mouse')
 ```
 

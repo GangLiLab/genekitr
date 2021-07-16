@@ -294,7 +294,14 @@ if(F){
   # keytypes(org.Hs.eg.db)
   # first get main id data (entrez, symbol, ensembl, uniprot)
   symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  ensembl_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  ensembl_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL")))) %>%
+    split(., .$gene_id) %>%
+    lapply(., function(x) {
+      paste0(x[, 2], collapse = "; ")
+    })  %>% do.call(rbind,.) %>% as.data.frame() %>%
+    dplyr::mutate(gene_id = rownames(.)) %>%
+    dplyr::rename( ensembl_id = V1) %>%
+    dplyr::select(gene_id,ensembl_id)
   uniprot_dat <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))%>%
     split(., .$gene_id) %>%
     lapply(., function(x) {

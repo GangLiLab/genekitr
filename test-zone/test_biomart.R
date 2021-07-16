@@ -55,7 +55,7 @@ organism = 'hsapiens'
 bmt = getBM( attributes = c("entrezgene_id","external_gene_name","ensembl_gene_id",
                             'chromosome_name','start_position','end_position','strand',
                       "uniprot_gn_symbol","entrezgene_description",'percentage_gene_gc_content',
-                      'gene_biotype','transcript_count','cds_start'),
+                      'gene_biotype'),
        mart = useMart("ensembl",
                       dataset = paste0(organism,"_gene_ensembl"),
                       host = "asia.ensembl.org"))
