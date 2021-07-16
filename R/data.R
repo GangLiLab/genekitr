@@ -49,175 +49,141 @@ NULL
 #' str(keggOrg_name)
 NULL
 
-#--- ENSEMBL ANNO PART ---#
+
+#--- ORGANISM ANNO PART ---#
 #' Datasets
-#' ensembl gtf annotation data homo_sapiens_V104_gtf
+#' Ag annotation data
 #'
 #' @name Datasets
-#' @aliases homo_sapiens_V104_gtf
+#' @aliases Ag_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(homo_sapiens_V104_gtf)
+#' data(Ag_anno)
 NULL
 
 #' Datasets
-#' ensembl gtf annotation data mus_musculus_V104_gtf
+#' Bt annotation data
 #'
 #' @name Datasets
-#' @aliases mus_musculus_V104_gtf
+#' @aliases Bt_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(mus_musculus_V104_gtf)
-NULL
-
-
-#' Datasets
-#' ensembl gtf annotation data rattus_norvegicus_V104_gtf
-#'
-#' @name Datasets
-#' @aliases rattus_norvegicus_V104_gtf
-#' @docType data
-#' @keywords datasets
-#' @examples
-#' data(rattus_norvegicus_V104_gtf)
-NULL
-
-#--- BIOCONDUCTOR ANNO PART ---#
-#' Datasets
-#' bioconductor annotation data Ag
-#'
-#' @name Datasets
-#' @aliases Ag_bioc_anno.rda
-#' @docType data
-#' @keywords datasets
-#' @examples
-#' data(Ag_bioc_anno.rda)
+#' data(Bt_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Bt
+#' Ce annotation data
 #'
 #' @name Datasets
-#' @aliases Bt_bioc_anno.rda
+#' @aliases Ce_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Bt_bioc_anno.rda)
-NULL
-
-#' Datasets
-#' bioconductor annotation data Ce
-#'
-#' @name Datasets
-#' @aliases Ce_bioc_anno.rda
-#' @docType data
-#' @keywords datasets
-#' @examples
-#' data(Ce_bioc_anno.rda)
+#' data(Ce_anno)
 NULL
 
 
 #' Datasets
-#' bioconductor annotation data Cf
+#' Cf annotation data
 #'
 #' @name Datasets
-#' @aliases Cf_bioc_anno.rda
+#' @aliases Cf_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Cf_bioc_anno.rda)
+#' data(Cf_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Dm
+#' Dm annotation data
 #'
 #' @name Datasets
-#' @aliases Dm_bioc_anno.rda
+#' @aliases Dm_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Dm_bioc_anno.rda)
+#' data(Dm_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Dr
+#' Dr annotation data
 #'
 #' @name Datasets
-#' @aliases Dr_bioc_anno.rda
+#' @aliases Dr_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Dr_bioc_anno.rda)
+#' data(Dr_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Gg
+#' Gg annotation data
 #'
 #' @name Datasets
-#' @aliases Gg_bioc_anno.rda
+#' @aliases Gg_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Gg_bioc_anno.rda)
+#' data(Gg_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Hs
+#' Hs annotation data
 #'
 #' @name Datasets
-#' @aliases Hs_bioc_anno.rda
+#' @aliases Hs_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Hs_bioc_anno.rda)
+#' data(Hs_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Mm
+#' Mm annotation data
 #'
 #' @name Datasets
-#' @aliases Mm_bioc_anno.rda
+#' @aliases Mm_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Mm_bioc_anno.rda)
+#' data(Mm_anno)
 NULL
 
 #' Datasets
-#' bioconductor annotation data Mmu
+#' Mmu annotation data
 #'
 #' @name Datasets
-#' @aliases Mmu_bioc_anno.rda
+#' @aliases Mmu_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Mmu_bioc_anno.rda)
-NULL
-
-
-#' Datasets
-#' bioconductor annotation data Pt
-#'
-#' @name Datasets
-#' @aliases Pt_bioc_anno.rda
-#' @docType data
-#' @keywords datasets
-#' @examples
-#' data(Pt_bioc_anno.rda)
+#' data(Mmu_anno)
 NULL
 
 
 #' Datasets
-#' bioconductor annotation data Rn
+#' Pt annotation data
 #'
 #' @name Datasets
-#' @aliases Rn_bioc_anno.rda
+#' @aliases Pt_anno
 #' @docType data
 #' @keywords datasets
 #' @examples
-#' data(Rn_bioc_anno.rda)
+#' data(Pt_anno)
+NULL
+
+
+#' Datasets
+#' Rn annotation data
+#'
+#' @name Datasets
+#' @aliases Rn_anno
+#' @docType data
+#' @keywords datasets
+#' @examples
+#' data(Rn_anno)
 NULL
 
 

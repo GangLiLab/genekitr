@@ -175,48 +175,52 @@ auto_install <- function(pkg){
 
 #--- get ensembl annotation ---#
 # current ensembl version: 104
-.get_ensembl_anno <- function(org, ensembl_version = '104', path = 'data'){
-  #--- args ---#
+# DEPRECATED NOW!
+if(F){
+  .get_ensembl_anno <- function(org, ensembl_version = '104', path = 'data'){
+    #--- args ---#
 
-  # For now supports common research species
-  if (org == "hg" | org == "human" | org == "hs" | org == "hsa") organism = 'homo_sapiens'
-  if (org == "mm" | org == "mouse" ) organism = 'mus_musculus'
-  if (org == "rn" | org == "rat" ) organism = 'rattus_norvegicus'
-  # if (org == "dm" | org == "fly" ) organism = 'drosophila_melanogaster'
-  # if (org == "dre"| org == "dr" | org == "zebrafish" ) organism = 'danio_rerio'
+    # For now supports common research species
+    if (org == "hg" | org == "human" | org == "hs" | org == "hsa") organism = 'homo_sapiens'
+    if (org == "mm" | org == "mouse" ) organism = 'mus_musculus'
+    if (org == "rn" | org == "rat" ) organism = 'rattus_norvegicus'
+    # if (org == "dm" | org == "fly" ) organism = 'drosophila_melanogaster'
+    # if (org == "dre"| org == "dr" | org == "zebrafish" ) organism = 'danio_rerio'
 
-  if(! organism %in% c('homo_sapiens','mus_musculus','rattus_norvegicus','drosophila_melanogaster','danio_rerio')){
-    stop("For now we support species from:\n homo_sapiens | mus_musculus | rattus_norvegicus ")
+    if(! organism %in% c('homo_sapiens','mus_musculus','rattus_norvegicus','drosophila_melanogaster','danio_rerio')){
+      stop("For now we support species from:\n homo_sapiens | mus_musculus | rattus_norvegicus ")
+    }
+
+    rda_file = paste0(path,'/',organism,'_V',ensembl_version,'_gtf.rda')
+    gtf_fle = list.files(path, pattern = stringr::str_to_title(organism), full.names = T)
+
+    command = paste0("wget -c -r -nd -np -R 'index.html*' -A '",
+                     stringr::str_to_title(organism),".*.",ensembl_version,".gtf.gz'",
+                     " ftp://ftp.ensembl.org/pub/current_gtf/", organism,"/")
+
+    #--- codes ---#
+    if(!file.exists(rda_file)){
+      system(command)
+      dat = rtracklayer::import(gtf_fle) %>%
+        as.data.frame() %>%
+        dplyr::filter(type == 'gene')%>%
+        dplyr::select(-c(15:ncol(.),ends_with('source'),'score','phase','gene_version')) %>%
+        dplyr::rename(ensembl = gene_id) %>%
+        dplyr::rename(symbol = gene_name) %>%
+        dplyr::rename(chr = seqnames) %>%
+        dplyr::relocate(symbol, ensembl,.before =  everything())
+
+      entrz = transId(id = dat$ensembl, trans_to = 'entrez',org, return_dat = T)
+      new_dat = merge(entrz, dat, by = 'ensembl', all.y = T)%>%
+        dplyr::relocate(entrezid,.before = everything()) %>%
+        dplyr::arrange(entrezid)
+
+      assign(paste0(org,'_gtf'), new_dat)
+      save(list=paste0(org,'_gtf'), file=rda_file)
+
+    }
   }
 
-  rda_file = paste0(path,'/',organism,'_V',ensembl_version,'_gtf.rda')
-  gtf_fle = list.files(path, pattern = stringr::str_to_title(organism), full.names = T)
-
-  command = paste0("wget -c -r -nd -np -R 'index.html*' -A '",
-                   stringr::str_to_title(organism),".*.",ensembl_version,".gtf.gz'",
-                   " ftp://ftp.ensembl.org/pub/current_gtf/", organism,"/")
-
-  #--- codes ---#
-  if(!file.exists(rda_file)){
-    system(command)
-    dat = rtracklayer::import(gtf_fle) %>%
-      as.data.frame() %>%
-      dplyr::filter(type == 'gene')%>%
-      dplyr::select(-c(15:ncol(.),ends_with('source'),'score','phase','gene_version')) %>%
-      dplyr::rename(ensembl = gene_id) %>%
-      dplyr::rename(symbol = gene_name) %>%
-      dplyr::rename(chr = seqnames) %>%
-      dplyr::relocate(symbol, ensembl,.before =  everything())
-
-    entrz = transId(id = dat$ensembl, trans_to = 'entrez',org, return_dat = T)
-    new_dat = merge(entrz, dat, by = 'ensembl', all.y = T)%>%
-      dplyr::relocate(entrezid,.before = everything()) %>%
-      dplyr::arrange(entrezid)
-
-    assign(paste0(org,'_gtf'), new_dat)
-    save(list=paste0(org,'_gtf'), file=rda_file)
-
-  }
 }
 
 #--- get biomart alias ---#
@@ -268,22 +272,22 @@ auto_install <- function(pkg){
   return(biomart_other)
 }
 
-#--- get bioconductor annotation ---#
+#--- get organism annotation ---#
 if(F){
   gsub('eck12|ecSakai|ss|xl','',biocOrg_name$short_name) %>%
     stringi::stri_remove_empty_na() %>%
     for(i in .){
       # i = biocOrg_name$short_name[1]
-      if(!file.exists(paste0('data/',stringr::str_to_title(i),'_bioc_anno.rda'))){
-        x = .get_bioc_anno(i)
-        assign(paste0(stringr::str_to_title(i),'_bioc_anno'), x)
-        save(list = paste0(stringr::str_to_title(i),'_bioc_anno'),
-             file = paste0('data/',stringr::str_to_title(i),'_bioc_anno.rda'))
+      if(!file.exists(paste0('data/',stringr::str_to_title(i),'_anno.rda'))){
+        x = .get_org_anno(i)
+        assign(paste0(stringr::str_to_title(i),'_anno'), x)
+        save(list = paste0(stringr::str_to_title(i),'_anno'),
+             file = paste0('data/',stringr::str_to_title(i),'_anno.rda'))
       }
     }
 }
 
-.get_bioc_anno <- function(org){
+.get_org_anno <- function(org){
   org = mapBiocOrg(tolower(org))
   .load_orgdb(org)
 
