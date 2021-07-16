@@ -69,7 +69,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - [x] `genInfo` 的`orgdb`数据根据每个物种保存为rda，以便快速加载【总共支持12种bioconductor org】
 
-- [ ] `genInfo` 输入name是gene alias：如果有对应的symbol，那么symbol列就写输入的name，其他列用标准symbol对应的列；如果没有对应的alias，那么其他列就是NA
+- [x] `genInfo` 输入name是gene alias：如果有对应的symbol，那么symbol列就写输入的name，其他列用标准symbol对应的列；如果没有对应的alias，那么其他列就是NA
 
 - [x] `genInfo`增加基因位置 【之前通过下载分析GTF，但现在用`biomart`接口更快更方便】
 
@@ -109,7 +109,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ## DEBUG
 
 - [x] `genGO`的use_symbol参数不管用 （原因：如果提供的已经是symbol，那么就忽略了这个参数）
-- [ ] `genInfo` 如果有symbol对应不到ncbi的name，那么就找ncbi 和 ensembl alias的对应
+- [x] `genInfo` 如果有symbol对应不到ncbi的name，那么就找ncbi 和 ensembl alias的对应
 
 
 
@@ -131,17 +131,29 @@ mm_id=str_split(mm_id,"\n")[[1]]
 
 - **AUTO** detect orgnism name (e.g. `human/hs/hg`  is fine)
   - support 12 organisms (maybe more in the future...)
-  - use `biocAnno(org)`  to get data
 - **AUTO** detect duplicate ID, ID alias or wrong spelled ID
-- Make sure the input order is identical with the output
+- Make sure the input order is identical with the output rownames
 
 ```R
 # in this example, BCC7 is the alias of TP53; SXHFJG is a fake name
-id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53"  )
-genInfo(id, org = 'human')
+hg_id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53"  )
+genInfo(hg_id, org = 'human')
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-13-145933.png)
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-16-061933.png)
+
+Next, let's test mouse id:
+
+```R
+# here, some mouse id are not standard name, like histone genes (H1-0, H1-1...)
+# but we can still get matched standard symbol name
+# Besides, we add two fakegenes to test the robustness
+mm_id = c("Gtpbp4", "Gtpbp8", "Gtse1" , "Gys1","H1-0", "H1-1" ,"H1-2" ,"H1-3" ,"H1-4",
+          "H1-5" ,"H1-6","H2ac21","H2ax","H2az2")
+genInfo(mm_id, org = 'mouse')
+```
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-16-063245.png)
 
 
 

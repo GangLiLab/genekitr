@@ -20,8 +20,9 @@ genInfo <- function(id,
   options(warn = -1)
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 
+  org.bk = org
   org = mapBiocOrg(tolower(org))
-  .load_orgdb(org)
+  # .load_orgdb(org)
   keytype = .gentype(id, org) %>% tolower()
 
   if(any(duplicated(id))){
@@ -30,64 +31,36 @@ genInfo <- function(id,
   }
 
   #--- code ---#
-  all = biocAnno(org)
-  gene_info <- all %>%
-    dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
-    dplyr::arrange(match(eval(parse(text = keytype)), id)) %>%
-    dplyr::relocate(all_of(keytype),.before = dplyr::everything())
+  all = biocAnno(org)%>% dplyr::relocate(all_of(keytype),.before = everything())
 
-  # if some ids are spelled wrong or the name is an alias
-  all_alias = all %>% dplyr::pull(gene_alias) %>% stringr::str_split(.,';') %>%
-    unlist() %>% unique() %>% stringr::str_remove_all(' ')
+  tmp1 = data.frame(input_id = id)
+  tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)
 
-  if(any(!id %in% all[,keytype])){
-    if(keytype == 'symbol'){
-      # first to check: if input id is wrong
-      check = which( !id %in% all[,keytype] & !id %in% all_alias )
-      tmp = data.frame(rep(NA,ncol(gene_info))) %>% t() %>% as.data.frame() %>%
-        stats::setNames(.,colnames(gene_info))
-      rownames(tmp) = '1'
+  if(keytype != 'symbol'){
+    gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
+      magrittr::set_rownames(.$input_id) %>%
+      dplyr::select(-input_id)
+  }else{
+    gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
+      dplyr::mutate(symbol = case_when(input_id%in%all$symbol ~ input_id)) %>%
+      dplyr::relocate(symbol, .after = input_id) %>%
+      magrittr::set_rownames(.$input_id) %>%
+      dplyr::select(-input_id)
 
-      i = 1
-      while (i <= length(check) ) {
-        gene_info = gene_info %>%
-          tibble::add_row(tmp,
-                          .before = check[i])
-        gene_info[check,1] = id[check]
-
-        i = i+1
-      }
-
-      # then check: if input id is alias
-      check = which( !id %in% all[,keytype] & id %in% all_alias )
-      i = 1
-      while (i <= length(check) ) {
-        gene_info = gene_info %>%
-          tibble::add_row(all[mapply(grepl, paste0('\\b',id[check],'\\b'), all$gene_alias),],
-                          .before = check[i])
-        gene_info[check,1] = id[check]
-        i = i+1
-      }
-    } else {
-    # only check: if input id is wrong
-    check = which( !id %in% all[,keytype] )
-    tmp = data.frame(rep(NA,ncol(gene_info))) %>% t() %>% as.data.frame() %>%
-      stats::setNames(.,colnames(gene_info))
-    rownames(tmp) = '1'
-
-    i = 1
-    while (i <= length(check) ) {
-      gene_info = gene_info %>%
-        tibble::add_row(tmp,
-                        .before = check[i])
-      gene_info[check,1] = id[check]
-
-      i = i+1
+    # check if symbol in alias
+    all_alias = data.frame(all_alias = paste(all$ncbi_alias, all$ensembl_alias,sep = '; '))
+    check_row = which(is.na(gene_info$symbol))
+    for(i in check_row){
+      # i = check_row[1]
+      alias_row = which(stringr::str_detect(all_alias[,1], paste0('\\b',rownames(gene_info)[i],'\\b')))
+      if(length(alias_row) != 0){
+        # not match symbol but match alias
+        gene_info[i,] = all[alias_row,]
       }
     }
   }
-
-  gene_info = gene_info %>% dplyr::arrange(match(eval(parse(text = keytype)), id))
+  gene_info = gene_info[id,]
 
   return(gene_info)
 }
+
