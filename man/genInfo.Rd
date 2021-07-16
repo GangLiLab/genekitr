@@ -2,7 +2,7 @@
 % Please edit documentation in R/genInfo.R
 \name{genInfo}
 \alias{genInfo}
-\title{Get gene info using org.db}
+\title{Get gene related information}
 \usage{
 genInfo(id, org, ...)
 }
@@ -15,7 +15,7 @@ genInfo(id, org, ...)
 a dataframe of gene info.
 }
 \description{
-Get gene info using org.db
+Get gene related information
 }
 \examples{
 \donttest{

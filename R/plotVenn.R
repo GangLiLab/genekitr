@@ -11,7 +11,7 @@
 #' @return ggplot object
 #' @importFrom futile.logger flog.threshold ERROR
 #' @importFrom VennDiagram venn.diagram
-#' @importFrom RColorBrewerbrewer.pal
+#' @importFrom RColorBrewer brewer.pal
 #' @importFrom cowplot as_grob
 #' @importFrom ggplotify as.ggplot
 #' @importFrom scales alpha

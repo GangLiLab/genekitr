@@ -1,4 +1,4 @@
-#' Get gene info using org.db
+#' Get gene related information
 #'
 #' @param id gene id.
 #' @param org species name from `biocOrg_name()`.
