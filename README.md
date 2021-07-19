@@ -38,6 +38,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
   - 与Ensembl数据库保持同步，做了`biomart`的数据接口，可以扩展其中各种数据（序列数据由于太长，不支持该函数直接显示；会有相应的序列函数去获取）
   - 基因id 100%的匹配，没有对应返回NA；存在alias的返回标准symbol name
+  - 只有Entrez ID 才是唯一的（因此可能出现：一个entrez对应多个symbol、多个ensemble、多个uniprot）
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
 #### 数据整理与转换（Tidy & Trans）
