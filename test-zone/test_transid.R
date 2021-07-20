@@ -4,27 +4,23 @@ library(AnnoGenes)
 data(geneList, package = 'DOSE')
 id = names(geneList)[1:5]
 id
-transId(id, trans_to = 'symbol',org='hs', return_dat = T)
+transId(id, trans_to = 'symbol',org='hs')
+transId(id, trans_to = 'uni',org='human')
+transId(id, trans_to = 'ens',org='hg')
 
 fake_id = c(id,'23215326','1','2','344263475','45')
-res = transId(fake_id, trans_to = 'sym',org='human', return_dat = T)
-res
-only_id = transId(fake_id, trans_to = 'sym',org='human', return_dat = F)
-only_id
-identical(fake_id, res$entrezid)
-
-transId(na.omit(res$symbol), trans_to = 'ens',org='hs', return_dat = T)
-transId(na.omit(res$symbol), trans_to = 'entrez',org='hs', return_dat = T)
+transId(fake_id, trans_to = 'sym',org='human')
 
 # 如果选择物种不对，会提示报错
-transId(id, trans_to = 'sym',org='mouse', return_dat = F)
+transId(id, trans_to = 'sym',org='mouse')
 
 # transId vs bitr
 fake_id
-transId(fake_id, trans_to = 'sym',org='human', return_dat = T)
-clusterProfiler::bitr(fake_id, fromType = 'ENTREZID',
+res1 = transId(fake_id, trans_to = 'sym',org='human')
+res2 = clusterProfiler::bitr(fake_id, fromType = 'ENTREZID',
                       toType = 'SYMBOL', OrgDb = org.Hs.eg.db)
-
+class(res1); class(res2)
+length(res1); nrow(res2)
 
 #--- fly id ---#
 # auto_install('org.Dm.eg.db')

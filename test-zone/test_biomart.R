@@ -7,7 +7,7 @@ ensembl <- useEnsembl(biomart = "ensembl",
 ensembl <- useMart("ensembl",host = "asia.ensembl.org")
 listDatasets(ensembl) %>% dplyr::pull(1) %>% stringr::str_remove_all('_gene_ensembl')
 
-ensembl <- useMart("ensembl", dataset = "mmusculus_gene_ensembl",host = "asia.ensembl.org")
+ensembl <- useMart("ENSEMBL_MART_ENSEMBL", dataset = "mmusculus_gene_ensembl",host = "asia.ensembl.org")
 feature_page <- listAttributes(ensembl) %>%
 filter(page == 'feature_page')
 structure <- listAttributes(ensembl) %>%
@@ -29,8 +29,8 @@ Gcn5l1')
 mm_id=stringr::str_split(mm_id,"\n")[[1]]
 attr <- c("external_gene_name",'external_synonym','uniprot_gn_symbol')
 
-biomart_alias = getBM( values = unique(all$symbol),
-                       attributes = c("external_gene_name",'external_synonym','uniprot_gn_symbol'),
+biomart_alias = getBM( values = mm_id,
+                       attributes = c("external_gene_name",'uniprotswissprot'),
                        filters = "external_gene_name",
                        mart = useMart("ensembl",
                                       dataset = "mmusculus_gene_ensembl",
@@ -60,7 +60,7 @@ bmt = getBM( attributes = c("entrezgene_id","external_gene_name","ensembl_gene_i
                       dataset = paste0(organism,"_gene_ensembl"),
                       host = "asia.ensembl.org"))
 
-bmt2 <- getBM( attributes = c('ensembl_gene_id','cds_start','cds_end'),
+bmt2 <- getBM( attributes = c('ensembl_gene_id','transcript_length'),
                mart = useMart("ensembl",
                               dataset = paste0(organism,"_gene_ensembl"),
                               host = "asia.ensembl.org"))

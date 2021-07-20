@@ -37,8 +37,8 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - genecards虽然全，但是搜索数量有限制，于是整合了Ensembl 数据库和 `orgdb`中的基因信息 => `genInfo`
 
   - 与Ensembl数据库保持同步，做了`biomart`的数据接口，可以扩展其中各种数据（序列数据由于太长，不支持该函数直接显示；会有相应的序列函数去获取）
-  - 基因id 100%的匹配，没有对应返回NA；存在alias的返回标准symbol name
-  - 只有Entrez ID 才是唯一的（因此可能出现：一个entrez对应多个symbol、多个ensemble、多个uniprot）
+  - 保证返回结果与输入的id是一一对应的，即使没有结果也会用NA填充（即使输入的symbol是gene alias，也能拿到对应的标准symbol name）
+  - 只有Entrez ID 才是唯一的（因此可能出现：一个entrez对应多个symbol、多个ensemble、多个uniprot，但一般第一个才是最常使用的）
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
 #### 数据整理与转换（Tidy & Trans）
@@ -74,7 +74,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - [x] `genInfo`增加基因位置 【之前通过下载分析GTF，但现在用`biomart`接口更快更方便】
 
-- [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`
+- [ ] `genInfo`支持多个不同版本的基因组 => 可以参考`liftover`  （另外ensembl也有REST API：https://rest.ensembl.org/documentation/info/assembly_map）
 
 - [x] `genInfo`与biomart的融合
 
@@ -133,7 +133,7 @@ mm_id=str_split(mm_id,"\n")[[1]]
 
 - **AUTO** detect orgnism name (e.g. `human/hs/hg`  is fine)
   - support 12 organisms (maybe more in the future...)
-- **AUTO** detect duplicate ID, ID alias or wrong spelled ID
+- **AUTO** detect duplicate ID, ID alias or **even wrong spelled** ID
 - Make sure the input order is identical with the output rownames
 
 ```R
@@ -239,10 +239,13 @@ biocOrg_name()
 
 #### Method 5: Transform gene id
 
+> Get 1-vs-1 matched id, even input gene is alias, duplicated or even WRONG!
+> User just need to get the output (character) to do other analysis (exp. enrichment analysis)
+
 - `org` support many species from `biocOrg_name()` 
   - support common name (e.g. `human/hs/hg`, `mouse/mm`, `dm/fly`) ...
-- user can choose output dataframe or not => using `return_dat`
 - **AUTO detect** input gene id type
+- Gene **ORDER** of output and input is **IDENTICAL**!
 
 ```R
 library(AnnoGenes)
@@ -251,53 +254,60 @@ id = names(geneList)[1:5]
 id
 # "4312"  "8318"  "10874" "55143" "55388"
 
-## trans ID is very easy!
-transId(id, trans_to = 'symbol',org='hs', return_dat = T)
-# 100% genes are mapped from entrezid to symbol
-# entrezid symbol
-#  4312   MMP1
-#  8318  CDC45
-# 10874    NMU
-# 55143  CDCA8
-# 55388  MCM10
+## ANY organism alias name and ANY trans_to argument name (exp. "ens", "ensem", "ensembl" are ok to function)
+transId(id, trans_to = 'symbol',org='hs')
+transId(id, trans_to = 'uni',org='human')
+transId(id, trans_to = 'ens',org='hg')
 ```
 
-If there are some ID could not transform to another type (like "type error ID", "entrez ID has no symbol/ensembl"), the output will show as NA, while keep the same order with the input
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-20-025105.png)
+
+
+
+If there are some ID could not transform to another type (like "type ERROR ID", "entrez ID has NO matched id"), the output will show as NA, while **still keep the same order** with the input
 
 ```R
-# the id "23215326", "344263475" and "45" are fake, while "1" and "2" are real
-fake_id = c(id,'23215326','1','2','344263475','45')
+# the id "23215326", "344263475" and "45" are fake, while others are real
+fake_id = c(names(geneList)[1:5], '23215326','1','2','344263475','45')
 
-res = transId(fake_id, trans_to = 'sym',org='human', return_dat = T)
-
-## input and output order is identical, even there are many NAs!
-identical(fake_id, res$entrezid)
+# the gene order of output and input is identical!
+transId(fake_id, trans_to = 'sym',org='human')
+# 70% genes are mapped from entrezid to symbol
+# [1] "MMP1"  "CDC45" "NMU"   "CDCA8" "MCM10" NA      "A1BG"  "A2M"   NA      NA 
 ```
 
-![](man/figures/example5.png)
-
-
-
-Also, transform from symbol to entrez or ensembl is very easy...
-
-```R
-transId(na.omit(res$symbol), trans_to = 'ens',org='hs', return_dat = T)
-transId(na.omit(res$symbol), trans_to = 'entrez',org='hg', return_dat = T)
-```
-
-![](man/figures/example6.png)
-
-However, if user provides wrong orgnism, the function will report error...
+However, if user provides **wrong orgnism,** the function will report error...
 
 ```R
 ## try to trans human id to symbol, but choose wrong org (mouse)
-transId(id, trans_to = 'sym',org='mouse', return_dat = F)
+transId(id, trans_to = 'sym',org='mouse')
 # Error in .gentype(id, org) : Wrong organism! 
 ```
 
 Compare `AnnoGenes::transId` and `clusterProfiler::bitr`
 
-![](man/figures/example8.png)
+> 保留原始id顺序，而没有去除NA，就是为了方便用户看到哪些ID没有转换成功；
+> 如果用户后面需要去掉NA，那么直接使用`na.omit()`即可
+
+```R
+fake_id = c(names(geneList)[1:5], '23215326','1','2','344263475','45')
+res1 = transId(fake_id, trans_to = 'sym',org='human')
+res2 = clusterProfiler::bitr(fake_id, fromType = 'ENTREZID',
+                      toType = 'SYMBOL', OrgDb = org.Hs.eg.db)
+```
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-20-030618.png)
+
+Change another organism:
+
+```R
+library(org.Dm.eg.db)
+id = toTable(org.Dm.egSYMBOL) %>% dplyr::pull(1) %>% sample(20)
+transId(id, trans_to = 'ens',org='fly')
+transId(id, trans_to = 'symbol',org='fly')
+```
+
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-20-031038.png)
 
 
 
