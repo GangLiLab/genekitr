@@ -45,10 +45,12 @@ genKEGG <- function(id,
 
   if(! keyType %in% c('ENTREZID') ) {
     message(paste0(keyType), ' gene will be mapped to entrez id')
-    trans_id = transId(id,'entrezid',org.bk)
+    trans_id = suppressMessages(transId(id,'entrezid',org.bk)) %>% stringi::stri_remove_na()
   }else{
     trans_id = id
   }
+
+  info = genInfo(trans_id,org) %>% dplyr::mutate(entrezid := rownames(.))
 
   #--- codes ---#
   keg <- suppressMessages(
@@ -58,18 +60,27 @@ genKEGG <- function(id,
                                 qvalueCutoff = qvalueCutoff,
                                 universe  = universe,
                                 minGSSize = minGSSize,
-                                maxGSSize = maxGSSize )
-  )
-
+                                maxGSSize = maxGSSize ))
 
   if( use_symbol ){
-    biocOrg = mapBiocOrg(tolower(org.bk))
-    pkg=paste0("org.", biocOrg, ".eg.db")
-    .load_orgdb(org)
-    keg <- DOSE::setReadable(keg, OrgDb = pkg, keyType = 'ENTREZID')
+    new_geneID = stringr::str_split(keg$geneID,'\\/') %>%
+      lapply(., function(x) {
+        info[x,'symbol']
+      }) %>% sapply(., paste0, collapse = "/")
+    new_keg =  keg %>% as.data.frame() %>%
+      dplyr::mutate(geneID = new_geneID) %>% calcFoldEnrich()
+
+  }else{
+    new_geneID = stringr::str_split(keg$geneID,'\\/') %>%
+      lapply(., function(x) {
+        info %>%
+          dplyr::filter(entrezid %in% x) %>% dplyr::pull(tolower(keyType))
+      }) %>% sapply(., paste0, collapse = "/")
+    new_keg =  keg %>% as.data.frame() %>%
+      dplyr::mutate(geneID = new_geneID) %>% calcFoldEnrich()
   }
 
-  new_keg = keg %>% as.data.frame() %>% calcFoldEnrich()
   return(new_keg)
 
 }
+
