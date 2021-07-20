@@ -89,7 +89,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ##### 数据整理与转换（Tidy & Trans）
 
 - [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
-- [ ] 从`genInfo`的结果中提取转换后的id，可以更快更准确
+- [x] 从`genInfo`的结果中提取转换后的id，更快更准确，并且可以保证output和input顺序一致
 
 ##### 数据分析（Analyse）
 
