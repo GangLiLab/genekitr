@@ -94,6 +94,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ##### 数据分析（Analyse）
 
 - [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
+- [ ] 富集分析先将基因id全部转成entrez id，然后再根据需要利用 `transId()`  进行转换，达到`setReadable`的目的
 
 ##### 可视化（Visualize）
 

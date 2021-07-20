@@ -3,7 +3,9 @@ library(dplyr)
 library(AnnoGenes)
 data(geneList, package="DOSE")
 ids = names(geneList)[1:100]
-gkeg <- genKEGG(ids, org = 'hg',use_symbol = T)
+ensid = transId(ids, trans_to = 'ensembl',org = 'human')
+
+gkeg <- genKEGG(ensid, org = 'hg',use_symbol = F)
 head(gkeg)
 plotEnrichDot(gkeg, xlab_type =  'FoldEnrich',
               show_item = 15, main_text_size = 14,legend_text_size = 10,

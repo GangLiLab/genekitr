@@ -11,10 +11,9 @@
 #' @param maxGSSize maximal size of each geneSet for analyzing, default is 500.
 #' @param universe background genes. If missing, the orgdb all gene list will be used as background.
 #' @return a dataframe of gene info.
-#' @importFrom dplyr pull
-#' @importFrom stringr str_to_title
+#' @importFrom dplyr  %>% mutate
 #' @importFrom clusterProfiler enrichGO
-#' @importFrom DOSE setReadable
+#' @importFrom stringr str_split
 #' @export
 #' @examples
 #' \dontrun{
@@ -43,15 +42,8 @@ genGO <- function(id,
 
   org_bk = org
   org = mapBiocOrg(tolower(org))
-  .load_orgdb(org)
   pkg=paste0("org.", org, ".eg.db")
-
   keyType = .gentype(id, org)
-  if(! keyType %in% c('SYMBOL','ENSEMBL','ENTREZID')) {
-    stop('Gene id type should be one of: SYMBOL, ENSEMBL and ENTREZID')
-  }
-
-  if(! .genInorg(id,org) ) stop('Gene id is not matched with organism: ', org_bk, ' !')
 
   #--- codes ---#
   ego <- suppressMessages(
@@ -61,21 +53,24 @@ genGO <- function(id,
                               universe = universe,
                               qvalueCutoff = qvalueCutoff,
                               minGSSize = minGSSize,
-                              maxGSSize  = maxGSSize)
-  )
+                              maxGSSize  = maxGSSize))
 
   if(nrow(as.data.frame(ego)) == 0){
     stop('No GO terms enriched ...')
   }
 
   if( use_symbol){
-    biocOrg = mapBiocOrg(tolower(org.bk))
-    pkg=paste0("org.", biocOrg, ".eg.db")
-    keyType = .gentype(names(genelist), biocOrg)
-    egmt <- DOSE::setReadable(egmt, OrgDb = pkg, keyType)
+    info = genInfo(id,org)
+    new_geneID = stringr::str_split(ego$geneID,'\\/') %>%
+      lapply(., function(x) {
+        info[x,'symbol']
+      }) %>% sapply(., paste0, collapse = "/")
+    new_ego =  ego %>% as.data.frame() %>%
+      dplyr::mutate(geneID = new_geneID) %>% calcFoldEnrich()
+
+  }else{
+    new_ego = ego %>% as.data.frame() %>% calcFoldEnrich()
   }
 
-  new_ego = ego %>% as.data.frame() %>% calcFoldEnrich()
   return(new_ego)
-
 }

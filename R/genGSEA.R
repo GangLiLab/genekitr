@@ -45,11 +45,15 @@ genGSEA <- function(genelist,
   org.bk = org
   geneset <- getMsigdb(org.bk, category, subcategory)
 
-  # gene id or symbol
+  # use entrez id or symbol
   if (any(names(genelist) %in% geneset$gene_symbol)) {
     geneset = geneset %>%
       dplyr::select(gs_name,gene_symbol)
+  }else if (any(names(genelist) %in% geneset$entrez_gene)) {
+    geneset = geneset %>%
+      dplyr::select(gs_name,entrez_gene)
   }else{
+    names(genelist) =transId(names(genelist),trans_to = 'entrez',org)
     geneset = geneset %>%
       dplyr::select(gs_name,entrez_gene)
   }

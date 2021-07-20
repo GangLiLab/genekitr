@@ -10,9 +10,9 @@
 #' @param maxGSSize numberic of maximal size of each geneSet for analyzing, default is 500.
 #' @param universe background genes. If missing, the orgdb all gene list will be used as background.
 #' @return a dataframe of gene info.
-#' @importFrom dplyr pull
-#' @importFrom stringr str_to_title
-#' @importFrom clusterProfiler enrichGO
+#' @importFrom dplyr  %>%
+#' @importFrom stringi stri_omit_na
+#' @importFrom clusterProfiler enrichKEGG
 #' @importFrom DOSE setReadable
 #' @export
 #' @examples
@@ -42,13 +42,13 @@ genKEGG <- function(id,
   org.bk = org
   org = mapKeggOrg(tolower(org))
   keyType = .gentype(id, org)
+
   if(! keyType %in% c('ENTREZID') ) {
     message(paste0(keyType), ' gene will be mapped to entrez id')
     trans_id = transId(id,'entrezid',org.bk)
   }else{
     trans_id = id
   }
-
 
   #--- codes ---#
   keg <- suppressMessages(
@@ -61,9 +61,11 @@ genKEGG <- function(id,
                                 maxGSSize = maxGSSize )
   )
 
-  biocOrg = mapBiocOrg(tolower(org.bk))
-  pkg=paste0("org.", biocOrg, ".eg.db")
+
   if( use_symbol ){
+    biocOrg = mapBiocOrg(tolower(org.bk))
+    pkg=paste0("org.", biocOrg, ".eg.db")
+    .load_orgdb(org)
     keg <- DOSE::setReadable(keg, OrgDb = pkg, keyType = 'ENTREZID')
   }
 

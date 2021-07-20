@@ -100,24 +100,24 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
 }
 
 #---  gene id in this org or not (return a logical) ---#
-.genInorg <- function(id, org){
-  if(nchar(org) > 2){
-    org = substr(org,1,nchar(org)-1)
-  }
-  org <- stringr::str_to_title(org)
-  suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
-  keytype = .gentype(id,org)
-
-  orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  if(keytype == "ENTREZID"){
-    ifelse(any(id%in%orgSymbol$gene_id),TRUE,FALSE)
-  }else if(keytype == "SYMBOL"){
-    ifelse(any(id%in%orgSymbol$symbol),TRUE,FALSE)
-  }else{
-    orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
-    ifelse(any(id%in%orgENSEMBL$ensembl_id),TRUE,FALSE)
-  }
-}
+# .genInorg <- function(id, org){
+#   if(nchar(org) > 2){
+#     org = substr(org,1,nchar(org)-1)
+#   }
+#   org <- stringr::str_to_title(org)
+#   suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
+#   keytype = .gentype(id,org)
+#
+#   orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+#   if(keytype == "ENTREZID"){
+#     ifelse(any(id%in%orgSymbol$gene_id),TRUE,FALSE)
+#   }else if(keytype == "SYMBOL"){
+#     ifelse(any(id%in%orgSymbol$symbol),TRUE,FALSE)
+#   }else{
+#     orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+#     ifelse(any(id%in%orgENSEMBL$ensembl_id),TRUE,FALSE)
+#   }
+# }
 
 #---  auto-install packages ---#
 auto_install <- function(pkg){

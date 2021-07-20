@@ -6,6 +6,11 @@ head(geneList)
 egmt1 <- genGSEA(genelist = geneList,org = 'hs', category='C5',subcategory = 'GO:MF',use_symbol = F)
 egmt2 <- genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'MIR:MIRDB',use_symbol = T)
 
+# use symbol genelist
+names(geneList) = transId(names(geneList),trans_to = 'symbol',org = 'hs')
+geneList = geneList[!is.na(names(geneList))]
+genGSEA(genelist = geneList,org = 'hs', category='C5',subcategory = 'GO:MF')
+
 
 ## 来自：https://support.bioconductor.org/p/122496/
 # 意思是：GSEA需要利用全部的基因集（附带logFC）进行分析【当然我们的函数支持symbol或entrez】；
