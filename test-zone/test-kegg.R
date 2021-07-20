@@ -11,15 +11,9 @@ plotEnrichDot(gkeg, xlab_type =  'FoldEnrich',
               xleft = 0, font_type = 'Arial', remove_grid = T,
               wrap_width = 30,border_thick = 3 )
 
-# mapId(id = ids, from = 'entrez', to = 'symbol',org='hg', return_dat = T)
-# mapId(id = ids, from = 'entrez', to = 'symbol',org='human', return_dat = T)
-
 # if we use symbol gene as input:
-test = mapId(id = names(geneList)[100:300], from = 'entrez', to = 'symbol',org='hs', return_dat = F)
-head(test)
-keg_raw <- genKEGG(test, org = 'hs', use_symbol = F)
-keg_readable <- genKEGG(test, org = 'hs', use_symbol = T)
-
-
+smb = transId(ids,org = 'human',trans_to = 'symbol')
+keg_raw <- genKEGG(smb, org = 'hs', use_symbol = F)
+keg_readable <- genKEGG(smb, org = 'hs', use_symbol = T)
 
 
