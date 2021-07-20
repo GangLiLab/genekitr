@@ -21,10 +21,15 @@ res2 = clusterProfiler::bitr(fake_id, fromType = 'ENTREZID',
                       toType = 'SYMBOL', OrgDb = org.Hs.eg.db)
 class(res1); class(res2)
 length(res1); nrow(res2)
+res1
+res2
 
 #--- fly id ---#
 # auto_install('org.Dm.eg.db')
 library(org.Dm.eg.db)
 id = toTable(org.Dm.egSYMBOL) %>% dplyr::pull(1) %>% sample(20)
-id = transId(id, trans_to = 'symbol',org='fly', return_dat = F)
-transId(id, trans_to = 'ens',org='fly', return_dat = T)
+transId(id, trans_to = 'ens',org='fly')
+transId(id, trans_to = 'symbol',org='fly')
+
+
+
