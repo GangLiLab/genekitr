@@ -155,7 +155,7 @@ mm_id = c("Gtpbp4", "Gtpbp8", "Gtse1" , "Gys1","H1-0", "H1-1" ,"H1-2" ,"H1-3" ,"
 genInfo(mm_id, org = 'mouse')
 ```
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-16-063245.png)
+![](man/figures/example5.png)
 
 
 
