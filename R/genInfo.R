@@ -41,10 +41,15 @@ genInfo <- function(id,
       dplyr::select(-input_id)
   }else{
     gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
-      dplyr::mutate(symbol = dplyr::case_when(input_id%in%all$symbol ~ input_id)) %>%
-      dplyr::relocate(symbol, .after = input_id) %>%
-      dplyr::distinct() %>%
-      magrittr::set_rownames(.$input_id) %>%
+      split(., .$input_id) %>%
+      lapply(., function(x) apply(x, 2, function(y){
+        if(!any(duplicated(y))) {paste0(y, collapse = "; ") }else{ y[1] }
+      })) %>%
+      do.call(rbind,.) %>% as.data.frame() %>%
+      apply(., 2, function(x) gsub('^NA; ','',x) %>%  gsub('; NA$','',.) %>%
+              gsub('^; ','',.) %>% gsub('; $','',.))%>%
+      as.data.frame() %>%
+      mutate_all(., list(~na_if(.,""))) %>%
       dplyr::select(-input_id)
 
     # check if symbol in alias
@@ -59,8 +64,8 @@ genInfo <- function(id,
       }
     }
   }
-  gene_info = gene_info[id,]
 
+  gene_info = gene_info[id,]
   return(gene_info)
 }
 
