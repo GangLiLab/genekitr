@@ -5,7 +5,7 @@
 #' @return a dataframe of gene info.
 #' @importFrom stringr str_detect
 #' @importFrom magrittr set_rownames
-#' @importFrom dplyr  %>% filter arrange relocate pull select mutate case_when
+#' @importFrom dplyr  %>% filter relocate select
 #' @export
 #' @examples
 #' \donttest{
@@ -64,7 +64,7 @@ genInfo <- function(id,
       }
     }
   }
-
+  gene_info[ gene_info == "NA" ] <- NA
   gene_info = gene_info[id,]
   return(gene_info)
 }

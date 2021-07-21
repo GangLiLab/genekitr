@@ -294,6 +294,7 @@ if(F){
   # keytypes(org.Hs.eg.db)
   # first get main id data (entrez, symbol, ensembl, uniprot)
   symbol_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+
   ensembl_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL")))) %>%
     split(., .$gene_id) %>%
     lapply(., function(x) {

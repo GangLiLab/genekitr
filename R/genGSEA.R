@@ -60,14 +60,18 @@ genGSEA <- function(genelist,
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist, TERM2GENE=geneset, pvalueCutoff, verbose=F))
 
-  if(use_symbol){
-    biocOrg = mapBiocOrg(tolower(org.bk))
-    pkg=paste0("org.", biocOrg, ".eg.db")
-    keyType = .gentype(names(genelist), biocOrg)
-    egmt <- DOSE::setReadable(egmt, OrgDb = pkg, keyType)
-  }
+  if( use_symbol){
+    info = genInfo(names(genelist),org)
+    new_geneID = stringr::str_split(egmt$core_enrichment,'\\/') %>%
+      lapply(., function(x) {
+        info[x,'symbol']
+      }) %>% sapply(., paste0, collapse = "/")
+    new_egmt =  egmt %>% as.data.frame() %>%
+      dplyr::mutate(core_enrichment = new_geneID)
 
-  new_egmt = egmt %>% as.data.frame()
+  }else{
+    new_egmt = egmt %>% as.data.frame()
+  }
 
   return(new_egmt)
 

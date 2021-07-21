@@ -14,7 +14,7 @@ id3 = transId(id, trans_to = 'ens',org='hs', return_dat = F)
 genInfo(id3,org = 'human')
 
 # in this example, BCC7 is the alias of TP53; SXHFJG is a fake name
-id4 = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53"  )
+id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53",'HBD'  )
 genInfo(id4,org = 'human')
 
 # change organism: moouse
@@ -36,6 +36,7 @@ Myo15
 Gal3st2b
 Bloc1s1
 Tp53
+Trp53
 Gcn5l1')
 mm_id=stringr::str_split(mm_id,"\n")[[1]]
 

@@ -94,7 +94,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 ##### 数据分析（Analyse）
 
 - [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
-- [ ] 富集分析先将基因id全部转成entrez id，然后再根据需要利用 `transId()`  进行转换，达到`setReadable`的目的
+- [x] 富集分析先将基因id全部转成entrez id，然后再根据需要利用 `transId()`  进行转换，达到`setReadable`的目的
 
 ##### 可视化（Visualize）
 
@@ -202,13 +202,12 @@ genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD
 #### Method 4: GO
 
 - 函数需要用到物种的`org.db`，**如果没有相关物种注释包**，函数内部的`auto_install()` 会帮助下载👍
+- `use_symbol = T` will return symbol id, otherwise return input id type
 
 ```R
 data(geneList, package="DOSE")
 id = names(geneList)[1:100]
 ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
-head(ego)
-tmp=as.data.frame(ego)
 ```
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-02-035433.png)
