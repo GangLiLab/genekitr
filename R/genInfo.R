@@ -39,8 +39,11 @@ genInfo <- function(id,
     gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
       magrittr::set_rownames(.$input_id) %>%
       dplyr::select(-input_id)
+    gene_info[ gene_info == "NA" ] <- NA
   }else{
     gene_info <- merge(tmp1,tmp2,by.x = 'input_id', by.y = keytype, all.x=T) %>%
+      dplyr::mutate(symbol = dplyr::case_when(input_id%in%all$symbol ~ input_id)) %>%
+      dplyr::relocate(symbol, .after = input_id) %>%
       split(., .$input_id) %>%
       lapply(., function(x) apply(x, 2, function(y){
         if(!any(duplicated(y))) {paste0(y, collapse = "; ") }else{ y[1] }
@@ -52,6 +55,7 @@ genInfo <- function(id,
       mutate_all(., list(~na_if(.,""))) %>%
       dplyr::select(-input_id)
 
+    gene_info[ gene_info == "NA" ] <- NA
     # check if symbol in alias
     all_alias = data.frame(all_alias = paste(all$ncbi_alias, all$ensembl_alias,sep = '; '))
     check_row = which(is.na(gene_info$symbol))
@@ -64,7 +68,7 @@ genInfo <- function(id,
       }
     }
   }
-  gene_info[ gene_info == "NA" ] <- NA
+
   gene_info = gene_info[id,]
   return(gene_info)
 }
