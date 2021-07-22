@@ -45,9 +45,12 @@ genInfo <- function(id,
       dplyr::mutate(symbol = dplyr::case_when(input_id%in%all$symbol ~ input_id)) %>%
       dplyr::relocate(symbol, .after = input_id) %>%
       split(., .$input_id) %>%
-      lapply(., function(x) apply(x, 2, function(y){
-        if(!any(duplicated(y))) {paste0(y, collapse = "; ") }else{ y[1] }
-      })) %>%
+      lapply(., function(x){
+        x = x[order(as.numeric(x$entrezid)),]
+        apply(x, 2, function(y){
+          if(!any(duplicated(y))) {paste0(y, collapse = "; ") }else{ y[1] }
+        })
+      }) %>%
       do.call(rbind,.) %>% as.data.frame() %>%
       apply(., 2, function(x) gsub('^NA; ','',x) %>%  gsub('; NA$','',.) %>%
               gsub('^; ','',.) %>% gsub('; $','',.))%>%

@@ -38,7 +38,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
   - 与Ensembl数据库保持同步，做了`biomart`的数据接口，可以扩展其中各种数据（序列数据由于太长，不支持该函数直接显示；会有相应的序列函数去获取）
   - 保证返回结果与输入的id是一一对应的，即使没有结果也会用NA填充（即使输入的symbol是gene alias，也能拿到对应的标准symbol name）
-  - 只有Entrez ID 才是唯一的（因此可能出现：一个entrez对应多个symbol、多个ensemble、多个uniprot，但一般第一个才是最常使用的）
+  - 只有Entrez ID 才是唯一的（因此可能出现：一个entrez对应多个symbol、多个ensemble、多个uniprot，但一般第一个或者数值最小的entrez id才是最常使用的）
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
 #### 数据整理与转换（Tidy & Trans）
@@ -113,6 +113,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 
 - [x] `genGO`的use_symbol参数不管用 （原因：如果提供的已经是symbol，那么就忽略了这个参数）
 - [x] 函数正常使用，但是帮助文档出不来（原因：写完函数忘记`devtools::document()` ，跳过这一步直接刷新包就会导致文档没更新）
+- [x] 一个symbol对应多个entrez时，会默认按照数值从小到大排序，然后再进行合并。因为同一个symbol name，数值比较小的entrez更常用
 
 
 

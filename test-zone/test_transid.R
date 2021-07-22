@@ -15,10 +15,12 @@ transId(fake_id, trans_to = 'sym',org='human')
 transId(id, trans_to = 'sym',org='mouse')
 
 # transId vs bitr
-fake_id
-res1 = transId(fake_id, trans_to = 'sym',org='human')
-res2 = clusterProfiler::bitr(fake_id, fromType = 'ENTREZID',
-                      toType = 'SYMBOL', OrgDb = org.Hs.eg.db)
+fake_id = c("DEL11P13" , "TRNAV-CAC", "MMD2" ,     "HBD"  ,     "RNR1",
+            "RNR2" ,     "TEC"  ,     "MEMO1" ,    "TP53"  ,    "BCC7")
+
+res1 = transId(fake_id, trans_to = 'ent',org='human',keep_unique = T)
+res2 = clusterProfiler::bitr(fake_id, fromType = 'SYMBOL',
+                      toType = 'ENTREZID', OrgDb = org.Hs.eg.db)
 class(res1); class(res2)
 length(res1); nrow(res2)
 res1
