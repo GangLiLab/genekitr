@@ -30,7 +30,8 @@ genInfo <- function(id,
   }
 
   #--- code ---#
-  all = biocAnno(org)%>% dplyr::relocate(all_of(keytype),.before = everything())
+  all = biocAnno(org) %>% dplyr::relocate(all_of(keytype),.before = everything())
+  rm(list = paste0(org,'_anno'), envir = .GlobalEnv)
 
   tmp1 = data.frame(input_id = id)
   tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)

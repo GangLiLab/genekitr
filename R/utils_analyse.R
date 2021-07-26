@@ -28,9 +28,9 @@ getMsigdb <- function(org,
   if (org == "mm" | org == "mmu") org = 'mouse'
 
   # org
-  msig_org <- msigdb_org_data()
-  all_org = c(msig_org[,1],
-              stringr::str_split(msig_org[,2],', ',simplify = T) %>%
+  msigOrg <- msigdb_org_data(); rm(msig_org,envir = .GlobalEnv)
+  all_org = c(msigOrg[,1],
+              stringr::str_split(msigOrg[,2],', ',simplify = T) %>%
                 as.character() %>%
                 stringi::stri_remove_empty_na())
   if (!org %in% tolower(all_org)) stop("Choose a valid organism!\n\n",paste0(all_org,' | '))
@@ -43,11 +43,11 @@ getMsigdb <- function(org,
   }
 
   # subcategory
-  msig_category <- msigdb_category_data()
-  all_sub <- msig_category[,2] %>%
+  msigCategory <- msigdb_category_data() ; rm(msig_category,envir = .GlobalEnv)
+  all_sub <- msigCategory[,2] %>%
     stringi::stri_remove_empty_na()
 
-  som_sub <- msig_category %>%
+  som_sub <- msigCategory %>%
     dplyr::filter(gs_cat==category) %>%
     dplyr::pull(gs_subcat)
 
@@ -87,7 +87,7 @@ mapBiocOrg <- function(organism) {
   if (organism == "mm" | organism == "mouse") organism = 'mm'
 
   # support organisms: http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
-  biocorg = biocOrg_name()
+  biocorg = biocOrg_name(); rm(biocOrg_name,envir = .GlobalEnv)
 
   if( organism %in% biocorg$short_name ){
     org = organism
@@ -115,7 +115,8 @@ mapKeggOrg <- function(organism){
   is.common = ifelse(organism %in% c("rat","cow","dog"), TRUE, FALSE)
 
   # support organisms: https://www.genome.jp/kegg/catalog/org_list.html
-  kgorg = keggOrg_name()
+  kgorg = keggOrg_name() ;rm(keggOrg_name,envir = .GlobalEnv)
+
   if( (organism %in% kgorg$short_name && !is.common ) ){
     org = organism
   }else if ( nchar(organism) >= 3 ){

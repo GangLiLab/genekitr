@@ -47,6 +47,6 @@ genInfo(mm_id,org = 'mouse')
 library(org.Dm.eg.db)
 fly_id = toTable(org.Dm.egSYMBOL) %>% dplyr::pull(1) %>% sample(10)
 fly_id = c(fly_id,'1') # add a human fake id
-x = genInfo(fly_id,org = 'sdggsaf')
+x = genInfo(fly_id,org = 'dm')
 
 

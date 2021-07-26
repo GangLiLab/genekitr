@@ -18,7 +18,7 @@ transId(id, trans_to = 'sym',org='mouse')
 fake_id = c("DEL11P13" , "TRNAV-CAC", "MMD2" ,     "HBD"  ,     "RNR1",
             "RNR2" ,     "TEC"  ,     "MEMO1" ,    "TP53"  ,    "BCC7")
 
-res1 = transId(fake_id, trans_to = 'ent',org='human',keep_unique = T)
+res1 = transId(fake_id, trans_to = 'ens',org='human',keep_unique = F)
 res2 = clusterProfiler::bitr(fake_id, fromType = 'SYMBOL',
                       toType = 'ENTREZID', OrgDb = org.Hs.eg.db)
 class(res1); class(res2)
@@ -32,6 +32,6 @@ library(org.Dm.eg.db)
 id = toTable(org.Dm.egSYMBOL) %>% dplyr::pull(1) %>% sample(20)
 transId(id, trans_to = 'ens',org='fly')
 transId(id, trans_to = 'symbol',org='fly')
-
+transId(id, trans_to = 'uni',org='fly')
 
 
