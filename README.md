@@ -1,4 +1,4 @@
-# Annotate genes 
+# Genekitr
 
 > This tool annotates genes with alias, symbol, full name, function also related papers.
 >
