@@ -2,15 +2,19 @@ Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
 Version: 0.1.0
-Author: Yunze Liu
+Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre"), 
+            comment = c(ORCID = "0000-0002-7414-8556"),
+            person("Gang", "Li", role = "aut"))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
+URL: https://github.com/GangLiLab/genekitr
+BugReports: https://github.com/GangLiLab/genekitr/issues
 Description: An analysis toolkit based on gene. It mainly includes five 
     features (search, transform, analysis, visualization and export).
     User just needs to provide gene id ('entrez', 'symbol' or 'ensembl') then can 
     search gene related information, transform id type, do GSEA/GO/KEGG analysis,
     visualize enrichment result, visualized multi-group gene venn diagram and export
     result as excel sheets to easily share and communicate with others.
-License: MIT
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 Imports: 
