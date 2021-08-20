@@ -60,7 +60,8 @@ bmt = getBM( attributes = c("entrezgene_id","external_gene_name","ensembl_gene_i
                       dataset = paste0(organism,"_gene_ensembl"),
                       host = "asia.ensembl.org"))
 
-bmt2 <- getBM( attributes = c('ensembl_gene_id','transcript_length'),
+bmt2 <- getBM( values = mm_id,
+               attributes = c('ensembl_gene_id','transcript_length'),
                mart = useMart("ensembl",
                               dataset = paste0(organism,"_gene_ensembl"),
                               host = "asia.ensembl.org"))

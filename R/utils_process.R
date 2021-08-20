@@ -253,8 +253,8 @@ if(F){
 
 }
 
-# support add-in via changing attributes
-.get_biomrt_other <- function(org){
+# support add-in via changing attributes (exp. feature)
+.get_biomrt_feature <- function(org){
   org = tolower(org)
   if (org == "hg" | org == "human" | org == "hsa" |  org == "hs") organism = 'hsapiens'
   if (org == "mm" | org == "mouse" ) organism = 'mmusculus'
@@ -315,7 +315,7 @@ if(F){
   # then get gene name and alias
   name_dat = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egGENENAME"))))
   biomart_alias = .get_biomrt_alias(org)
-  biomart_other = .get_biomrt_other(org)
+  biomart_feature = .get_biomrt_feature(org)
   ncbi_alias = AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egALIAS2EG")))) %>%
     split(., .$gene_id) %>%
     lapply(., function(x) {
@@ -333,7 +333,7 @@ if(F){
     dplyr::rename(ensembl = ensembl_id) %>%
     merge(., biomart_alias, by='symbol',all.x=TRUE,all.y=FALSE) %>%
     # if add more from biomart, just add here...
-    merge(., biomart_other, by='ensembl',all.x=TRUE,all.y=FALSE) %>%
+    merge(., biomart_feature, by='ensembl',all.x=TRUE,all.y=FALSE) %>%
     dplyr::relocate(entrezid,.before = everything()) %>%
     dplyr::arrange(entrezid) %>%
     dplyr::relocate(chr,start,end,width,strand, .after = uniprot)

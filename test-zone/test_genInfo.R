@@ -7,14 +7,14 @@ id
 
 genInfo(id,org = 'human')
 
-id2 = transId(id, trans_to = 'symbol',org='hs', return_dat = F)
+id2 = transId(id, trans_to = 'symbol',org='hs')
 genInfo(id2,org = 'human')
 
-id3 = transId(id, trans_to = 'ens',org='hs', return_dat = F)
+id3 = transId(id, trans_to = 'ens',org='hs')
 genInfo(id3,org = 'human')
 
 # in this example, BCC7 is the alias of TP53; SXHFJG is a fake name
-id = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53",'HBD'  )
+id4 = c("MCM10",  "CDC20",  "S100A9", "FOXM1",  "KIF23",  "MMP1",   "CDC45",  "BCC7" ,  "SXHFJG", "TP53",'HBD'  )
 genInfo(id4,org = 'human')
 
 # change organism: moouse
