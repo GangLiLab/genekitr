@@ -2,14 +2,17 @@
 #'
 #' @param id a gene vector which can be entrez, ensembl or symbol.
 #' @param org  organism name from `biocOrg_name`.
-#' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all three.
+#' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all
+#'   three.
 #' @param use_symbol logical to output as gene symbol, default is TRUE.
-#' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".
+#' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH",
+#'   "BY", "fdr", "none".
 #' @param pvalueCutoff adjusted pvalue cutoff, default is 0.05.
 #' @param qvalueCutoff adjusted pvalue cutoff, default is 0.1.
 #' @param minGSSize minimal size of each geneSet for analyzing, default is 10.
 #' @param maxGSSize maximal size of each geneSet for analyzing, default is 500.
-#' @param universe background genes. If missing, the orgdb all gene list will be used as background.
+#' @param universe background genes. If missing, the orgdb all gene list will be
+#'   used as background.
 #' @return a dataframe of gene info.
 #' @importFrom dplyr  %>% mutate
 #' @importFrom clusterProfiler enrichGO
@@ -19,7 +22,8 @@
 #' \dontrun{
 #' data(geneList, package="DOSE")
 #' id = names(geneList)[1:100]
-#' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
+#' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
+#'   qvalueCutoff = 0.1 ,use_symbol = T)
 #' head(ego)
 #' }
 genGO <- function(id,

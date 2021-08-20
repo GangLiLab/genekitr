@@ -1,7 +1,8 @@
 # AnnoGenes utilities for processing
 
 #' @title Show NCBI database searchable name
-#' @param db a character vector. Can be "pubmed" or one or more of `rentrez::entrez_dbs()` result.
+#' @param db a character vector. Can be "pubmed" or one
+#'   or more of `rentrez::entrez_dbs()` result.
 #' @return a dataframe including search keyword and information.
 #' @importFrom rentrez entrez_db_searchable
 #' @export
@@ -15,7 +16,8 @@ showNCBI <- function(db = "pubmed") {
   res <- as.data.frame(fields)[1:3]
 
   if (nrow(res) == 0) { # nocov start
-    message("Something is wrong in your input, NULL will be returned, please check.")
+    message("Something is wrong in your input,
+            NULL will be returned, please check.")
     return(NULL)
   } # nocov end
   return(res)
@@ -27,7 +29,8 @@ showNCBI <- function(db = "pubmed") {
 #' @param sheet_name name of added dataframe.
 #' @return a worksheet including many dataframes.
 #' @importFrom stringr str_detect
-#' @importFrom openxlsx addWorksheet writeData writeFormula createStyle addStyle setColWidths
+#' @importFrom openxlsx addWorksheet writeData writeFormula
+#'   createStyle addStyle setColWidths
 #' @export
 #' @examples
 #' \donttest{
@@ -48,8 +51,10 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
     for (i in 1:nrow(sheet_dat)) {
       for (n in which(check)) {
         if (! is.na(sheet_dat[i, n]) & !is.na(sheet_dat[i, n] )) {
-          sheet_datd_link <- paste0("HYPERLINK(\"", sheet_dat[i, n], "\", \"", sheet_dat[i, n], "\")")
-          writeFormula(wb, sheet = sheet_name, startRow = i + 1, startCol = n, x = sheet_datd_link)
+          sheet_datd_link <- paste0("HYPERLINK(\"", sheet_dat[i, n],
+                                    "\", \"", sheet_dat[i, n], "\")")
+          writeFormula(wb, sheet = sheet_name, startRow = i + 1,
+                       startCol = n, x = sheet_datd_link)
         }
       }
     }
@@ -64,14 +69,16 @@ expo_sheet <- function(wb, sheet_dat, sheet_name) {
           "HYPERLINK(\"", paste0("https://pubmed.ncbi.nlm.nih.gov/", sheet_dat[i, 5]),
           "\", \"", sheet_dat[i, 2], "\")"
         )
-        writeFormula(wb, sheet = sheet_name, startRow = i + 1, startCol = 2, x = sheet_datd_link)
+        writeFormula(wb, sheet = sheet_name, startRow = i + 1,
+                     startCol = 2, x = sheet_datd_link)
       }
     }
   }
 
   ## styling sheet
   headerStyle <- createStyle(textDecoration = "Bold")
-  addStyle(wb, sheet = sheet_name, style = headerStyle, rows = 1, cols = seq_len(ncol(sheet_dat)), gridExpand = TRUE)
+  addStyle(wb, sheet = sheet_name, style = headerStyle,
+           rows = 1, cols = seq_len(ncol(sheet_dat)), gridExpand = TRUE)
   setColWidths(wb, sheet = sheet_name, cols = seq_len(ncol(sheet_dat)), widths = "auto")
 
   invisible(wb)

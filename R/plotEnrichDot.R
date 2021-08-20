@@ -8,12 +8,14 @@
 #' @param remove_grid logical, remove legend, default is FALSE.
 #' @param show_item numeric, select top N rows to show.
 #' @param main_text_size numeric, specify the plot text size.
-#' @param font_type character, specify the plot text font family, example "Times New Roman", "Arial".
+#' @param font_type character, specify the plot text font family, example "Times
+#'   New Roman", "Arial".
 #' @param wrap_width numeric, wrap text longer than this number.
 #' @param border_thick numeric, border thickness in mm.
 #' @return ggplot object
 #' @importFrom dplyr pull %>% arrange mutate slice_head
-#' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme guide_colorbar scale_y_discrete element_blank
+#' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme
+#'   guide_colorbar scale_y_discrete element_blank
 #' @importFrom stringr str_to_title
 #' @importFrom clusterProfiler enrichGO
 #' @importFrom DOSE setReadable
@@ -23,7 +25,8 @@
 #' \dontrun{
 #' data(geneList, package="DOSE")
 #' id = names(geneList)[1:100]
-#' ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
+#' ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
+#'   qvalueCutoff = 0.1 ,use_symbol = T)
 #' ego = as.enrichDat(ego)
 #' plotEnrichDot(ego)
 #' }

@@ -1,6 +1,7 @@
 #' transform gene id among symbol, entrezid,  ensembl and uniprot
 #' @param id character of gene ids.
-#' @param trans_to transform to which type, one of symbol, entrezid, ensembl and uniprot.
+#' @param trans_to transform to which type, one of symbol, entrezid, ensembl and
+#'   uniprot.
 #' @param org organism name from `biocOrg_name`.
 #' @param keep_unique logical to keep output id is unique, default is `TRUE`.
 #' @return a character of transformed ids.
@@ -10,7 +11,8 @@
 #' @export
 #' @examples
 #' \donttest{
-#' transId(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"),trans_to = 'ensembl', org = 'mouse')
+#' transId(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"),
+#'   trans_to = 'ensembl', org = 'mouse')
 #' }
 transId <- function(id, trans_to, org, keep_unique = TRUE){
 
