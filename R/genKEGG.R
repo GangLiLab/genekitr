@@ -13,6 +13,7 @@
 #'   default is 500.
 #' @param universe Background genes. If missing, the orgdb all gene list will be
 #'   used as background.
+#' @param ... Other argument to `enrichKEGG` function
 #' @importFrom dplyr  %>% mutate filter
 #' @importFrom stringr  str_split
 #' @importFrom stringi stri_omit_na
@@ -65,7 +66,8 @@ genKEGG <- function(id,
                                 qvalueCutoff = qvalueCutoff,
                                 universe  = universe,
                                 minGSSize = minGSSize,
-                                maxGSSize = maxGSSize ))
+                                maxGSSize = maxGSSize,
+                                ...))
 
   if( use_symbol ){
     new_geneID = stringr::str_split(keg$geneID,'\\/') %>%

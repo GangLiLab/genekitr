@@ -18,35 +18,39 @@ genKEGG(
 )
 }
 \arguments{
-\item{id}{a vector of entrez gene.}
+\item{id}{A vector of entrez gene.}
 
-\item{org}{character of organism name which can test by `mapKeggOrg()`.}
+\item{org}{KEGG organism name from `keggOrg_name()`.}
 
-\item{use_symbol}{logical to output as gene symbol, default is TRUE.}
+\item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
 
-\item{pAdjustMethod}{one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".}
+\item{pAdjustMethod}{One of "holm", "hochberg", "hommel", "bonferroni", "BH",
+"BY", "fdr", "none".}
 
-\item{pvalueCutoff}{numberic of adjusted pvalue cutoff, default is 0.05.}
+\item{pvalueCutoff}{Numberic of adjusted pvalue cutoff, default is 0.05.}
 
-\item{qvalueCutoff}{numberic of adjusted pvalue cutoff, default is 0.1.}
+\item{qvalueCutoff}{Numberic of adjusted pvalue cutoff, default is 0.1.}
 
-\item{minGSSize}{numberic of minimal size of each geneSet for analyzing, default is 10.}
+\item{minGSSize}{Numberic of minimal size of each geneSet for analyzing,
+default is 10.}
 
-\item{maxGSSize}{numberic of maximal size of each geneSet for analyzing, default is 500.}
+\item{maxGSSize}{Numberic of maximal size of each geneSet for analyzing,
+default is 500.}
 
-\item{universe}{background genes. If missing, the orgdb all gene list will be used as background.}
+\item{universe}{Background genes. If missing, the orgdb all gene list will be
+used as background.}
+
+\item{...}{Other argument to `enrichKEGG` function}
 }
 \value{
-a dataframe of gene info.
+A `data.frame`.
 }
 \description{
 Gene enrichment of KEGG analysis
 }
 \examples{
-\dontrun{
 data(geneList, package="DOSE")
-id = names(geneList)[1:100]
+id <- names(geneList)[1:100]
 keg <- genKEGG(id, org = 'human')
 head(keg)
-}
 }

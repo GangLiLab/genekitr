@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotEnrichDot.R
 \name{plotEnrichDot}
 \alias{plotEnrichDot}
-\title{Dotplot for enrichment analysis}
+\title{Dotplot for GO and KEGG enrichment analysis}
 \usage{
 plotEnrichDot(
   enrich_df,
@@ -18,46 +18,52 @@ plotEnrichDot(
   show_item = 10,
   main_text_size = 10,
   legend_text_size = 8,
-  wrap_width = NULL,
-  ...
+  wrap_width = NULL
 )
 }
 \arguments{
-\item{enrich_df}{dataframe of enrichment analysis result .}
+\item{enrich_df}{`data.frame` of enrichment analysis result .}
 
-\item{xlab_type}{x-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
+\item{xlab_type}{X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
 
-\item{legend_by}{stats legend type, one of "pvalue", "p.adjust", "qvalue".}
+\item{legend_by}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
 
-\item{border_thick}{numeric, border thickness in mm.}
+\item{border_thick}{Numeric, border thickness in mm.}
 
-\item{remove_grid}{logical, remove legend, default is FALSE.}
+\item{remove_grid}{Logical, remove background grid lines, default is FALSE.}
 
-\item{remove_text}{logical, remove all text, default is FALSE.}
+\item{remove_text}{Logical, remove all text, default is FALSE.}
 
-\item{font_type}{character, specify the plot text font family, example "Times New Roman", "Arial".}
+\item{remove_legend}{Logical, remove legend, default is FALSE.}
 
-\item{show_item}{numeric, select top N rows to show.}
+\item{low_color}{Legend color for low pvalue or qvalue, default is "red".}
 
-\item{main_text_size}{numeric, specify the plot text size.}
+\item{high_color}{Legend color for high pvalue or qvalue, default is "blue".}
 
-\item{wrap_width}{numeric, wrap text longer than this number.}
+\item{font_type}{Character, specify the plot text font family, example "Times
+New Roman", "Arial".}
+
+\item{show_item}{Numeric, select top N rows to show, default is 10.}
+
+\item{main_text_size}{Numeric, specify the main text size, default is 10.}
+
+\item{legend_text_size}{Numeric, specify the legend text size, default is 8.}
+
+\item{wrap_width}{Numeric, wrap text if longer than this number, default is NULL.}
 }
 \value{
-ggplot object
+A ggplot object
 }
 \description{
-Dotplot for enrichment analysis
+Dotplot for GO and KEGG enrichment analysis
 }
 \examples{
 \dontrun{
 data(geneList, package="DOSE")
 id = names(geneList)[1:100]
-ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
+ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
+  qvalueCutoff = 0.1 ,use_symbol = FALSE)
 ego = as.enrichDat(ego)
 plotEnrichDot(ego)
 }
-}
-\author{
-Yunze Liu
 }

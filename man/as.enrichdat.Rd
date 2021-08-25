@@ -11,12 +11,9 @@ as.enrichdat(enrich_df)
 \item{enrich_df}{dataframe of enrichment analysis result .}
 }
 \value{
-dataframe
+A `data.frame`.
 }
 \description{
 Adjust dataframe for enrichment plot
 make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
-}
-\author{
-Yunze Liu
 }

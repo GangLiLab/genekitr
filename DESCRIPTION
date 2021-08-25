@@ -3,7 +3,7 @@ Type: Package
 Title: Gene Analysis Toolkit in R
 Version: 0.1.1
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre"), 
-            comment = c(ORCID = "0000-0002-7414-8556"),
+            comment = c(ORCID = "0000-0002-7414-8556")),
             person("Gang", "Li", role = "aut"))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
@@ -17,14 +17,34 @@ Description: An analysis toolkit based on gene. It mainly includes five
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
+Depends: R (>= 3.5)
 Imports: 
+    AnnotationDbi,
+    clusterProfiler,
     dplyr,
+    DOSE,
+    ggplot2,
     stringr,
-    easyPubMed,
+    stringi,
     tidyr,
-    rentrez,
+    tibble,
+    VennDiagram
+Suggests:
+    BiocManager,
+    biomaRt,
+    cowplot,
+    data.table,
+    easyPubMed,
+    futile.logger,
+    ggplotify,
+    ggsci,
+    ggupset,
+    magrittr,
+    msigdbr,
     openxlsx,
-    org.Mm.eg.db,
-    org.Hs.eg.db,
-    ggplot2
+    RColorBrewer,
+    rentrez,
+    scales,
+    stats,
+    utils
 RoxygenNote: 7.1.1

@@ -2,26 +2,26 @@
 % Please edit documentation in R/genPubmed.R
 \name{genPubmed}
 \alias{genPubmed}
-\title{Get gene related pubmed paper record}
+\title{Gene related pubmed paper records}
 \usage{
-genPubmed(id, keywords, field = "ALL", ...)
+genPubmed(id, keywords, field = "ALL")
 }
 \arguments{
-\item{id}{gene "symbol".}
+\item{id}{Gene "symbol".}
 
 \item{keywords}{species "mm" or "hs".}
 
 \item{field}{pubmed field from `showNCBI('pubmed')`, default is "ALL".}
 }
 \value{
-a dataframe of pubmed paper records of genes.
+A `data.frame`.
 }
 \description{
-Get gene related pubmed paper record
+Gene related pubmed paper records
 }
 \examples{
 \dontrun{
-x = genPubmed(id = c("Cyp2c23","Fhit","Gal3st2b","Gbp4"), keywords = 'stem cell', field = 'tiab')
+x = genPubmed(id = c("Cyp2c23","Fhit","Gal3st2b","Gbp4"),
+  keywords = 'stem cell', field = 'tiab')
 }
-
 }

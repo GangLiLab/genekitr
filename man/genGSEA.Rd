@@ -2,7 +2,7 @@
 % Please edit documentation in R/genGSEA.R
 \name{genGSEA}
 \alias{genGSEA}
-\title{GSEA for a genelist with decreasing logFC value}
+\title{GSEA for a gene list with decreasing logFC value}
 \usage{
 genGSEA(
   genelist,
@@ -17,31 +17,35 @@ genGSEA(
 )
 }
 \arguments{
-\item{genelist}{order ranked genelist in decreasing order, gene can be entrez or symbol.}
+\item{genelist}{Order ranked genelist in decreasing order, gene can be
+entrez, ensembl or symbol.}
 
-\item{org}{organism name from `msigdb_org_data()`.}
+\item{org}{Organism name from `msigdb_org_data()`.}
 
-\item{category}{MSigDB collection abbreviation, C1 to C8 and H.}
+\item{category}{MSigDB collection abbreviation, one of C1','C2','C3',
+'C4','C5','C6','C7','C8','H'.}
 
-\item{subcategory}{MSigDB sub-collection abbreviation, such as REACTOME or BP.}
+\item{subcategory}{MSigDB sub-collection abbreviation, choose from
+`msigdb_category_data()`.}
 
-\item{use_symbol}{logical to output as gene symbol, default is TRUE.}
+\item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
 
-\item{minGSSize}{minimal size of each geneSet for analyzing, default is 10.}
+\item{minGSSize}{Minimal size of each geneSet for analyzing, default is 10.}
 
-\item{maxGSSize}{maximal size of each geneSet for analyzing, default is 500.}
+\item{maxGSSize}{Maximal size of each geneSet for analyzing, default is 500.}
 
-\item{pvalueCutoff}{adjusted pvalue cutoff, default is 0.05.}
+\item{pvalueCutoff}{Adjusted pvalue cutoff, default is 0.05.}
+
+\item{...}{Other argument to `GSEA` function}
 }
 \value{
-a dataframe of gene info.
+A `data.frame`.
 }
 \description{
-GSEA for a genelist with decreasing logFC value
+GSEA for a gene list with decreasing logFC value
 }
 \examples{
-\dontrun{
 data(geneList, package="DOSE")
-genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD',use_symbol = F)
-}
+genGSEA(genelist = geneList,org = 'human', category='C3',
+  subcategory = 'TFT:GTRD',use_symbol = FALSE)
 }

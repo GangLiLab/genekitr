@@ -3,8 +3,7 @@
 #' @param id Gene id.
 #' @param org Species name from `biocOrg_name`.
 #' @importFrom stringr str_detect
-#' @importFrom magrittr set_rownames
-#' @importFrom dplyr  %>% filter relocate select
+#' @importFrom dplyr  %>% filter relocate select mutate mutate_all na_if
 #'
 #' @return A `data.frame`.
 #' @export
@@ -14,8 +13,7 @@
 #' head(x)
 
 genInfo <- function(id,
-                    org,
-                    ...) {
+                    org) {
   #--- args ---#
   options(warn = -1)
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
@@ -57,7 +55,7 @@ genInfo <- function(id,
       apply(., 2, function(x) gsub('^NA; ','',x) %>%  gsub('; NA$','',.) %>%
               gsub('^; ','',.) %>% gsub('; $','',.))%>%
       as.data.frame() %>%
-      mutate_all(., list(~na_if(.,""))) %>%
+      dplyr::mutate_all(., list(~dplyr::na_if(.,""))) %>%
       dplyr::select(-input_id)
 
     gene_info[ gene_info == "NA" ] <- NA

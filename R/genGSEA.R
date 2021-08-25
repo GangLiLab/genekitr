@@ -11,6 +11,7 @@
 #' @param minGSSize Minimal size of each geneSet for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each geneSet for analyzing, default is 500.
 #' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
+#' @param ... Other argument to `GSEA` function
 #' @importFrom dplyr select
 #' @importFrom clusterProfiler GSEA
 #'
@@ -20,7 +21,7 @@
 #' @examples
 #' data(geneList, package="DOSE")
 #' genGSEA(genelist = geneList,org = 'human', category='C3',
-#'   subcategory = 'TFT:GTRD',use_symbol = F)
+#'   subcategory = 'TFT:GTRD',use_symbol = FALSE)
 
 genGSEA <- function(genelist,
                     org,
@@ -62,7 +63,9 @@ genGSEA <- function(genelist,
       dplyr::select(gs_name,entrez_gene)
   }
 
-  egmt <- suppressWarnings(clusterProfiler::GSEA(genelist, TERM2GENE=geneset, pvalueCutoff, verbose=F))
+  egmt <- suppressWarnings(clusterProfiler::GSEA(genelist, TERM2GENE=geneset,
+                                                 pvalueCutoff, verbose=F,
+                                                 ...))
 
   if( use_symbol){
     info = genInfo(names(genelist),org)

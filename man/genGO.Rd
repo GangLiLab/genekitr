@@ -2,7 +2,7 @@
 % Please edit documentation in R/genGO.R
 \name{genGO}
 \alias{genGO}
-\title{Gene enrichment of GO analysis}
+\title{Gene GO enrichment analysis}
 \usage{
 genGO(
   id,
@@ -19,37 +19,41 @@ genGO(
 )
 }
 \arguments{
-\item{id}{a gene vector which can be entrez, ensembl or symbol.}
+\item{id}{A vector of gene id which can be entrez, ensembl or symbol.}
 
-\item{org}{organism name from `biocOrg_name`.}
+\item{org}{Organism name from `biocOrg_name`.}
 
-\item{ont}{One of "bp", "mf", and "cc" subontologies, or "all" for all three.}
+\item{ont}{One of "bp", "mf", and "cc" subontologies, or "all" for all
+three.}
 
-\item{use_symbol}{logical to output as gene symbol, default is TRUE.}
+\item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
 
-\item{pAdjustMethod}{one of "holm", "hochberg", "hommel", "bonferroni", "BH", "BY", "fdr", "none".}
+\item{pAdjustMethod}{One of "holm", "hochberg", "hommel", "bonferroni", "BH",
+"BY", "fdr", "none".}
 
-\item{pvalueCutoff}{adjusted pvalue cutoff, default is 0.05.}
+\item{pvalueCutoff}{Adjusted pvalue cutoff, default is 0.05.}
 
-\item{qvalueCutoff}{adjusted pvalue cutoff, default is 0.1.}
+\item{qvalueCutoff}{Adjusted pvalue cutoff, default is 0.1.}
 
-\item{minGSSize}{minimal size of each geneSet for analyzing, default is 10.}
+\item{minGSSize}{Minimal size of each gene set for analyzing, default is 10.}
 
-\item{maxGSSize}{maximal size of each geneSet for analyzing, default is 500.}
+\item{maxGSSize}{Maximal size of each gene set for analyzing, default is 500.}
 
-\item{universe}{background genes. If missing, the orgdb all gene list will be used as background.}
+\item{universe}{Background genes. If missing, then all gene list in
+orgdb will be used as background.}
+
+\item{...}{other argument to `enrichGO` function}
 }
 \value{
-a dataframe of gene info.
+A `data.frame` contains gene ratio and fold enrichment.
 }
 \description{
-Gene enrichment of GO analysis
+Gene GO enrichment analysis
 }
 \examples{
-\dontrun{
 data(geneList, package="DOSE")
-id = names(geneList)[1:100]
-ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
+id <- names(geneList)[1:100]
+ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
+  qvalueCutoff = 0.1 ,use_symbol = TRUE)
 head(ego)
-}
 }

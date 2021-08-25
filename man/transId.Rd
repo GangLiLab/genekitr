@@ -2,27 +2,27 @@
 % Please edit documentation in R/transID.R
 \name{transId}
 \alias{transId}
-\title{transform gene id among symbol, entrezid,  ensembl and uniprot}
+\title{Transform gene id among symbol, entrezid,  ensembl and uniprot}
 \usage{
 transId(id, trans_to, org, keep_unique = TRUE)
 }
 \arguments{
-\item{id}{character of gene ids.}
+\item{id}{Character of gene ids.}
 
-\item{trans_to}{transform to which type, one of symbol, entrezid, ensembl and uniprot.}
+\item{trans_to}{Transform to which type, one of "symbol", "entrezid",
+"ensembl" and "uniprot."}
 
-\item{org}{organism name from `biocOrg_name`.}
+\item{org}{Organism name from `biocOrg_name`.}
 
-\item{keep_unique}{logical to keep output id is unique, default is `TRUE`.}
+\item{keep_unique}{Logical to keep output id is unique, default is `TRUE`.}
 }
 \value{
-a character of transformed ids.
+A character of transformed ids.
 }
 \description{
-transform gene id among symbol, entrezid,  ensembl and uniprot
+Transform gene id among symbol, entrezid,  ensembl and uniprot
 }
 \examples{
-\donttest{
-transId(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"),trans_to = 'ensembl', org = 'mouse')
-}
+transId(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"),
+  trans_to = 'ensembl', org = 'mouse')
 }

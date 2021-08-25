@@ -1,32 +1,35 @@
-#' Dotplot for enrichment analysis
+#' Dotplot for GO and KEGG enrichment analysis
 #'
-#' @param enrich_df dataframe of enrichment analysis result .
-#' @param xlab_type x-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
-#' @param legend_by stats legend type, one of "pvalue", "p.adjust", "qvalue".
-#' @param remove_grid logical, remove background grid lines, default is FALSE.
-#' @param remove_text logical, remove all text, default is FALSE.
-#' @param remove_grid logical, remove legend, default is FALSE.
-#' @param show_item numeric, select top N rows to show.
-#' @param main_text_size numeric, specify the plot text size.
-#' @param font_type character, specify the plot text font family, example "Times
+#' @param enrich_df `data.frame` of enrichment analysis result .
+#' @param xlab_type X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
+#' @param legend_by Stats legend type, one of "pvalue", "p.adjust", "qvalue".
+#' @param border_thick Numeric, border thickness in mm.
+#' @param remove_grid Logical, remove background grid lines, default is FALSE.
+#' @param remove_text Logical, remove all text, default is FALSE.
+#' @param remove_legend Logical, remove legend, default is FALSE.
+#' @param low_color Legend color for low pvalue or qvalue, default is "red".
+#' @param high_color Legend color for high pvalue or qvalue, default is "blue".
+#' @param font_type Character, specify the plot text font family, example "Times
 #'   New Roman", "Arial".
-#' @param wrap_width numeric, wrap text longer than this number.
-#' @param border_thick numeric, border thickness in mm.
-#' @return ggplot object
+#' @param show_item Numeric, select top N rows to show, default is 10.
+#' @param main_text_size Numeric, specify the main text size, default is 10.
+#' @param legend_text_size Numeric, specify the legend text size, default is 8.
+#' @param wrap_width Numeric, wrap text if longer than this number, default is NULL.
+
 #' @importFrom dplyr pull %>% arrange mutate slice_head
 #' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme
 #'   guide_colorbar scale_y_discrete element_blank
 #' @importFrom stringr str_to_title
 #' @importFrom clusterProfiler enrichGO
-#' @importFrom DOSE setReadable
+#'
+#' @return A ggplot object
 #' @export
-#' @author Yunze Liu
 #' @examples
 #' \dontrun{
 #' data(geneList, package="DOSE")
 #' id = names(geneList)[1:100]
 #' ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.1 ,use_symbol = T)
+#'   qvalueCutoff = 0.1 ,use_symbol = FALSE)
 #' ego = as.enrichDat(ego)
 #' plotEnrichDot(ego)
 #' }
@@ -46,8 +49,7 @@ plotEnrichDot <- function(enrich_df,
                           # xleft = 0, xright = NA,
                           main_text_size = 10,
                           legend_text_size = 8,
-                          wrap_width = NULL,
-                          ...) {
+                          wrap_width = NULL) {
   #--- args ---#
   stopifnot(is.numeric(show_item))
   xlab_type <- match.arg(xlab_type)
@@ -142,11 +144,11 @@ plotEnrichDot <- function(enrich_df,
 ##' make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
 ##'
 ##' @param enrich_df dataframe of enrichment analysis result .
-##' @return dataframe
-##' @importFrom dplyr %>% mutate
-##' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme guide_colorbar scale_y_discrete element_blank
+##'
+##' @importFrom stringr str_remove_all str_split str_remove
+##' @importFrom dplyr mutate pull
+##' @return A `data.frame`.
 ##' @export
-##' @author Yunze Liu
 
 as.enrichdat <- function(enrich_df){
 

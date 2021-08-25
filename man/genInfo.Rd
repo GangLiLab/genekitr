@@ -4,21 +4,20 @@
 \alias{genInfo}
 \title{Get gene related information}
 \usage{
-genInfo(id, org, ...)
+genInfo(id, org)
 }
 \arguments{
-\item{id}{gene id.}
+\item{id}{Gene id.}
 
-\item{org}{species name from `biocOrg_name()`.}
+\item{org}{Species name from `biocOrg_name`.}
 }
 \value{
-a dataframe of gene info.
+A `data.frame`.
 }
 \description{
 Get gene related information
 }
 \examples{
-\donttest{
 x = genInfo(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"), org = 'mm')
-}
+head(x)
 }

@@ -1,26 +1,21 @@
-#' Venn plot for list of genes If venn list length is over 4, use UpSet plot
+#' Venn plot for groups of genes
 #'
-#' @param venn_list a group list of genes or others to plot venn
-#' @param color colors for venn_list, default is NULL.
-#' @param alpha_degree alpha transparency of each circle's area, default is 0.3.
-#' @param border_thick thickness of each circle, default is 1.
-#' @param text_size text size, default is 1.
-#' @param remove_grid logical, remove circle or grid lines, default is `FALSE`.
-#' @param use_venn logical, use venn to plot, default is `TRUE`, the other
+#' If gene group over 4, plot will be visulized using UpSet plot.
+#'
+#' @param venn_list A list of gene id.
+#' @param color Colors for gene lists, default is NULL.
+#' @param alpha_degree Alpha transparency of each circle's area, default is 0.3.
+#' @param border_thick Thickness of each circle, default is 1.
+#' @param text_size Text size, default is 1.
+#' @param remove_grid Logical, remove circle or grid lines, default is `FALSE`.
+#' @param use_venn Logical, use venn to plot, default is `TRUE`, the other
 #'   option is upsetplot for large list.
-#' @return ggplot object
-#' @importFrom futile.logger flog.threshold ERROR
+#' @return  A ggplot object
 #' @importFrom VennDiagram venn.diagram
-#' @importFrom RColorBrewer brewer.pal
-#' @importFrom cowplot as_grob
-#' @importFrom ggplotify as.ggplot
-#' @importFrom scales alpha
-#' @importFrom stats setNames
 #' @importFrom dplyr as_tibble filter select group_by summarize %>%
 #' @importFrom tidyr gather
 #' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme
-#'   element_blank
-#' @importFrom ggupset scale_x_upset  scale_y_continuous
+#'   element_blank scale_y_continuous
 #' @export
 #' @examples
 #' \dontrun{
@@ -33,9 +28,9 @@
 #' la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3,
 #'   gset4 = set4, gset5 = set5 )
 #' plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = 1,
-#'   remove_grid = T,color = ggsci::pal_lancet()(3))
+#'   remove_grid = TRUE,color = ggsci::pal_lancet()(3))
 #' plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,
-#' remove_grid = T, use_venn = F)
+#' remove_grid = TRUE, use_venn = FALSE)
 #'
 #' }
 
@@ -45,13 +40,17 @@ plotVenn <- function(venn_list,
                      border_thick = 1,
                      text_size = 1,
                      remove_grid = FALSE,
-                     use_venn = TRUE,
-                     ...) {
+                     use_venn = TRUE) {
 
   #--- args ---#
   stopifnot(is.list(venn_list))
   # if gene list too long, use upset plot
   # use_venn <- ifelse(length(venn_list) <= 4, TRUE, FALSE)
+
+  if (!requireNamespace("futile.logger", quietly = TRUE)) {
+    stop("Package futile.logger needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
 
   #--- codes ---#
   if (use_venn) {

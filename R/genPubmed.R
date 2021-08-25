@@ -3,7 +3,6 @@
 #' @param id Gene "symbol".
 #' @param keywords species "mm" or "hs".
 #' @param field pubmed field from `showNCBI('pubmed')`, default is "ALL".
-#' @importFrom easyPubMed get_pubmed_ids fetch_pubmed_data table_articles_byAuth
 #' @importFrom tidyr unite
 #' @importFrom dplyr select mutate relocate everything %>%
 #'
@@ -16,9 +15,13 @@
 #' }
 genPubmed <- function(id,
                       keywords,
-                      field = "ALL",
-                      ...) {
+                      field = "ALL") {
   #--- args ---#
+  if (!requireNamespace("easyPubMed", quietly = TRUE)) {
+    stop("Package easyPubMed needed for this function to work. Please install it.",
+         call. = FALSE)
+  }
+
   stopifnot(
     is.character(id),
     is.character(keywords)
@@ -55,7 +58,7 @@ genPubmed <- function(id,
         encoding = "ASCII"
       ) %>%
         tidyr::unite("date", year, month, day) %>%
-        dplyr::select(., title, date, doi, pmid, journal))
+        dplyr::select(title, date, doi, pmid, journal))
 
       l[[x]] <- pub_df
     }

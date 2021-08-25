@@ -13,6 +13,7 @@
 #' @param maxGSSize Maximal size of each gene set for analyzing, default is 500.
 #' @param universe Background genes. If missing, then all gene list in
 #'   orgdb will be used as background.
+#' @param ... other argument to `enrichGO` function
 #' @importFrom dplyr  %>% mutate
 #' @importFrom clusterProfiler enrichGO
 #' @importFrom stringr str_split
@@ -24,7 +25,7 @@
 #' data(geneList, package="DOSE")
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.1 ,use_symbol = T)
+#'   qvalueCutoff = 0.1 ,use_symbol = TRUE)
 #' head(ego)
 genGO <- function(id,
                   org,
@@ -57,7 +58,8 @@ genGO <- function(id,
                               universe = universe,
                               qvalueCutoff = qvalueCutoff,
                               minGSSize = minGSSize,
-                              maxGSSize  = maxGSSize))
+                              maxGSSize  = maxGSSize,
+                              ...))
 
   if(nrow(as.data.frame(ego)) == 0){
     stop('No GO terms enriched ...')

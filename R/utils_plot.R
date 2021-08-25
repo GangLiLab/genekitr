@@ -1,23 +1,4 @@
-# AnnoGenes utilities for plotting
-
-#' ggplot theme
-#'
-#' @title plot_theme
-#' @param main_text_size numeric, main text font size.
-#' @param legend_text_size numeric, legend text font size.
-#' @param font_type font family.
-#' @param border_thick numeric, border thickness in mm.
-#' @return ggplot theme
-#' @importFrom ggplot2 theme_bw
-#' @importFrom ggplot2 xlim
-#' @importFrom ggplot2 ylim
-#' @importFrom ggplot2 theme
-#' @importFrom ggplot2 element_text
-#' @importFrom ggplot2 margin
-#' @examples
-#' library(ggplot2)
-#' ggplot(mtcars,aes(x=mpg)) + geom_histogram(binwidth=5) + plot_theme()
-#' @export
+#--- ggplot theme settting ---#
 plot_theme <- function(main_text_size=14,
                        legend_text_size=10,
                        font_type = 'Arial',
