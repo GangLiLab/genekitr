@@ -1,31 +1,32 @@
 #' Gene enrichment of KEGG analysis
 #'
-#' @param id a vector of entrez gene.
-#' @param org  character of organism name which can test by `mapKeggOrg()`.
-#' @param use_symbol logical to output as gene symbol, default is TRUE.
-#' @param pAdjustMethod one of "holm", "hochberg", "hommel", "bonferroni", "BH",
+#' @param id A vector of entrez gene.
+#' @param org  KEGG organism name from `keggOrg_name()`.
+#' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
+#' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 #'   "BY", "fdr", "none".
-#' @param pvalueCutoff numberic of adjusted pvalue cutoff, default is 0.05.
-#' @param qvalueCutoff numberic of adjusted pvalue cutoff, default is 0.1.
-#' @param minGSSize numberic of minimal size of each geneSet for analyzing,
+#' @param pvalueCutoff Numberic of adjusted pvalue cutoff, default is 0.05.
+#' @param qvalueCutoff Numberic of adjusted pvalue cutoff, default is 0.1.
+#' @param minGSSize Numberic of minimal size of each geneSet for analyzing,
 #'   default is 10.
-#' @param maxGSSize numberic of maximal size of each geneSet for analyzing,
+#' @param maxGSSize Numberic of maximal size of each geneSet for analyzing,
 #'   default is 500.
-#' @param universe background genes. If missing, the orgdb all gene list will be
+#' @param universe Background genes. If missing, the orgdb all gene list will be
 #'   used as background.
-#' @return a dataframe of gene info.
-#' @importFrom dplyr  %>%
+#' @importFrom dplyr  %>% mutate filter
+#' @importFrom stringr  str_split
 #' @importFrom stringi stri_omit_na
 #' @importFrom clusterProfiler enrichKEGG
-#' @importFrom DOSE setReadable
+#'
+#' @return A `data.frame`.
 #' @export
+#'
 #' @examples
-#' \dontrun{
 #' data(geneList, package="DOSE")
-#' id = names(geneList)[1:100]
+#' id <- names(geneList)[1:100]
 #' keg <- genKEGG(id, org = 'human')
 #' head(keg)
-#' }
+
 genKEGG <- function(id,
                     org,
                     use_symbol = TRUE,

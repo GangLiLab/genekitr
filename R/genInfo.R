@@ -1,16 +1,17 @@
 #' Get gene related information
 #'
-#' @param id gene id.
-#' @param org species name from `biocOrg_name()`.
-#' @return a dataframe of gene info.
+#' @param id Gene id.
+#' @param org Species name from `biocOrg_name`.
 #' @importFrom stringr str_detect
 #' @importFrom magrittr set_rownames
 #' @importFrom dplyr  %>% filter relocate select
+#'
+#' @return A `data.frame`.
 #' @export
+#'
 #' @examples
-#' \donttest{
 #' x = genInfo(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"), org = 'mm')
-#' }
+#' head(x)
 
 genInfo <- function(id,
                     org,

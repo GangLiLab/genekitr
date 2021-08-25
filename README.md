@@ -1,4 +1,4 @@
-# Genekitr
+# genekitr: Gene Analysis Toolkit in R
 
 > This tool annotates genes with alias, symbol, full name, function also related papers.
 >
@@ -15,17 +15,17 @@
 
 ## Installation
 
-You can also install devel version of **AnnoGenes** from github with:
+You can also install devel version of **genekitr** from github with:
 
 ``` r
 # install.packages("remotes")
-remotes::install_github("GangLiLab/AnnoGenes")
+remotes::install_github("GangLiLab/genekitr")
 ```
 
 If you want to build vignette in local, please add two options:
 
 ``` r
-remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependencies = TRUE)
+remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependencies = TRUE)
 ```
 
 
@@ -101,6 +101,7 @@ remotes::install_github("GangLiLab/AnnoGenes", build_vignettes = TRUE, dependenc
 - [x] 增加genVenn，先做成数据框结果。然后如果多于五组比较，就做成usetplot图
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 - [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
+- [ ] 可视化GSEA结果
 
 ##### 导出结果 (Export)
 
