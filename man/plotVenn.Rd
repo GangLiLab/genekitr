@@ -8,10 +8,13 @@ plotVenn(
   venn_list,
   color = NULL,
   alpha_degree = 0.3,
-  border_thick = 1,
   text_size = 1,
   remove_grid = FALSE,
-  use_venn = TRUE
+  use_venn = TRUE,
+  main_text_size = 10,
+  legend_text_size = 8,
+  font_type = "Arial",
+  border_thick = 1
 )
 }
 \arguments{
@@ -21,14 +24,20 @@ plotVenn(
 
 \item{alpha_degree}{Alpha transparency of each circle's area, default is 0.3.}
 
-\item{border_thick}{Thickness of each circle, default is 1.}
-
 \item{text_size}{Text size, default is 1.}
 
 \item{remove_grid}{Logical, remove circle or grid lines, default is `FALSE`.}
 
 \item{use_venn}{Logical, use venn to plot, default is `TRUE`, the other
 option is upsetplot for large list.}
+
+\item{main_text_size}{Numeric, main text size}
+
+\item{legend_text_size}{Numeric, legend text size}
+
+\item{font_type}{Font family}
+
+\item{border_thick}{Numeric, border thickness}
 }
 \value{
 A ggplot object
@@ -37,12 +46,13 @@ A ggplot object
 If gene group over 4, plot will be visulized using UpSet plot.
 }
 \examples{
-\dontrun{
-set1 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-set2 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-set3 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-set4 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-set5 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
+\donttest{
+library(ggplot2)
+set1 <- paste(rep("gene", 100), sample(c(1:1000), 100), sep="")
+set2 <- paste(rep("gene", 100), sample(c(1:1000), 100), sep="")
+set3 <- paste(rep("gene", 100), sample(c(1:1000), 100), sep="")
+set4 <- paste(rep("gene", 100), sample(c(1:1000), 100), sep="")
+set5 <- paste(rep("gene", 100), sample(c(1:1000), 100), sep="")
 sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
 la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3,
   gset4 = set4, gset5 = set5 )

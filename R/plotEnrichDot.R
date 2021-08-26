@@ -3,7 +3,6 @@
 #' @param enrich_df `data.frame` of enrichment analysis result .
 #' @param xlab_type X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
 #' @param legend_by Stats legend type, one of "pvalue", "p.adjust", "qvalue".
-#' @param border_thick Numeric, border thickness in mm.
 #' @param remove_grid Logical, remove background grid lines, default is FALSE.
 #' @param remove_text Logical, remove all text, default is FALSE.
 #' @param remove_legend Logical, remove legend, default is FALSE.
@@ -12,13 +11,12 @@
 #' @param font_type Character, specify the plot text font family, example "Times
 #'   New Roman", "Arial".
 #' @param show_item Numeric, select top N rows to show, default is 10.
-#' @param main_text_size Numeric, specify the main text size, default is 10.
-#' @param legend_text_size Numeric, specify the legend text size, default is 8.
+#' @inheritParams plot_theme
 #' @param wrap_width Numeric, wrap text if longer than this number, default is NULL.
-
+#'
 #' @importFrom dplyr pull %>% arrange mutate slice_head
 #' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme
-#'   guide_colorbar scale_y_discrete element_blank
+#'   guide_colorbar scale_y_discrete element_blank xlab labs
 #' @importFrom stringr str_to_title
 #' @importFrom clusterProfiler enrichGO
 #'
@@ -26,11 +24,12 @@
 #' @export
 #' @examples
 #' \dontrun{
+#' library(ggplot2)
 #' data(geneList, package="DOSE")
 #' id = names(geneList)[1:100]
 #' ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
 #'   qvalueCutoff = 0.1 ,use_symbol = FALSE)
-#' ego = as.enrichDat(ego)
+#' ego = as.enrichdat(ego)
 #' plotEnrichDot(ego)
 #' }
 
@@ -38,17 +37,17 @@
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
                           legend_by = c("p.adjust", "pvalue", "qvalue"),
-                          border_thick = 1,
                           remove_grid = FALSE,
                           remove_text = FALSE,
                           remove_legend = FALSE,
                           low_color = "red",
                           high_color = "blue",
-                          font_type = "Arial",
                           show_item = 10,
                           # xleft = 0, xright = NA,
                           main_text_size = 10,
                           legend_text_size = 8,
+                          font_type = 'Arial',
+                          border_thick = 1,
                           wrap_width = NULL) {
   #--- args ---#
   stopifnot(is.numeric(show_item))
@@ -141,7 +140,8 @@ plotEnrichDot <- function(enrich_df,
 
 
 ##' Adjust dataframe for enrichment plot
-##' make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
+##'
+##' make sure colname contains Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
 ##'
 ##' @param enrich_df dataframe of enrichment analysis result .
 ##'

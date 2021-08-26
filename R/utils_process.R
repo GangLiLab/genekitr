@@ -1,3 +1,13 @@
+# add global variables
+utils::globalVariables(c(".", ":=", "Count", "Description", "V1", "chr",
+                         "count", "day", "doi", "element_line", "element_rect",
+                         "element_text", "end", "ensembl_id", "entrez_gene",
+                         "entrezid", "full_name", "gene","gene_id", "gene_symbol",
+                         "gs_cat", "gs_name", "gs_subcat", "input_id",
+                         "install.packages", "item", "journal", "labs", "margin",
+                         "month", "msig_category","msig_org", "na.omit", "pmid",
+                         "setSize", "sets", "short_name", "start", "strand", "symbol",
+                         "theme_bw", "title", "type", "uniprot", "unit", "width", "xlab", "year"))
 
 showNCBI <- function(db = "pubmed") {
   # suppress binding notes
@@ -80,7 +90,7 @@ auto_install <- function(pkg){
       missing_pkgs <- names(ret[!ret])
       if (length(missing_pkgs) > 0) {
         message("Try installing via CRAN...\n")
-        suppressWarnings(install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
+        suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
 
         # 第三次检查
         ret <- suppressPackageStartupMessages(

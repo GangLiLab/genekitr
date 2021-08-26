@@ -2,8 +2,7 @@
 % Please edit documentation in R/plotEnrichDot.R
 \name{as.enrichdat}
 \alias{as.enrichdat}
-\title{Adjust dataframe for enrichment plot
-make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust}
+\title{Adjust dataframe for enrichment plot}
 \usage{
 as.enrichdat(enrich_df)
 }
@@ -14,6 +13,5 @@ as.enrichdat(enrich_df)
 A `data.frame`.
 }
 \description{
-Adjust dataframe for enrichment plot
-make sure colnames have Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
+make sure colname contains Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
 }

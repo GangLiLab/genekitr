@@ -20,11 +20,11 @@ An Excel file.
 Export result into different Excel sheets
 }
 \examples{
-\dontrun{
+\donttest{
 library(openxlsx)
 wb <- createWorkbook()
 wb <- expo_sheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
-saveWorkbook(wb, "./test.xlsx", overwrite = TRUE)
+saveWorkbook(wb, paste0(tempdir(),'/test.xlsx'), overwrite = TRUE)
 }
 
 }

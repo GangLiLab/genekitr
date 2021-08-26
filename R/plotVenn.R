@@ -5,11 +5,11 @@
 #' @param venn_list A list of gene id.
 #' @param color Colors for gene lists, default is NULL.
 #' @param alpha_degree Alpha transparency of each circle's area, default is 0.3.
-#' @param border_thick Thickness of each circle, default is 1.
 #' @param text_size Text size, default is 1.
 #' @param remove_grid Logical, remove circle or grid lines, default is `FALSE`.
 #' @param use_venn Logical, use venn to plot, default is `TRUE`, the other
 #'   option is upsetplot for large list.
+#' @inheritParams plot_theme
 #' @return  A ggplot object
 #' @importFrom VennDiagram venn.diagram
 #' @importFrom dplyr as_tibble filter select group_by summarize %>%
@@ -18,12 +18,13 @@
 #'   element_blank scale_y_continuous
 #' @export
 #' @examples
-#' \dontrun{
-#' set1 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-#' set2 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-#' set3 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-#' set4 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
-#' set5 <- paste(rep("gene", 100), sample(c(1:1000), 100, replace=F), sep="")
+#' \donttest{
+#' library(ggplot2)
+#' set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+#' set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+#' set3 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+#' set4 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+#' set5 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 #' sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
 #' la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3,
 #'   gset4 = set4, gset5 = set5 )
@@ -37,10 +38,13 @@
 plotVenn <- function(venn_list,
                      color = NULL,
                      alpha_degree = 0.3,
-                     border_thick = 1,
                      text_size = 1,
                      remove_grid = FALSE,
-                     use_venn = TRUE) {
+                     use_venn = TRUE,
+                     main_text_size = 10,
+                     legend_text_size = 8,
+                     font_type = 'Arial',
+                     border_thick = 1) {
 
   #--- args ---#
   stopifnot(is.list(venn_list))
@@ -110,7 +114,7 @@ plotVenn <- function(venn_list,
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
       ggupset::scale_x_upset(name = "") +
       ggplot2::scale_y_continuous(name = "") +
-      plot_theme(border_thick = border_thick, main_text_size = text_size)
+      plot_theme()
 
     # hide background grid line
     if (remove_grid) {

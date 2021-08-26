@@ -8,11 +8,11 @@
 #' @return An Excel file.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(openxlsx)
 #' wb <- createWorkbook()
 #' wb <- expo_sheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
-#' saveWorkbook(wb, "./test.xlsx", overwrite = TRUE)
+#' saveWorkbook(wb, paste0(tempdir(),'/test.xlsx'), overwrite = TRUE)
 #' }
 #'
 expo_sheet <- function(wb, sheet_dat, sheet_name) {

@@ -9,7 +9,7 @@
 #' @return A `data.frame`.
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' x = genPubmed(id = c("Cyp2c23","Fhit","Gal3st2b","Gbp4"),
 #'   keywords = 'stem cell', field = 'tiab')
 #' }

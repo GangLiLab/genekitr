@@ -8,16 +8,16 @@ plotEnrichDot(
   enrich_df,
   xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
   legend_by = c("p.adjust", "pvalue", "qvalue"),
-  border_thick = 1,
   remove_grid = FALSE,
   remove_text = FALSE,
   remove_legend = FALSE,
   low_color = "red",
   high_color = "blue",
-  font_type = "Arial",
   show_item = 10,
   main_text_size = 10,
   legend_text_size = 8,
+  font_type = "Arial",
+  border_thick = 1,
   wrap_width = NULL
 )
 }
@@ -27,8 +27,6 @@ plotEnrichDot(
 \item{xlab_type}{X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
 
 \item{legend_by}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
-
-\item{border_thick}{Numeric, border thickness in mm.}
 
 \item{remove_grid}{Logical, remove background grid lines, default is FALSE.}
 
@@ -40,14 +38,16 @@ plotEnrichDot(
 
 \item{high_color}{Legend color for high pvalue or qvalue, default is "blue".}
 
+\item{show_item}{Numeric, select top N rows to show, default is 10.}
+
+\item{main_text_size}{Numeric, main text size}
+
+\item{legend_text_size}{Numeric, legend text size}
+
 \item{font_type}{Character, specify the plot text font family, example "Times
 New Roman", "Arial".}
 
-\item{show_item}{Numeric, select top N rows to show, default is 10.}
-
-\item{main_text_size}{Numeric, specify the main text size, default is 10.}
-
-\item{legend_text_size}{Numeric, specify the legend text size, default is 8.}
+\item{border_thick}{Numeric, border thickness}
 
 \item{wrap_width}{Numeric, wrap text if longer than this number, default is NULL.}
 }
@@ -59,11 +59,12 @@ Dotplot for GO and KEGG enrichment analysis
 }
 \examples{
 \dontrun{
+library(ggplot2)
 data(geneList, package="DOSE")
 id = names(geneList)[1:100]
 ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
   qvalueCutoff = 0.1 ,use_symbol = FALSE)
-ego = as.enrichDat(ego)
+ego = as.enrichdat(ego)
 plotEnrichDot(ego)
 }
 }
