@@ -106,8 +106,9 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 ##### 导出结果 (Export)
 
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
-- [ ] 想到一个R包名称：`genepedia` （看看以后会不会使用它）
-- [x] 设置了一个文件上传下载的服务器，示例数据可以直接存在其中，而不用占用`data`目录的位置
+- [ ] ~~想到一个R包名称：`genepedia` （看看以后会不会使用它）~~
+- [x] 设置了一个文件上传下载的服务器，示例数据可以直接存在其中，而不用占用`data`目录的空间
+- [ ] `expoSheet`的帮助示例添加管道操作，演示多个数据集的导出
 
 
 
