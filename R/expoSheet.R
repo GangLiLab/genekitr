@@ -11,11 +11,11 @@
 #' \donttest{
 #' library(openxlsx)
 #' wb <- createWorkbook()
-#' wb <- expo_sheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
+#' wb <- expoSheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
 #' saveWorkbook(wb, paste0(tempdir(),'/test.xlsx'), overwrite = TRUE)
 #' }
 #'
-expo_sheet <- function(wb, sheet_dat, sheet_name) {
+expoSheet <- function(wb, sheet_dat, sheet_name) {
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("Package openxlsx needed for this function to work. Please install it.",
          call. = FALSE)

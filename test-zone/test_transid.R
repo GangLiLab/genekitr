@@ -2,7 +2,7 @@ rm(list = ls())
 library(genekitr)
 #--- huamn id ---#
 data(geneList, package = 'DOSE')
-id = names(geneList)[1:5]
+id = names(geneList)[1:100]
 id
 transId(id, trans_to = 'symbol',org='hs')
 transId(id, trans_to = 'uni',org='human')
