@@ -7,18 +7,6 @@
 \alias{msig_category}
 \alias{biocOrg_name}
 \alias{keggOrg_name}
-\alias{Ag_anno}
-\alias{Bt_anno}
-\alias{Ce_anno}
-\alias{Cf_anno}
-\alias{Dm_anno}
-\alias{Dr_anno}
-\alias{Gg_anno}
-\alias{Hs_anno}
-\alias{Mm_anno}
-\alias{Mmu_anno}
-\alias{Pt_anno}
-\alias{Rn_anno}
 \title{Datasets
 msig_species contains msigdb species information}
 \description{
@@ -34,42 +22,6 @@ biocOrg_name contains organism name of bioconductor
 Datasets
 keggOrg_name contains organism name of KEGG
 https://www.genome.jp/kegg/catalog/org_list.html
-
-Datasets
-Ag annotation data
-
-Datasets
-Bt annotation data
-
-Datasets
-Ce annotation data
-
-Datasets
-Cf annotation data
-
-Datasets
-Dm annotation data
-
-Datasets
-Dr annotation data
-
-Datasets
-Gg annotation data
-
-Datasets
-Hs annotation data
-
-Datasets
-Mm annotation data
-
-Datasets
-Mmu annotation data
-
-Datasets
-Pt annotation data
-
-Datasets
-Rn annotation data
 }
 \examples{
 data(msig_org)
@@ -80,17 +32,5 @@ data(biocOrg_name)
 str(biocOrg_name)
 data(keggOrg_name)
 str(keggOrg_name)
-data(Ag_anno)
-data(Bt_anno)
-data(Ce_anno)
-data(Cf_anno)
-data(Dm_anno)
-data(Dr_anno)
-data(Gg_anno)
-data(Hs_anno)
-data(Mm_anno)
-data(Mmu_anno)
-data(Pt_anno)
-data(Rn_anno)
 }
 \keyword{datasets}

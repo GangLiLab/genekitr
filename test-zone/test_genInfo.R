@@ -1,5 +1,5 @@
 rm(list = ls())
-library(AnnoGenes)
+library(genekitr)
 # use huamn id
 data(geneList, package = 'DOSE')
 id = names(geneList)[1:5]

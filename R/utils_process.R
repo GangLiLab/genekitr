@@ -1,5 +1,5 @@
 # add global variables
-utils::globalVariables(c(".", ":=", "Count", "Description", "V1", "chr",
+utils::globalVariables(c(".", ":=", "Count", "download.file","Description", "V1", "chr",
                          "count", "day", "doi", "element_line", "element_rect",
                          "element_text", "end", "ensembl_id", "entrez_gene",
                          "entrezid", "full_name", "gene","gene_id", "gene_symbol",
@@ -229,7 +229,8 @@ if(F){
         x = .get_org_anno(i)
         assign(paste0(stringr::str_to_title(i),'_anno'), x)
         save(list = paste0(stringr::str_to_title(i),'_anno'),
-             file = paste0('data/',stringr::str_to_title(i),'_anno.rda'))
+             file = paste0('data/',stringr::str_to_title(i),'_anno.rda'),
+             compress = 'xz')
       }
     }
 }

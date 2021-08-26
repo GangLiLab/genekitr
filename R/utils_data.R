@@ -22,8 +22,19 @@ keggOrg_name <- function() {
   get("keggOrg_name", envir = .GlobalEnv)
 }
 
-#--- get ensembl anno ---#
-# DEPRECATED NOW!
+#--- get bioconductor anno ---#
+biocAnno <- function(org){
+  org = mapBiocOrg(tolower(org))
+  if(!file.exists(paste0(tempdir(),'/',org,'_anno.rda'))){
+    download.file(paste0("http://112.74.191.19/genekitr/",org,'_anno.rda'),
+                  paste0(tempdir(),'/',org,'_anno.rda'),mode = "wb",quiet = TRUE)
+  }
+  load(paste0(tempdir(),'/',org,'_anno.rda'), envir = .GlobalEnv)
+  get(paste0(org,'_anno'), envir = .GlobalEnv)
+}
+
+
+#--- get ensembl anno (DEPRECATED NOW!) ---#
 if(F){
   human_gtf <- function() {
     utils::data(list="data/homo_sapiens_V104_gtf.rda", package="genekitr")
@@ -40,12 +51,6 @@ if(F){
 }
 
 
-#--- get bioconductor anno ---#
-biocAnno <- function(org){
-  org = mapBiocOrg(tolower(org))
-  utils::data(list=paste0(org,'_anno'), package="genekitr")
-  get(paste0(org,'_anno'), envir = .GlobalEnv)
-}
 
 
 
