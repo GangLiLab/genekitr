@@ -93,7 +93,7 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 
 ##### 数据分析（Analyse）
 
-- [ ] 设置自己的示例数据，like：`data(geneList, package="AnnoGenes")`
+- [ ] 设置自己的示例数据，like：`data(geneList, package="genekitr")`
 - [x] 富集分析先将基因id全部转成entrez id，然后再根据需要利用 `transId()`  进行转换，达到`setReadable`的目的
 
 ##### 可视化（Visualize）
@@ -313,7 +313,9 @@ transId(id, trans_to = 'symbol',org='fly')
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-20-031038.png)
 
+不管是参数的简洁，还是结果的准确性，都胜过其他两大R包：
 
+![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-08-26-095054.png)
 
 #### Method 6: KEGG
 
