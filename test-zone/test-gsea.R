@@ -1,5 +1,5 @@
 rm(list = ls())
-library(AnnoGenes)
+library(genekitr)
 data(geneList, package="DOSE")
 head(geneList)
 

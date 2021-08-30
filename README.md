@@ -289,7 +289,7 @@ transId(id, trans_to = 'sym',org='mouse')
 # Error in .gentype(id, org) : Wrong organism! 
 ```
 
-Compare `AnnoGenes::transId` and `clusterProfiler::bitr`
+Compare `genekitr::transId` and `clusterProfiler::bitr`
 
 > 保留原始id顺序，而没有去除NA，就是为了方便用户看到哪些ID没有转换成功；
 > 如果用户后面需要去掉NA，那么直接使用`na.omit()`即可
@@ -314,9 +314,9 @@ transId(id, trans_to = 'symbol',org='fly')
 
 ![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-07-20-031038.png)
 
-不管是参数的简洁，还是结果的准确性，都胜过其他两大R包：
+不管是参数的简洁，还是结果的准确性，都胜过其他两大R包`clusterProfiler::bitr` 和`biomaRt::getBM`：
 
-![](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2021-08-26-095054.png)
+![](man/figures/exp8.png)
 
 #### Method 6: KEGG
 
