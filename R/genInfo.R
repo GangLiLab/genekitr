@@ -15,7 +15,6 @@
 genInfo <- function(id,
                     org) {
   #--- args ---#
-  options(warn = -1)
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
 
   org.bk = org

@@ -18,7 +18,6 @@
 transId <- function(id, trans_to, org, keep_unique = TRUE){
 
   #--- args ---#
-  options(warn = -1)
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   org = mapBiocOrg(tolower(org))
   keytype = .gentype(id, org)

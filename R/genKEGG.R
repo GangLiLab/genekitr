@@ -41,7 +41,6 @@ genKEGG <- function(id,
 
   #--- args ---#
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
-  options(warn=-1)
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 

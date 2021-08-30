@@ -35,7 +35,6 @@ genGSEA <- function(genelist,
 
   #--- args ---#
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
-  options(warn=-1)
   category = match.arg(category)
 
   stopifnot(

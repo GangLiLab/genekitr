@@ -30,7 +30,6 @@ getMsigdb <- function(org,
                       subcategory=NULL) {
 
   #--- args ---#
-  options(warn=-1)
   if (!requireNamespace('msigdbr', quietly = TRUE)) auto_install('msigdbr')
   org = tolower(org)
   if (org == "hg" | org == "hsa" |  org == "hs" | org == 'homo sapiens') org = 'human'
