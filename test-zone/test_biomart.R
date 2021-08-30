@@ -30,7 +30,7 @@ mm_id=stringr::str_split(mm_id,"\n")[[1]]
 attr <- c("external_gene_name",'external_synonym','uniprot_gn_symbol')
 
 biomart_alias = getBM( values = mm_id,
-                       attributes = c("external_gene_name",'uniprotswissprot'),
+                       attributes = c("external_gene_name",'uniprotswissprot','ensembl_gene_id'),
                        filters = "external_gene_name",
                        mart = useMart("ensembl",
                                       dataset = "mmusculus_gene_ensembl",

@@ -2,29 +2,38 @@
 % Please edit documentation in R/expoSheet.R
 \name{expoSheet}
 \alias{expoSheet}
-\title{Export result into different Excel sheets}
+\title{Export list of datasets into different Excel sheets}
 \usage{
-expoSheet(wb, sheet_dat, sheet_name)
+expoSheet(
+  dat_list,
+  name_list,
+  filename = NULL,
+  dir = tempdir(),
+  overwrite = TRUE
+)
 }
 \arguments{
-\item{wb}{workbook created from `createWorkbook`.}
+\item{dat_list}{List of datasets.}
 
-\item{sheet_dat}{`data.frame` to export.}
+\item{name_list}{List of data names.}
 
-\item{sheet_name}{sheet name.}
+\item{filename}{A character string naming an xlsx file.}
+
+\item{dir}{A character string naming output directory.}
+
+\item{overwrite}{If TRUE, overwrite any existing file.}
 }
 \value{
 An Excel file.
 }
 \description{
-Export result into different Excel sheets
+Export list of datasets into different Excel sheets
 }
 \examples{
 \donttest{
 library(openxlsx)
-wb <- createWorkbook()
-wb <- expoSheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
-saveWorkbook(wb, paste0(tempdir(),'/test.xlsx'), overwrite = TRUE)
+expoSheet(dat_list =  list(mtcars,ToothGrowth), name_list = list('mtcars','tooth'),
+  filename = 'test.xlsx', dir = tempdir())
 }
 
 }

@@ -1,8 +1,10 @@
-#' Export result into different Excel sheets
+#' Export list of datasets into different Excel sheets
 #'
-#' @param wb workbook created from `createWorkbook`.
-#' @param sheet_dat `data.frame` to export.
-#' @param sheet_name sheet name.
+#' @param dat_list List of datasets.
+#' @param name_list List of data names.
+#' @param filename A character string naming an xlsx file.
+#' @param dir A character string naming output directory.
+#' @param overwrite If TRUE, overwrite any existing file.
 #' @importFrom stringr str_detect
 #'
 #' @return An Excel file.
@@ -10,59 +12,41 @@
 #' @examples
 #' \donttest{
 #' library(openxlsx)
-#' wb <- createWorkbook()
-#' wb <- expoSheet(wb, sheet_dat =  mtcars, sheet_name = 'mtcars')
-#' saveWorkbook(wb, paste0(tempdir(),'/test.xlsx'), overwrite = TRUE)
+#' expoSheet(dat_list =  list(mtcars,ToothGrowth), name_list = list('mtcars','tooth'),
+#'   filename = 'test.xlsx', dir = tempdir())
 #' }
 #'
-expoSheet <- function(wb, sheet_dat, sheet_name) {
+
+expoSheet <- function(dat_list,
+                      name_list,
+                      filename = NULL,
+                      dir = tempdir(),
+                      overwrite = TRUE) {
+
+  #--- args ---#
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
     stop("Package openxlsx needed for this function to work. Please install it.",
          call. = FALSE)
   }
-  openxlsx::addWorksheet(wb, sheet_name)
-  openxlsx::writeData(wb, sheet = sheet_name, x = sheet_dat)
+  if(!"wb" %in% ls()) wb <- createWorkbook()
 
-  ## add hyperlink for gene
-  check <- apply(sheet_dat, 2, function(x) {
-    any(stringr::str_detect(x, "http"))
-  })
-  # check[is.na(check)] <- FALSE
-  if (any(check)) {
-    sub_dat <- sheet_dat[, check]
-
-    for (i in 1:nrow(sheet_dat)) {
-      for (n in which(check)) {
-        if (! is.na(sheet_dat[i, n]) & !is.na(sheet_dat[i, n] )) {
-          sheet_datd_link <- paste0("HYPERLINK(\"", sheet_dat[i, n],
-                                    "\", \"", sheet_dat[i, n], "\")")
-          openxlsx::writeFormula(wb, sheet = sheet_name, startRow = i + 1,
-                       startCol = n, x = sheet_datd_link)
-        }
-      }
-    }
+  if(length(dat_list) != length(name_list)){
+    stop('Datasets number is not equal with names!')
   }
 
-  ## add hyperlink for pubmed
-  check2 <- any(stringr::str_detect(colnames(sheet_dat), "pmid"))
-  if (check2) {
-    for (i in seq_len(nrow(sheet_dat))) {
-      if (sheet_dat[i, 2] != "NA") {
-        sheet_datd_link <- paste0(
-          "HYPERLINK(\"", paste0("https://pubmed.ncbi.nlm.nih.gov/", sheet_dat[i, 5]),
-          "\", \"", sheet_dat[i, 2], "\")"
-        )
-        openxlsx::writeFormula(wb, sheet = sheet_name, startRow = i + 1,
-                     startCol = 2, x = sheet_datd_link)
-      }
-    }
-  }
+  if(is.null(filename)) filename='test.xlsx'
 
-  ## styling sheet
-  headerStyle <- openxlsx::createStyle(textDecoration = "Bold")
-  openxlsx::addStyle(wb, sheet = sheet_name, style = headerStyle,
-           rows = 1, cols = seq_len(ncol(sheet_dat)), gridExpand = TRUE)
-  openxlsx::setColWidths(wb, sheet = sheet_name, cols = seq_len(ncol(sheet_dat)), widths = "auto")
+  #--- codes ---#
+  invisible(lapply(seq_along(dat_list), function(i){
+    openxlsx::addWorksheet(wb, name_list[[i]])
+    openxlsx::writeData(wb, sheet = name_list[[i]], x = dat_list[[i]])
 
-  invisible(wb)
+    ## styling sheet
+    headerStyle <- openxlsx::createStyle(textDecoration = "Bold")
+    openxlsx::addStyle(wb, sheet = name_list[[i]], style = headerStyle,
+                       rows = 1, cols = seq_len(ncol(dat_list[[i]])), gridExpand = TRUE)
+    openxlsx::setColWidths(wb, sheet =name_list[[i]], cols = seq_len(ncol(dat_list[[i]])), widths = "auto")
+  }))
+
+  saveWorkbook(wb, paste0(dir,filename), overwrite)
 }

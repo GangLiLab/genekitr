@@ -108,7 +108,8 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 - [ ] ~~图片也能导入excel（后期再看看这个有没有意义）~~
 - [ ] ~~想到一个R包名称：`genepedia` （看看以后会不会使用它）~~
 - [x] 设置了一个文件上传下载的服务器，示例数据可以直接存在其中，而不用占用`data`目录的空间
-- [ ] `expoSheet`的帮助示例添加管道操作，演示多个数据集的导出
+- [ ] ~~`expoSheet`的帮助示例添加管道操作，演示多个数据集的导出那个~~
+- [x] `expoSheet` 参数接收list 的数据集和名称，取代之前的管道操作
 
 
 
@@ -427,16 +428,14 @@ p4 = plotVenn(la_gene_list,use_venn = F,
 
 
 
-## Supplement
+## Export
 
-- support pipe ` %>% ` 
+- support list of datasets with different sheet names
 
 ```R
 library(openxlsx)
-wb <- createWorkbook()
-wb <- expo_sheet(wb, sheet_dat = test1, sheet_name = 'genInfo') %>% 
-  expo_sheet(., sheet_dat = test2, sheet_name = 'genPub')
-saveWorkbook(wb, "~/Downloads/test.xlsx", overwrite = T)
+expoSheet(dat_list =  list(mtcars,ToothGrowth,iris), name_list = list('mtcars','tooth','IRIS'),
+  filename = 'test.xlsx')
 ```
 
 <img src='man/figures/example1.png' align="below" />
