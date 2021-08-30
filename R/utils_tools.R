@@ -1,3 +1,29 @@
+#--- add global variables ---#
+utils::globalVariables(c(".", ":=", "Count", "download.file","Description", "V1", "chr",
+                         "count", "day", "doi", "element_line", "element_rect",
+                         "element_text", "end", "ensembl_id", "entrez_gene",
+                         "entrezid", "full_name", "gene","gene_id", "gene_symbol",
+                         "gs_cat", "gs_name", "gs_subcat", "input_id",
+                         "install.packages", "item", "journal", "labs", "margin",
+                         "month", "msig_category","msig_org", "na.omit", "pmid",
+                         "setSize", "sets", "short_name", "start", "strand", "symbol",
+                         "theme_bw", "title", "type", "uniprot", "unit", "width", "xlab", "year",
+                         'createWorkbook','saveWorkbook'))
+
+#--- NCBI entrez ---#
+showNCBI <- function(db = "pubmed") {
+  # suppress binding notes
+  fields <- rentrez::entrez_db_searchable(db)
+  res <- as.data.frame(fields)[1:3]
+
+  if (nrow(res) == 0) { # nocov start
+    message("Something is wrong in your input,
+            NULL will be returned, please check.")
+    return(NULL)
+  } # nocov end
+  return(res)
+}
+
 #---  get msigdb data ---#
 getMsigdb <- function(org,
                       category = c('C1','C2','C3','C4','C5','C6','C7','C8','H'),
@@ -55,7 +81,6 @@ getMsigdb <- function(org,
 
 }
 
-
 #---  map bioc org fullname to shortname ---#
 mapBiocOrg <- function(organism) {
   organism = tolower(organism)
@@ -79,7 +104,6 @@ mapBiocOrg <- function(organism) {
   org <- stringr::str_to_title(org)
   return(org)
 }
-
 
 #--- map kegg org fullname to shortname ---#
 mapKeggOrg <- function(organism){
@@ -120,6 +144,71 @@ mapKeggOrg <- function(organism){
   return(org)
 }
 
+#--- define gene type: entrezid, ensembl or symbol ---#
+.gentype <- function(id, org){
+  org = mapBiocOrg(org)
+  if(nchar(org) > 2){
+    org = substr(org,1,nchar(org)-1)
+  }
+  org <- stringr::str_to_title(org)
+  suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
+  orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
+  orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  if (any(id %in% orgSymbol$symbol)) {
+    c("SYMBOL")
+  } else if(any(id %in% orgENSEMBL$ensembl_id)){
+    c("ENSEMBL")
+  }else if (any(id %in% orgENSEMBL$gene_id)){
+    c("ENTREZID")
+  }else{
+    stop('Wrong organism!')
+  }
+}
+
+#---  auto-install packages ---#
+auto_install <- function(pkg){
+  options(warn=-1)
+
+  # check first time
+  ret <- suppressPackageStartupMessages(
+    sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+  )
+  missing_pkgs <- names(ret[!ret])
+  if (length(missing_pkgs) > 0) {
+    warning("The following packages are not installed: \n",
+            paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
+            immediate. = TRUE
+    )
+    message("\nTry installing via Bioconductor...\n")
+
+    mod = try(suppressMessages(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE)),silent = T)
+
+    if(isTRUE(class(mod)=="try-error")) {
+      # check again
+      ret <- suppressPackageStartupMessages(
+        sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+      )
+      missing_pkgs <- names(ret[!ret])
+      if (length(missing_pkgs) > 0) {
+        message("Try installing via CRAN...\n")
+        suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
+
+        # 第三次检查
+        ret <- suppressPackageStartupMessages(
+          sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+        )
+        missing_pkgs <- names(ret[!ret])
+        if (length(missing_pkgs) > 0) {
+          stop("Maybe you should check the package name ",
+               paste(missing_pkgs,collapse = ', '),
+               " or try devtools::install_github()")
+        }
+      }
+    }
+  }else{
+    message(sapply(pkg, function(x) paste0('The package ',x, ' exist...\n')))
+  }
+}
 
 #---calc fold enrichment ---#
 calcFoldEnrich <- function(df){
@@ -135,6 +224,13 @@ calcFoldEnrich <- function(df){
 
 }
 
-
+#--- load org.db ---#
+.load_orgdb <- function(org){
+  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
+  org = mapBiocOrg(tolower(org))
+  pkg=paste0("org.", org, ".eg.db")
+  if (!requireNamespace(pkg, quietly = TRUE)) auto_install(pkg)
+  suppressPackageStartupMessages(require(pkg, character.only = TRUE))
+}
 
 
