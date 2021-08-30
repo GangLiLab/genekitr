@@ -2,14 +2,17 @@
 #'
 #' @param id Gene id.
 #' @param org Species name from `biocOrg_name`.
+#' @param simple Logical to keep only one when matches many entrez ids, default is FALSE.
 #' @importFrom stringr str_detect
-#' @importFrom dplyr  %>% filter relocate select mutate mutate_all na_if
+#' @importFrom dplyr %>% filter relocate select mutate mutate_all na_if
+#' @importFrom tidyr unnest
 #'
 #' @return A `data.frame`.
 #' @export
 #'
 #' @examples
-#' x = genInfo(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"), org = 'mm')
+#' x = genInfo(id= c("MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
+#'    "FAKEID", "TP53", "HBD", "TP53", "NUDT10"), org = 'hs', simple = FALSE)
 #' head(x)
 
 genInfo <- function(id,
