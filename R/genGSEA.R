@@ -2,11 +2,11 @@
 #'
 #' @param genelist Order ranked genelist in decreasing order, gene can be
 #'   entrez, ensembl or symbol.
-#' @param org Organism name from `msigdb_org_data()`.
+#' @param org Organism name from `msig_org`.
 #' @param category MSigDB collection abbreviation, one of C1','C2','C3',
 #'   'C4','C5','C6','C7','C8','H'.
 #' @param subcategory MSigDB sub-collection abbreviation, choose from
-#'   `msigdb_category_data()`.
+#'   `msig_category`.
 #' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
 #' @param minGSSize Minimal size of each geneSet for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each geneSet for analyzing, default is 500.

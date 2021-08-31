@@ -20,13 +20,13 @@ genGSEA(
 \item{genelist}{Order ranked genelist in decreasing order, gene can be
 entrez, ensembl or symbol.}
 
-\item{org}{Organism name from `msigdb_org_data()`.}
+\item{org}{Organism name from `msig_org`.}
 
 \item{category}{MSigDB collection abbreviation, one of C1','C2','C3',
 'C4','C5','C6','C7','C8','H'.}
 
 \item{subcategory}{MSigDB sub-collection abbreviation, choose from
-`msigdb_category_data()`.}
+`msig_category`.}
 
 \item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
 

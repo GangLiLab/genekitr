@@ -2,7 +2,7 @@
 #' @param id Gene ids.
 #' @param trans_to Transform to which type, one of "symbol", "entrezid",
 #'   "ensembl" and "uniprot."
-#' @param org Organism name from `biocOrg_name()`, both full name and short name are fine.
+#' @param org Organism name from `biocOrg_name`, both full name and short name are fine.
 #' @param simple Logical to keep only one matched ID, default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
 #' @importFrom AnnotationDbi toTable
@@ -18,8 +18,8 @@
 #' )
 #' # input id contains duplicates,fake id and one-to-many match id
 #' transId(
-#' id = c("MMD2", "HBD", "TP53", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
-#' trans_to = "entrez", org = "hg", simple = FALSE
+#'   id = c("MMD2", "HBD", "TP53", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
+#'   trans_to = "entrez", org = "hg", simple = FALSE
 #' )
 transId <- function(id, trans_to, org, simple = TRUE) {
 

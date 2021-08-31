@@ -86,6 +86,8 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 
 - [ ] `auto_install`增加镜像选择
 
+- [ ] 目前`ensembl`数据库的uniprot id 不全，需要使用uniprot的数据把gene 和 protein id联系起来
+
 ##### 数据整理与转换（Tidy & Trans）
 
 - [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致

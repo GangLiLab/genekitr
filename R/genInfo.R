@@ -1,7 +1,7 @@
 #' Get gene related information
 #'
 #' @param id Gene id (symbol, ensembl or entrez id) or uniprot id.
-#' @param org Species name from `biocOrg_name()`, both full name and short name are fine.
+#' @param org Species name from `biocOrg_name`, both full name and short name are fine.
 #' @param simple Logical to keep only one matched ID, default is FALSE.
 #' @importFrom stringr str_detect
 #' @importFrom dplyr %>% filter relocate select mutate mutate_all na_if

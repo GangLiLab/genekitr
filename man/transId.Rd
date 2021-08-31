@@ -12,7 +12,7 @@ transId(id, trans_to, org, simple = TRUE)
 \item{trans_to}{Transform to which type, one of "symbol", "entrezid",
 "ensembl" and "uniprot."}
 
-\item{org}{Organism name from `biocOrg_name()`, both full name and short name are fine.}
+\item{org}{Organism name from `biocOrg_name`, both full name and short name are fine.}
 
 \item{simple}{Logical to keep only one matched ID, default is FALSE.}
 }
@@ -29,7 +29,7 @@ transId(
 )
 # input id contains duplicates,fake id and one-to-many match id
 transId(
-id = c("MMD2", "HBD", "TP53", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
-trans_to = "entrez", org = "hg", simple = FALSE
+  id = c("MMD2", "HBD", "TP53", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
+  trans_to = "entrez", org = "hg", simple = FALSE
 )
 }

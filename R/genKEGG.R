@@ -1,7 +1,7 @@
 #' Gene enrichment of KEGG analysis
 #'
 #' @param id A vector of entrez gene.
-#' @param org  KEGG organism name from `keggOrg_name()`.
+#' @param org  KEGG organism name from `keggOrg_name`.
 #' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
 #' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 #'   "BY", "fdr", "none".

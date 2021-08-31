@@ -158,12 +158,11 @@ mapKeggOrg <- function(organism){
     c("SYMBOL")
   } else if(any(id %in% orgENSEMBL$ensembl_id)){
     c("ENSEMBL")
-  }else if (any(id %in% orgENSEMBL$gene_id)){
+  }else if (any(id %in% orgENSEMBL$gene_id | id %in%orgSymbol$gene_id  | id %in%orgUNIPROT$gene_id)){
     c("ENTREZID")
   }else if (any(id %in% orgUNIPROT$uniprot_id)){
     c("UNIPROT")
-  }
-  else{
+  }else{
     stop('Wrong organism!')
   }
 }

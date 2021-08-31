@@ -9,7 +9,7 @@ genInfo(id, org, simple = FALSE)
 \arguments{
 \item{id}{Gene id (symbol, ensembl or entrez id) or uniprot id.}
 
-\item{org}{Species name from `biocOrg_name()`, both full name and short name are fine.}
+\item{org}{Species name from `biocOrg_name`, both full name and short name are fine.}
 
 \item{simple}{Logical to keep only one matched ID, default is FALSE.}
 }

@@ -6,9 +6,6 @@
 #' @aliases msig_org
 #' @docType data
 #' @keywords datasets
-#' @examples
-#' data(msig_org)
-#' str(msig_org)
 NULL
 
 #' Datasets
@@ -18,9 +15,6 @@ NULL
 #' @aliases msig_category
 #' @docType data
 #' @keywords datasets
-#' @examples
-#' data(msig_category)
-#' str(msig_category)
 NULL
 
 #' Datasets
@@ -30,9 +24,6 @@ NULL
 #' @aliases biocOrg_name
 #' @docType data
 #' @keywords datasets
-#' @examples
-#' data(biocOrg_name)
-#' str(biocOrg_name)
 NULL
 
 #' Datasets
@@ -43,9 +34,6 @@ NULL
 #' @aliases keggOrg_name
 #' @docType data
 #' @keywords datasets
-#' @examples
-#' data(keggOrg_name)
-#' str(keggOrg_name)
 NULL
 
 

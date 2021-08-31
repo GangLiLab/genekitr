@@ -29,9 +29,10 @@ Gcn5l1')
 mm_id=stringr::str_split(mm_id,"\n")[[1]]
 attr <- c("external_gene_name",'external_synonym','uniprot_gn_symbol')
 
-biomart_alias = getBM( values = mm_id,
-                       attributes = c("external_gene_name",'uniprotswissprot','ensembl_gene_id'),
-                       filters = "external_gene_name",
+biomart_alias = getBM( values = 'Abca2',
+                       attributes = c("uniprot_gn_symbol",'uniprotswissprot','ensembl_gene_id',
+                                      'uniprot_gn_id','uniprotsptrembl'),
+                       filters = "uniprot_gn_symbol",
                        mart = useMart("ensembl",
                                       dataset = "mmusculus_gene_ensembl",
                                       host = "asia.ensembl.org")) %>%

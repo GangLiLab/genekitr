@@ -23,14 +23,4 @@ Datasets
 keggOrg_name contains organism name of KEGG
 https://www.genome.jp/kegg/catalog/org_list.html
 }
-\examples{
-data(msig_org)
-str(msig_org)
-data(msig_category)
-str(msig_category)
-data(biocOrg_name)
-str(biocOrg_name)
-data(keggOrg_name)
-str(keggOrg_name)
-}
 \keyword{datasets}

@@ -20,7 +20,7 @@ genKEGG(
 \arguments{
 \item{id}{A vector of entrez gene.}
 
-\item{org}{KEGG organism name from `keggOrg_name()`.}
+\item{org}{KEGG organism name from `keggOrg_name`.}
 
 \item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
 
