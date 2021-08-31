@@ -39,6 +39,7 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
   - 与Ensembl数据库保持同步，做了`biomart`的数据接口，可以扩展其中各种数据（序列数据由于太长，不支持该函数直接显示；会有相应的序列函数去获取）
   - 保证返回结果与输入的id是一一对应的，即使没有结果也会用NA填充（即使输入的symbol是gene alias，也能拿到对应的标准symbol name）
   - 只有Entrez ID 才是唯一的（因此可能出现：一个entrez对应多个symbol、多个ensemble、多个uniprot，但一般第一个或者数值最小的entrez id才是最常使用的）
+  - 对human、mouse、rat使用最全的uniprotKB数据（比ensemble数据库还新）
 - 整合了相关的文献信息，可以自定义搜索关键词 => `genPubmed` 
 
 #### 数据整理与转换（Tidy & Trans）
@@ -86,7 +87,9 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 
 - [ ] `auto_install`增加镜像选择
 
-- [ ] 目前`ensembl`数据库的uniprot id 不全，需要使用uniprot的数据把gene 和 protein id联系起来
+- [x] 目前`ensembl`数据库的uniprot id 不全，需要使用uniprot的数据把gene 和 protein id联系起来
+  (例如小鼠的`P41234`这个Uniprot ID，在`ensemble`和`orgdb`中都不全，只有用uniprot数据才可以; 
+  再如`Q6P2L7` 这个ID，有的MasSpes数据中将它转为`Casc4` 基因，但是Uniprot官网是`Golm2` ，这里我们的可以和官网保持一致，并且可以比常规MasSpes数据的基因id更丰富)
 
 ##### 数据整理与转换（Tidy & Trans）
 

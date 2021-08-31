@@ -150,21 +150,26 @@ mapKeggOrg <- function(organism){
     org = substr(org,1,nchar(org)-1)
   }
   org <- stringr::str_to_title(org)
-  suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
-  orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
-  orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
-  orgUNIPROT <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))
-  if (any(id %in% orgSymbol$symbol)) {
+
+  all = biocAnno(org)
+  all_symbol = all$symbol %>% stringi::stri_remove_empty_na()
+  all_ensembl = all$ensembl %>% stringi::stri_remove_empty_na()
+  all_entrezid = all$entrezid %>% stringi::stri_remove_empty_na()
+  all_uniprot = all$uniprot %>% strsplit('; ') %>% unlist() %>% stringi::stri_remove_empty_na()
+
+  rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
+  if (any(id %in% all_symbol)) {
     c("SYMBOL")
-  } else if(any(id %in% orgENSEMBL$ensembl_id)){
+  } else if(any(id %in% all_ensembl)){
     c("ENSEMBL")
-  }else if (any(id %in% orgENSEMBL$gene_id | id %in%orgSymbol$gene_id  | id %in%orgUNIPROT$gene_id)){
+  }else if (any(id %in% all_entrezid)){
     c("ENTREZID")
-  }else if (any(id %in% orgUNIPROT$uniprot_id)){
+  }else if (any(id %in% all_uniprot)){
     c("UNIPROT")
   }else{
-    stop('Wrong organism!')
+    stop('Wrong organism or input id has no match!')
   }
+
 }
 
 #---  auto-install packages ---#
