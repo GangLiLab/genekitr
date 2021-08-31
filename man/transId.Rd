@@ -4,17 +4,17 @@
 \alias{transId}
 \title{Transform gene id among symbol, entrezid,  ensembl and uniprot}
 \usage{
-transId(id, trans_to, org, keep_unique = TRUE)
+transId(id, trans_to, org, simple = TRUE)
 }
 \arguments{
-\item{id}{Character of gene ids.}
+\item{id}{Gene ids.}
 
 \item{trans_to}{Transform to which type, one of "symbol", "entrezid",
 "ensembl" and "uniprot."}
 
-\item{org}{Organism name from `biocOrg_name`.}
+\item{org}{Organism name from `biocOrg_name()`, both full name and short name are fine.}
 
-\item{keep_unique}{Logical to keep output id is unique, default is `TRUE`.}
+\item{simple}{Logical to keep only one matched ID, default is FALSE.}
 }
 \value{
 A character of transformed ids.
@@ -23,6 +23,8 @@ A character of transformed ids.
 Transform gene id among symbol, entrezid,  ensembl and uniprot
 }
 \examples{
-transId(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"),
-  trans_to = 'ensembl', org = 'mouse')
+transId(
+  id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
+  trans_to = "ensembl", org = "mouse", simple = TRUE
+)
 }

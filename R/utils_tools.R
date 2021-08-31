@@ -153,13 +153,17 @@ mapKeggOrg <- function(organism){
   suppressPackageStartupMessages(require(paste0("org.", org, ".eg.db"), character.only = TRUE))
   orgSymbol <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egSYMBOL"))))
   orgENSEMBL <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egENSEMBL"))))
+  orgUNIPROT <- AnnotationDbi::toTable(eval(parse(text = paste0("org.", org, ".egUNIPROT"))))
   if (any(id %in% orgSymbol$symbol)) {
     c("SYMBOL")
   } else if(any(id %in% orgENSEMBL$ensembl_id)){
     c("ENSEMBL")
   }else if (any(id %in% orgENSEMBL$gene_id)){
     c("ENTREZID")
-  }else{
+  }else if (any(id %in% orgUNIPROT$uniprot_id)){
+    c("UNIPROT")
+  }
+  else{
     stop('Wrong organism!')
   }
 }
@@ -223,13 +227,5 @@ calcFoldEnrich <- function(df){
 
 }
 
-#--- load org.db ---#
-.load_orgdb <- function(org){
-  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
-  org = mapBiocOrg(tolower(org))
-  pkg=paste0("org.", org, ".eg.db")
-  if (!requireNamespace(pkg, quietly = TRUE)) auto_install(pkg)
-  suppressPackageStartupMessages(require(pkg, character.only = TRUE))
-}
 
 

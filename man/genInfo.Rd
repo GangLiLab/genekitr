@@ -4,12 +4,14 @@
 \alias{genInfo}
 \title{Get gene related information}
 \usage{
-genInfo(id, org)
+genInfo(id, org, simple = FALSE)
 }
 \arguments{
-\item{id}{Gene id.}
+\item{id}{Gene id (symbol, ensembl or entrez id) or uniprot id.}
 
-\item{org}{Species name from `biocOrg_name`.}
+\item{org}{Species name from `biocOrg_name()`, both full name and short name are fine.}
+
+\item{simple}{Logical to keep only one matched ID, default is FALSE.}
 }
 \value{
 A `data.frame`.
@@ -18,6 +20,9 @@ A `data.frame`.
 Get gene related information
 }
 \examples{
-x = genInfo(id= c("Cyp2c23","Fhit","Gal3st2b","Trp53","Tp53"), org = 'mm')
+x <- genInfo(id = c(
+  "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
+  "FAKEID", "TP53", "HBD", "TP53", "NUDT10"
+), org = "hg", simple = FALSE)
 head(x)
 }
