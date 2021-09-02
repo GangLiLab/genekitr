@@ -124,6 +124,7 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 - [x] 函数正常使用，但是帮助文档出不来（原因：写完函数忘记`devtools::document()` ，跳过这一步直接刷新包就会导致文档没更新）
 - [x] 一个symbol对应多个entrez时，会默认按照数值从小到大排序，然后再进行合并。因为同一个symbol name，数值比较小的entrez更常用
 - [x] 更新了`genInfo` 和`transID` ，增加参数`simple = TRUE` ，方便应对一个id同时存在多个match结果的情况（如果`simple = TRUE` 就返回和input id 同样顺序的结果；如果`simple = F` ，就返回所有结果）
+- [ ] `biomart`的结果也不全？发现`ENSG00000002079`[这个基因](http://asia.ensembl.org/Homo_sapiens/Gene/Summary?db=core;g=ENSG00000002079;r=7:99238829-99311130)在ensembl中对应基因`MYH16` ，但是biomart的结果中`ENSG00000002079 ` 没有对应，而且`MYH16` 对应的ensemble id也是NA
 
 
 
