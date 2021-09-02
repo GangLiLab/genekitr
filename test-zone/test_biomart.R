@@ -67,6 +67,15 @@ bmt2 <- getBM( values = mm_id,
                               dataset = paste0(organism,"_gene_ensembl"),
                               host = "asia.ensembl.org"))
 
+
+getBM( values = 'ENSG00000002079',
+       attributes = c("uniprot_gn_symbol",'uniprotswissprot','ensembl_gene_id',
+                      'uniprot_gn_id','uniprotsptrembl'),
+       filters = "ensembl_gene_id",
+       mart = useMart("ensembl",
+                      dataset = paste0(organism,"_gene_ensembl"),
+                      host = "asia.ensembl.org"))
+
 # %>%
 #   data.table::setnames(., old =colnames(.),
 #                        new = c('ensembl','chr','start','end','strand','gc_content','gene_biotype','transcript_count')) %>%

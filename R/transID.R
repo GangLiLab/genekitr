@@ -14,13 +14,11 @@
 #' @examples
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
-#'   trans_to = "ensembl", org = "mouse", simple = TRUE
-#' )
+#'   trans_to = "ensembl", org = "mouse", simple = TRUE)
 #' # input id contains duplicates,fake id and one-to-many match id
 #' transId(
 #'   id = c("MMD2", "HBD", "TP53", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
-#'   trans_to = "entrez", org = "hg", simple = FALSE
-#' )
+#'   trans_to = "entrez", org = "hg", simple = FALSE)
 transId <- function(id, trans_to, org, simple = TRUE) {
 
   #--- args ---#
