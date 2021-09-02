@@ -9,6 +9,7 @@
 -   [Installation](#installation)
 -   [Features](#features)
 -   [Plans](#plans)
+-   [Debug](#debug)
 -   [Let's mining data!](#lets-mining-data)
 -   [Let's plot!](#lets-plot)
 -   [Export](#export)
