@@ -11,7 +11,7 @@
 -   [Plans](#plans)
 -   [Let's mining data!](#lets-mining-data)
 -   [Let's plot!](#lets-plot)
--   [Supplement](#supplement)
+-   [Export](#export)
 
 ## Installation
 

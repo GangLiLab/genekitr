@@ -22,7 +22,7 @@ Get gene related information
 \examples{
 x <- genInfo(id = c(
   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
-  "FAKEID", "TP53", "HBD", "TP53", "NUDT10"
-), org = "hg", simple = FALSE)
+  "FAKEID", "TP53", "HBD", "TP53", "NUDT10"),
+  org = "hg", simple = FALSE)
 head(x)
 }
