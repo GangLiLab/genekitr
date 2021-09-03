@@ -5,7 +5,6 @@
 #' @param org Organism name from `biocOrg_name`, both full name and short name are fine.
 #' @param unique Logical to keep only one unique mapped ID, default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
-#' @importFrom AnnotationDbi toTable
 #' @importFrom tibble add_row
 #'
 #' @return A character of transformed ids.

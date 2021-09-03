@@ -18,7 +18,6 @@
 #' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme
 #'   guide_colorbar scale_y_discrete element_blank xlab labs
 #' @importFrom stringr str_to_title
-#' @importFrom clusterProfiler enrichGO
 #'
 #' @return A ggplot object
 #' @export
