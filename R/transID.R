@@ -46,10 +46,10 @@ transId <- function(id, trans_to, org, unique = TRUE) {
   }
 
   percent <- paste(round(100 * n_new / length(id), 2), "%", sep = "")
-  message(percent, " genes are mapped from ", from, " to ", trans_to)
+  message('\n',percent, " genes are mapped from ", from, " to ", trans_to)
   if (n_new != length(id)) {
     message(paste0(
-      "\nNon matched ID are marked as NA",
+      "Non matched ID are marked as NA",
       '...\nMaybe use "na.omit()" for downstream analysis'
     ))
   }

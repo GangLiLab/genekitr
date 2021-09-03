@@ -3,8 +3,7 @@ Type: Package
 Title: Gene Analysis Toolkit in R
 Version: 0.1.5
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre"), 
-            comment = c(ORCID = "0000-0002-7414-8556")),
-            person("Gang", "Li", role = "aut"))
+            comment = c(ORCID = "0000-0002-7414-8556")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
 BugReports: https://github.com/GangLiLab/genekitr/issues
@@ -19,10 +18,7 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5)
 Imports: 
-    AnnotationDbi,
-    clusterProfiler,
     dplyr,
-    DOSE,
     ggplot2,
     stringr,
     stringi,
@@ -30,9 +26,10 @@ Imports:
     tibble,
     VennDiagram
 Suggests:
+    AnnotationDbi,
     BiocManager,
-    biomaRt,
     cowplot,
+    clusterProfiler,
     data.table,
     easyPubMed,
     futile.logger,
