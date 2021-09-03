@@ -18,6 +18,8 @@ Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.5)
 Imports: 
+    AnnotationDbi,
+    clusterProfiler,
     dplyr,
     ggplot2,
     stringr,
@@ -26,10 +28,8 @@ Imports:
     tibble,
     VennDiagram
 Suggests:
-    AnnotationDbi,
     BiocManager,
     cowplot,
-    clusterProfiler,
     data.table,
     easyPubMed,
     futile.logger,
