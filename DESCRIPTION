@@ -10,8 +10,8 @@ BugReports: https://github.com/GangLiLab/genekitr/issues
 Description: An analysis toolkit based on gene. It mainly includes five 
     features (search, transform, analysis, visualization and export).
     User just needs to provide gene id ('entrez', 'symbol' or 'ensembl') then can 
-    search gene related information, transform id type, do GSEA/GO/KEGG analysis,
-    visualize enrichment result, visualized multi-group gene venn diagram and export
+    search gene related information, transform id type, do enrichment analysis,
+    visualize enrichment result, visualized multi-group Venn diagram and export
     result as excel sheets to easily share and communicate with others.
 License: GPL-3
 Encoding: UTF-8
