@@ -8,7 +8,7 @@ utils::globalVariables(c(".", ":=", "Count", "download.file","Description", "V1"
                          "month", "msig_category","msig_org", "na.omit", "pmid",
                          "setSize", "sets", "short_name", "start", "strand", "symbol",
                          "theme_bw", "title", "type", "uniprot", "unit", "width", "xlab", "year",
-                         'createWorkbook','saveWorkbook'))
+                         'createWorkbook','saveWorkbook','biocOrg_name', 'keggOrg_name'))
 
 #--- NCBI entrez ---#
 showNCBI <- function(db = "pubmed") {
@@ -87,7 +87,7 @@ mapBiocOrg <- function(organism) {
   if (organism == "mm" | organism == "mouse") organism = 'mm'
 
   # support organisms: http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
-  biocorg = biocOrg_name(); rm(biocOrg_name,envir = .GlobalEnv)
+  biocorg = biocOrg_name_data(); rm(biocOrg_name,envir = .GlobalEnv)
 
   if( organism %in% biocorg$short_name ){
     org = organism
@@ -95,9 +95,9 @@ mapBiocOrg <- function(organism) {
     org = biocorg %>% dplyr::filter(full_name == organism) %>% dplyr::pull(short_name)
   }else{
     stop('Check organism name! \n USE FULL NAME: ',
-         paste0(biocOrg_name() %>% dplyr::pull(full_name),' | '),
+         paste0(biocOrg_name_data() %>% dplyr::pull(full_name),' | '),
          '\n OR USE SHORT NAME: ',
-         paste0(biocOrg_name() %>% dplyr::pull(short_name),' | '))
+         paste0(biocOrg_name_data() %>% dplyr::pull(short_name),' | '))
   }
 
   org <- stringr::str_to_title(org)
@@ -114,7 +114,7 @@ mapKeggOrg <- function(organism){
   is.common = ifelse(organism %in% c("rat","cow","dog"), TRUE, FALSE)
 
   # support organisms: https://www.genome.jp/kegg/catalog/org_list.html
-  kgorg = keggOrg_name() ;rm(keggOrg_name,envir = .GlobalEnv)
+  kgorg = keggOrg_name_data() ;rm(keggOrg_name,envir = .GlobalEnv)
 
   if( (organism %in% kgorg$short_name && !is.common ) ){
     org = organism

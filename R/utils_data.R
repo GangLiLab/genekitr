@@ -11,13 +11,13 @@ msigdb_category_data <- function() {
 }
 
 #--- get bioc org name ---#
-biocOrg_name <- function() {
+biocOrg_name_data <- function() {
   utils::data(list="biocOrg_name", package="genekitr")
   get("biocOrg_name", envir = .GlobalEnv)
 }
 
 #---  get kegg org name ---#
-keggOrg_name <- function() {
+keggOrg_name_data <- function() {
   utils::data(list="keggOrg_name", package="genekitr")
   get("keggOrg_name", envir = .GlobalEnv)
 }

@@ -3,7 +3,7 @@
 #' @param trans_to Transform to which type, one of "symbol", "entrezid",
 #'   "ensembl" and "uniprot."
 #' @param org Organism name from `biocOrg_name`, both full name and short name are fine.
-#' @param simple Logical to keep only one matched ID, default is FALSE.
+#' @param unique Logical to keep only one unique mapped ID, default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
 #' @importFrom AnnotationDbi toTable
 #' @importFrom tibble add_row
@@ -14,12 +14,12 @@
 #' @examples
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
-#'   trans_to = "ensembl", org = "mouse", simple = TRUE)
+#'   trans_to = "ensembl", org = "mouse", unique = TRUE)
 #' # input id contains duplicates,fake id and one-to-many match id
 #' transId(
-#'   id = c("MMD2", "HBD", "TP53", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
-#'   trans_to = "entrez", org = "hg", simple = FALSE)
-transId <- function(id, trans_to, org, simple = TRUE) {
+#'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
+#'   trans_to = "entrez", org = "hg", unique = FALSE)
+transId <- function(id, trans_to, org, unique = TRUE) {
 
   #--- args ---#
   options(rstudio.connectionObserver.errorsSuppressed = TRUE)
@@ -37,17 +37,21 @@ transId <- function(id, trans_to, org, simple = TRUE) {
   }
 
   #--- codes ---#
-  new_id <- genInfo(id, org, simple) %>% dplyr::pull(trans_to)
+  if (unique) {
+    new_id <- genInfo(id, org, unique) %>% dplyr::pull(trans_to)
+    n_new = na.omit(new_id) %>% as.character() %>% length()
+  }else{
+    new_id = genInfo(id, org, unique) %>% dplyr::select(input_id, all_of(trans_to))
+    n_new = na.omit(new_id) %>% .[1] %>% unique() %>% nrow()
+  }
 
-  if (simple) {
-    percent <- paste(round(100 * length(as.character(na.omit(new_id))) / length(id), 2), "%", sep = "")
-    message(percent, " genes are mapped from ", from, " to ", trans_to)
-    if (any(is.na(new_id))) {
-      message(paste0(
-        "\nSome ID could not match ", trans_to, ", return NA",
-        '...\nMaybe use "na.omit()" for downstream analysis'
-      ))
-    }
+  percent <- paste(round(100 * n_new / length(id), 2), "%", sep = "")
+  message(percent, " genes are mapped from ", from, " to ", trans_to)
+  if (n_new != length(id)) {
+    message(paste0(
+      "\nNon matched ID are marked as NA",
+      '...\nMaybe use "na.omit()" for downstream analysis'
+    ))
   }
 
   return(new_id)

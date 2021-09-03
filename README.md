@@ -46,6 +46,12 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 #### 数据整理与转换（Tidy & Trans）
 
 - 基因ID转换 => `transId`  
+  - 支持`one-to-one match`  以及 `one-to-many match` 两种模式
+  - `one-to-one` ：【id顺序优先级高于数量】提供id及要转换的类型，给出最合适的等长度的id，方便用户直接新增列（比如masspec数据我们想知道每一个uniprot id对应什么基因，一对一模式直接满足新增列）；我们给到的转换id也不是随意挑选的，而是先看`genInfo`的返回信息中NA最少的，如果NA数量一致，再看entrez id最小的（参考entrez id的编排意义）
+    => 返回字符串
+  - `one-to-many` ：【数量优先级高于顺序】比如想要对基因id进行富集分析，就需要尽可能多的id，需要用到一对多的模式，只要能匹配的我们都要
+    => 返回数据框
+  - 默认不进行`na.omit`，目的是让用户方便知道哪些基因没有match上
 
 #### 数据分析（Analyse）
 
@@ -96,7 +102,7 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 
 - [x] ID转换`transId` 允许错误的id匹配，结果为NA，并且提交的顺序和结果的顺序一致
 - [x] 从`genInfo`的结果中提取转换后的id，更快更准确，并且可以保证output和input顺序一致
-- [ ] 加快大型数据的ID转换速度，需要改进`genInfo` 
+- [x] 加快大型数据的ID转换速度，需要改进`genInfo`  脚本的`75-92`行代码=》重新写了`genInfo` 和`transId`代码，重新思考了两种不同id转换模式的应用场景  
 
 ##### 数据分析（Analyse）
 
