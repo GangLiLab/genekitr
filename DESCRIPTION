@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.1.5
+Version: 0.2.0
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre"), 
             comment = c(ORCID = "0000-0002-7414-8556")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>

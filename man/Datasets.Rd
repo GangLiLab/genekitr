@@ -3,13 +3,17 @@
 \docType{data}
 \name{Datasets}
 \alias{Datasets}
+\alias{geneList}
 \alias{msig_org}
 \alias{msig_category}
 \alias{biocOrg_name}
 \alias{keggOrg_name}
 \title{Datasets
-msig_species contains msigdb species information}
+geneList entrez gene list with decreasing fold change value}
 \description{
+Datasets
+geneList entrez gene list with decreasing fold change value
+
 Datasets
 msig_species contains msigdb species information
 

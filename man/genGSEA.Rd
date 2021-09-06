@@ -9,7 +9,6 @@ genGSEA(
   org,
   category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
   subcategory = NULL,
-  use_symbol = TRUE,
   minGSSize = 10,
   maxGSSize = 500,
   pvalueCutoff = 0.05,
@@ -28,8 +27,6 @@ entrez, ensembl or symbol.}
 \item{subcategory}{MSigDB sub-collection abbreviation, choose from
 `msig_category`.}
 
-\item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
-
 \item{minGSSize}{Minimal size of each geneSet for analyzing, default is 10.}
 
 \item{maxGSSize}{Maximal size of each geneSet for analyzing, default is 500.}
@@ -45,7 +42,9 @@ A `data.frame`.
 GSEA for a gene list with decreasing logFC value
 }
 \examples{
-data(geneList, package="DOSE")
+\donttest{
+data(geneList, package="genekitr")
 genGSEA(genelist = geneList,org = 'human', category='C3',
-  subcategory = 'TFT:GTRD',use_symbol = FALSE)
+  subcategory = 'TFT:GTRD')
+}
 }

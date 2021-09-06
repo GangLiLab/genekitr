@@ -1,4 +1,14 @@
 #' Datasets
+#' geneList entrez gene list with decreasing fold change value
+#'
+#'
+#' @name Datasets
+#' @aliases geneList
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Datasets
 #' msig_species contains msigdb species information
 #'
 #'

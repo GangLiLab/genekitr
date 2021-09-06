@@ -106,7 +106,8 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 
 ##### 数据分析（Analyse）
 
-- [ ] 设置自己的示例数据，like：`data(geneList, package="genekitr")`
+- [x] 设置自己的示例数据，like：`data(geneList, package="genekitr")`
+  数据来自`airway` ，使用`DESeq2`进行差异分析
 - [x] 富集分析先将基因id全部转成entrez id，然后再根据需要利用 `transId()`  进行转换，达到`setReadable`的目的
 
 ##### 可视化（Visualize）

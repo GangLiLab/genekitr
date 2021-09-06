@@ -11,18 +11,18 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' # input id contains fake id and one-to-many match id
 #' x <- genInfo(id = c(
 #'   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
 #'   "FAKEID", "TP53", "HBD", "NUDT10"
 #' ), org = "hg", unique = FALSE)
 #' head(x)
+#' }
 genInfo <- function(id,
                     org,
                     unique = FALSE) {
   #--- args ---#
-  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
-
   org <- mapBiocOrg(tolower(org))
   keytype <- .gentype(id, org) %>% tolower()
 

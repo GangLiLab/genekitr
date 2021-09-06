@@ -23,10 +23,12 @@
 #' @export
 #'
 #' @examples
-#' data(geneList, package="DOSE")
+#' \donttest{
+#' data(geneList, package="genekitr")
 #' id <- names(geneList)[1:100]
 #' keg <- genKEGG(id, org = 'human')
 #' head(keg)
+#' }
 
 genKEGG <- function(id,
                     org,
@@ -40,22 +42,20 @@ genKEGG <- function(id,
                     ...){
 
   #--- args ---#
-  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  org.bk = org
   org = mapKeggOrg(tolower(org))
   keyType = .gentype(id, org)
 
   if(! keyType %in% c('ENTREZID') ) {
     message(paste0(keyType), ' gene will be mapped to entrez id')
-    trans_id = suppressMessages(transId(id,'entrezid',org.bk)) %>% stringi::stri_remove_na()
+    trans_id = suppressMessages(transId(id,'entrezid',org)) %>% stringi::stri_remove_na()
   }else{
     trans_id = id
   }
 
-  info = genInfo(trans_id,org) %>% dplyr::mutate(entrezid := rownames(.))
+  info = genInfo(trans_id,org,unique = T) %>% na.omit()
 
   #--- codes ---#
   keg <- suppressMessages(
@@ -71,19 +71,13 @@ genKEGG <- function(id,
   if( use_symbol ){
     new_geneID = stringr::str_split(keg$geneID,'\\/') %>%
       lapply(., function(x) {
-        info[x,'symbol']
+        info %>% dplyr::filter(input_id %in% x) %>% dplyr::pull(symbol)
       }) %>% sapply(., paste0, collapse = "/")
     new_keg =  keg %>% as.data.frame() %>%
       dplyr::mutate(geneID = new_geneID) %>% calcFoldEnrich()
 
   }else{
-    new_geneID = stringr::str_split(keg$geneID,'\\/') %>%
-      lapply(., function(x) {
-        info %>%
-          dplyr::filter(entrezid %in% x) %>% dplyr::pull(tolower(keyType))
-      }) %>% sapply(., paste0, collapse = "/")
-    new_keg =  keg %>% as.data.frame() %>%
-      dplyr::mutate(geneID = new_geneID) %>% calcFoldEnrich()
+    new_keg =  keg %>% as.data.frame()  %>% calcFoldEnrich()
   }
 
   return(new_keg)

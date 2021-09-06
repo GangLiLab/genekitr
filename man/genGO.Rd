@@ -51,9 +51,11 @@ A `data.frame` contains gene ratio and fold enrichment.
 Gene GO enrichment analysis
 }
 \examples{
-data(geneList, package="DOSE")
+\donttest{
+data(geneList, package="genekitr")
 id <- names(geneList)[1:100]
 ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
   qvalueCutoff = 0.1 ,use_symbol = TRUE)
 head(ego)
+}
 }

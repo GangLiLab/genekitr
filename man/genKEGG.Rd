@@ -49,8 +49,10 @@ A `data.frame`.
 Gene enrichment of KEGG analysis
 }
 \examples{
-data(geneList, package="DOSE")
+\donttest{
+data(geneList, package="genekitr")
 id <- names(geneList)[1:100]
 keg <- genKEGG(id, org = 'human')
 head(keg)
+}
 }

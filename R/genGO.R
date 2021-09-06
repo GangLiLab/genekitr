@@ -14,19 +14,21 @@
 #' @param universe Background genes. If missing, then all gene list in
 #'   orgdb will be used as background.
 #' @param ... other argument to `enrichGO` function
-#' @importFrom dplyr  %>% mutate
-#' @importFrom clusterProfiler enrichGO
+#' @importFrom dplyr select filter pull mutate %>%
 #' @importFrom stringr str_split
+#' @importFrom clusterProfiler enrichGO
 #'
 #' @return A `data.frame` contains gene ratio and fold enrichment.
 #' @export
 #'
 #' @examples
-#' data(geneList, package="DOSE")
+#' \donttest{
+#' data(geneList, package="genekitr")
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
 #'   qvalueCutoff = 0.1 ,use_symbol = TRUE)
 #' head(ego)
+#' }
 genGO <- function(id,
                   org,
                   ont,
@@ -40,11 +42,9 @@ genGO <- function(id,
                   ...){
 
   #--- args ---#
-  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  org_bk = org
   org = mapBiocOrg(tolower(org))
   pkg=paste0("org.", org, ".eg.db")
   keyType = .gentype(id, org)
@@ -65,10 +65,10 @@ genGO <- function(id,
   }
 
   if( use_symbol){
-    info = genInfo(id,org)
+    info = genInfo(id,org,unique = T) %>% na.omit()
     new_geneID = stringr::str_split(ego$geneID,'\\/') %>%
       lapply(., function(x) {
-        info[x,'symbol']
+        info %>% dplyr::filter(input_id %in% x) %>% dplyr::pull(symbol)
       }) %>% sapply(., paste0, collapse = "/")
     new_ego =  ego %>% as.data.frame() %>%
       dplyr::mutate(geneID = new_geneID) %>% calcFoldEnrich()

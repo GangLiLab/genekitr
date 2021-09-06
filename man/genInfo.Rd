@@ -20,10 +20,12 @@ A `data.frame`.
 Get gene related information
 }
 \examples{
+\donttest{
 # input id contains fake id and one-to-many match id
 x <- genInfo(id = c(
   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
   "FAKEID", "TP53", "HBD", "NUDT10"
 ), org = "hg", unique = FALSE)
 head(x)
+}
 }

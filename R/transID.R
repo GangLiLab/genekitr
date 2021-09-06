@@ -11,6 +11,7 @@
 #' @export
 #'
 #' @examples
+#' \donttest{
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
 #'   trans_to = "ensembl", org = "mouse", unique = TRUE)
@@ -18,10 +19,10 @@
 #' transId(
 #'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
 #'   trans_to = "entrez", org = "hg", unique = FALSE)
+#' }
 transId <- function(id, trans_to, org, unique = TRUE) {
 
   #--- args ---#
-  options(rstudio.connectionObserver.errorsSuppressed = TRUE)
   org <- mapBiocOrg(tolower(org))
   keytype <- .gentype(id, org)
   from <- tolower(keytype)
