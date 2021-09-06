@@ -14,7 +14,7 @@
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
 #'   trans_to = "ensembl", org = "mouse", unique = TRUE)
-#' # input id contains duplicates,fake id and one-to-many match id
+#' # input id contains fake id and one-to-many match id
 #' transId(
 #'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
 #'   trans_to = "entrez", org = "hg", unique = FALSE)
@@ -48,7 +48,7 @@ transId <- function(id, trans_to, org, unique = TRUE) {
   message('\n',percent, " genes are mapped from ", from, " to ", trans_to)
   if (n_new != length(id)) {
     message(paste0(
-      "Non matched ID are marked as NA",
+      "Non-matched ID are marked as NA",
       '...\nMaybe use "na.omit()" for downstream analysis'
     ))
   }

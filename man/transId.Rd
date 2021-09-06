@@ -26,7 +26,7 @@ Transform gene id among symbol, entrezid,  ensembl and uniprot
 transId(
   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
   trans_to = "ensembl", org = "mouse", unique = TRUE)
-# input id contains duplicates,fake id and one-to-many match id
+# input id contains fake id and one-to-many match id
 transId(
   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
   trans_to = "entrez", org = "hg", unique = FALSE)

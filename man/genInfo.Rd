@@ -11,7 +11,7 @@ genInfo(id, org, unique = FALSE)
 
 \item{org}{Species name from `biocOrg_name`, both full name and short name are fine.}
 
-\item{unique}{Logical to keep only one unique mapped ID, default is FALSE.}
+\item{unique}{Logical to keep only one matched ID, default is FALSE.}
 }
 \value{
 A `data.frame`.
@@ -20,9 +20,10 @@ A `data.frame`.
 Get gene related information
 }
 \examples{
+# input id contains fake id and one-to-many match id
 x <- genInfo(id = c(
   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
-  "FAKEID", "TP53", "HBD", "NUDT10"),
-  org = "hg", unique = FALSE)
+  "FAKEID", "TP53", "HBD", "NUDT10"
+), org = "hg", unique = FALSE)
 head(x)
 }

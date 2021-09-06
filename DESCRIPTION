@@ -29,6 +29,7 @@ Imports:
 Suggests:
     BiocManager,
     cowplot,
+    DOSE,
     data.table,
     easyPubMed,
     futile.logger,
