@@ -60,7 +60,7 @@ geneList = DEG$log2FoldChange
 names(geneList) = DEG$id
 geneList = sort(geneList,decreasing = T)
 head(geneList)
-save(geneList,file = 'data/geneList.rda')
+# save(geneList,file = 'data/geneList.rda')
 
 
 entid = names(geneList)[1:100]

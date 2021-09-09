@@ -30,10 +30,7 @@ An Excel file.
 Export list of datasets into different Excel sheets
 }
 \examples{
-\donttest{
 library(openxlsx)
 expoSheet(dat_list =  list(mtcars,ToothGrowth), name_list = list('mtcars','tooth'),
   filename = 'test.xlsx', dir = tempdir())
-}
-
 }

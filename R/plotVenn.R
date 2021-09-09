@@ -18,7 +18,6 @@
 #'   element_blank scale_y_continuous
 #' @export
 #' @examples
-#' \donttest{
 #' library(ggplot2)
 #' set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 #' set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
@@ -33,7 +32,6 @@
 #' plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,
 #' remove_grid = TRUE, use_venn = FALSE)
 #'
-#' }
 
 plotVenn <- function(venn_list,
                      color = NULL,

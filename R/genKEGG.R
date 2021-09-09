@@ -27,7 +27,6 @@
 #' data(geneList, package="genekitr")
 #' id <- names(geneList)[1:100]
 #' keg <- genKEGG(id, org = 'human')
-#' head(keg)
 #' }
 
 genKEGG <- function(id,
@@ -67,6 +66,10 @@ genKEGG <- function(id,
                                 minGSSize = minGSSize,
                                 maxGSSize = maxGSSize,
                                 ...))
+
+  if(nrow(as.data.frame(keg)) == 0){
+    stop('No KEGG terms enriched ...')
+  }
 
   if( use_symbol ){
     new_geneID = stringr::str_split(keg$geneID,'\\/') %>%

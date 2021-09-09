@@ -21,9 +21,9 @@
 #' @examples
 #' \donttest{
 #' data(geneList, package="genekitr")
-#' genGSEA(genelist = geneList,org = 'human', category='C3',
-#'   subcategory = 'TFT:GTRD')
+#' gse = genGSEA(genelist = geneList,org = 'human', category='H')
 #' }
+
 
 genGSEA <- function(genelist,
                     org,

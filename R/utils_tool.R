@@ -174,7 +174,6 @@ mapKeggOrg <- function(organism){
 
 #---  auto-install packages ---#
 auto_install <- function(pkg){
-  options(warn=-1)
 
   # check first time
   ret <- suppressPackageStartupMessages(
@@ -225,7 +224,7 @@ calcFoldEnrich <- function(df){
     to_calc =  paste0('(',df[,check_gr],')/(',df[,check_bg],')')
 
     df <- df %>%
-      dplyr::mutate(FoldEnrich = sapply(to_calc, function(x)eval(parse(text = x)) ))
+      dplyr::mutate(FoldEnrich = sapply(to_calc, function(x) eval(parse(text = x)) ))
   }
   return(df)
 

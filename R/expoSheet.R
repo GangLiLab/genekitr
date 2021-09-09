@@ -10,12 +10,10 @@
 #' @return An Excel file.
 #' @export
 #' @examples
-#' \donttest{
 #' library(openxlsx)
 #' expoSheet(dat_list =  list(mtcars,ToothGrowth), name_list = list('mtcars','tooth'),
 #'   filename = 'test.xlsx', dir = tempdir())
-#' }
-#'
+
 
 expoSheet <- function(dat_list,
                       name_list,

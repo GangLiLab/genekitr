@@ -54,8 +54,8 @@ Gene GO enrichment analysis
 \donttest{
 data(geneList, package="genekitr")
 id <- names(geneList)[1:100]
-ego <- genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,
-  qvalueCutoff = 0.1 ,use_symbol = TRUE)
+ego <- genGO(id, org = 'human',ont = 'cc',pvalueCutoff = 0.01,
+  qvalueCutoff = 0.1 ,use_symbol = FALSE)
 head(ego)
 }
 }

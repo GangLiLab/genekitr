@@ -16,7 +16,7 @@
 #' x <- genInfo(id = c(
 #'   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
 #'   "FAKEID", "TP53", "HBD", "NUDT10"
-#' ), org = "hg", unique = FALSE)
+#' ), org = "hg", unique = TRUE)
 #' head(x)
 #' }
 genInfo <- function(id,

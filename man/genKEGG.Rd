@@ -53,6 +53,5 @@ Gene enrichment of KEGG analysis
 data(geneList, package="genekitr")
 id <- names(geneList)[1:100]
 keg <- genKEGG(id, org = 'human')
-head(keg)
 }
 }
