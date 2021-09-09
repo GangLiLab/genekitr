@@ -52,12 +52,17 @@ set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 set3 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 set4 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 set5 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-sm_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3)
-la_gene_list = list(gset1 = set1, gset2 = set2, gset3 = set3,
-  gset4 = set4, gset5 = set5 )
-plotVenn(sm_gene_list,text_size = 1.5,alpha_degree = 1,
-  remove_grid = TRUE,color = ggsci::pal_lancet()(3))
-plotVenn(la_gene_list,text_size = 15,alpha_degree = 0.2,border_thick = 2,
-remove_grid = TRUE, use_venn = FALSE)
-
+sm_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3)
+la_gene_list <- list(
+  gset1 = set1, gset2 = set2, gset3 = set3,
+  gset4 = set4, gset5 = set5
+)
+plotVenn(sm_gene_list,
+  text_size = 1.5, alpha_degree = 1,
+  remove_grid = TRUE, color = ggsci::pal_lancet()(3)
+)
+plotVenn(la_gene_list,
+  text_size = 15, alpha_degree = 0.2, border_thick = 2,
+  remove_grid = TRUE, use_venn = FALSE
+)
 }

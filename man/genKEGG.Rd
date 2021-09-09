@@ -50,8 +50,9 @@ Gene enrichment of KEGG analysis
 }
 \examples{
 \donttest{
-data(geneList, package="genekitr")
+data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
-keg <- genKEGG(id, org = 'human')
+keg <- genKEGG(id, org = "human")
 }
+
 }

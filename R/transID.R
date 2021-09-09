@@ -14,13 +14,15 @@
 #' \donttest{
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
-#'   trans_to = "ensembl", org = "mouse", unique = TRUE)
+#'   trans_to = "ensembl", org = "mouse", unique = TRUE
+#' )
 #' # input id contains fake id and one-to-many match id
 #' transId(
 #'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
-#'   trans_to = "entrez", org = "hg", unique = FALSE)
+#'   trans_to = "entrez", org = "hg", unique = FALSE
+#' )
 #' }
-
+#'
 transId <- function(id, trans_to, org, unique = TRUE) {
 
   #--- args ---#
@@ -40,14 +42,19 @@ transId <- function(id, trans_to, org, unique = TRUE) {
   #--- codes ---#
   if (unique) {
     new_id <- genInfo(id, org, unique) %>% dplyr::pull(trans_to)
-    n_new = na.omit(new_id) %>% as.character() %>% length()
-  }else{
-    new_id = genInfo(id, org, unique) %>% dplyr::select(input_id, all_of(trans_to))
-    n_new = na.omit(new_id) %>% .[1] %>% unique() %>% nrow()
+    n_new <- na.omit(new_id) %>%
+      as.character() %>%
+      length()
+  } else {
+    new_id <- genInfo(id, org, unique) %>% dplyr::select(input_id, all_of(trans_to))
+    n_new <- na.omit(new_id) %>%
+      .[1] %>%
+      unique() %>%
+      nrow()
   }
 
   percent <- paste(round(100 * n_new / length(id), 2), "%", sep = "")
-  message('\n',percent, " genes are mapped from ", from, " to ", trans_to)
+  message("\n", percent, " genes are mapped from ", from, " to ", trans_to)
   if (n_new != length(id)) {
     message(paste0(
       "Non-matched ID are marked as NA",

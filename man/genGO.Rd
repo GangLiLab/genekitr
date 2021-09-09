@@ -52,10 +52,12 @@ Gene GO enrichment analysis
 }
 \examples{
 \donttest{
-data(geneList, package="genekitr")
+data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
-ego <- genGO(id, org = 'human',ont = 'cc',pvalueCutoff = 0.01,
-  qvalueCutoff = 0.1 ,use_symbol = FALSE)
+ego <- genGO(id,
+  org = "human", ont = "cc", pvalueCutoff = 0.01,
+  qvalueCutoff = 0.1, use_symbol = FALSE
+)
 head(ego)
 }
 }

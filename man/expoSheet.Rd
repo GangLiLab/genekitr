@@ -31,6 +31,8 @@ Export list of datasets into different Excel sheets
 }
 \examples{
 library(openxlsx)
-expoSheet(dat_list =  list(mtcars,ToothGrowth), name_list = list('mtcars','tooth'),
-  filename = 'test.xlsx', dir = tempdir())
+expoSheet(
+  dat_list = list(mtcars, ToothGrowth), name_list = list("mtcars", "tooth"),
+  filename = "test.xlsx", dir = tempdir()
+)
 }

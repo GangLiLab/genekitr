@@ -10,8 +10,10 @@
 #' @export
 #' @examples
 #' \donttest{
-#' x = genPubmed(id = c("Cyp2c23","Fhit","Gal3st2b","Gbp4"),
-#'   keywords = 'stem cell', field = 'tiab')
+#' x <- genPubmed(
+#'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Gbp4"),
+#'   keywords = "stem cell", field = "tiab"
+#' )
 #' }
 genPubmed <- function(id,
                       keywords,
@@ -19,7 +21,8 @@ genPubmed <- function(id,
   #--- args ---#
   if (!requireNamespace("easyPubMed", quietly = TRUE)) {
     stop("Package easyPubMed needed for this function to work. Please install it.",
-         call. = FALSE)
+      call. = FALSE
+    )
   }
 
   stopifnot(
@@ -27,7 +30,7 @@ genPubmed <- function(id,
     is.character(keywords)
   )
 
-  field = toupper(field)
+  field <- toupper(field)
 
   data <- showNCBI("pubmed")
   if (field %in% data$Name) {

@@ -43,7 +43,8 @@ GSEA for a gene list with decreasing logFC value
 }
 \examples{
 \donttest{
-data(geneList, package="genekitr")
-gse = genGSEA(genelist = geneList,org = 'human', category='H')
+data(geneList, package = "genekitr")
+gse <- genGSEA(genelist = geneList, org = "human", category = "H")
 }
+
 }

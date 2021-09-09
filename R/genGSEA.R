@@ -20,22 +20,21 @@
 #'
 #' @examples
 #' \donttest{
-#' data(geneList, package="genekitr")
-#' gse = genGSEA(genelist = geneList,org = 'human', category='H')
+#' data(geneList, package = "genekitr")
+#' gse <- genGSEA(genelist = geneList, org = "human", category = "H")
 #' }
-
-
+#'
 genGSEA <- function(genelist,
                     org,
-                    category = c('C1','C2','C3','C4','C5','C6','C7','C8','H'),
+                    category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
                     subcategory = NULL,
                     minGSSize = 10,
                     maxGSSize = 500,
                     pvalueCutoff = 0.05,
-                    ...){
+                    ...) {
 
   #--- args ---#
-  category = match.arg(category)
+  category <- match.arg(category)
 
   stopifnot(
     is.numeric(minGSSize),
@@ -50,20 +49,22 @@ genGSEA <- function(genelist,
 
   # use entrez id or symbol
   if (any(names(genelist) %in% geneset$gene_symbol)) {
-    geneset = geneset %>%
-      dplyr::select(gs_name,gene_symbol)
-  }else if (any(names(genelist) %in% geneset$entrez_gene)) {
-    geneset = geneset %>%
-      dplyr::select(gs_name,entrez_gene)
-  }else{
-    names(genelist) =transId(names(genelist),trans_to = 'entrez',org)
-    geneset = geneset %>%
-      dplyr::select(gs_name,entrez_gene)
+    geneset <- geneset %>%
+      dplyr::select(gs_name, gene_symbol)
+  } else if (any(names(genelist) %in% geneset$entrez_gene)) {
+    geneset <- geneset %>%
+      dplyr::select(gs_name, entrez_gene)
+  } else {
+    names(genelist) <- transId(names(genelist), trans_to = "entrez", org)
+    geneset <- geneset %>%
+      dplyr::select(gs_name, entrez_gene)
   }
 
-  egmt <- suppressWarnings(clusterProfiler::GSEA(genelist, TERM2GENE=geneset,
-                                                 pvalueCutoff, verbose=F,
-                                                 ...))
+  egmt <- suppressWarnings(clusterProfiler::GSEA(genelist,
+    TERM2GENE = geneset,
+    pvalueCutoff, verbose = F,
+    ...
+  ))
 
   # if( use_symbol){
   #   info = genInfo(names(genelist),org,unique = T) %>% na.omit()
@@ -78,7 +79,6 @@ genGSEA <- function(genelist,
   #   new_egmt = egmt %>% as.data.frame()
   # }
   #
-  new_egmt = egmt %>% as.data.frame()
+  new_egmt <- egmt %>% as.data.frame()
   return(new_egmt)
-
 }
