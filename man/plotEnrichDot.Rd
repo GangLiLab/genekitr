@@ -8,17 +8,13 @@ plotEnrichDot(
   enrich_df,
   xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
   legend_by = c("p.adjust", "pvalue", "qvalue"),
-  remove_grid = FALSE,
-  remove_text = FALSE,
-  remove_legend = FALSE,
   low_color = "red",
   high_color = "blue",
   show_item = 10,
-  main_text_size = 10,
-  legend_text_size = 8,
-  font_type = "Arial",
-  border_thick = 1,
-  wrap_width = NULL
+  xlim_left = 0,
+  xlim_right = NA,
+  wrap_length = NULL,
+  ...
 )
 }
 \arguments{
@@ -28,28 +24,19 @@ plotEnrichDot(
 
 \item{legend_by}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
 
-\item{remove_grid}{Logical, remove background grid lines, default is FALSE.}
-
-\item{remove_text}{Logical, remove all text, default is FALSE.}
-
-\item{remove_legend}{Logical, remove legend, default is FALSE.}
-
 \item{low_color}{Legend color for low pvalue or qvalue, default is "red".}
 
 \item{high_color}{Legend color for high pvalue or qvalue, default is "blue".}
 
 \item{show_item}{Numeric, select top N rows to show, default is 10.}
 
-\item{main_text_size}{Numeric, main text size}
+\item{xlim_left}{X-axis left limit, default is 0.}
 
-\item{legend_text_size}{Numeric, legend text size}
+\item{xlim_right}{X-axis right limit, default is NA.}
 
-\item{font_type}{Character, specify the plot text font family, example "Times
-New Roman", "Arial".}
+\item{wrap_length}{Numeric, wrap text if longer than this length, default is NULL.}
 
-\item{border_thick}{Numeric, border thickness}
-
-\item{wrap_width}{Numeric, wrap text if longer than this number, default is NULL.}
+\item{...}{other arguments transfer to `plot_theme` function}
 }
 \value{
 A ggplot object
@@ -66,7 +53,6 @@ ego <- genGO(id,
   org = "human", ont = "mf", pvalueCutoff = 0.05,
   qvalueCutoff = 0.1, use_symbol = FALSE
 )
-ego <- as.enrichdat(ego)
 plotEnrichDot(ego)
 }
 

@@ -3,13 +3,14 @@
 #' If gene group over 4, plot will be visulized using UpSet plot.
 #'
 #' @param venn_list A list of gene id.
+#' @param use_venn Logical, use venn to plot, default is `TRUE`, the other
+#'   option is upsetplot for large list.
 #' @param color Colors for gene lists, default is NULL.
 #' @param alpha_degree Alpha transparency of each circle's area, default is 0.3.
 #' @param text_size Text size, default is 1.
+#' @param border_thick Numeric, border thickness, default is 1.
 #' @param remove_grid Logical, remove circle or grid lines, default is `FALSE`.
-#' @param use_venn Logical, use venn to plot, default is `TRUE`, the other
-#'   option is upsetplot for large list.
-#' @inheritParams plot_theme
+#' @param ... other arguments transfer to `plot_theme` function
 #' @return  A ggplot object
 #' @importFrom VennDiagram venn.diagram
 #' @importFrom dplyr as_tibble filter select group_by summarize %>%
@@ -38,15 +39,13 @@
 #'   remove_grid = TRUE, use_venn = FALSE
 #' )
 plotVenn <- function(venn_list,
+                     use_venn = TRUE,
                      color = NULL,
                      alpha_degree = 0.3,
                      text_size = 1,
+                     border_thick = 1,
                      remove_grid = FALSE,
-                     use_venn = TRUE,
-                     main_text_size = 10,
-                     legend_text_size = 8,
-                     font_type = "Arial",
-                     border_thick = 1) {
+                     ...) {
 
   #--- args ---#
   stopifnot(is.list(venn_list))
@@ -55,7 +54,7 @@ plotVenn <- function(venn_list,
 
   if (!requireNamespace("futile.logger", quietly = TRUE)) {
     stop("Package futile.logger needed for this function to work. Please install it.",
-      call. = FALSE
+         call. = FALSE
     )
   }
 
@@ -116,16 +115,11 @@ plotVenn <- function(venn_list,
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
       ggupset::scale_x_upset(name = "") +
       ggplot2::scale_y_continuous(name = "") +
-      plot_theme()
+      plot_theme(main_text_size = text_size,
+                 remove_grid = remove_grid,
+                 border_thick = border_thick,
+                 ...)
 
-    # hide background grid line
-    if (remove_grid) {
-      p <- p + theme(
-        # panel.border = element_blank(),
-        panel.grid.major = element_blank(),
-        panel.grid.minor = element_blank()
-      )
-    }
   }
 
   return(p)

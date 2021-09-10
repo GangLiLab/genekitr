@@ -3,16 +3,13 @@
 #' @param enrich_df `data.frame` of enrichment analysis result .
 #' @param xlab_type X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
 #' @param legend_by Stats legend type, one of "pvalue", "p.adjust", "qvalue".
-#' @param remove_grid Logical, remove background grid lines, default is FALSE.
-#' @param remove_text Logical, remove all text, default is FALSE.
-#' @param remove_legend Logical, remove legend, default is FALSE.
 #' @param low_color Legend color for low pvalue or qvalue, default is "red".
 #' @param high_color Legend color for high pvalue or qvalue, default is "blue".
-#' @param font_type Character, specify the plot text font family, example "Times
-#'   New Roman", "Arial".
 #' @param show_item Numeric, select top N rows to show, default is 10.
-#' @inheritParams plot_theme
-#' @param wrap_width Numeric, wrap text if longer than this number, default is NULL.
+#' @param xlim_left X-axis left limit, default is 0.
+#' @param xlim_right X-axis right limit, default is NA.
+#' @param wrap_length Numeric, wrap text if longer than this length, default is NULL.
+#' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom dplyr pull %>% arrange mutate slice_head
 #' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme
@@ -30,25 +27,19 @@
 #'   org = "human", ont = "mf", pvalueCutoff = 0.05,
 #'   qvalueCutoff = 0.1, use_symbol = FALSE
 #' )
-#' ego <- as.enrichdat(ego)
 #' plotEnrichDot(ego)
 #' }
 #'
 plotEnrichDot <- function(enrich_df,
                           xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
                           legend_by = c("p.adjust", "pvalue", "qvalue"),
-                          remove_grid = FALSE,
-                          remove_text = FALSE,
-                          remove_legend = FALSE,
                           low_color = "red",
                           high_color = "blue",
                           show_item = 10,
-                          # xleft = 0, xright = NA,
-                          main_text_size = 10,
-                          legend_text_size = 8,
-                          font_type = "Arial",
-                          border_thick = 1,
-                          wrap_width = NULL) {
+                          xlim_left = 0,
+                          xlim_right = NA,
+                          wrap_length = NULL,
+                          ...) {
   #--- args ---#
   stopifnot(is.numeric(show_item))
   xlab_type <- match.arg(xlab_type)
@@ -101,46 +92,26 @@ plotEnrichDot <- function(enrich_df,
       labels = function(x) format(x, scientific = T)
     ) +
     xlab(xlab_title) +
-    plot_theme(main_text_size, legend_text_size, font_type, border_thick) +
-    # xlim(xleft, xright) +
-    labs(color = legend_by)
+    labs(color = legend_by)+
+    xlim(xlim_left,xlim_right)+
+    plot_theme(...)
 
-  # hide background grid line
-  if (remove_grid) {
-    p <- p + theme(
-      # panel.border = element_blank(),
-      panel.grid.major = element_blank(),
-      panel.grid.minor = element_blank()
-    )
-  }
-
-  # hide axis text
-  if (remove_text) {
-    p <- p + theme(
-      # panel.border = element_blank(),
-      axis.text.x = element_blank(),
-      axis.text.y = element_blank(),
-      axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
-    )
-  }
-
-  # hide legend
-  if (remove_legend) {
-    p <- p + theme(
-      legend.position = "none"
-    )
-  }
 
   # wrap long text
-  if (!is.null(wrap_width) & is.numeric(wrap_width)) {
-    p <- p + scale_y_discrete(labels = text_wraper(wrap_width))
+  if (!is.null(wrap_length) & is.numeric(wrap_length)) {
+    p <- p + scale_y_discrete(labels = text_wraper(wrap_length))
   }
 
   return(p)
 }
 
 
+#--- wrap text if too long ---#
+text_wraper <- function(width) {
+  function(x) {
+    lapply(strwrap(x, width = width, simplify = FALSE), paste, collapse = "\n")
+  }
+}
 
 
 ##' Adjust dataframe for enrichment plot

@@ -9,7 +9,8 @@ utils::globalVariables(c(
   "month", "msig_category", "msig_org", "na.omit", "pmid",
   "setSize", "sets", "short_name", "start", "strand", "symbol",
   "theme_bw", "title", "type", "uniprot", "unit", "width", "xlab", "year",
-  "createWorkbook", "saveWorkbook", "biocOrg_name", "keggOrg_name"
+  "createWorkbook", "saveWorkbook", "biocOrg_name", "keggOrg_name",
+  "theme_classic", "xlim"
 ))
 
 #--- NCBI entrez ---#

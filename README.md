@@ -116,6 +116,8 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 - [x] 图片的y轴label折叠（比如dotplot的y轴有很多的term，且长度不一，如果出现太长的term，最好可以折叠一下）=> `strwrap()`
 - [x] 设定特定的作图格式，比如dotplot可以支持任何网站的结果，只要满足我们的作图格式`as.enrichdat`
 - [ ] 可视化GSEA结果
+- [ ] enrichment plot 设置参数`type` ，可以是dot、bar、circle等等
+- [x] 将画图theme相关的函数分离出来，单独使用（即控制文字、图上的线、颜色等等）=> `plot_theme()` ，并且允许其他作图函数使用`...`调用
 
 ##### 导出结果 (Export)
 
