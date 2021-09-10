@@ -7,6 +7,7 @@
 #'   'C4','C5','C6','C7','C8','H'.
 #' @param subcategory MSigDB sub-collection abbreviation, choose from
 #'   `msig_category`.
+#' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
 #' @param minGSSize Minimal size of each geneSet for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each geneSet for analyzing, default is 500.
 #' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
@@ -21,13 +22,15 @@
 #' @examples
 #' \donttest{
 #' data(geneList, package = "genekitr")
-#' gse <- genGSEA(genelist = geneList, org = "human", category = "H")
+#' gse <- genGSEA(genelist = geneList, org = "human",
+#'   category = "H",use_symbol = TRUE)
 #' }
 #'
 genGSEA <- function(genelist,
                     org,
                     category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
                     subcategory = NULL,
+                    use_symbol = TRUE,
                     minGSSize = 10,
                     maxGSSize = 500,
                     pvalueCutoff = 0.05,
@@ -66,20 +69,16 @@ genGSEA <- function(genelist,
     ...
   ))
 
-  # => GSEA usually does not need to show gene id
-  # if( use_symbol){
-  #   info = genInfo(names(genelist),org,unique = T) %>% na.omit()
-  #   new_geneID = stringr::str_split(egmt$geneID,'\\/') %>%
-  #     lapply(., function(x) {
-  #       info %>% dplyr::filter(input_id %in% x) %>% dplyr::pull(symbol)
-  #     }) %>% sapply(., paste0, collapse = "/")
-  #   new_egmt =  egmt %>% as.data.frame() %>%
-  #     dplyr::mutate(core_enrichment = new_geneID)
-  #
-  # }else{
-  #   new_egmt = egmt %>% as.data.frame()
-  # }
-  #
-  new_egmt <- egmt %>% as.data.frame() %>% as.enrichdat()
-  return(new_egmt)
+  egmt =  egmt %>% as.data.frame() %>% as.enrichdat()
+  if( use_symbol){
+    info = genInfo(unique(unlist(stringr::str_split(egmt$geneID,'\\/'))),org,unique = T) %>% na.omit()
+    new_geneID = stringr::str_split(egmt$geneID,'\\/') %>%
+      lapply(., function(x) {
+        info %>% dplyr::filter(input_id %in% x) %>% dplyr::pull(symbol)
+      }) %>% sapply(., paste0, collapse = "/")
+    egmt =  egmt %>%
+      dplyr::mutate(geneID = new_geneID)
+  }
+
+  return(egmt)
 }

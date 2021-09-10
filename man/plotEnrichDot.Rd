@@ -47,7 +47,7 @@ Dotplot for GO and KEGG enrichment analysis
 \examples{
 \dontrun{
 library(ggplot2)
-data(geneList, package = "DOSE")
+data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
 ego <- genGO(id,
   org = "human", ont = "mf", pvalueCutoff = 0.05,

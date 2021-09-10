@@ -177,13 +177,13 @@ mapKeggOrg <- function(organism) {
     stringi::stri_remove_empty_na()
 
   rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
-  if (any(id %in% all_symbol)) {
+  if ( sum(id %in% all_symbol) > length(id)/2 ) {
     c("SYMBOL")
-  } else if (any(id %in% all_ensembl)) {
+  } else if (sum(id %in% all_ensembl) > length(id)/2) {
     c("ENSEMBL")
-  } else if (any(id %in% all_entrezid)) {
+  } else if (sum(id %in% all_entrezid) > length(id)/2) {
     c("ENTREZID")
-  } else if (any(id %in% all_uniprot)) {
+  } else if (sum(id %in% all_uniprot) > length(id)/2) {
     c("UNIPROT")
   } else {
     stop("Wrong organism or input id has no match!")
