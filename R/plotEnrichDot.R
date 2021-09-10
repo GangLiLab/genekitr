@@ -12,8 +12,8 @@
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom dplyr pull %>% arrange mutate slice_head
-#' @importFrom ggplot2 ggplot aes geom_point scale_color_continuous theme
-#'   guide_colorbar scale_y_discrete element_blank xlab labs
+#' @importFrom ggplot2 ggplot aes_string geom_point scale_color_continuous theme
+#'   guide_colorbar scale_y_discrete element_blank xlab labs xlim
 #' @importFrom stringr str_to_title
 #'
 #' @return A ggplot object
@@ -21,7 +21,7 @@
 #' @examples
 #' \dontrun{
 #' library(ggplot2)
-#' data(geneList, package = "DOSE")
+#' data(geneList, package = "genekitr")
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id,
 #'   org = "human", ont = "mf", pvalueCutoff = 0.05,
@@ -82,10 +82,10 @@ plotEnrichDot <- function(enrich_df,
   }
 
   #--- plot ---#
-  p <- ggplot(enrich_df, aes(x = eval(parse(text = xlab_type)), y = Description)) +
-    geom_point(aes(
-      color = eval(parse(text = legend_type)),
-      size = Count
+  p <- ggplot(enrich_df, aes_string(x = xlab_type, y = "Description")) +
+    geom_point(aes_string(
+      color = legend_type,
+      size = "Count"
     )) +
     scale_color_continuous(
       low = low_color, high = high_color, name = legend_title,

@@ -66,6 +66,7 @@ genGSEA <- function(genelist,
     ...
   ))
 
+  # => GSEA usually does not need to show gene id
   # if( use_symbol){
   #   info = genInfo(names(genelist),org,unique = T) %>% na.omit()
   #   new_geneID = stringr::str_split(egmt$geneID,'\\/') %>%

@@ -64,6 +64,7 @@ remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependenci
 #### 可视化（Visualize）
 
 - 气泡图 => `plotEnrichDot ` 
+- 条形图 => `plotEnrichBar`
 - 交集韦恩图 =>`plotVenn` 
 
 #### 导出结果 (Export)
@@ -214,7 +215,7 @@ genPubmed(mm_id, keywords = 'stem cell AND epithelial', field = 'tiab')
 
   ```R
   # 加载示例数据
-  data(geneList, package="DOSE")
+  data(geneList, package="genekitr")
   # 获得msigdb的gene set
   msigdb <- getMsigdb(org='human', category='C3',subcategory = 'TFT:GTRD')
   # 直接进行gsea
@@ -241,7 +242,7 @@ genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 'TFT:GTRD
 - `use_symbol = T` will return symbol id, otherwise return input id type
 
 ```R
-data(geneList, package="DOSE")
+data(geneList, package="genekitr")
 id = names(geneList)[1:100]
 ego = genGO(id, org = 'human',ont = 'mf',pvalueCutoff = 0.05,qvalueCutoff = 0.1 ,use_symbol = T)
 ```
@@ -285,7 +286,7 @@ biocOrg_name()
 
 ```R
 library(AnnoGenes)
-data(geneList, package = 'DOSE')
+data(geneList, package = 'genekitr')
 id = names(geneList)[1:5]
 id
 # "4312"  "8318"  "10874" "55143" "55388"
@@ -427,7 +428,7 @@ wrap_plots(list(p1,p2,p3,p4))+ plot_layout(ncol = 2) +
 - upset plot可以调整：字体大小、边框粗细、内部网格线
 
 ```R
-library(AnnoGenes)
+library(genekitr)
 library(dplyr)
 library(patchwork)
 
