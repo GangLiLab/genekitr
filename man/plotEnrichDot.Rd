@@ -7,7 +7,7 @@
 plotEnrichDot(
   enrich_df,
   xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
-  legend_by = c("p.adjust", "pvalue", "qvalue"),
+  legend_type = c("p.adjust", "pvalue", "qvalue"),
   low_color = "red",
   high_color = "blue",
   show_item = 10,
@@ -22,7 +22,7 @@ plotEnrichDot(
 
 \item{xlab_type}{X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
 
-\item{legend_by}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
+\item{legend_type}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
 
 \item{low_color}{Legend color for low pvalue or qvalue, default is "red".}
 
@@ -53,7 +53,8 @@ ego <- genGO(id,
   org = "human", ont = "mf", pvalueCutoff = 0.05,
   qvalueCutoff = 0.1, use_symbol = FALSE
 )
-plotEnrichDot(ego)
+plotEnrichDot(ego,remove_grid = T, main_text_size = 8,
+  legend_text_size = 6,border_thick = 1.5)
 }
 
 }

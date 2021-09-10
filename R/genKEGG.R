@@ -85,11 +85,13 @@ genKEGG <- function(id,
     new_keg <- keg %>%
       as.data.frame() %>%
       dplyr::mutate(geneID = new_geneID) %>%
-      calcFoldEnrich()
+      calcFoldEnrich() %>%
+      as.enrichdat()
   } else {
     new_keg <- keg %>%
       as.data.frame() %>%
-      calcFoldEnrich()
+      calcFoldEnrich() %>%
+      as.enrichdat()
   }
 
   return(new_keg)

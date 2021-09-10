@@ -15,7 +15,8 @@
 #' @importFrom ggplot2 theme_bw theme margin unit element_text element_rect element_line
 #' @examples
 #' library(ggplot2)
-#' ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+ plot_theme(theme_type = 'bw')
+#' ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+
+#'   plot_theme(theme_type = 'bw', font_type = 'Times', border_thick = 2)
 #' @export
 plot_theme <- function(theme_type = c('bw','classic'),
                        main_text_size = 14,

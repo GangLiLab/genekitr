@@ -43,5 +43,6 @@ Change ggplot text, font, legend and border
 }
 \examples{
 library(ggplot2)
-ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+ plot_theme(theme_type = 'bw')
+ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+
+  plot_theme(theme_type = 'bw', font_type = 'Times', border_thick = 2)
 }

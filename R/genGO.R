@@ -81,11 +81,13 @@ genGO <- function(id,
     new_ego <- ego %>%
       as.data.frame() %>%
       dplyr::mutate(geneID = new_geneID) %>%
-      calcFoldEnrich()
+      calcFoldEnrich() %>%
+      as.enrichdat()
   } else {
     new_ego <- ego %>%
       as.data.frame() %>%
-      calcFoldEnrich()
+      calcFoldEnrich() %>%
+      as.enrichdat()
   }
 
   return(new_ego)

@@ -79,6 +79,6 @@ genGSEA <- function(genelist,
   #   new_egmt = egmt %>% as.data.frame()
   # }
   #
-  new_egmt <- egmt %>% as.data.frame()
+  new_egmt <- egmt %>% as.data.frame() %>% as.enrichdat()
   return(new_egmt)
 }
