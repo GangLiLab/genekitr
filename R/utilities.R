@@ -87,18 +87,23 @@ gentype <- function(id, org) {
     strsplit("; ") %>%
     unlist() %>%
     stringi::stri_remove_empty_na()
+  all_alias <- c(all$ncbi_alias, all$ensembl_alias) %>%
+    strsplit("; ") %>%
+    unlist() %>%
+    stringi::stri_remove_empty_na()
 
   rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
   n_sym = sum(id %in% all_symbol)
   n_ens = sum(id %in% all_ensembl)
   n_ent = sum(id %in% all_entrezid)
   n_uni = sum(id %in% all_uniprot)
+  n_ala = sum(id %in% all_alias)
 
-  if(sum(n_sym,n_ens,n_ent,n_uni) == 0){
+  if(sum(n_sym,n_ens,n_ent,n_uni,n_ala) == 0){
     stop("Wrong organism or input id has no match!")
   }else{
-    check = which(c(n_sym,n_ens,n_ent,n_uni) %in% max(n_sym,n_ens,n_ent,n_uni) )
-    typ = c("SYMBOL","ENSEMBL","ENTREZID","UNIPROT")[check]
+    check = which(c(n_sym,n_ens,n_ent,n_uni,n_ala) %in% max(n_sym,n_ens,n_ent,n_uni,n_ala) )
+    typ = c("SYMBOL","ENSEMBL","ENTREZID","UNIPROT","SYMBOL")[check] %>% unique()
   }
 
   return(typ)
