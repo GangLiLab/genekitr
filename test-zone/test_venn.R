@@ -1,4 +1,4 @@
-library(AnnoGenes)
+library(genekitr)
 library(dplyr)
 set1 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
 set2 <- paste(rep("gene" , 100) , sample(c(1:1000) , 100 , replace=F) , sep="")
