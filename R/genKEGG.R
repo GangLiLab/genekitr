@@ -18,6 +18,8 @@
 #' @importFrom stringr  str_split
 #' @importFrom stringi stri_omit_na
 #' @importFrom clusterProfiler enrichKEGG
+#' @importFrom stats na.omit
+#' @importFrom rlang .data
 #'
 #' @return A `data.frame`.
 #' @export
@@ -45,7 +47,7 @@ genKEGG <- function(id,
   if (missing(universe)) universe <- NULL
 
   org <- mapKeggOrg(tolower(org))
-  keyType <- .gentype(id, org)
+  keyType <- gentype(id, org)
 
   if (!keyType %in% c("ENTREZID")) {
     message(paste0(keyType), " gene will be mapped to entrez id")
@@ -96,3 +98,7 @@ genKEGG <- function(id,
 
   return(new_keg)
 }
+
+
+utils::globalVariables(c("input_id","symbol"))
+

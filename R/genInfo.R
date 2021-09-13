@@ -6,6 +6,7 @@
 #' @importFrom stringr str_detect
 #' @importFrom dplyr %>% filter relocate select mutate mutate_all na_if
 #' @importFrom tidyr unnest
+#' @importFrom rlang .data
 #'
 #' @return A `data.frame`.
 #' @export
@@ -24,7 +25,7 @@ genInfo <- function(id,
                     unique = FALSE) {
   #--- args ---#
   org <- mapBiocOrg(tolower(org))
-  keytype <- .gentype(id, org) %>% tolower()
+  keytype <- gentype(id, org) %>% tolower()
 
   #--- code ---#
   all <- biocAnno(org) %>%
@@ -42,7 +43,7 @@ genInfo <- function(id,
     apply(., 1, is.na)
 
   ## keep each id even has no info
-  # only symbol id needs to consider alias
+  # only symbol id needs  to consider alias
   if (keytype != "symbol") {
     gene_info <- merge(tmp1, tmp2, by.x = "input_id", by.y = keytype, all.x = T)
   } else if (any(apply(tmp3, 2, sum) == nrow(tmp3))) {
@@ -123,3 +124,5 @@ genInfo <- function(id,
 
   return(gene_info)
 }
+
+utils::globalVariables(c(":=","symbol","uniprot","input_id","symbol"))

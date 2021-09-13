@@ -17,6 +17,7 @@
 #' @importFrom tidyr gather
 #' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme
 #'   element_blank scale_y_continuous
+#' @importFrom rlang .data
 #' @export
 #' @examples
 #' library(ggplot2)

@@ -6,6 +6,7 @@
 #'
 #' @importFrom stringr str_remove_all str_split str_remove
 #' @importFrom dplyr mutate pull
+#' @importFrom rlang .data
 #' @return A `data.frame`.
 #' @export
 
@@ -122,3 +123,5 @@ as.enrichdat <- function(enrich_df) {
 
   return(enrich_df)
 }
+
+utils::globalVariables(c("Count","setSize"))

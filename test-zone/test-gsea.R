@@ -1,6 +1,6 @@
 rm(list = ls())
 library(genekitr)
-data(geneList, package="DOSE")
+data(geneList, package="genekitr")
 head(geneList)
 
 egmt1 <- genGSEA(genelist = geneList,org = 'hs', category='C5',subcategory = 'GO:MF',use_symbol = F)
@@ -9,7 +9,8 @@ egmt2 <- genGSEA(genelist = geneList,org = 'human', category='C3',subcategory = 
 # use symbol genelist
 names(geneList) = transId(names(geneList),trans_to = 'symbol',org = 'hs')
 geneList = geneList[!is.na(names(geneList))]
-genGSEA(genelist = geneList,org = 'hs', category='C5',subcategory = 'GO:MF')
+head(geneList)
+egmt3 <- genGSEA(genelist = geneList,org = 'hs', category='C5',subcategory = 'GO:MF')
 
 
 ## 来自：https://support.bioconductor.org/p/122496/

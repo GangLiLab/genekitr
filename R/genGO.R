@@ -17,6 +17,8 @@
 #' @importFrom dplyr select filter pull mutate %>%
 #' @importFrom stringr str_split
 #' @importFrom clusterProfiler enrichGO
+#' @importFrom stats na.omit
+#' @importFrom rlang .data
 #'
 #' @return A `data.frame` contains gene ratio and fold enrichment.
 #' @export
@@ -49,7 +51,7 @@ genGO <- function(id,
 
   org <- mapBiocOrg(tolower(org))
   pkg <- paste0("org.", org, ".eg.db")
-  keyType <- .gentype(id, org)
+  keyType <- gentype(id, org)
 
   #--- codes ---#
   ego <- suppressMessages(
@@ -92,3 +94,6 @@ genGO <- function(id,
 
   return(new_ego)
 }
+
+
+utils::globalVariables(c("input_id"))

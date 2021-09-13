@@ -15,6 +15,8 @@
 #' @importFrom dplyr select filter pull mutate %>%
 #' @importFrom stringr str_split
 #' @importFrom clusterProfiler GSEA
+#' @importFrom stats na.omit
+#' @importFrom rlang .data
 #'
 #' @return A `data.frame`.
 #' @export
@@ -65,7 +67,8 @@ genGSEA <- function(genelist,
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist,
     TERM2GENE = geneset,
-    pvalueCutoff, verbose = F,
+    pvalueCutoff,
+    verbose = F,
     ...
   ))
 
@@ -82,3 +85,69 @@ genGSEA <- function(genelist,
 
   return(egmt)
 }
+
+getMsigdb <- function(org,
+                      category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
+                      subcategory = NULL) {
+
+  #--- args ---#
+  if (!requireNamespace("msigdbr", quietly = TRUE)) auto_install("msigdbr")
+  org <- tolower(org)
+  if (org == "hg" | org == "hsa" | org == "hs" | org == "homo sapiens") org <- "human"
+  if (org == "mm" | org == "mmu") org <- "mouse"
+
+  # org
+  msigOrg <- msigdb_org_data()
+  rm(msig_org, envir = .GlobalEnv)
+  all_org <- c(
+    msigOrg[, 1],
+    stringr::str_split(msigOrg[, 2], ", ", simplify = T) %>%
+      as.character() %>%
+      stringi::stri_remove_empty_na()
+  )
+  if (!org %in% tolower(all_org)) stop("Choose a valid organism!\n\n", paste0(all_org, " | "))
+
+  # category
+  if (!category %in% c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H")) {
+    stop("Category should choose from: C1, C2, C3, C4, C5, C6, C7, C8, H...")
+  } else {
+    category <- match.arg(category)
+  }
+
+  # subcategory
+  msigCategory <- msigdb_category_data()
+  rm(msig_category, envir = .GlobalEnv)
+  all_sub <- msigCategory[, 2] %>%
+    stringi::stri_remove_empty_na()
+
+  som_sub <- msigCategory %>%
+    dplyr::filter(gs_cat == category) %>%
+    dplyr::pull(gs_subcat)
+
+  if (is.null(subcategory)) {
+    if (som_sub == "") {
+      message(paste0(category, " has no subcategory, continue..."))
+      subcategory <- ""
+    } else {
+      stop("choose a valid subcategory for ", category, "...\n", paste0(som_sub, " | "))
+    }
+  } else if (!subcategory %in% som_sub) {
+    stop("choose a valid subcategory for ", category, "...\n", paste0(som_sub, " | "))
+  }
+
+
+  #--- codes ---#
+  msigdb <- msigdbr::msigdbr(org, category, subcategory) %>%
+    dplyr::select(., c("gs_name", "gene_symbol", "entrez_gene")) %>%
+    as.data.frame()
+
+  return(msigdb)
+}
+
+utils::globalVariables(c("gs_name","gene_symbol","entrez_gene","input_id","symbol",
+                         "msig_org","msig_category","gs_cat","gs_subcat"))
+
+
+
+
+

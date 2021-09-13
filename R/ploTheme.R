@@ -13,6 +13,7 @@
 #' @param remove_legend Logical, remove legend, default is FALSE.
 #' @return ggplot theme
 #' @importFrom ggplot2 theme_bw theme margin unit element_text element_rect element_line
+#' @importFrom rlang .data
 #' @examples
 #' library(ggplot2)
 #' ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+

@@ -5,7 +5,7 @@
 #' @param field pubmed field from `showNCBI('pubmed')`, default is "ALL".
 #' @importFrom tidyr unite
 #' @importFrom dplyr select mutate relocate everything %>%
-#'
+#' @importFrom rlang .data
 #' @return A `data.frame`.
 #' @export
 #' @examples
@@ -78,3 +78,19 @@ genPubmed <- function(id,
 
   invisible(res)
 }
+
+
+showNCBI <- function(db = "pubmed") {
+  # suppress binding notes
+  fields <- rentrez::entrez_db_searchable(db)
+  res <- as.data.frame(fields)[1:3]
+
+  if (nrow(res) == 0) { # nocov start
+    message("Something is wrong in your input,
+            NULL will be returned, please check.")
+    return(NULL)
+  } # nocov end
+  return(res)
+}
+
+utils::globalVariables(c("year","month","day","title","doi","pmid","journal","gene"))

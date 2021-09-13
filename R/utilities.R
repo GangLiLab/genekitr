@@ -1,92 +1,4 @@
-#--- add global variables ---#
-utils::globalVariables(c(
-  ".", ":=", "Count", "download.file", "Description", "V1", "chr",
-  "count", "day", "doi", "element_line", "element_rect",
-  "element_text", "end", "ensembl_id", "entrez_gene",
-  "entrezid", "full_name", "gene", "gene_id", "gene_symbol",
-  "gs_cat", "gs_name", "gs_subcat", "input_id",
-  "install.packages", "item", "journal", "labs", "margin",
-  "month", "msig_category", "msig_org", "na.omit", "pmid",
-  "setSize", "sets", "short_name", "start", "strand", "symbol",
-  "theme_bw", "title", "type", "uniprot", "unit", "width", "xlab", "year",
-  "createWorkbook", "saveWorkbook", "biocOrg_name", "keggOrg_name",
-  "theme_classic", "xlim"
-))
-
-#--- NCBI entrez ---#
-showNCBI <- function(db = "pubmed") {
-  # suppress binding notes
-  fields <- rentrez::entrez_db_searchable(db)
-  res <- as.data.frame(fields)[1:3]
-
-  if (nrow(res) == 0) { # nocov start
-    message("Something is wrong in your input,
-            NULL will be returned, please check.")
-    return(NULL)
-  } # nocov end
-  return(res)
-}
-
-#---  get msigdb data ---#
-getMsigdb <- function(org,
-                      category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
-                      subcategory = NULL) {
-
-  #--- args ---#
-  if (!requireNamespace("msigdbr", quietly = TRUE)) auto_install("msigdbr")
-  org <- tolower(org)
-  if (org == "hg" | org == "hsa" | org == "hs" | org == "homo sapiens") org <- "human"
-  if (org == "mm" | org == "mmu") org <- "mouse"
-
-  # org
-  msigOrg <- msigdb_org_data()
-  rm(msig_org, envir = .GlobalEnv)
-  all_org <- c(
-    msigOrg[, 1],
-    stringr::str_split(msigOrg[, 2], ", ", simplify = T) %>%
-      as.character() %>%
-      stringi::stri_remove_empty_na()
-  )
-  if (!org %in% tolower(all_org)) stop("Choose a valid organism!\n\n", paste0(all_org, " | "))
-
-  # category
-  if (!category %in% c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H")) {
-    stop("Category should choose from: C1, C2, C3, C4, C5, C6, C7, C8, H...")
-  } else {
-    category <- match.arg(category)
-  }
-
-  # subcategory
-  msigCategory <- msigdb_category_data()
-  rm(msig_category, envir = .GlobalEnv)
-  all_sub <- msigCategory[, 2] %>%
-    stringi::stri_remove_empty_na()
-
-  som_sub <- msigCategory %>%
-    dplyr::filter(gs_cat == category) %>%
-    dplyr::pull(gs_subcat)
-
-  if (is.null(subcategory)) {
-    if (som_sub == "") {
-      message(paste0(category, " has no subcategory, continue..."))
-      subcategory <- ""
-    } else {
-      stop("choose a valid subcategory for ", category, "...\n", paste0(som_sub, " | "))
-    }
-  } else if (!subcategory %in% som_sub) {
-    stop("choose a valid subcategory for ", category, "...\n", paste0(som_sub, " | "))
-  }
-
-
-  #--- codes ---#
-  msigdb <- msigdbr::msigdbr(org, category, subcategory) %>%
-    dplyr::select(., c("gs_name", "gene_symbol", "entrez_gene")) %>%
-    as.data.frame()
-
-  return(msigdb)
-}
-
-#---  map bioc org fullname to shortname ---#
+#---  get organism Bioconductor shortname ---#
 mapBiocOrg <- function(organism) {
   organism <- tolower(organism)
   if (organism == "hg" | organism == "human" | organism == "hsa" | organism == "hs") organism <- "hs"
@@ -115,7 +27,7 @@ mapBiocOrg <- function(organism) {
   return(org)
 }
 
-#--- map kegg org fullname to shortname ---#
+#---  get organism KEGG shortname ---#
 mapKeggOrg <- function(organism) {
   organism <- tolower(organism)
   if (organism == "hg" | organism == "human" | organism == "hs") organism <- "hsa"
@@ -159,8 +71,8 @@ mapKeggOrg <- function(organism) {
   return(org)
 }
 
-#--- define gene type: entrezid, ensembl or symbol ---#
-.gentype <- function(id, org) {
+#---  decide gene id type ---#
+gentype <- function(id, org) {
   org <- mapBiocOrg(org)
   if (nchar(org) > 2) {
     org <- substr(org, 1, nchar(org) - 1)
@@ -177,17 +89,70 @@ mapKeggOrg <- function(organism) {
     stringi::stri_remove_empty_na()
 
   rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
-  if ( sum(id %in% all_symbol) > length(id)/2 ) {
-    c("SYMBOL")
-  } else if (sum(id %in% all_ensembl) > length(id)/2) {
-    c("ENSEMBL")
-  } else if (sum(id %in% all_entrezid) > length(id)/2) {
-    c("ENTREZID")
-  } else if (sum(id %in% all_uniprot) > length(id)/2) {
-    c("UNIPROT")
-  } else {
+  n_sym = sum(id %in% all_symbol)
+  n_ens = sum(id %in% all_ensembl)
+  n_ent = sum(id %in% all_entrezid)
+  n_uni = sum(id %in% all_uniprot)
+
+  if(sum(n_sym,n_ens,n_ent,n_uni) == 0){
     stop("Wrong organism or input id has no match!")
+  }else{
+    check = which(c(n_sym,n_ens,n_ent,n_uni) %in% max(n_sym,n_ens,n_ent,n_uni) )
+    typ = c("SYMBOL","ENSEMBL","ENTREZID","UNIPROT")[check]
   }
+
+  return(typ)
+
+}
+
+#---calc fold enrichment ---#
+calcFoldEnrich <- function(df) {
+  if (any(grepl("[gene|bg]ratio", tolower(colnames(df))))) {
+    check_gr <- which(grepl(".*gene.*ratio", tolower(colnames(df))))
+    check_bg <- which(grepl(".*bg*ratio", tolower(colnames(df))))
+    to_calc <- paste0("(", df[, check_gr], ")/(", df[, check_bg], ")")
+
+    df <- df %>%
+      dplyr::mutate(FoldEnrich = sapply(to_calc, function(x) eval(parse(text = x))))
+  }
+  return(df)
+}
+
+#---  get msigdb org ---#
+msigdb_org_data <- function() {
+  utils::data(list = "msig_org", package = "genekitr")
+  get("msig_org", envir = .GlobalEnv)
+}
+
+#---  get msigdb org ---#
+msigdb_category_data <- function() {
+  utils::data(list = "msig_category", package = "genekitr")
+  get("msig_category", envir = .GlobalEnv)
+}
+
+#--- bioc org name data ---#
+biocOrg_name_data <- function() {
+  utils::data(list = "biocOrg_name", package = "genekitr")
+  get("biocOrg_name", envir = .GlobalEnv)
+}
+
+#---  kegg org name data ---#
+keggOrg_name_data <- function() {
+  utils::data(list = "keggOrg_name", package = "genekitr")
+  get("keggOrg_name", envir = .GlobalEnv)
+}
+
+#--- bioconductor anno data ---#
+biocAnno <- function(org) {
+  org <- mapBiocOrg(tolower(org))
+  if (!file.exists(paste0(tempdir(), "/", org, "_anno.rda"))) {
+    utils::download.file(paste0("http://112.74.191.19/genekitr/", org, "_anno.rda"),
+                  paste0(tempdir(), "/", org, "_anno.rda"),
+                  mode = "wb", quiet = TRUE
+    )
+  }
+  load(paste0(tempdir(), "/", org, "_anno.rda"), envir = .GlobalEnv)
+  get(paste0(org, "_anno"), envir = .GlobalEnv)
 }
 
 #---  auto-install packages ---#
@@ -200,8 +165,8 @@ auto_install <- function(pkg) {
   missing_pkgs <- names(ret[!ret])
   if (length(missing_pkgs) > 0) {
     warning("The following packages are not installed: \n",
-      paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
-      immediate. = TRUE
+            paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
+            immediate. = TRUE
     )
     message("\nTry installing via Bioconductor...\n")
 
@@ -236,16 +201,8 @@ auto_install <- function(pkg) {
   }
 }
 
-#---calc fold enrichment ---#
-calcFoldEnrich <- function(df) {
-  if (any(grepl("[gene|bg]ratio", tolower(colnames(df))))) {
-    check_gr <- which(grepl(".*gene.*ratio", tolower(colnames(df))))
-    check_bg <- which(grepl(".*bg*ratio", tolower(colnames(df))))
-    to_calc <- paste0("(", df[, check_gr], ")/(", df[, check_bg], ")")
 
-    df <- df %>%
-      dplyr::mutate(FoldEnrich = sapply(to_calc, function(x) eval(parse(text = x))))
-  }
-  return(df)
-}
-
+#--- add global variables ---#
+utils::globalVariables(c(
+  ".", "biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
+  "count","theme_classic","input_id"))

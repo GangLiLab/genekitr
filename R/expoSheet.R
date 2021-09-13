@@ -6,6 +6,7 @@
 #' @param dir A character string naming output directory.
 #' @param overwrite If TRUE, overwrite any existing file.
 #' @importFrom stringr str_detect
+#' @importFrom rlang .data
 #'
 #' @return An Excel file.
 #' @export
@@ -27,7 +28,7 @@ expoSheet <- function(dat_list,
       call. = FALSE
     )
   }
-  if (!"wb" %in% ls()) wb <- createWorkbook()
+  if (!"wb" %in% ls()) wb <- openxlsx::createWorkbook()
 
   if (length(dat_list) != length(name_list)) {
     stop("Datasets number is not equal with names!")
@@ -46,8 +47,11 @@ expoSheet <- function(dat_list,
       sheet = name_list[[i]], style = headerStyle,
       rows = 1, cols = seq_len(ncol(dat_list[[i]])), gridExpand = TRUE
     )
-    openxlsx::setColWidths(wb, sheet = name_list[[i]], cols = seq_len(ncol(dat_list[[i]])), widths = "auto")
+    openxlsx::setColWidths(wb, sheet = name_list[[i]],
+                           cols = seq_len(ncol(dat_list[[i]])), widths = "auto")
   }))
 
-  saveWorkbook(wb, paste0(dir, filename), overwrite)
+  openxlsx::saveWorkbook(wb, paste0(dir, filename), overwrite)
 }
+
+

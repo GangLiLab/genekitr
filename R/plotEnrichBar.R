@@ -6,6 +6,7 @@
 #' @importFrom ggplot2 ggplot aes_string geom_bar scale_fill_continuous theme
 #'   guide_colorbar scale_y_discrete element_blank xlab labs xlim
 #' @importFrom stringr str_to_title
+#' @importFrom rlang .data
 #'
 #' @return A ggplot object
 #' @export

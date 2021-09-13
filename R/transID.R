@@ -6,6 +6,8 @@
 #' @param unique Logical to keep only one unique mapped ID, default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
 #' @importFrom tibble add_row
+#' @importFrom stats na.omit
+#' @importFrom rlang .data
 #'
 #' @return A character of transformed ids.
 #' @export
@@ -27,7 +29,7 @@ transId <- function(id, trans_to, org, unique = TRUE) {
 
   #--- args ---#
   org <- mapBiocOrg(tolower(org))
-  keytype <- .gentype(id, org)
+  keytype <- gentype(id, org)
   from <- tolower(keytype)
 
   if (grepl(tolower(trans_to), "entrezid")) trans_to <- "entrezid"
