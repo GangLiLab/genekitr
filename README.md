@@ -229,7 +229,7 @@ plotVenn(sm_gene_list,
 #> Color length should be same with venn_list, auto assign colors...
 ```
 
-![](README-unnamed-chunk-6-1.png)<!-- -->
+![](man/figures/unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 # if only have five groups
@@ -242,7 +242,7 @@ plotVenn(la_gene_list,
   remove_grid = TRUE, use_venn = FALSE)
 ```
 
-![](README-unnamed-chunk-6-2.png)<!-- -->
+![](man/figures/unnamed-chunk-6-2.png)<!-- -->
 
 ##### Enrichment barplot
 
@@ -254,16 +254,16 @@ plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
   legend_text_size = 6,border_thick = 1.5)
 ```
 
-![](README-unnamed-chunk-7-1.png)<!-- -->
+![](man/figures/unnamed-chunk-7-1.png)<!-- -->
 
 ##### Enrichment dotplot
 
 ``` r
-plotEnrichDot(ego,remove_grid = T, main_text_size = 8,
-  legend_text_size = 6,border_thick = 1.5)
+plotEnrichDot(ego,remove_grid = F, xlab_type = 'GeneRatio',
+              legend_type = 'qvalue')
 ```
 
-![](README-unnamed-chunk-8-1.png)<!-- -->
+![](man/figures/unnamed-chunk-8-1.png)<!-- -->
 
 ### Export
 

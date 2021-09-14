@@ -74,7 +74,7 @@ library(DT)
 
 Support many organisms and three main gene ID types ("symbol", "entrezid" and "ensembl")
 
-Firstly, we take human genes as opening...
+Firstly, we take human genes as beginning...
 
 Use symbol ID (function could detect fake ID, here is "FAKEID")
 ```{r}

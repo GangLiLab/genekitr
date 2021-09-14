@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "README-"
+  fig.path = "man/figures/"
 )
 ```
 
@@ -161,7 +161,7 @@ If we only have two or three groups of genes, the function will plot Venn diagra
 
 If we have at least four groups of genes, the default option will be UpSet diagram.
 
-```{r}
+```{r venn}
 # if only have three groups
 set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
@@ -186,18 +186,18 @@ plotVenn(la_gene_list,
 
 User could choose "FoldEnrich", "GeneRatio" or "Count" as x-axis label, default is "FoldEnrich".
 
-```{r}
+```{r enrich_bar}
 plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
   legend_text_size = 6,border_thick = 1.5)
 ```
 
+
 ##### Enrichment dotplot
 
-```{r}
-plotEnrichDot(ego,remove_grid = T, main_text_size = 8,
-  legend_text_size = 6,border_thick = 1.5)
+```{r enrich_dot}
+plotEnrichDot(ego,remove_grid = F, xlab_type = 'GeneRatio',
+              legend_type = 'qvalue')
 ```
-
 
 
 ### Export 
