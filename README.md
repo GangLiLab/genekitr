@@ -179,11 +179,6 @@ choose full name or short name
 
 ``` r
 ego = genGO(id, org = 'human', ont = 'bp',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
-#> Warning: package 'AnnotationDbi' was built under R version 4.0.3
-#> Warning: package 'BiocGenerics' was built under R version 4.0.3
-#> Warning: package 'Biobase' was built under R version 4.0.3
-#> Warning: package 'IRanges' was built under R version 4.0.3
-#> Warning: package 'S4Vectors' was built under R version 4.0.3
 ```
 
 ##### KEGG analysis
@@ -234,7 +229,7 @@ plotVenn(sm_gene_list,
 #> Color length should be same with venn_list, auto assign colors...
 ```
 
-<img src='man/figures/venn.png' height="500" alt="venn"/>
+![](README-unnamed-chunk-6-1.png)<!-- -->
 
 ``` r
 # if only have five groups
@@ -247,7 +242,7 @@ plotVenn(la_gene_list,
   remove_grid = TRUE, use_venn = FALSE)
 ```
 
-<img src='man/figures/upset.png' height="500" alt="upset"/>
+![](README-unnamed-chunk-6-2.png)<!-- -->
 
 ##### Enrichment barplot
 
@@ -259,7 +254,7 @@ plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
   legend_text_size = 6,border_thick = 1.5)
 ```
 
-<img src='man/figures/enrich_bar.png' height="500" alt="enrich_bar"/>
+![](README-unnamed-chunk-7-1.png)<!-- -->
 
 ##### Enrichment dotplot
 
@@ -268,7 +263,7 @@ plotEnrichDot(ego,remove_grid = T, main_text_size = 8,
   legend_text_size = 6,border_thick = 1.5)
 ```
 
-<img src='man/figures/enrich_dot.png' height="500" alt="enrich_dot"/>
+![](README-unnamed-chunk-8-1.png)<!-- -->
 
 ### Export
 
@@ -286,7 +281,7 @@ expoSheet(
 
 The result will be:
 
-<img src='man/figures/exp0.jpg' height="500" alt="exp0"/>
+![](man/figures/exp0.jpg)
 
 ## Vignette
 
