@@ -161,7 +161,7 @@ If we only have two or three groups of genes, the function will plot Venn diagra
 
 If we have at least four groups of genes, the default option will be UpSet diagram.
 
-```{r venn}
+```{r venn, fig.height = 4}
 # if only have three groups
 set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
 set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
@@ -186,7 +186,7 @@ plotVenn(la_gene_list,
 
 User could choose "FoldEnrich", "GeneRatio" or "Count" as x-axis label, default is "FoldEnrich".
 
-```{r enrich_bar}
+```{r enrich_bar, fig.height = 4}
 plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
   legend_text_size = 6,border_thick = 1.5)
 ```
@@ -194,8 +194,9 @@ plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
 
 ##### Enrichment dotplot
 
-```{r enrich_dot}
+```{r enrich_dot, fig.height = 4}
 plotEnrichDot(ego,remove_grid = F, xlab_type = 'GeneRatio',
+              main_text_size = 8, legend_text_size = 6,
               legend_type = 'qvalue')
 ```
 
@@ -214,7 +215,7 @@ expoSheet(
 
 The result will be:
 
-![](man/figures/exp0.jpg)
+<img src='man/figures/exp0.jpg' height="500" alt="exp0"/>
 
 
 ## Vignette
