@@ -67,12 +67,165 @@ remotes::install_github("GangLiLab/genekitr")
 
 ## Quick guide
 
+To quickly go through the package usage, we will use built-in gene list from GEO airway
 
+([GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778)) DEG analysis.
+
+### Search 
+
+##### Search gene related information
+
+`org` argument could accept fullname or shortname of specific organism. For example, we could 
+
+use `human/hs/hg` to describe human.
+
+```{r geninfo}
+library(genekitr)
+data(geneList)
+id = names(geneList)[1:100]
+head(id)
+ginfo = genInfo(id, org = 'human')
+dplyr::as_tibble(ginfo)
+```
+
+##### Search gene PubMed records
+
+```{r genpubmed}
+pub = genPubmed(
+  id = c("Cyp2c23", "Fhit", "Gal3st2b","Insl3", "Gbp4"),
+  keywords = "stem cell", field = "tiab")
+head(pub)
+```
+
+
+### Transform
+
+Regardless of input ID type, function will detect automatically.
+
+User only need to specify which type you want, the left things just give `transId`.
+
+##### Transform ID from entrezid to symbol
+
+```{r transid}
+head(id)
+id2 = transId(id, trans_to = 'symbol',org='hs')
+head(id2)
+```
+
+
+### Analysis 
+
+All enrichment analysis just give a gene list (especially GSEA need the gene list with a decreasing fold change)
+
+##### GO analysis 
+
+User could choose ontology among "bp", "cc" or "mf".
+
+If set `use_symbol = TRUE`, the result will return gene symbol for easily understand.
+
+If you are not sure the organism name, please type `biocOrg_name` and choose full name or short name
+
+```{r}
+ego = genGO(id, org = 'human', ont = 'bp',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
+```
+
+##### KEGG analysis 
+
+If you are not sure the organism name, please type `keggOrg_name` and choose full name or short name
+
+```{r}
+ekeg = genKEGG(id, org = 'hg',use_symbol = T)
+```
+
+##### GSEA analysis 
+
+`category` argument could choose from 'C1','C2','C3', 'C4','C5','C6','C7','C8' and 'H'
+
+If you are not sure `subcategory`, you can only choose `category` and leave `subcategory` as blank. 
+
+The message will tell what options you could choose in the main `category`.
+
+```{r}
+egsea = genGSEA(genelist = geneList,org = 'hs', 
+                category='C2',subcategory = 'CP:KEGG',
+                use_symbol = T, pvalueCutoff = 0.01)
+```
+
+
+
+### Visulaize 
+
+##### Gene overlap
+
+If we only have two or three groups of genes, the function will plot Venn diagram;
+
+If we have at least four groups of genes, the default option will be UpSet diagram.
+
+```{r}
+# if only have three groups
+set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+set3 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+sm_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3)
+plotVenn(sm_gene_list,
+  text_size = 1.5, alpha_degree = 1,
+  remove_grid = TRUE)
+
+# if only have five groups
+set4 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+set5 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+la_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3,
+  gset4 = set4, gset5 = set5)
+plotVenn(la_gene_list,
+  text_size = 15, alpha_degree = 0.2, border_thick = 2,
+  remove_grid = TRUE, use_venn = FALSE)
+
+```
+
+##### Enrichment barplot
+
+User could choose "FoldEnrich", "GeneRatio" or "Count" as x-axis label, default is "FoldEnrich".
+
+```{r}
+plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
+  legend_text_size = 6,border_thick = 1.5)
+```
+
+##### Enrichment dotplot
+
+```{r}
+plotEnrichDot(ego,remove_grid = T, main_text_size = 8,
+  legend_text_size = 6,border_thick = 1.5)
+```
+
+
+
+### Export 
+
+If you want to export many data sets in one file, you could use `expoSheet`
+
+For example, since we got 100 genes' GO and KEGG result, then we want to export them with gene information:
+
+```{r eval=FALSE}
+expoSheet(
+  dat_list = list(ginfo, ego, ekeg), name_list = list("GeneInfo","GO", "KEGG"),
+  filename = "gene_enrich.xlsx", dir = tempdir())
+```
+
+The result will be:
+
+![](man/figures/exp0.png)
 
 
 ## Vignette
 
+### English 
 
+- Wait to update...
+
+### 中文区 (推文专区)
+
+- 待更新1：R包搞定你的基因需求
 
 
 ## Citation
@@ -88,7 +241,7 @@ If you are interested in this tool, welcome contribute your ideas as follows:
 * Double click `genekitr.Rproj` to open RStudio
 * Modify source code in `R/` folder
 * Run `devtools::check()` to make sure no errors, warnings or notes
-* Pull request
+* Pull request and describe clearly your changes
 
 
 
