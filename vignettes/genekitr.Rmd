@@ -1,0 +1,103 @@
+---
+title: "genekitr: an R toolkit for gene-based analysis"
+author: "Yunze Liu \\
+        University of Macau"
+date: "`r Sys.Date()`"
+
+output:
+  prettydoc::html_pretty:
+    toc: true
+    theme: cayman
+    highlight: github
+  pdf_document:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{Basic usage}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\usepackage[utf8]{inputenc}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+**genekitr** is an R analysis toolkit based on the gene. It mainly contains five features:
+
+- Search: Gene IDs as input then get gene-related information (exp. location, gene name, gene alias, GC content ...) as well as search gene-related PubMed records
+
+- Transform: Transform gene ID type among "symbol", "entrezid", "ensembl" and "uniprot"
+
+- Analysis: Gene enrichment analysis including ORA (GO and KEGG) and GSEA
+
+- Visualize: Visualization for enrichment analysis and gene overlaps
+
+- Export: Gene IDs and analysis results could be exported as various sheets in one Excel file, which could be easily read and shared with others
+
+## Installation
+
+Install CRAN stable version:
+
+```{r, eval=FALSE}
+install.packages("genekitr")
+```
+
+Install GitHub dev version:
+
+```{r install-github, eval = FALSE}
+# install.packages("remotes")
+remotes::install_github("GangLiLab/genekitr")
+# To build local vignette:
+# remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependencies = TRUE)
+```
+
+## Usage
+
+```{r DT_opt, include=FALSE}
+options(DT.options = list(pageLength = 3, 
+                          language = list(search = 'Filter:'),
+                          autoWidth = TRUE,
+                          scrollX = TRUE,
+                          rownames= TRUE,
+                          scrollY = '450px'))
+```
+
+
+```{r}
+library(genekitr)
+library(DT)
+```
+
+### Get gene information => `genInfo`
+
+Support many organisms and three main gene ID types ("symbol", "entrezid" and "ensembl")
+
+Firstly, we take human genes as opening...
+
+Use symbol ID (function could detect fake ID, here is "FAKEID")
+```{r}
+id = c("MCM10", "CDC20","S100A9", "FOXM1", "KIF23", "MMP1", "CDC45",  "BCC7", "FAKEID", "TP53",'HBD')
+info = genInfo(id,org = 'hg')
+datatable(info)
+```
+
+It is common for one type of gene matched to many results in another type. For example,
+according to the message above, we got two matched result for gene "HBD".
+
+If we just want to get one-to-one match, we just need to set `unique=TRUE`
+
+```{r}
+info2 = genInfo(id,org = 'hg',unique=TRUE)
+identical(id,info2$input_id)
+datatable(info2)
+```
+
+
+
+
+
+
+
+

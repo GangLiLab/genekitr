@@ -30,7 +30,8 @@
 #'
 genGSEA <- function(genelist,
                     org,
-                    category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
+                    category = c("C1", "C2", "C3", "C4",
+                                 "C5", "C6", "C7", "C8", "H"),
                     subcategory = NULL,
                     use_symbol = TRUE,
                     minGSSize = 10,
