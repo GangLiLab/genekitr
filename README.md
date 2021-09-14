@@ -286,7 +286,7 @@ expoSheet(
 
 The result will be:
 
-<img src='man/figures/exp0.png' height="500" alt="exp0"/>
+<img src='man/figures/exp0.jpg' height="500" alt="exp0"/>
 
 ## Vignette
 

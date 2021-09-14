@@ -125,7 +125,7 @@ If set `use_symbol = TRUE`, the result will return gene symbol for easily unders
 
 If you are not sure the organism name, please type `biocOrg_name` and choose full name or short name
 
-```{r}
+```{r warning=FALSE}
 ego = genGO(id, org = 'human', ont = 'bp',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
 ```
 
@@ -214,7 +214,7 @@ expoSheet(
 
 The result will be:
 
-![](man/figures/exp0.png)
+![](man/figures/exp0.jpg)
 
 
 ## Vignette
