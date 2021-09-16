@@ -92,7 +92,7 @@ getMsigdb <- function(org,
                       subcategory = NULL) {
 
   #--- args ---#
-  if (!requireNamespace("msigdbr", quietly = TRUE)) auto_install("msigdbr")
+  if (!requireNamespace("msigdbr", quietly = TRUE)) utils::install.packages("msigdbr")
   org <- tolower(org)
   if (org == "hg" | org == "hsa" | org == "hs" | org == "homo sapiens") org <- "human"
   if (org == "mm" | org == "mmu") org <- "mouse"

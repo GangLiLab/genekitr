@@ -22,7 +22,7 @@ Gene related pubmed paper records
 \examples{
 \donttest{
 x <- genPubmed(
-  id = c("Cyp2c23", "Fhit", "Gal3st2b", "Gbp4"),
+  id = c("Cyp2c23", "Fhit", "Gal3st2b","Insl3", "Gbp4"),
   keywords = "stem cell", field = "tiab"
 )
 }
