@@ -81,12 +81,9 @@ gentype <- function(id, org) {
 
   all <- biocAnno(org)
   all_symbol <- all$symbol %>% stringi::stri_remove_empty_na()
-  all_ensembl <- all$ensembl %>% stringi::stri_remove_empty_na()
+  all_ensembl <- stringr::str_split(all$ensembl,'; ') %>% unlist() %>% stringi::stri_remove_empty_na()
   all_entrezid <- all$entrezid %>% stringi::stri_remove_empty_na()
-  all_uniprot <- all$uniprot %>%
-    strsplit("; ") %>%
-    unlist() %>%
-    stringi::stri_remove_empty_na()
+  all_uniprot <- stringr::str_split(all$uniprot,'; ') %>% unlist()%>% stringi::stri_remove_empty_na()
   all_alias <- c(all$ncbi_alias, all$ensembl_alias) %>%
     strsplit("; ") %>%
     unlist() %>%
@@ -150,61 +147,98 @@ keggOrg_name_data <- function() {
 #--- bioconductor anno data ---#
 biocAnno <- function(org) {
   org <- mapBiocOrg(tolower(org))
-  if (!file.exists(paste0(tempdir(), "/", org, "_anno.rda"))) {
-    utils::download.file(paste0("http://112.74.191.19/genekitr/", org, "_anno.rda"),
-                  paste0(tempdir(), "/", org, "_anno.rda"),
-                  mode = "wb", quiet = TRUE
+  data_dir = rappdirs::user_data_dir(appname = 'genekitr')
+
+  if(!dir.exists(data_dir)){
+    tryCatch(
+      {
+        dir.create(data_dir)
+      },
+      error = function(e) {
+        message(paste0("Seems like you cannot create dir: ",data_dir,
+                       '\nPlease spefify a valid dir to save data...'))
+        data_dir = readline(prompt="Enter directory: ")
+        dir.create(data_dir)
+      }
     )
   }
-  load(paste0(tempdir(), "/", org, "_anno.rda"), envir = .GlobalEnv)
+
+  if (!file.exists(paste0(data_dir, "/", org, "_anno.rda"))) {
+    url = paste0("http://112.74.191.19/genekitr/", org, "_anno.rda")
+    web_download(url, paste0(data_dir, "/", org, "_anno.rda"),  mode = "wb", quiet = TRUE)
+  }
+
+  load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
   get(paste0(org, "_anno"), envir = .GlobalEnv)
 }
 
-#---  auto-install packages ---#
-auto_install <- function(pkg) {
-
-  # check first time
-  ret <- suppressPackageStartupMessages(
-    sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-  )
-  missing_pkgs <- names(ret[!ret])
-  if (length(missing_pkgs) > 0) {
-    warning("The following packages are not installed: \n",
-            paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
-            immediate. = TRUE
-    )
-    message("\nTry installing via Bioconductor...\n")
-
-    mod <- try(suppressMessages(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE)), silent = T)
-
-    if (isTRUE(class(mod) == "try-error")) {
-      # check again
-      ret <- suppressPackageStartupMessages(
-        sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-      )
-      missing_pkgs <- names(ret[!ret])
-      if (length(missing_pkgs) > 0) {
-        message("Try installing via CRAN...\n")
-        suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
-
-        # 第三次检查
-        ret <- suppressPackageStartupMessages(
-          sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-        )
-        missing_pkgs <- names(ret[!ret])
-        if (length(missing_pkgs) > 0) {
-          stop(
-            "Maybe you should check the package name ",
-            paste(missing_pkgs, collapse = ", "),
-            " or try devtools::install_github()"
-          )
-        }
+web_download <- function(url, destfile, try_time = 2L, ...) {
+  Sys.sleep(0.01)
+  tryCatch(
+    {
+      if (abs(try_time - 3L) > 1) {
+        message(abs(try_time - 3L),' attempt ...')
+      }
+      utils::download.file(url, destfile, ...)
+    },
+    error = function(e) {
+      if (try_time == 0) {
+        message("Failed after 2 attempts, please check internet connection!")
+        invisible(NULL)
+      } else {
+        web_download(url, destfile, try_time = try_time - 1L, ...)
       }
     }
-  } else {
-    message(sapply(pkg, function(x) paste0("The package ", x, " exist...\n")))
-  }
+  )
 }
+
+#---  auto-install packages ---#
+# auto_install <- function(pkg) {
+#
+#   # check first time
+#   ret <- suppressPackageStartupMessages(
+#     sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+#   )
+#   missing_pkgs <- names(ret[!ret])
+#   if (length(missing_pkgs) > 0) {
+#     warning("The following packages are not installed: \n",
+#             paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
+#             immediate. = TRUE
+#     )
+#     message("\nTry installing via Bioconductor...\n")
+#
+#     mod <- try(suppressWarnings(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE)), silent = T)
+#
+#     mod <- try( suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE)), silent = T)
+#
+#     if (isTRUE(class(mod) == "try-error")) {
+#       # check again
+#       ret <- suppressPackageStartupMessages(
+#         sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+#       )
+#       missing_pkgs <- names(ret[!ret])
+#       if (length(missing_pkgs) > 0) {
+#         message("Try installing via CRAN...\n")
+#         suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
+#
+#         # 第三次检查
+#         ret <- suppressPackageStartupMessages(
+#           sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
+#         )
+#         missing_pkgs <- names(ret[!ret])
+#         if (length(missing_pkgs) > 0) {
+#           stop(
+#             "Maybe you should check the package name ",
+#             paste(missing_pkgs, collapse = ", "),
+#             " or try devtools::install_github()"
+#           )
+#         }
+#       }
+#     }
+#   } else {
+#     message(sapply(pkg, function(x) paste0("The package ", x, " exist...\n")))
+#   }
+# }
 
 
 #--- add global variables ---#
