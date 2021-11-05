@@ -71,6 +71,31 @@ mapKeggOrg <- function(organism) {
   return(org)
 }
 
+#---  get organism ensembl short latin name ---#
+mapEnsOrg <- function(organism) {
+  organism <- tolower(organism)
+  if (organism == "hg" | organism == "human" | organism == "hsa" | organism == "hs") org <- "hsapiens"
+  if (organism == "mm" | organism == "mouse") organism <- "mmusculus"
+  if (organism == "rn" | organism == "rat" ) organism <- "rnorvegicus"
+  if (organism == "dm" | organism == "fly" ) organism <- "dmelanogaster"
+  if (organism == "dr" | organism == "zebrafish" ) organism <- "drerio"
+
+  # ensembl organisms: https://asia.ensembl.org/info/about/species.html
+  ensorg <- ensOrg_name_data()
+  rm(ensOrg_name, envir = .GlobalEnv)
+
+  check_all = apply(ensorg, 2, function(x) organism %in% x)
+
+  if(any(check_all)){
+    org = ensorg %>% dplyr::filter(eval(parse(text = colnames(.)[check_all])) %in% org) %>%
+      dplyr::pull(latin_short_name)
+  }else{
+    stop("\nCheck the organism name with `ensOrg_name_data()`")
+  }
+
+  return(org)
+}
+
 #---  decide gene id type ---#
 gentype <- function(id, org) {
   org <- mapBiocOrg(org)
@@ -144,8 +169,15 @@ keggOrg_name_data <- function() {
   get("keggOrg_name", envir = .GlobalEnv)
 }
 
+#--- ensembl org name data ---#
+ensOrg_name_data <- function(){
+  utils::data(list = "ensOrg_name", package = "genekitr")
+  get("ensOrg_name", envir = .GlobalEnv)
+}
+
 #--- bioconductor anno data ---#
-biocAnno <- function(org) {
+biocAnno <- function(org, version = NULL) {
+  if(is.null(version)) version = 104
   org <- mapBiocOrg(tolower(org))
   data_dir = rappdirs::user_data_dir(appname = 'genekitr')
 
@@ -164,7 +196,7 @@ biocAnno <- function(org) {
   }
 
   if (!file.exists(paste0(data_dir, "/", org, "_anno.rda"))) {
-    url = paste0("http://112.74.191.19/genekitr/", org, "_anno.rda")
+    url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.rda")
     web_download(url, paste0(data_dir, "/", org, "_anno.rda"),  mode = "wb", quiet = TRUE)
   }
 
