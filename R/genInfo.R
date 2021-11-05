@@ -1,7 +1,7 @@
 #' Get gene related information
 #'
 #' @param id Gene id (symbol, ensembl or entrez id) or uniprot id.
-#' @param org Species name from `biocOrg_name`, both full name and short name are fine.
+#' @param org Short latin name from `ensOrg_name_data`.
 #' @param unique Logical to keep only one matched ID, default is FALSE.
 #' @importFrom stringr str_detect
 #' @importFrom dplyr %>% filter relocate select mutate mutate_all na_if
@@ -24,11 +24,11 @@ genInfo <- function(id,
                     org,
                     unique = FALSE) {
   #--- args ---#
-  org <- mapBiocOrg(tolower(org))
+  org <- mapEnsOrg(org)
   keytype <- gentype(id, org) %>% tolower()
 
   #--- code ---#
-  all <- biocAnno(org) %>%
+  all <- ensAnno(org) %>%
     dplyr::relocate(all_of(keytype), .before = everything()) %>%
     dplyr::mutate(!!keytype := strsplit(.[, 1], "; ")) %>%
     tidyr::unnest(cols = all_of(keytype)) %>%
@@ -38,9 +38,11 @@ genInfo <- function(id,
   tmp1 <- data.frame(input_id = id)
   tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)
 
-  tmp3 <- tmp2 %>%
-    dplyr::select(-c("symbol", "uniprot")) %>%
-    apply(., 1, is.na)
+  if(any(c("symbol", "uniprot") %in% colnames(all))){
+    tmp3 <- tmp2 %>%
+      dplyr::select(-c("symbol", "uniprot")) %>%
+      apply(., 1, is.na)
+  }
 
   ## keep each id even has no info
   # only symbol id needs  to consider alias
@@ -121,6 +123,7 @@ genInfo <- function(id,
     gene_info$input_id <- factor(gene_info$input_id, ordered = T, levels = unique(id))
     gene_info <- gene_info[order(gene_info$input_id), ]
   }
+
 
   return(gene_info)
 }

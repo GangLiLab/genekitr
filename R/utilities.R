@@ -74,7 +74,7 @@ mapKeggOrg <- function(organism) {
 #---  get organism ensembl short latin name ---#
 mapEnsOrg <- function(organism) {
   organism <- tolower(organism)
-  if (organism == "hg" | organism == "human" | organism == "hsa" | organism == "hs") org <- "hsapiens"
+  if (organism == "hg" | organism == "human" | organism == "hsa" | organism == "hs") organism <- "hsapiens"
   if (organism == "mm" | organism == "mouse") organism <- "mmusculus"
   if (organism == "rn" | organism == "rat" ) organism <- "rnorvegicus"
   if (organism == "dm" | organism == "fly" ) organism <- "dmelanogaster"
@@ -87,7 +87,7 @@ mapEnsOrg <- function(organism) {
   check_all = apply(ensorg, 2, function(x) organism %in% x)
 
   if(any(check_all)){
-    org = ensorg %>% dplyr::filter(eval(parse(text = colnames(.)[check_all])) %in% org) %>%
+    org = ensorg %>% dplyr::filter(eval(parse(text = colnames(.)[check_all])) %in% organism) %>%
       dplyr::pull(latin_short_name)
   }else{
     stop("\nCheck the organism name with `ensOrg_name_data()`")
@@ -98,28 +98,47 @@ mapEnsOrg <- function(organism) {
 
 #---  decide gene id type ---#
 gentype <- function(id, org) {
-  org <- mapBiocOrg(org)
-  if (nchar(org) > 2) {
-    org <- substr(org, 1, nchar(org) - 1)
+  org <- mapEnsOrg(org)
+  all <- ensAnno(org)
+  if('symbol' %in% colnames(all)){
+    all_symbol <- all$symbol %>% stringi::stri_remove_empty_na()
+    n_sym = sum(id %in% all_symbol)
+  }else{
+    n_sym = 0L
   }
-  org <- stringr::str_to_title(org)
 
-  all <- biocAnno(org)
-  all_symbol <- all$symbol %>% stringi::stri_remove_empty_na()
-  all_ensembl <- stringr::str_split(all$ensembl,'; ') %>% unlist() %>% stringi::stri_remove_empty_na()
-  all_entrezid <- all$entrezid %>% stringi::stri_remove_empty_na()
-  all_uniprot <- stringr::str_split(all$uniprot,'; ') %>% unlist()%>% stringi::stri_remove_empty_na()
-  all_alias <- c(all$ncbi_alias, all$ensembl_alias) %>%
-    strsplit("; ") %>%
-    unlist() %>%
-    stringi::stri_remove_empty_na()
+  if('ensembl' %in% colnames(all)){
+    all_ensembl <- stringr::str_split(all$ensembl,'; ') %>% unlist() %>% stringi::stri_remove_empty_na()
+    n_ens = sum(id %in% all_ensembl)
+  }else{
+    n_ens = 0L
+  }
+
+  if('entrezid' %in% colnames(all)){
+    all_entrezid <- all$entrezid %>% stringi::stri_remove_empty_na()
+    n_ent = sum(id %in% all_entrezid)
+  }else{
+    n_ent = 0L
+  }
+
+  if('uniprot' %in% colnames(all)){
+    all_uniprot <- stringr::str_split(all$uniprot,'; ') %>% unlist()%>% stringi::stri_remove_empty_na()
+    n_uni = sum(id %in% all_uniprot)
+  }else{
+    n_uni = 0L
+  }
+
+  if('ncbi_alias' %in% colnames(all) ){
+    all_alias <- c(all$ncbi_alias, all$ensembl_alias) %>%
+      strsplit("; ") %>%
+      unlist() %>%
+      stringi::stri_remove_empty_na()
+    n_ala = sum(id %in% all_alias)
+  }else{
+    n_ala = 0L
+  }
 
   rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
-  n_sym = sum(id %in% all_symbol)
-  n_ens = sum(id %in% all_ensembl)
-  n_ent = sum(id %in% all_entrezid)
-  n_uni = sum(id %in% all_uniprot)
-  n_ala = sum(id %in% all_alias)
 
   if(sum(n_sym,n_ens,n_ent,n_uni,n_ala) == 0){
     stop("Wrong organism or input id has no match!")
@@ -175,10 +194,10 @@ ensOrg_name_data <- function(){
   get("ensOrg_name", envir = .GlobalEnv)
 }
 
-#--- bioconductor anno data ---#
-biocAnno <- function(org, version = NULL) {
+#--- ensembl anno data ---#
+ensAnno <- function(org, version = NULL) {
   if(is.null(version)) version = 104
-  org <- mapBiocOrg(tolower(org))
+  org <- mapEnsOrg(tolower(org))
   data_dir = rappdirs::user_data_dir(appname = 'genekitr')
 
   if(!dir.exists(data_dir)){
@@ -187,7 +206,7 @@ biocAnno <- function(org, version = NULL) {
         dir.create(data_dir)
       },
       error = function(e) {
-        message(paste0("Seems like you cannot create dir: ",data_dir,
+        message(paste0("Seems like you cannot access dir: ",data_dir,
                        '\nPlease spefify a valid dir to save data...'))
         data_dir = readline(prompt="Enter directory: ")
         dir.create(data_dir)
@@ -224,56 +243,7 @@ web_download <- function(url, destfile, try_time = 2L, ...) {
   )
 }
 
-#---  auto-install packages ---#
-# auto_install <- function(pkg) {
-#
-#   # check first time
-#   ret <- suppressPackageStartupMessages(
-#     sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-#   )
-#   missing_pkgs <- names(ret[!ret])
-#   if (length(missing_pkgs) > 0) {
-#     warning("The following packages are not installed: \n",
-#             paste0(sprintf("  - %s", missing_pkgs), collapse = "\n"),
-#             immediate. = TRUE
-#     )
-#     message("\nTry installing via Bioconductor...\n")
-#
-#     mod <- try(suppressWarnings(BiocManager::install(missing_pkgs, update = FALSE, ask = FALSE)), silent = T)
-#
-#     mod <- try( suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE)), silent = T)
-#
-#     if (isTRUE(class(mod) == "try-error")) {
-#       # check again
-#       ret <- suppressPackageStartupMessages(
-#         sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-#       )
-#       missing_pkgs <- names(ret[!ret])
-#       if (length(missing_pkgs) > 0) {
-#         message("Try installing via CRAN...\n")
-#         suppressWarnings(utils::install.packages(missing_pkgs, quiet = TRUE, dependencies = TRUE))
-#
-#         # 第三次检查
-#         ret <- suppressPackageStartupMessages(
-#           sapply(pkg, require, character.only = TRUE, quietly = FALSE, warn.conflicts = FALSE)
-#         )
-#         missing_pkgs <- names(ret[!ret])
-#         if (length(missing_pkgs) > 0) {
-#           stop(
-#             "Maybe you should check the package name ",
-#             paste(missing_pkgs, collapse = ", "),
-#             " or try devtools::install_github()"
-#           )
-#         }
-#       }
-#     }
-#   } else {
-#     message(sapply(pkg, function(x) paste0("The package ", x, " exist...\n")))
-#   }
-# }
-
-
 #--- add global variables ---#
 utils::globalVariables(c(
   ".", "biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
-  "count","theme_classic","input_id"))
+  "count","theme_classic","input_id","ensOrg_name","latin_short_name"))

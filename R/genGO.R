@@ -49,8 +49,8 @@ genGO <- function(id,
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  org <- mapBiocOrg(tolower(org))
-  pkg <- paste0("org.", org, ".eg.db")
+  bioc_org <- mapBiocOrg(tolower(org))
+  pkg <- paste0("org.", bioc_org, ".eg.db")
   keyType <- gentype(id, org)
 
   #--- codes ---#

@@ -46,17 +46,17 @@ genKEGG <- function(id,
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  org <- mapKeggOrg(tolower(org))
+  kegg_org <- mapKeggOrg(tolower(org))
   keyType <- gentype(id, org)
 
   if (!keyType %in% c("ENTREZID")) {
     message(paste0(keyType), " gene will be mapped to entrez id")
-    trans_id <- suppressMessages(transId(id, "entrezid", org)) %>% stringi::stri_remove_na()
+    trans_id <- suppressMessages(transId(id, "entrezid", kegg_org)) %>% stringi::stri_remove_na()
   } else {
     trans_id <- id
   }
 
-  info <- genInfo(trans_id, org, unique = T) %>% na.omit()
+  info <- genInfo(trans_id, org, unique = T)
 
   #--- codes ---#
   keg <- suppressMessages(

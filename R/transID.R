@@ -28,7 +28,7 @@
 transId <- function(id, trans_to, org, unique = TRUE) {
 
   #--- args ---#
-  org <- mapBiocOrg(tolower(org))
+  org <- mapEnsOrg(tolower(org))
   keytype <- gentype(id, org)
   from <- tolower(keytype)
 

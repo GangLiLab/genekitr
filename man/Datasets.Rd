@@ -8,6 +8,7 @@
 \alias{msig_category}
 \alias{biocOrg_name}
 \alias{keggOrg_name}
+\alias{ensOrg_name}
 \title{Datasets
 geneList entrez gene list with decreasing fold change value}
 \description{
@@ -26,5 +27,8 @@ biocOrg_name contains organism name of bioconductor
 Datasets
 keggOrg_name contains organism name of KEGG
 https://www.genome.jp/kegg/catalog/org_list.html
+
+Datasets
+ensOrg_name contains organism name of ensembl
 }
 \keyword{datasets}
