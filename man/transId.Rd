@@ -12,9 +12,9 @@ transId(id, trans_to, org, unique = TRUE)
 \item{trans_to}{Transform to which type, one of "symbol", "entrezid",
 "ensembl" and "uniprot."}
 
-\item{org}{Organism name from `biocOrg_name`, both full name and short name are fine.}
+\item{org}{Short latin name from `ensOrg_name_data`.}
 
-\item{unique}{Logical to keep only one unique mapped ID, default is FALSE.}
+\item{unique}{If keep only one unique mapped ID when one-to-many gene occurs, default is FALSE.}
 }
 \value{
 A character of transformed ids.

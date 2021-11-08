@@ -2,8 +2,8 @@
 #' @param id Gene ids.
 #' @param trans_to Transform to which type, one of "symbol", "entrezid",
 #'   "ensembl" and "uniprot."
-#' @param org Organism name from `biocOrg_name`, both full name and short name are fine.
-#' @param unique Logical to keep only one unique mapped ID, default is FALSE.
+#' @param org Short latin name from `ensOrg_name_data`.
+#' @param unique If keep only one unique mapped ID when one-to-many gene occurs, default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
 #' @importFrom tibble add_row
 #' @importFrom stats na.omit

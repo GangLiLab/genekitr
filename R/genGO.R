@@ -49,7 +49,8 @@ genGO <- function(id,
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  bioc_org <- mapBiocOrg(tolower(org))
+  bioc_org <- mapBiocOrg(org)
+  org <- mapEnsOrg(org)
   pkg <- paste0("org.", bioc_org, ".eg.db")
   keyType <- gentype(id, org)
 
@@ -72,7 +73,7 @@ genGO <- function(id,
   }
 
   if (use_symbol) {
-    info <- genInfo(id, org, unique = T) %>% na.omit()
+    info <- genInfo(id, org, unique = T)
     new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
       lapply(., function(x) {
         info %>%

@@ -36,12 +36,13 @@ genInfo <- function(id,
   rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
 
   tmp1 <- data.frame(input_id = id)
-  tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)
 
   if(any(c("symbol", "uniprot") %in% colnames(all))){
+    tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)
     tmp3 <- tmp2 %>%
       dplyr::select(-c("symbol", "uniprot")) %>%
-      apply(., 1, is.na)
+      apply(., 1, is.na) %>%
+      as.data.frame()
   }
 
   ## keep each id even has no info
@@ -49,8 +50,8 @@ genInfo <- function(id,
   if (keytype != "symbol") {
     gene_info <- merge(tmp1, tmp2, by.x = "input_id", by.y = keytype, all.x = T)
   } else if (any(apply(tmp3, 2, sum) == nrow(tmp3))) {
-    # if only symbol and uniprot are not NA
-    tmp2 <- tmp2 %>% dplyr::filter_at(dplyr::vars(-symbol, -uniprot), dplyr::all_vars(!is.na(.)))
+    # only symbol and uniprot are not NA <= import gene from uniprot
+    tmp2 <- tmp2[-which(apply(tmp3, 2, sum) == nrow(tmp3)),]
     gene_info <- merge(tmp1, tmp2, by.x = "input_id", by.y = keytype, all.x = T) %>%
       dplyr::arrange(id) %>%
       dplyr::mutate(symbol = dplyr::case_when(input_id %in% tmp2$symbol ~ input_id)) %>%

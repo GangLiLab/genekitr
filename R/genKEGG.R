@@ -46,12 +46,13 @@ genKEGG <- function(id,
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
 
-  kegg_org <- mapKeggOrg(tolower(org))
+  kegg_org <- mapKeggOrg(org)
+  org <- mapEnsOrg(org)
   keyType <- gentype(id, org)
 
   if (!keyType %in% c("ENTREZID")) {
     message(paste0(keyType), " gene will be mapped to entrez id")
-    trans_id <- suppressMessages(transId(id, "entrezid", kegg_org)) %>% stringi::stri_remove_na()
+    trans_id <- suppressMessages(transId(id, "entrezid", org)) %>% stringi::stri_remove_na()
   } else {
     trans_id <- id
   }
@@ -61,7 +62,7 @@ genKEGG <- function(id,
   #--- codes ---#
   keg <- suppressMessages(
     clusterProfiler::enrichKEGG(
-      gene = trans_id, organism = org, keyType = "kegg",
+      gene = trans_id, organism = kegg_org, keyType = "kegg",
       pvalueCutoff = pvalueCutoff,
       pAdjustMethod = pAdjustMethod,
       qvalueCutoff = qvalueCutoff,
