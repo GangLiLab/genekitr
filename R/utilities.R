@@ -71,14 +71,32 @@ mapKeggOrg <- function(organism) {
   return(org)
 }
 
+#--- get KEGG full latin name ---#
+getKeggLatin <- function(organism){
+  organism <- tolower(organism)
+  kgorg <- keggOrg_name_data()
+  rm(keggOrg_name, envir = .GlobalEnv)
+
+  latin <- kgorg[kgorg$short_name %in% organism,'full_name' ] %>%
+    gsub(' \\(.*\\)$','',.)
+
+  return(latin)
+}
+
 #---  get organism ensembl short latin name ---#
 mapEnsOrg <- function(organism) {
-  organism <- tolower(organism)
+  # organism <- tolower(organism)
   if (organism == "hg" | organism == "human" | organism == "hsa" | organism == "hs") organism <- "hsapiens"
   if (organism == "mm" | organism == "mouse") organism <- "mmusculus"
   if (organism == "rn" | organism == "rat" ) organism <- "rnorvegicus"
   if (organism == "dm" | organism == "fly" ) organism <- "dmelanogaster"
   if (organism == "dr" | organism == "zebrafish" ) organism <- "drerio"
+  if (organism == "bt" | organism == "bovine" ) organism <- "btaurus"
+  if (organism == "ce" | organism == "worm" ) organism <- "celegans"
+  if (organism == "gg" | organism == "chicken" ) organism <- "ggallus"
+  if (organism == "mmu" | organism == "rhesus" ) organism <- "mmulatta"
+  if (organism == "pt" | organism == "chipm" ) organism <- "ptroglodytes"
+  if (organism == "xenopus" ) organism <- "xtropicalis"
 
   # ensembl organisms: https://asia.ensembl.org/info/about/species.html
   ensorg <- ensOrg_name_data()
@@ -90,7 +108,7 @@ mapEnsOrg <- function(organism) {
     org = ensorg %>% dplyr::filter(eval(parse(text = colnames(.)[check_all])) %in% organism) %>%
       dplyr::pull(latin_short_name)
   }else{
-    stop("\nCheck the organism name with `ensOrg_name_data()`")
+    stop("\nCheck the latin_short_name in `ensOrg_name_data()`")
   }
 
   return(org)

@@ -47,17 +47,28 @@ genKEGG <- function(id,
   if (missing(universe)) universe <- NULL
 
   kegg_org <- mapKeggOrg(org)
-  org <- mapEnsOrg(org)
-  keyType <- gentype(id, org)
+  full_latin <- getKeggLatin(kegg_org)
+  ensorg <- ensOrg_name_data()
+  rm(ensOrg_name, envir = .GlobalEnv)
 
-  if (!keyType %in% c("ENTREZID")) {
-    message(paste0(keyType), " gene will be mapped to entrez id")
-    trans_id <- suppressMessages(transId(id, "entrezid", org)) %>% stringi::stri_remove_na()
-  } else {
+  if(full_latin %in% ensorg$latin_full_name){
+    ens_org <- mapEnsOrg(full_latin)
+    keyType <- gentype(id, ens_org)
+    if (!keyType %in% c("ENTREZID")) {
+      message(paste0(keyType), " gene will be mapped to entrez id")
+      trans_id <- suppressMessages(transId(id, "entrezid", ens_org)) %>% stringi::stri_remove_na()
+    }else{
+      trans_id <- id
+    }
+    info <- genInfo(trans_id, ens_org, unique = T)
+
+  }else{
     trans_id <- id
+    use_symbol <- FALSE
   }
 
-  info <- genInfo(trans_id, org, unique = T)
+
+
 
   #--- codes ---#
   keg <- suppressMessages(
