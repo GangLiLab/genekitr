@@ -36,52 +36,50 @@ genInfo <- function(id,
   rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
 
   tmp1 <- data.frame(input_id = id)
+  tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)
 
   if(any(c("symbol", "uniprot") %in% colnames(all))){
-    tmp2 <- all %>% dplyr::filter(eval(parse(text = keytype)) %in% id)
     tmp3 <- tmp2 %>%
       dplyr::select(-c("symbol", "uniprot")) %>%
       apply(., 1, is.na) %>%
       as.data.frame()
   }
 
-  ## keep each id even has no info
-  # only symbol id needs  to consider alias
-  if (keytype != "symbol") {
+  if(keytype != "symbol"){
     gene_info <- merge(tmp1, tmp2, by.x = "input_id", by.y = keytype, all.x = T)
-  } else if (any(apply(tmp3, 2, sum) == nrow(tmp3))) {
-    # only symbol and uniprot are not NA <= import gene from uniprot
+  }else if( any(apply(tmp3, 2, sum) == nrow(tmp3)) ){
     tmp2 <- tmp2[-which(apply(tmp3, 2, sum) == nrow(tmp3)),]
     gene_info <- merge(tmp1, tmp2, by.x = "input_id", by.y = keytype, all.x = T) %>%
-      dplyr::arrange(id) %>%
+      dplyr::left_join(data.frame(input_id=id),.,by="input_id") %>%
       dplyr::mutate(symbol = dplyr::case_when(input_id %in% tmp2$symbol ~ input_id)) %>%
       dplyr::relocate(symbol, .after = input_id)
-    # check if symbol in alias (only check input ids without matched)
     all_alias <- data.frame(all_alias = paste(all$ncbi_alias, all$ensembl_alias, sep = "; "))
-    check_row <- which(is.na(gene_info$symbol))
-    for (i in check_row) {
-      # i  = check_row[1]
-      alias_row <- which(stringr::str_detect(all_alias[, 1], paste0("\\b", gene_info[i, 1], "\\b")))
-      if (length(alias_row) != 0) {
-        # not match symbol but match alias
-        gene_info <- dplyr::add_row(gene_info, all[alias_row, ], .after = i)
-        gene_info$input_id[(i + 1):(i + length(alias_row))] <- gene_info$input_id[i]
-        gene_info <- gene_info %>% dplyr::slice(-i)
+    check_id <- gene_info$input_i[is.na(gene_info$symbol)]
+    for (i in check_id) {
+      # i =check_id[3]
+      alias_row <- which(stringr::str_detect(all_alias[, 1], paste0("\\b", i, "\\b")))
+      loc = match(i,gene_info$input_id)
+      if ( length(alias_row) != 0 ) {
+        gene_info <- dplyr::add_row(gene_info, all[alias_row, ], .after = loc)
+        gene_info$input_id[(loc + 1):(loc + length(alias_row))] <- i
+        gene_info <- gene_info %>% dplyr::slice(-loc)
       }
     }
-  } else {
+  }else{
     gene_info <- merge(tmp1, tmp2, by.x = "input_id", by.y = keytype, all.x = T) %>%
-      dplyr::mutate(symbol = dplyr::case_when(input_id %in% all$symbol ~ input_id)) %>%
+      dplyr::left_join(data.frame(input_id=id),.,by="input_id") %>%
+      dplyr::mutate(symbol = dplyr::case_when(input_id %in% tmp2$symbol ~ input_id)) %>%
       dplyr::relocate(symbol, .after = input_id)
-
-    # check if symbol in alias (only check input ids without matched)
     all_alias <- data.frame(all_alias = paste(all$ncbi_alias, all$ensembl_alias, sep = "; "))
-    check_row <- which(is.na(gene_info$symbol))
-    for (i in check_row) {
-      alias_row <- which(stringr::str_detect(all_alias[, 1], paste0("\\b", gene_info[i, 1], "\\b")))
-      if (length(alias_row) != 0) {
-        # not match symbol but match alias
-        gene_info[i, 2:ncol(gene_info)] <- all[alias_row, ]
+    check_id <- gene_info$input_i[is.na(gene_info$symbol)]
+    for (i in check_id) {
+      # i =check_id[3]
+      alias_row <- which(stringr::str_detect(all_alias[, 1], paste0("\\b", i, "\\b")))
+      loc = match(i,gene_info$input_id)
+      if ( length(alias_row) != 0 ) {
+        gene_info <- dplyr::add_row(gene_info, all[alias_row, ], .after = loc)
+        gene_info$input_id[(loc + 1):(loc + length(alias_row))] <- i
+        gene_info <- gene_info %>% dplyr::slice(-loc)
       }
     }
   }
@@ -91,7 +89,7 @@ genInfo <- function(id,
   tomany_id <- tomany_id[!tomany_id %in% id[duplicated(id)]]
   if (length(tomany_id) > 0 & length(tomany_id) < 3 & !unique) {
     message(paste0(
-      'Some ID occurs one-to-many match, like "', tomany_id, '"\n',
+      'Some ID occurs one-to-many match, like "', paste0(tomany_id, collapse = ", "), '"\n',
       'If you want to get one-to-one match, please set "unique=TRUE"'
     ))
   } else if (length(tomany_id) > 3 & !unique) {
