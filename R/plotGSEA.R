@@ -3,24 +3,30 @@
 
 plotGSEA <- function(gsea_df,
                      plot_type = c('volcano','pathway'),
-                     show_item = 5){
+                     show_item = 5,
+                     ...){
 
   #--- args ---#
   stopifnot(is.data.frame(gsea_df))
   plot_type <- match.arg(plot_type)
 
   if(plot_type == 'volcano'){
-    e_left <- gsea_df$Description[tail(order(gsea_df$NES),show_item)]
-    e_right <- gsea_df$Description[head(order(gsea_df$NES),show_item)]
-    data$enrich <- ifelse(data$Description %in% e_left ,"left",
-                          ifelse(data$Description %in% e_right ,"right","no"))
-    ggplot(gsea_df, aes(x = NES,y=-log10(qvalue),color=enrich)) +
+    gsea_df <- gsea_df[order(gsea_df$NES,decreasing = TRUE),]
+    if(is.numeric(show_item)){
+      gsea_df$group <- c(rep('high',show_item),rep('ignore',nrow(gsea_df)-2*show_item),rep('low',show_item))
+    }else{
+      nes <- gsea_df[gsea_df$Description %in% show_item,'NES']
+      gsea_df$group <- 'ignore'
+      gsea_df[gsea_df$Description %in% show_item,'group'] <- sapply(nes, function(x) ifelse(x>0,'high','low'))
+    }
+
+    ggplot(gsea_df, aes(x = NES,y=-log10(qvalue),color=group)) +
       geom_point(alpha=0.6,size=3.5) +
       theme_set(theme_set(theme_bw(base_size = 20))) +
       xlab("NES") + ylab("-log10(pvalue)") +
-      scale_color_manual(values = c("red","#00000033","darkgreen"))+
+      scale_color_manual(values = c("red","#00000066","darkgreen"))+
       theme_bw()+theme(legend.position="none")+
-      geom_text_repel(data = data[data$Description %in% c(e_left,e_right),],
+      geom_text_repel(data = gsea_df[gsea_df$group != 'ignore',],
                       aes(label = Description),
                       size =3,
                       color = "black",
