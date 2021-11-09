@@ -75,7 +75,7 @@ genGSEA <- function(genelist,
 
   egmt =  egmt %>% as.data.frame() %>% as.enrichdat()
   if( use_symbol){
-    info = genInfo(unique(unlist(stringr::str_split(egmt$geneID,'\\/'))),org,unique = T) %>% na.omit()
+    info = genInfo(unique(unlist(stringr::str_split(egmt$geneID,'\\/'))),org,unique = T)
     new_geneID = stringr::str_split(egmt$geneID,'\\/') %>%
       lapply(., function(x) {
         info %>% dplyr::filter(input_id %in% x) %>% dplyr::pull(symbol)
