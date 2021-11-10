@@ -32,7 +32,7 @@ as.enrichdat <- function(enrich_df) {
   ## find count col
   # if finds genes col, calc gene num as count; else find another col as count
   if (!any(grepl("count", to_check))) {
-    check_gene <- apply(enrich_df, 2, function(x) all(grepl("[A-Za-z]{3,}|\\/|,", x) & !grepl("tags|list", x)))
+    check_gene <- apply(enrich_df, 2, function(x) all(any(grepl("[A-Za-z]{3,}|\\/|,", x)) & !grepl("tags|list", x)))
     check2 <- which(check_gene)
     if (any(check2 > (ncol(enrich_df) / 2))) {
       colnames(enrich_df)[check_gene][check2 > (ncol(enrich_df) / 2)] <- "geneID"

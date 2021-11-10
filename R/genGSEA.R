@@ -68,10 +68,12 @@ genGSEA <- function(genelist,
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist,
     TERM2GENE = geneset,
-    pvalueCutoff,
+    pvalueCutoff = pvalueCutoff,
     verbose = F,
     ...
   ))
+
+  exponent <-  egmt@params[["exponent"]]
 
   egmt =  egmt %>% as.data.frame() %>% as.enrichdat()
   if( use_symbol){
@@ -84,7 +86,9 @@ genGSEA <- function(genelist,
       dplyr::mutate(geneID = new_geneID)
   }
 
-  return(egmt)
+  res <- list(genelist = genelist, geneset = geneset, gsea_df = egmt, exponent = exponent, org = org)
+
+  return(res)
 }
 
 getMsigdb <- function(org,
@@ -144,6 +148,8 @@ getMsigdb <- function(org,
 
   return(msigdb)
 }
+
+
 
 utils::globalVariables(c("gs_name","gene_symbol","entrez_gene","input_id","symbol",
                          "msig_org","msig_category","gs_cat","gs_subcat"))
