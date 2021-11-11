@@ -18,7 +18,7 @@
 #' @importFrom stats na.omit
 #' @importFrom rlang .data
 #'
-#' @return A `data.frame`.
+#' @return GSEA list
 #' @export
 #'
 #' @examples

@@ -39,7 +39,7 @@ entrez, ensembl or symbol.}
 \item{...}{Other argument to `GSEA` function}
 }
 \value{
-A `data.frame`.
+GSEA list
 }
 \description{
 GSEA for a gene list with decreasing logFC value

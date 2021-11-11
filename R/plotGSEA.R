@@ -1,11 +1,41 @@
-# 不指定show_pathway名称时，默认使用前后5个；
-# 当然可以自己指定可视化的名称，自己挑选出来，然后自动判断NES属于左边还是右边
-# gsea_df =
+#' GSEA plot
+#'
+#' @param gsea_list GSEA result from `genGSEA` function
+#' @param plot_type GSEA plot type, one of 'volcano' and 'pathway'.
+#' @param show_pathway Numeric to specify how many pathways included, default is 3.
+#'   Or character to specify some pathway name.
+#' @param show_genes Character to specify gene names included in plot when `plot_type` is "pathway".
+#' @param colors Character to specify colors when `plot_type` is "pathway".
+#' @param ... other arguments transfer to `plot_theme` function
+#'
+#' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline element_blank
+#'   element_rect margin geom_linerange scale_y_continuous geom_segment geom_bar scale_fill_manual
+#'   geom_hline element_line
+#' @importFrom dplyr filter pull %>%
+#'
+#' @return A ggplot object
+#' @export
+#' @examples
+#' \dontrun{
+#' library(ggplot2)
+#' # get GSEA result
+#' data(geneList, package = "genekitr")
+#' gse <- genGSEA(genelist = geneList, org = "human",
+#'                category = "H",use_symbol = TRUE, pvalueCutoff = 1)
+#' # volcano plot
+#' plotGSEA(gse, plot_type = c('volcano'), show_pathway = 3)
+#'
+#' # pathway plot
+#' plotGSEA(gse, plot_type = c('pathway'), show_pathway = 1:2)
+#'
+#' }
+#'
 
 plotGSEA <- function(gsea_list,
                      plot_type = c('volcano','pathway'),
-                     show_pathway = 5,
+                     show_pathway = 3,
                      show_genes = NULL,
+                     colors = NULL,
                      ...){
 
   #--- args ---#
@@ -16,6 +46,10 @@ plotGSEA <- function(gsea_list,
     gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES,decreasing = TRUE),]
     if(is.numeric(show_pathway)){
+      if(nrow(gsea_df) < 2*show_pathway){
+        warning('GSEA result is too few... Please set show_pathway lower!')
+        show_pathway <- 1
+      }
       gsea_df$group <- c(rep('high',show_pathway),rep('ignore',nrow(gsea_df)-2*show_pathway),rep('low',show_pathway))
     }else{
       nes <- gsea_df[gsea_df$Description %in% show_pathway,'NES']
@@ -25,16 +59,15 @@ plotGSEA <- function(gsea_list,
 
     p <- ggplot(gsea_df, aes(x = NES,y=-log10(qvalue),color=group)) +
       geom_point(alpha=0.6,size=3.5) +
-      theme_set(theme_set(theme_bw(base_size = 20))) +
       xlab("NES") + ylab("-log10(pvalue)") +
-      scale_color_manual(values = c("red","#00000066","darkgreen"))+
-      theme_bw()+theme(legend.position="none")+
-      geom_text_repel(data = gsea_df[gsea_df$group != 'ignore',],
+      scale_color_manual(values = c("red","grey66","darkgreen"))+
+      ggrepel::geom_text_repel(data = gsea_df[gsea_df$group != 'ignore',],
                       aes(label = Description),
                       size =3,
                       color = "black",
                       show.legend = F)+
-      plot_theme(remove_grid = T,remove_legend = T,border_thick = 1.5, ...)
+      plot_theme(remove_grid = T,remove_legend = T,border_thick = 1.5,
+                 main_text_size = 15)
   }
 
   if(plot_type == 'pathway'){
@@ -44,18 +77,27 @@ plotGSEA <- function(gsea_list,
     exponent <- gsea_list$exponent
     org <- gsea_list$org
 
-    if(is.numeric(show_pathway)) show_pathway = gsea_df$Description[show_pathway]
+    if(is.numeric(show_pathway)){
+      show_pathway = gsea_df$Description[show_pathway]
+    }else{
+
+    }
 
     df <- do.call(rbind, lapply(show_pathway, function(x) calcScore(geneset,genelist,x, exponent,fortify = TRUE, org)))
 
-    colors <- c("darkgreen","chocolate4","blueviolet","#223D6C","#D20A13","#088247","#58CDD9","#7A142C","#5D90BA","#431A3D","#91612D","#6E568C","#E0367A","#D8D155","#64495D","#7CC767")
+    if(is.null(colors)){
+      colors <- c("\\#5DA5DAFF","\\#FAA43AFF","\\#60BD68FF","\\#F15854FF","\\#B276B2FF",
+                  "\\#8D4B08FF","\\#DECF3FFF","\\#F17CB0FF","\\#66E3D9FF","\\#00FF7FFF",
+                  "\\#E31A1CFF","\\#FFFF99FF")
+      colors <- stringr::str_remove_all(colors,'.*#') %>% paste0('#',.)
+    }
 
     p1 <- ggplot(df, aes_(x = ~x)) + xlab(NULL) +
       geom_line(aes_(y = ~runningScore, color= ~Description), size=1) +
       scale_color_manual(values = colors) +
       geom_hline(yintercept = 0, lty = "longdash", lwd = 0.2) +
       ylab("Enrichment\n Score") +
-      plot_theme(remove_grid = T)+
+      plot_theme(remove_grid = T,...)+
       theme(axis.text.x=element_blank(),
             axis.ticks.x=element_blank(),
             axis.line.x=element_blank(),
@@ -78,17 +120,24 @@ plotGSEA <- function(gsea_list,
       geom_linerange(aes_(ymin=~ymin, ymax=~ymax, color=~Description)) +
       xlab(NULL) + ylab(NULL) +
       scale_color_manual(values = colors)+
-      plot_theme(remove_legend = T,remove_grid = T,remove_text = T)+
+      plot_theme(remove_legend = T,remove_grid = T,remove_text = T,...)+
       scale_y_continuous(expand=c(0,0))+
       theme(
         plot.margin = margin(t=-.1, b=0,unit="cm"),
             axis.line.x = element_blank(),
             axis.ticks = element_blank())
 
-    df$y <- df$geneList
-    select_genes <- data.frame(gene =  c('MCM2','MCM5','MCM6','PSMB9','PSMD3'))
-    select_genes <- merge(select_genes, df, by = "gene")
-    select_genes <- select_genes[select_genes$position == 1,]
+    df$y <- df$genelist
+
+    if(!is.null(show_genes)){
+      select_genes <- data.frame(gene =  show_genes)
+      select_genes <- merge(select_genes, df, by = "gene")
+      select_genes <- select_genes[select_genes$position == 1,]
+    }else{
+      select_genes <- data.frame(gene =  'no_select_genes')
+      select_genes <- merge(select_genes, df, by = "gene")
+      select_genes <- select_genes[select_genes$position == 1,]
+    }
 
     p3 <- ggplot(select_genes, aes(x, y, fill = Description, color = Description, label = gene)) +
       geom_segment(data=df, aes_(x=~x, xend=~x, y=~y, yend=0),
@@ -99,9 +148,9 @@ plotGSEA <- function(gsea_list,
       geom_hline(yintercept = 0, lty = 2, lwd = 0.2) +
       ylab("Ranked list\n metric") +
       xlab("Rank in ordered dataset") +
-      plot_theme(remove_grid = T)+
+      plot_theme(remove_grid = T,...)+
       # show gene names
-      geom_text_repel(data = select_genes,
+      ggrepel::geom_text_repel(data = select_genes,
                       show.legend = FALSE,
                       direction = "x",
                       ylim = c(2, NA),
@@ -121,7 +170,6 @@ plotGSEA <- function(gsea_list,
   }
 
   return(p)
-
 
 }
 
@@ -158,14 +206,14 @@ calcScore <- function(geneset,genelist,item, exponent, fortify = TRUE, org) {
   h <- diff(range(df$runningScore))/20
   df$ymin[pos] <- -h
   df$ymax[pos] <- h
-  df$geneList <- geneList
+  df$genelist <- genelist
 
   df$Description <- item
   return(df)
 }
 
 
-
+utils::globalVariables(c("NES","qvalue","group","Description","geom_line","x","y"))
 
 
 

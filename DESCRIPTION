@@ -36,6 +36,7 @@ Suggests:
     ggplotify,
     ggsci,
     ggupset,
+    ggrepel,
     magrittr,
     msigdbr,
     openxlsx,
