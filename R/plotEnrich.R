@@ -1,6 +1,7 @@
 #' Dotplot for GO and KEGG enrichment analysis
 #'
-#' @param enrich_df `data.frame` of enrichment analysis result .
+#' @param enrich_df `data.frame` of enrichment analysis result.
+#' @param plot_type One of "bar" and "dot"
 #' @param xlab_type X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
 #' @param legend_type Stats legend type, one of "pvalue", "p.adjust", "qvalue".
 #' @param low_color Legend color for low pvalue or qvalue, default is "red".
@@ -25,25 +26,30 @@
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id,
-#'   org = "human", ont = "mf", pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.1, use_symbol = FALSE
+#'   org = "human", ont = "bp", pvalueCutoff = 0.05,
+#'   qvalueCutoff = 0.05, use_symbol = FALSE
 #' )
-#' plotEnrichDot(ego,remove_grid = T, main_text_size = 8,
+#' plotEnrich(ego,plot_type = "dot",remove_grid = T, main_text_size = 8,
+#'   legend_text_size = 6,border_thick = 1.5)
+#'
+#' plotEnrich(ego,plot_type = "bar",remove_grid = T, main_text_size = 8,
 #'   legend_text_size = 6,border_thick = 1.5)
 #' }
 #'
-plotEnrichDot <- function(enrich_df,
-                          xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
-                          legend_type = c("p.adjust", "pvalue", "qvalue"),
-                          low_color = "red",
-                          high_color = "blue",
-                          show_item = 10,
-                          xlim_left = 0,
-                          xlim_right = NA,
-                          wrap_length = NULL,
-                          ...) {
+plotEnrich <- function(enrich_df,
+                       plot_type = c('bar','dot'),
+                       xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
+                       legend_type = c("p.adjust", "pvalue", "qvalue"),
+                       low_color = "red",
+                       high_color = "blue",
+                       show_item = 10,
+                       xlim_left = 0,
+                       xlim_right = NA,
+                       wrap_length = NULL,
+                       ...) {
   #--- args ---#
   stopifnot(is.numeric(show_item))
+  plot_type <- match.arg(plot_type)
   xlab_type <- match.arg(xlab_type)
   legend_type <- match.arg(legend_type)
 
@@ -83,20 +89,34 @@ plotEnrichDot <- function(enrich_df,
   }
 
   #--- plot ---#
-  p <- ggplot(enrich_df, aes_string(x = xlab_type, y = "Description")) +
-    geom_point(aes_string(
-      color = legend_type,
-      size = "Count"
-    )) +
-    scale_color_continuous(
-      low = low_color, high = high_color, name = legend_title,
-      guide = guide_colorbar(reverse = TRUE),
-      labels = function(x) format(x, scientific = T)
-    ) +
-    xlab(xlab_title) +
-    labs(color = legend_type)+
-    xlim(xlim_left,xlim_right)+
-    plot_theme(...)
+  if(plot_type == 'dot'){
+    p <- ggplot(enrich_df, aes_string(x = xlab_type, y = "Description")) +
+      geom_point(aes_string(
+        color = legend_type,
+        size = "Count"
+      )) +
+      scale_color_continuous(
+        low = low_color, high = high_color, name = legend_title,
+        guide = guide_colorbar(reverse = TRUE),
+        labels = function(x) format(x, scientific = T)
+      ) +
+      xlab(xlab_title) +
+      labs(color = legend_type)+
+      xlim(xlim_left,xlim_right)+
+      plot_theme(...)
+  }else if (plot_type == 'bar'){
+    p <- ggplot(data=enrich_df, aes_string(x = xlab_type, y = 'Description', fill = legend_type)) +
+      geom_bar(stat="identity")+
+      scale_fill_continuous(
+        low = low_color, high = high_color, name = legend_title,
+        guide = guide_colorbar(reverse = TRUE),
+        labels = function(x) format(x, scientific = T))+
+      xlab(xlab_title)+
+      labs(color = legend_type)+
+      xlim(xlim_left,xlim_right)+
+      plot_theme(...)
+
+  }
 
 
   # wrap long text
