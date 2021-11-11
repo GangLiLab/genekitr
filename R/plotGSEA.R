@@ -79,8 +79,8 @@ plotGSEA <- function(gsea_list,
 
     if(is.numeric(show_pathway)){
       show_pathway = gsea_df$Description[show_pathway]
-    }else{
-
+    }else if(any(!show_pathway %in% gsea_df$Description)){
+      stop(paste0(show_pathway[!show_pathway%in%gsea_df$Description],' not in GSEA result!'))
     }
 
     df <- do.call(rbind, lapply(show_pathway, function(x) calcScore(geneset,genelist,x, exponent,fortify = TRUE, org)))
