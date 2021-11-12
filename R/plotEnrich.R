@@ -27,7 +27,7 @@
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id,
 #'   org = "human", ont = "bp", pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.05, use_symbol = FALSE
+#'   qvalueCutoff = 0.05, use_symbol = TRUE
 #' )
 #' plotEnrich(ego,plot_type = "dot",remove_grid = T, main_text_size = 8,
 #'   legend_text_size = 6,border_thick = 1.5)
