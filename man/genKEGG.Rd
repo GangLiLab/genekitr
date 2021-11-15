@@ -6,6 +6,7 @@
 \usage{
 genKEGG(
   id,
+  group_list = NULL,
   org,
   use_symbol = TRUE,
   pAdjustMethod = "BH",
@@ -19,6 +20,8 @@ genKEGG(
 }
 \arguments{
 \item{id}{A vector of entrez gene.}
+
+\item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{org}{KEGG organism name from `keggOrg_name`.}
 
@@ -50,9 +53,20 @@ Gene enrichment of KEGG analysis
 }
 \examples{
 \donttest{
+# only gene ids
 data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
 keg <- genKEGG(id, org = "human")
+
+# gene id with groups
+id <- c(head(names(geneList),50),tail(names(geneList),50))
+group <- list(group1  = c(rep('up',50),rep('down',50)),
+              group2 = c(rep('A',40),rep('B',60)))
+gkeg <- genKEGG(id, group_list = group,
+              org = "human", pvalueCutoff = 0.1,
+              qvalueCutoff = 0.1, use_symbol = FALSE
+)
+
 }
 
 }

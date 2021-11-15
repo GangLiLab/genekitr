@@ -1,6 +1,7 @@
 #' Gene GO enrichment analysis
 #'
 #' @param id A vector of gene id which can be entrez, ensembl or symbol.
+#' @param group_list A list of gene id groups, default is NULL.
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all
 #'   three.
@@ -26,14 +27,28 @@
 #' @examples
 #' \donttest{
 #' data(geneList, package = "genekitr")
+#'
+#' # only gene ids
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id,
 #'   org = "human", ont = "cc", pvalueCutoff = 0.01,
 #'   qvalueCutoff = 0.1, use_symbol = FALSE
 #' )
 #' head(ego)
+#'
+#' # gene id with groups
+#' id <- c(head(names(geneList),50),tail(names(geneList),50))
+#' group <- list(group1  = c(rep('up',50),rep('down',50)),
+#'   group2 = c(rep('A',40),rep('B',60)))
+#'
+#' gego <- genGO(id, group_list = group,
+#'   org = "human", ont = "bp", pvalueCutoff = 0.1,
+#'   qvalueCutoff = 1, use_symbol = FALSE
+#' )
+#'
 #' }
 genGO <- function(id,
+                  group_list = NULL,
                   org,
                   ont,
                   use_symbol = TRUE,
@@ -48,6 +63,9 @@ genGO <- function(id,
   #--- args ---#
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
+  if(!is.null(group_list) & lapply(group_list, function(x) length(x) == length(id)) %>% unlist() %>% sum() == 0){
+    stop('Each element in "group_list" should have same length with gene id!')
+  }
 
   bioc_org <- mapBiocOrg(org)
   org <- mapEnsOrg(org)
@@ -55,43 +73,82 @@ genGO <- function(id,
   keyType <- gentype(id, org)
 
   #--- codes ---#
-  ego <- suppressMessages(
-    clusterProfiler::enrichGO(
-      gene = id, OrgDb = pkg, keyType = keyType, ont = toupper(ont),
-      pvalueCutoff = pvalueCutoff,
-      pAdjustMethod = pAdjustMethod,
-      universe = universe,
-      qvalueCutoff = qvalueCutoff,
-      minGSSize = minGSSize,
-      maxGSSize = maxGSSize,
-      ...
+  ## only gene ids
+  if(is.null(group_list)){
+    ego <- suppressMessages(
+      clusterProfiler::enrichGO(
+        gene = id, OrgDb = pkg, keyType = keyType, ont = toupper(ont),
+        pvalueCutoff = pvalueCutoff,
+        pAdjustMethod = pAdjustMethod,
+        universe = universe,
+        qvalueCutoff = qvalueCutoff,
+        minGSSize = minGSSize,
+        maxGSSize = maxGSSize,
+        ...
+      )
     )
-  )
 
-  if (nrow(as.data.frame(ego)) == 0) {
-    stop("No GO terms enriched ...")
+    if (nrow(as.data.frame(ego)) == 0) {
+      stop("No GO terms enriched ...")
+    }
+
+    if (use_symbol) {
+      info <- genInfo(id, org, unique = T)
+      new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
+        lapply(., function(x) {
+          info %>%
+            dplyr::filter(input_id %in% x) %>%
+            dplyr::pull(symbol)
+        }) %>%
+        sapply(., paste0, collapse = "/")
+      new_ego <- ego %>%
+        as.data.frame() %>%
+        dplyr::mutate(geneID = new_geneID) %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    } else {
+      new_ego <- ego %>%
+        as.data.frame() %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }
+  }else{
+    ## gene id plus groups
+    df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
+    lego <- clusterProfiler::compareCluster(eval(parse(text =paste0('id~',paste(colnames(df)[-ncol(df)],collapse = '+')))),
+                                            data=df,
+                                            fun='enrichGO', OrgDb=pkg,
+                                            pvalueCutoff = pvalueCutoff,
+                                            pAdjustMethod = pAdjustMethod,
+                                            qvalueCutoff = qvalueCutoff,
+                                            ...)
+
+    if (nrow(as.data.frame(lego)) == 0) {
+      stop("No GO terms enriched ...")
+    }
+
+    if (use_symbol) {
+      info <- genInfo(id, org, unique = T)
+      new_geneID <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>%
+        lapply(., function(x) {
+          info %>%
+            dplyr::filter(input_id %in% x) %>%
+            dplyr::pull(symbol)
+        }) %>%
+        sapply(., paste0, collapse = "/")
+      new_ego <- lego %>%
+        as.data.frame() %>%
+        dplyr::mutate(geneID = new_geneID) %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }else{
+      new_ego <- lego %>%
+        as.data.frame() %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }
   }
 
-  if (use_symbol) {
-    info <- genInfo(id, org, unique = T)
-    new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
-      lapply(., function(x) {
-        info %>%
-          dplyr::filter(input_id %in% x) %>%
-          dplyr::pull(symbol)
-      }) %>%
-      sapply(., paste0, collapse = "/")
-    new_ego <- ego %>%
-      as.data.frame() %>%
-      dplyr::mutate(geneID = new_geneID) %>%
-      calcFoldEnrich() %>%
-      as.enrichdat()
-  } else {
-    new_ego <- ego %>%
-      as.data.frame() %>%
-      calcFoldEnrich() %>%
-      as.enrichdat()
-  }
 
   return(new_ego)
 }

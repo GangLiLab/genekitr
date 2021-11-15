@@ -6,7 +6,7 @@
 \usage{
 plotGSEA(
   gsea_list,
-  plot_type = c("volcano", "pathway"),
+  plot_type = c("volcano", "classic", "fgsea"),
   show_pathway = 3,
   show_genes = NULL,
   colors = NULL,
@@ -16,10 +16,10 @@ plotGSEA(
 \arguments{
 \item{gsea_list}{GSEA result from `genGSEA` function}
 
-\item{plot_type}{GSEA plot type, one of 'volcano' and 'pathway'.}
+\item{plot_type}{GSEA plot type, one of 'volcano', 'classic' or 'fgsea'.}
 
-\item{show_pathway}{Numeric to specify how many pathways included, default is 3.
-Or character to specify some pathway name.}
+\item{show_pathway}{Which pathways included, user could specify number (default is 3) or
+character name.}
 
 \item{show_genes}{Character to specify gene names included in plot when `plot_type` is "pathway".}
 
@@ -43,8 +43,11 @@ gse <- genGSEA(genelist = geneList, org = "human",
 # volcano plot
 plotGSEA(gse, plot_type = c('volcano'), show_pathway = 3)
 
-# pathway plot
-plotGSEA(gse, plot_type = c('pathway'), show_pathway = 1:2)
+# classic pathway plot
+plotGSEA(gse, plot_type = c('classic'), show_pathway = 1:2)
+
+# fgsea for multiple pathway
+plotGSEA(gse, plot_type = c('fgsea'), show_pathway = 10)
 
 }
 

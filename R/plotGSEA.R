@@ -1,9 +1,9 @@
 #' GSEA plot
 #'
 #' @param gsea_list GSEA result from `genGSEA` function
-#' @param plot_type GSEA plot type, one of 'volcano' and 'pathway'.
-#' @param show_pathway Numeric to specify how many pathways included, default is 3.
-#'   Or character to specify some pathway name.
+#' @param plot_type GSEA plot type, one of 'volcano', 'classic' or 'fgsea'.
+#' @param show_pathway Which pathways included, user could specify number (default is 3) or
+#'   character name.
 #' @param show_genes Character to specify gene names included in plot when `plot_type` is "pathway".
 #' @param colors Character to specify colors when `plot_type` is "pathway".
 #' @param ... other arguments transfer to `plot_theme` function
@@ -25,14 +25,17 @@
 #' # volcano plot
 #' plotGSEA(gse, plot_type = c('volcano'), show_pathway = 3)
 #'
-#' # pathway plot
-#' plotGSEA(gse, plot_type = c('pathway'), show_pathway = 1:2)
+#' # classic pathway plot
+#' plotGSEA(gse, plot_type = c('classic'), show_pathway = 1:2)
+#'
+#' # fgsea for multiple pathway
+#' plotGSEA(gse, plot_type = c('fgsea'), show_pathway = 10)
 #'
 #' }
 #'
 
 plotGSEA <- function(gsea_list,
-                     plot_type = c('volcano','pathway'),
+                     plot_type = c('volcano','classic','fgsea'),
                      show_pathway = 3,
                      show_genes = NULL,
                      colors = NULL,
@@ -166,6 +169,30 @@ plotGSEA <- function(gsea_list,
             axis.ticks.x = element_line())
 
     p = cowplot::plot_grid(plotlist = pl, ncol = 1, align="v", rel_heights = panel_size)
+
+  }
+
+  if(plot_type == 'fgsea'){
+    geneset_list <- gsea_list$geneset %>% split(.$gs_name) %>% lapply( "[[", 2)
+    genelist <- gsea_list$genelist
+
+    fres <- suppressWarnings(fgsea::fgsea(pathways = geneset_list,
+                                          stats = genelist))
+
+    if(is.numeric(show_pathway)){
+      up_path = fres %>% dplyr::filter(ES > 0 ) %>% dplyr::arrange(.,pval) %>%
+        dplyr::slice_head(n =show_pathway) %>% dplyr::pull(pathway)
+      down_path = fres %>% dplyr::filter(ES < 0 ) %>% dplyr::arrange(.,pval) %>%
+        dplyr::slice_head(n =show_pathway) %>% dplyr::pull(pathway)
+      all = c(up_path,down_path)
+    }else if(any(!show_pathway %in% fres$pathway)){
+      stop(paste0(show_pathway[!show_pathway%in%fres$pathway],' not in fgsea result!'))
+    }else{
+      all = show_pathway
+    }
+
+    p = fgsea::plotGseaTable(geneset_list[all], genelist, fres,render = F) %>%
+      ggplotify::as.ggplot()
 
   }
 

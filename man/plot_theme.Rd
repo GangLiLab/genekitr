@@ -6,11 +6,11 @@
 \usage{
 plot_theme(
   theme_type = c("bw", "classic"),
-  main_text_size = 14,
-  legend_text_size = 10,
+  main_text_size = 8,
+  legend_text_size = 6,
   font_type = "sans",
-  border_thick = 1,
-  remove_grid = FALSE,
+  border_thick = 1.5,
+  remove_grid = TRUE,
   remove_border = FALSE,
   remove_text = FALSE,
   remove_legend = FALSE

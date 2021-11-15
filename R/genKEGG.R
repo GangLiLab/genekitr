@@ -1,6 +1,7 @@
 #' Gene enrichment of KEGG analysis
 #'
 #' @param id A vector of entrez gene.
+#' @param group_list A list of gene id groups, default is NULL.
 #' @param org  KEGG organism name from `keggOrg_name`.
 #' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
 #' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
@@ -26,12 +27,24 @@
 #'
 #' @examples
 #' \donttest{
+#' # only gene ids
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[1:100]
 #' keg <- genKEGG(id, org = "human")
+#'
+#' # gene id with groups
+#' id <- c(head(names(geneList),50),tail(names(geneList),50))
+#' group <- list(group1  = c(rep('up',50),rep('down',50)),
+#'               group2 = c(rep('A',40),rep('B',60)))
+#' gkeg <- genKEGG(id, group_list = group,
+#'               org = "human", pvalueCutoff = 0.1,
+#'               qvalueCutoff = 0.1, use_symbol = FALSE
+#' )
+#'
 #' }
 #'
 genKEGG <- function(id,
+                    group_list = NULL,
                     org,
                     use_symbol = TRUE,
                     pAdjustMethod = "BH",
@@ -67,45 +80,82 @@ genKEGG <- function(id,
     use_symbol <- FALSE
   }
 
-
-
-
   #--- codes ---#
-  keg <- suppressMessages(
-    clusterProfiler::enrichKEGG(
-      gene = trans_id, organism = kegg_org, keyType = "kegg",
-      pvalueCutoff = pvalueCutoff,
-      pAdjustMethod = pAdjustMethod,
-      qvalueCutoff = qvalueCutoff,
-      universe = universe,
-      minGSSize = minGSSize,
-      maxGSSize = maxGSSize,
-      ...
+  ## only gene ids
+  if(is.null(group_list)){
+    keg <- suppressMessages(
+      clusterProfiler::enrichKEGG(
+        gene = trans_id, organism = kegg_org, keyType = "kegg",
+        pvalueCutoff = pvalueCutoff,
+        pAdjustMethod = pAdjustMethod,
+        qvalueCutoff = qvalueCutoff,
+        universe = universe,
+        minGSSize = minGSSize,
+        maxGSSize = maxGSSize,
+        ...
+      )
     )
-  )
 
-  if (nrow(as.data.frame(keg)) == 0) {
-    stop("No KEGG terms enriched ...")
-  }
+    if (nrow(as.data.frame(keg)) == 0) {
+      stop("No KEGG terms enriched ...")
+    }
 
-  if (use_symbol) {
-    new_geneID <- stringr::str_split(keg$geneID, "\\/") %>%
-      lapply(., function(x) {
-        info %>%
-          dplyr::filter(input_id %in% x) %>%
-          dplyr::pull(symbol)
-      }) %>%
-      sapply(., paste0, collapse = "/")
-    new_keg <- keg %>%
-      as.data.frame() %>%
-      dplyr::mutate(geneID = new_geneID) %>%
-      calcFoldEnrich() %>%
-      as.enrichdat()
-  } else {
-    new_keg <- keg %>%
-      as.data.frame() %>%
-      calcFoldEnrich() %>%
-      as.enrichdat()
+    if (use_symbol) {
+      new_geneID <- stringr::str_split(keg$geneID, "\\/") %>%
+        lapply(., function(x) {
+          info %>%
+            dplyr::filter(input_id %in% x) %>%
+            dplyr::pull(symbol)
+        }) %>%
+        sapply(., paste0, collapse = "/")
+      new_keg <- keg %>%
+        as.data.frame() %>%
+        dplyr::mutate(geneID = new_geneID) %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    } else {
+      new_keg <- keg %>%
+        as.data.frame() %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }
+  }else{
+    ## gene id plus groups
+    df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
+    lkeg <- clusterProfiler::compareCluster(eval(parse(text =paste0('id~',paste(colnames(df)[-ncol(df)],collapse = '+')))),
+                                            data=df,
+                                            fun='enrichKEGG', organism = kegg_org,
+                                            pvalueCutoff = pvalueCutoff,
+                                            pAdjustMethod = pAdjustMethod,
+                                            qvalueCutoff = qvalueCutoff,
+                                            universe = universe,
+                                            minGSSize = minGSSize,
+                                            maxGSSize = maxGSSize,
+                                            ...)
+
+    if (nrow(as.data.frame(lkeg)) == 0) {
+      stop("No KEGG terms enriched ...")
+    }
+    if (use_symbol) {
+      new_geneID <- stringr::str_split(lkeg@compareClusterResult$geneID, "\\/") %>%
+        lapply(., function(x) {
+          info %>%
+            dplyr::filter(input_id %in% x) %>%
+            dplyr::pull(symbol)
+        }) %>%
+        sapply(., paste0, collapse = "/")
+      new_keg <- lkeg %>%
+        as.data.frame() %>%
+        dplyr::mutate(geneID = new_geneID) %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    } else {
+      new_keg <- lkeg %>%
+        as.data.frame() %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }
+
   }
 
   return(new_keg)

@@ -6,6 +6,7 @@
 \usage{
 genGO(
   id,
+  group_list = NULL,
   org,
   ont,
   use_symbol = TRUE,
@@ -20,6 +21,8 @@ genGO(
 }
 \arguments{
 \item{id}{A vector of gene id which can be entrez, ensembl or symbol.}
+
+\item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{org}{Organism name from `biocOrg_name`.}
 
@@ -53,11 +56,24 @@ Gene GO enrichment analysis
 \examples{
 \donttest{
 data(geneList, package = "genekitr")
+
+# only gene ids
 id <- names(geneList)[1:100]
 ego <- genGO(id,
   org = "human", ont = "cc", pvalueCutoff = 0.01,
   qvalueCutoff = 0.1, use_symbol = FALSE
 )
 head(ego)
+
+# gene id with groups
+id <- c(head(names(geneList),50),tail(names(geneList),50))
+group <- list(group1  = c(rep('up',50),rep('down',50)),
+  group2 = c(rep('A',40),rep('B',60)))
+
+gego <- genGO(id, group_list = group,
+  org = "human", ont = "bp", pvalueCutoff = 0.1,
+  qvalueCutoff = 1, use_symbol = FALSE
+)
+
 }
 }
