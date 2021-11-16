@@ -14,7 +14,8 @@
 #'
 #' @importFrom dplyr pull %>% arrange mutate slice_head
 #' @importFrom ggplot2 ggplot aes_string geom_point scale_color_continuous theme
-#'   guide_colorbar scale_y_discrete element_blank xlab labs xlim
+#'   guide_colorbar scale_y_discrete element_blank xlab labs xlim scale_x_discrete
+#'   facet_grid
 #' @importFrom stringr str_to_title
 #' @importFrom rlang .data
 #'
@@ -51,10 +52,10 @@ plotEnrich <- function(enrich_df,
   xlab_type <- match.arg(xlab_type)
   legend_type <- match.arg(legend_type)
   compare_group <- any(grepl('cluster',colnames(enrich_df),ignore.case = T))
+  all_go <- any(grepl('ONTOLOGY',colnames(enrich_df),ignore.case = T))
 
-  if(compare_group){
-    plot_type = 'dot'
-  }
+  if(compare_group) plot_type = 'dot'
+  if(all_go) plot_type = 'bar'
 
   types <- c("GeneRatio", "Count", "FoldEnrich")
   legends <- c("p.adjust", "pvalue", "qvalue")
@@ -80,12 +81,24 @@ plotEnrich <- function(enrich_df,
     ifelse(legend_type == "p.adjust", "P.adjust", "FDR")
   )
 
-  if(!compare_group){
+  if(!compare_group & !all_go){
     if (show_item <= nrow(enrich_df)) {
       enrich_df <- enrich_df %>%
         dplyr::arrange(eval(parse(text = xlab_type))) %>%
         dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T)) %>%
         dplyr::slice_head(., n = show_item)
+    } else {
+      enrich_df <- enrich_df %>%
+        dplyr::arrange(eval(parse(text = xlab_type))) %>%
+        dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T))
+    }
+  }else if (!compare_group & all_go){
+    if (show_item <= nrow(enrich_df)) {
+      enrich_df <- enrich_df %>%
+        dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T)) %>%
+        dplyr::group_by(ONTOLOGY) %>%
+        dplyr::arrange(eval(parse(text = xlab_type)),.by_group = T) %>%
+        dplyr::slice_head(.,n=show_item)
     } else {
       enrich_df <- enrich_df %>%
         dplyr::arrange(eval(parse(text = xlab_type))) %>%
@@ -145,6 +158,9 @@ plotEnrich <- function(enrich_df,
       labs(color = legend_type)+
       xlim(xlim_left,xlim_right)+
       plot_theme(...)
+
+    if(all_go) p <- p + facet_grid(ONTOLOGY~., scale = "free")+
+        plot_theme(...)
 
   }
 

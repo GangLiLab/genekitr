@@ -2,7 +2,7 @@
 output: github_document
 ---
 
-<!-- README.md is generated from README.Rmd. Please edit that file -->
+<!-- README.md is generated from README.Rmd. Please edit Rmd file -->
 
 ```{r, echo = FALSE}
 knitr::opts_chunk$set(
@@ -31,13 +31,17 @@ knitr::opts_chunk$set(
 
 用户痛点：
 
-- ID转换不够全，很多gene alias 不能够被识别（比如huamn 的BCC7实际对应TP53，mouse的Tp53实际可能对应Trp53, Trp53inp2 & Ano9）
+- ID转换不够全，很多gene alias 不能够被识别（比如huamn 的BCC7实际对应TP53，mouse的Tp53实际可能对应Trp53, Trp53inp2 & Ano9）;
+  另外，像是一些常见的gene symbol（如PD1、PDL1），实际上它们的gene id是PDCD1和CD274，很多表达矩阵中可能因此就忽略掉这些基因
 
-- 参数设置不够友好，太繁琐（我们允许用户只输入基因id，至于它是symbol、entrez还是其他，函数可以自行判断）
+- 基因ID转换支持物种太少，有些工具只支持模式物种。我们可以支持198个物种
 
-- 保持和数据库的同步（ensembl、Uniprot），很多MassSpec数据中uniprot ID对应的symbol存在错误或者不完整，我们可以尽量减少
+- 目前很多函数的参数设置不够友好，太繁琐（我们允许用户只输入基因id，至于它是symbol、entrez还是其他，函数可以自行判断）
 
-- ...
+- 保持和数据库的同步（ensembl、Uniprot），使用最新的ensemble v104版本（后期还可同步更新）
+  然后protein id也随着uniprot数据库更新
+
+- 很多函数导出的结果是一个对象（Object），而不是数据框（dataframe），如果用户想自行挑选terms，就比较麻烦；为此，我们的函数全面支持数据框，直接将数据框给到作图函数，便可轻松绘制，而且绘制的图形也尽可能简洁，比较贴近发表级，后期用户只需要简单AI修改即可
 
 
 ## Table of Contents
@@ -77,7 +81,7 @@ To quickly go through the package usage, we will use built-in gene list from GEO
 
 `org` argument could accept fullname or shortname of specific organism. For example, we could 
 
-use `human/hs/hg` to describe human.
+use common name: `human/hs/hg` to describe human.
 
 ```{r geninfo}
 library(genekitr)
@@ -107,26 +111,54 @@ User only need to specify which type you want, the left things just give `transI
 ##### Transform ID from entrezid to symbol
 
 ```{r transid}
-head(id)
-id2 = transId(id, trans_to = 'symbol',org='hs')
-head(id2)
+id[1:5]
+transId(id[1:5], trans_to = 'symbol',org='hs')
 ```
+
+##### Transform gene alias
+```{r alias}
+transId(c('BCC7','PDL1','PD1'), trans_to = 'symbol',org='human')
+
+# When one id have multi alias
+transId(c('BCC7','PDL1','PD1'), trans_to = 'symbol',org='hg',unique = F)
+```
+
+##### Transform protein id to gene id
+```{r}
+# to symbol
+transId(c('Q12879','Q86V25','Q8N386','Q5T7N3'),'sym','hs')
+# to ensembl
+transId(c('Q12879','Q86V25','Q8N386','Q5T7N3'),'ens','hs')
+```
+
+##### Transform ensembl id to symbol 
+```{r}
+transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989'),'sym','hg')
+```
+
+
 
 
 ### Analysis 
 
 All enrichment analysis just give a gene list (especially GSEA need the gene list with a decreasing fold change)
 
+#### over representation analysis (ORA)
+
 ##### GO analysis 
 
-User could choose ontology among "bp", "cc" or "mf".
+User could choose ontology among "bp", "cc", "mf" or "all".
 
 If set `use_symbol = TRUE`, the result will return gene symbol for easily understand.
 
 If you are not sure the organism name, please type `biocOrg_name` and choose full name or short name
 
 ```{r warning=FALSE}
-ego = genGO(id, org = 'human', ont = 'bp',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
+ego_bp = genGO(id[1:100], org = 'human', ont = 'bp',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
+
+# user could choose all three ontology
+ego_all = genGO(id[1:100], org = 'human', ont = 'all',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
+
 ```
 
 ##### KEGG analysis 
@@ -135,9 +167,15 @@ If you are not sure the organism name, please type `keggOrg_name` and choose ful
 
 ```{r}
 ekeg = genKEGG(id, org = 'hg',use_symbol = T)
+
+# If we want to compare different groups of genes, we only need to give a gene group list
+group = list(groupA = c(rep("up",50),rep("down",50)),
+             groupB = c(rep("A",30), rep("B",70)))
+ekeg_compare =  genKEGG(c(head(id,50),tail(id,50)), group_list = group,
+                    org = 'human',pvalueCutoff = 0.15,qvalueCutoff = 0.15, use_symbol = T)
 ```
 
-##### GSEA analysis 
+#### gene set enrichment analysis (GSEA) analysis 
 
 `category` argument could choose from 'C1','C2','C3', 'C4','C5','C6','C7','C8' and 'H'
 
@@ -147,10 +185,9 @@ The message will tell what options you could choose in the main `category`.
 
 ```{r}
 egsea = genGSEA(genelist = geneList,org = 'hs', 
-                category='C2',subcategory = 'CP:KEGG',
-                use_symbol = T, pvalueCutoff = 0.01)
+                category = "H",
+                use_symbol = T, pvalueCutoff = 1)
 ```
-
 
 
 ### Visulaize 
@@ -182,22 +219,47 @@ plotVenn(la_gene_list,
 
 ```
 
-##### Enrichment barplot
+##### Enrichment plot
 
-User could choose "FoldEnrich", "GeneRatio" or "Count" as x-axis label, default is "FoldEnrich".
+- Support barplot, dotplot
 
-```{r enrich_bar, fig.height = 4}
-plotEnrichBar(ego,remove_grid = T, main_text_size = 8,
+- x-axis support: GeneRatio/Count/FoldEnrich
+
+- stats support: pvalue/p.adjust/qvalue(FDR)
+
+- easily modify plot line & text pattern
+
+```{r enrich_bar1, fig.height = 4}
+plotEnrich(ego_bp,plot_type = 'bar',remove_grid = T, main_text_size = 8,
   legend_text_size = 6,border_thick = 1.5)
 ```
-
+```{r enrich_bar2, fig.height = 4}
+plotEnrich(ego_all,plot_type = 'bar', xlab_type = 'GeneRatio',legend_type = 'qvalue',
+           remove_grid = T, main_text_size = 8, legend_text_size = 6,border_thick = 1.5)
+```
 
 ##### Enrichment dotplot
 
 ```{r enrich_dot, fig.height = 4}
-plotEnrichDot(ego,remove_grid = F, xlab_type = 'GeneRatio',
-              main_text_size = 8, legend_text_size = 6,
-              legend_type = 'qvalue')
+plotEnrich(ego_bp,plot_type = 'dot',xlab_type = 'GeneRatio',legend_type = 'qvalue',
+          remove_grid = T, main_text_size = 8, legend_text_size = 6)
+```
+
+```{r enrich_dot2, fig.height = 4}
+plotEnrich(ekeg_compare)
+```
+
+##### gsea plot
+
+- support: volcano/classic/multi-pathway(fgsea)
+
+```{r gsea, fig.height = 4}
+plotGSEA(egsea,plot_type = 'volcano', show_pathway = 3)
+plotGSEA(egsea, plot_type = 'classic', show_pathway = c("HALLMARK_UV_RESPONSE_DN","HALLMARK_INTERFERON_ALPHA_RESPONSE"),
+         show_genes = c("SELL"))
+
+# default shows top3 up & down pathways
+plotGSEA(egsea, plot_type = 'fgsea')
 ```
 
 
@@ -209,13 +271,13 @@ For example, since we got 100 genes' GO and KEGG result, then we want to export 
 
 ```{r eval=FALSE}
 expoSheet(
-  dat_list = list(ginfo, ego, ekeg), name_list = list("GeneInfo","GO", "KEGG"),
+  dat_list = list(ginfo, ego_bp, ego_all,ekeg), name_list = list("GeneInfo","GO-BP", "GO-All","KEGG"),
   filename = "gene_enrich.xlsx", dir = tempdir())
 ```
 
 The result will be:
 
-<img src='man/figures/exp0.jpg' height="500" alt="exp0"/>
+<img src='man/figures/exp0.png' height="500" alt="exp0"/>
 
 
 ## Vignette

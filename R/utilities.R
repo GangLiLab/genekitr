@@ -265,4 +265,4 @@ web_download <- function(url, destfile, try_time = 2L, ...) {
 utils::globalVariables(c(
   ".", "biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
   "count","theme_classic","input_id","ensOrg_name","latin_short_name","ES","pathway",
-  "plotGseaTable","pval","scale_fill_continuous","scale_x_discrete"))
+  "plotGseaTable","pval","scale_fill_continuous","scale_x_discrete", "ONTOLOGY","facet_grid"))

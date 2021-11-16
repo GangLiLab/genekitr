@@ -10,7 +10,7 @@
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline element_blank
 #'   element_rect margin geom_linerange scale_y_continuous geom_segment geom_bar scale_fill_manual
-#'   geom_hline element_line
+#'   geom_hline element_line geom_line
 #' @importFrom dplyr filter pull %>%
 #'
 #' @return A ggplot object
@@ -73,7 +73,7 @@ plotGSEA <- function(gsea_list,
                  main_text_size = 15)
   }
 
-  if(plot_type == 'pathway'){
+  if(plot_type == 'classic'){
     gsea_df <- gsea_list$gsea_df
     geneset <- gsea_list$geneset
     genelist <- gsea_list$genelist
