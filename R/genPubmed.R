@@ -76,7 +76,7 @@ genPubmed <- function(id,
   }) %>%
     do.call(rbind, .)
 
-  invisible(res)
+  return(res)
 }
 
 

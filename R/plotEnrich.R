@@ -159,7 +159,7 @@ plotEnrich <- function(enrich_df,
       xlim(xlim_left,xlim_right)+
       plot_theme(...)
 
-    if(all_go) p <- p + facet_grid(ONTOLOGY~., scale = "free")+
+    if(all_go) p <- p + facet_grid(ONTOLOGY~., scales = "free")+
         plot_theme(...)
 
   }
