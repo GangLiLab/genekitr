@@ -81,7 +81,7 @@ To quickly go through the package usage, we will use built-in gene list from GEO
 
 `org` argument could accept fullname or shortname of specific organism. For example, we could 
 
-use common name: `human/hs/hg` to describe human.
+use common name: `human/hs/hg/hsa` to describe human.
 
 ```{r geninfo}
 library(genekitr)
@@ -89,8 +89,21 @@ data(geneList)
 id = names(geneList)[1:100]
 head(id)
 ginfo = genInfo(id, org = 'human')
-dplyr::as_tibble(ginfo)
+DT::datatable(ginfo, options = list(pageLength = 5))
 ```
+
+##### Get specific type genes
+
+For example, we want to retrieve all human protein-coding ids. Just leave argument `id` empty.
+
+```{r}
+pro_hg = genInfo(org = 'human') %>% 
+  dplyr::filter(gene_biotype  == 'protein_coding') %>% dplyr::pull(symbol)
+head(pro_hg) 
+# number of human protein id
+length(pro_hg)
+```
+
 
 ##### Search gene PubMed records
 
@@ -98,7 +111,7 @@ dplyr::as_tibble(ginfo)
 pub = genPubmed(
   id = c("Cyp2c23", "Fhit", "Gal3st2b","Insl3", "Gbp4"),
   keywords = "stem cell", field = "tiab")
-head(pub)
+DT::datatable(pub, options = list(pageLength = 5))
 ```
 
 
@@ -119,7 +132,7 @@ transId(id[1:5], trans_to = 'symbol',org='hs')
 ```{r alias}
 transId(c('BCC7','PDL1','PD1'), trans_to = 'symbol',org='human')
 
-# When one id have multi alias
+# We could get all matched id when one-to-many occurs
 transId(c('BCC7','PDL1','PD1'), trans_to = 'symbol',org='hg',unique = F)
 ```
 
@@ -136,12 +149,17 @@ transId(c('Q12879','Q86V25','Q8N386','Q5T7N3'),'ens','hs')
 transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989'),'sym','hg')
 ```
 
+##### Transform ensembl id to protein id
+
+```{r}
+transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989'),'uniprot','hg')
+```
 
 
 
 ### Analysis 
 
-All enrichment analysis just give a gene list (especially GSEA need the gene list with a decreasing fold change)
+All enrichment analysis ** just give a gene list ** (especially GSEA need the gene list with a decreasing fold change)
 
 #### over representation analysis (ORA)
 
@@ -149,7 +167,7 @@ All enrichment analysis just give a gene list (especially GSEA need the gene lis
 
 User could choose ontology among "bp", "cc", "mf" or "all".
 
-If set `use_symbol = TRUE`, the result will return gene symbol for easily understand.
+If set `use_symbol = TRUE`, the result will return gene symbol for easy understanding.
 
 If you are not sure the organism name, please type `biocOrg_name` and choose full name or short name
 
@@ -168,7 +186,7 @@ If you are not sure the organism name, please type `keggOrg_name` and choose ful
 ```{r}
 ekeg = genKEGG(id, org = 'hg',use_symbol = T)
 
-# If we want to compare different groups of genes, we only need to give a gene group list
+# If we want to compare different groups of genes, we only need to add a gene group list
 group = list(groupA = c(rep("up",50),rep("down",50)),
              groupB = c(rep("A",30), rep("B",70)))
 ekeg_compare =  genKEGG(c(head(id,50),tail(id,50)), group_list = group,
