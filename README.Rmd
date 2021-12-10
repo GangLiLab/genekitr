@@ -85,11 +85,12 @@ use common name: `human/hs/hg/hsa` to describe human.
 
 ```{r geninfo}
 library(genekitr)
+library(dplyr)
 data(geneList)
 id = names(geneList)[1:100]
 head(id)
 ginfo = genInfo(id, org = 'human')
-DT::datatable(ginfo, options = list(pageLength = 5))
+dplyr::as_tibble(head(ginfo))
 ```
 
 ##### Get specific type genes
@@ -111,7 +112,7 @@ length(pro_hg)
 pub = genPubmed(
   id = c("Cyp2c23", "Fhit", "Gal3st2b","Insl3", "Gbp4"),
   keywords = "stem cell", field = "tiab")
-DT::datatable(pub, options = list(pageLength = 5))
+dplyr::as_tibble(head(pub))
 ```
 
 
