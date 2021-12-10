@@ -69,10 +69,7 @@ remotes::install_github("GangLiLab/genekitr")
 ## Quick guide
 
 To quickly go through the package usage, we will use built-in gene list
-from GEO airway
-
-([GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778))
-DEG analysis.
+from GEO airway ([GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778)) DEG analysis.
 
 ### Search
 
@@ -228,8 +225,7 @@ transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989
 
 ### Analysis
 
-All enrichment analysis \*\* just give a gene list \*\* (especially GSEA
-need the gene list with a decreasing fold change)
+All enrichment analysis  **just give a gene list** (especially GSEA need the gene list with a decreasing fold change)
 
 #### over representation analysis (ORA)
 
