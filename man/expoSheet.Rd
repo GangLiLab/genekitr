@@ -5,7 +5,7 @@
 \title{Export list of datasets into different Excel sheets}
 \usage{
 expoSheet(
-  dat_list,
+  data_list,
   name_list,
   filename = NULL,
   dir = tempdir(),
@@ -13,7 +13,7 @@ expoSheet(
 )
 }
 \arguments{
-\item{dat_list}{List of datasets.}
+\item{data_list}{List of datasets.}
 
 \item{name_list}{List of data names.}
 
@@ -30,9 +30,12 @@ An Excel file.
 Export list of datasets into different Excel sheets
 }
 \examples{
+\dontrun{
 library(openxlsx)
 expoSheet(
-  dat_list = list(mtcars, ToothGrowth), name_list = list("mtcars", "tooth"),
+  data_list = list(mtcars, ToothGrowth),
+  name_list = list("mtcars", "tooth"),
   filename = "test.xlsx", dir = tempdir()
 )
+}
 }

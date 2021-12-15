@@ -23,7 +23,7 @@ A character of transformed ids.
 Transform gene id among symbol, entrezid,  ensembl and uniprot
 }
 \examples{
-\donttest{
+\dontrun{
 transId(
   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
   trans_to = "ensembl", org = "mouse", unique = TRUE

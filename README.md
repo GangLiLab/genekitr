@@ -24,22 +24,29 @@ contains five features:
 
 **Why develop this R package?**
 
-用户痛点：
+Features：
 
--   ID转换不够全，很多gene alias 不能够被识别（比如huamn
-    的BCC7实际对应TP53，mouse的Tp53实际可能对应Trp53, Trp53inp2 &
-    Ano9）; 另外，像是一些常见的gene
-    symbol（如PD1、PDL1），实际上它们的gene
-    id是PDCD1和CD274，很多表达矩阵中可能因此就忽略掉这些基因
+-   Many gene alias could not be recognized. For example, BCC7(human) is
+    actually TP53; Tp53(mouse) is actually Trp53, Trp53inp2 & Ano9. Many
+    popular gene symbol like PD1/PDL1 has own gene ID PDCD1/CD274, which
+    could be omitted in downstream analysis.
 
--   基因ID转换支持物种太少，有些工具只支持模式物种。我们可以支持198个物种
+-   Some popular gene ID transforming package only support dozens of
+    model species. But here we support 190 species
 
--   目前很多函数的参数设置不够友好，太繁琐（我们允许用户只输入基因id，至于它是symbol、entrez还是其他，函数可以自行判断）
+-   Some R package sets many arguments as input, but we only use
+    simplest argument. For example, user only need to input gene ID then
+    the function will determine gene type automatically.
 
--   保持和数据库的同步（ensembl、Uniprot），使用最新的ensemble
-    v104版本（后期还可同步更新） 然后protein id也随着uniprot数据库更新
+-   Keep updating annotating resource with online database (Ensembl &
+    Uniprot). For now, we use the current Ensemble v104.
 
--   很多函数导出的结果是一个对象（Object），而不是数据框（dataframe），如果用户想自行挑选terms，就比较麻烦；为此，我们的函数全面支持数据框，直接将数据框给到作图函数，便可轻松绘制，而且绘制的图形也尽可能简洁，比较贴近发表级，后期用户只需要简单AI修改即可
+-   Some package exports result as an object which not frendly for users
+    to export and share with others. We export the analysis results as
+    dataframes which could easily share and plot.
+
+-   Built in plotting functions could produce pre-published figures then
+    users only need to simply modify using AI.
 
 ## Table of Contents
 
@@ -69,7 +76,10 @@ remotes::install_github("GangLiLab/genekitr")
 ## Quick guide
 
 To quickly go through the package usage, we will use built-in gene list
-from GEO airway ([GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778)) DEG analysis.
+from GEO airway
+
+([GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778))
+DEG analysis.
 
 ### Search
 
@@ -225,7 +235,8 @@ transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989
 
 ### Analysis
 
-All enrichment analysis  **just give a gene list** (especially GSEA need the gene list with a decreasing fold change)
+All enrichment analysis \*\* just give a gene list \*\* (especially GSEA
+need the gene list with a decreasing fold change)
 
 #### over representation analysis (ORA)
 
@@ -405,7 +416,7 @@ The result will be:
 
 ### 中文区 (推文专区)
 
--   待更新1：R包搞定你的基因需求
+-   wait to update…
 
 ## Citation
 
