@@ -414,7 +414,7 @@ The result will be:
 
 -   Wait to update…
 
-### 中文区 (推文专区)
+### Chinese
 
 -   wait to update…
 
