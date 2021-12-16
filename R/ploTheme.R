@@ -28,7 +28,7 @@ plot_theme <- function(theme_type = c('bw','classic'),
                        remove_border = FALSE,
                        remove_text = FALSE,
                        remove_legend = FALSE
-                       ) {
+) {
 
   theme_type <- match.arg(theme_type)
 
@@ -39,32 +39,32 @@ plot_theme <- function(theme_type = c('bw','classic'),
   }
 
   font_theme <- theme(
-      axis.text.x = element_text(
-        color = "black", size = main_text_size,
-        vjust = 1, family = font_type
-      ),
-      axis.text.y = element_text(
-        color = "black", size = main_text_size,
-        hjust = 1, family = font_type
-      ),
-      axis.title.x = element_text(
-        color = "black", size = main_text_size,
-        margin = margin(8, 6, 0, 0),
-        family = font_type
-      ),
-      axis.title.y = element_text(angle = 90, size = main_text_size, family = font_type),
-      legend.title = element_text(
-        color = "black",
-        size = legend_text_size, family = font_type
-      ),
-      legend.text = element_text(
-        color = "black",
-        size = legend_text_size, family = font_type
-      ),
-      panel.border = element_rect(colour = "black", size = border_thick),
-      axis.ticks = element_line(colour = "black", size = as.numeric(border_thick) / 3),
-      axis.ticks.length = unit(.1, "cm"),
-    )
+    axis.text.x = element_text(
+      color = "black", size = main_text_size,
+      vjust = 1, family = font_type
+    ),
+    axis.text.y = element_text(
+      color = "black", size = main_text_size,
+      hjust = 1, family = font_type
+    ),
+    axis.title.x = element_text(
+      color = "black", size = main_text_size,
+      margin = margin(8, 6, 0, 0),
+      family = font_type
+    ),
+    axis.title.y = element_text(angle = 90, size = main_text_size, family = font_type),
+    legend.title = element_text(
+      color = "black",
+      size = legend_text_size, family = font_type
+    ),
+    legend.text = element_text(
+      color = "black",
+      size = legend_text_size, family = font_type
+    ),
+    panel.border = element_rect(colour = "black", size = border_thick),
+    axis.ticks = element_line(colour = "black", size = as.numeric(border_thick) / 3),
+    axis.ticks.length = unit(.1, "cm"),
+  )
 
   # remove background grid line
   if (remove_grid) {
@@ -110,5 +110,3 @@ plot_theme <- function(theme_type = c('bw','classic'),
 
   return(all_theme)
 }
-
-

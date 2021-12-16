@@ -221,13 +221,13 @@ ensAnno <- function(org, version = NULL) {
   if(!dir.exists(data_dir)){
     tryCatch(
       {
-        dir.create(data_dir)
+        dir.create(data_dir,recursive = TRUE)
       },
       error = function(e) {
         message(paste0("Seems like you cannot access dir: ",data_dir,
                        '\nPlease spefify a valid dir to save data...'))
         data_dir = readline(prompt="Enter directory: ")
-        dir.create(data_dir)
+        dir.create(data_dir,recursive = TRUE)
       }
     )
   }
@@ -263,6 +263,6 @@ web_download <- function(url, destfile, try_time = 2L, ...) {
 
 #--- add global variables ---#
 utils::globalVariables(c(
-  ".", "biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
+  ".", "data_dir","biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
   "count","theme_classic","input_id","ensOrg_name","latin_short_name","ES","pathway",
   "plotGseaTable","pval","scale_fill_continuous","scale_x_discrete", "ONTOLOGY","facet_grid"))
