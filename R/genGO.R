@@ -25,7 +25,7 @@
 #' @export
 #'
 #' @examples
-#' \donttest{
+#' \dontrun{
 #' data(geneList, package = "genekitr")
 #'
 #' # only gene ids

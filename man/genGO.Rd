@@ -54,7 +54,7 @@ A `data.frame` contains gene ratio and fold enrichment.
 Gene GO enrichment analysis
 }
 \examples{
-\donttest{
+\dontrun{
 data(geneList, package = "genekitr")
 
 # only gene ids
