@@ -216,7 +216,8 @@ ensOrg_name_data <- function(){
 ensAnno <- function(org, version = NULL) {
   if(is.null(version)) version = 104
   org <- mapEnsOrg(tolower(org))
-  data_dir = rappdirs::user_data_dir(appname = 'genekitr')
+  # data_dir = rappdirs::user_data_dir(appname = 'genekitr')
+  data_dir = tools::R_user_dir('genekitr',which = 'data')
 
   if(!dir.exists(data_dir)){
     tryCatch(
