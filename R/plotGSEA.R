@@ -69,8 +69,7 @@ plotGSEA <- function(gsea_list,
                       size =3,
                       color = "black",
                       show.legend = F)+
-      plot_theme(remove_grid = T,remove_legend = T,border_thick = 1.5,
-                 main_text_size = 15)
+      plot_theme(...)
   }
 
   if(plot_type == 'classic'){
