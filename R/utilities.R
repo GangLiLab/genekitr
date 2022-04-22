@@ -213,8 +213,8 @@ ensOrg_name_data <- function(){
 }
 
 #--- ensembl anno data ---#
-ensAnno <- function(org, version = NULL) {
-  if(is.null(version)) version = 104
+ensAnno <- function(org, version = 106) {
+  # if(is.null(version)) version = 106
   org <- mapEnsOrg(tolower(org))
   # data_dir = rappdirs::user_data_dir(appname = 'genekitr')
   data_dir = tools::R_user_dir('genekitr',which = 'data')

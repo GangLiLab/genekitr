@@ -6,6 +6,7 @@
 #' @param unique If keep only one unique mapped ID when one-to-many gene occurs, default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
 #' @importFrom tibble add_row
+#' @importFrom stringr str_split
 #' @importFrom stats na.omit
 #' @importFrom rlang .data
 #'
@@ -23,12 +24,15 @@
 #'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
 #'   trans_to = "entrez", org = "hg", unique = FALSE
 #' )
+#' # auto-remove ensembl version number
+#' transId('ENSG00000141510.11','symbol','hs')
 #' }
 #'
 transId <- function(id, trans_to, org, unique = TRUE) {
 
   #--- args ---#
   org <- mapEnsOrg(tolower(org))
+  id <- stringr::str_split(id,'\\.',simplify = T)[,1]
   keytype <- gentype(id, org)
   from <- tolower(keytype)
 
