@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.5.3
+Version: 0.6.1
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
@@ -50,4 +50,4 @@ Suggests:
     testthat (>= 3.0.0),
     knitr,
     rmarkdown
-RoxygenNote: 7.1.1
+RoxygenNote: 7.1.2

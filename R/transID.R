@@ -24,7 +24,7 @@
 #'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
 #'   trans_to = "entrez", org = "hg", unique = FALSE
 #' )
-#' # auto-remove ensembl version number
+#' # recognize ensembl version number
 #' transId('ENSG00000141510.11','symbol','hs')
 #' }
 #'
