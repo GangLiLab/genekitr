@@ -1,72 +1,78 @@
-#' Transform gene id among symbol, entrezid,  ensembl and uniprot
+#' Transform gene id among symbol, entrezid,  ensembl and uniprot.
 #' @param id Gene ids.
-#' @param trans_to Transform to which type, one of "symbol", "entrezid",
-#'   "ensembl" and "uniprot."
-#' @param org Short latin name from `ensOrg_name_data`.
-#' @param unique If keep only one unique mapped ID when one-to-many gene occurs, default is FALSE.
+#' @param transTo Transform to what type. User could select one or more from
+#' "symbol", "entrez", "ensembl" or "uniprot."
+#' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
+#' @param keepNA If some id has no match, keep it or not. Default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of
 #' @importFrom tibble add_row
 #' @importFrom stringr str_split
 #' @importFrom stats na.omit
 #' @importFrom rlang .data
 #'
-#' @return A character of transformed ids.
+#' @return A two-column data frame, first is input id and second is transformed id.
 #' @export
 #'
 #' @examples
 #' \dontrun{
+#' # example1:
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),
-#'   trans_to = "ensembl", org = "mouse", unique = TRUE
+#'   transTo = "ensembl", org = "mouse", keepNA = FALSE
 #' )
-#' # input id contains fake id and one-to-many match id
+#'
+#' ## example2: input id with one-to-many mapping and fake one
 #' transId(
 #'   id = c("MMD2", "HBD", "RNR1", "TEC", "BCC7", "FAKEID", "TP53"),
-#'   trans_to = "entrez", org = "hg", unique = FALSE
+#'   transTo = c("entrez","ensembl"), keepNA = TRUE
 #' )
-#' # recognize ensembl version number
-#' transId('ENSG00000141510.11','symbol','hs')
+#'
+#' # example3: auto-recognize ensembl version number
+#' transId('ENSG00000141510.11','symbol')
 #' }
 #'
-transId <- function(id, trans_to, org, unique = TRUE) {
+transId <- function(id, transTo, org = 'hs' , keepNA = FALSE) {
 
   #--- args ---#
-  org <- mapEnsOrg(tolower(org))
+  org <- mapEnsOrg(organism = tolower(org))
   id <- stringr::str_split(id,'\\.',simplify = T)[,1]
-  keytype <- gentype(id, org)
-  from <- tolower(keytype)
 
-  if (grepl(tolower(trans_to), "entrezid")) trans_to <- "entrezid"
-  if (grepl(tolower(trans_to), "ensemblid")) trans_to <- "ensembl"
-  if (grepl(tolower(trans_to), "symbolid")) trans_to <- "symbol"
-  if (grepl(tolower(trans_to), "uniprot")) trans_to <- "uniprot"
+  transTo <- sapply(tolower(transTo), function(x){
+    if( grepl(x,"entrezid") ) x = "entrezid"
+    if( grepl(x,"ensemblid") ) x = "ensembl"
+    if( grepl(x,"symbolid") ) x = "symbol"
+    if( grepl(x,"uniprot") ) x = "uniprot"
+    return(x)
+  }) %>% as.character()
 
-  if (!tolower(trans_to) %in% c("symbol", "entrezid", "ensembl", "uniprot")) {
-    stop("\nChoose 'trans_to' argument from: \nsymbol | entrezid | ensembl | uniprot")
+  if (!all(tolower(transTo) %in% c("symbol", "entrezid", "ensembl", "uniprot"))) {
+    stop("\nChoose 'transTo' argument from: \nsymbol | entrezid | ensembl | uniprot")
   }
 
   #--- codes ---#
-  if (unique) {
-    new_id <- genInfo(id, org, unique) %>% dplyr::pull(trans_to)
-    n_new <- na.omit(new_id) %>%
-      as.character() %>%
-      length()
-  } else {
-    new_id <- genInfo(id, org, unique) %>% dplyr::select(input_id, all_of(trans_to))
-    n_new <- na.omit(new_id) %>%
-      .[1] %>%
-      unique() %>%
-      nrow()
+  res <- genInfo(id, org) %>%
+    dplyr::select(input_id, all_of(transTo)) %>%
+    distinct()
+  if (!keepNA) {
+    res <- res %>%
+      filter_at(vars(!input_id), any_vars(!is.na(.)))
   }
+
+  ## calculate percent
+  n_new = sapply(transTo, function(x){
+    # x = transTo[1]
+    res %>%  dplyr::select(input_id, all_of(x)) %>%
+      na.omit() %>%
+      distinct(input_id) %>%
+      nrow()
+  })
 
   percent <- paste(round(100 * n_new / length(id), 2), "%", sep = "")
-  message("\n", percent, " genes are mapped from ", from, " to ", trans_to)
-  if (n_new != length(id)) {
-    message(paste0(
-      "Non-matched ID are marked as NA",
-      '...\nMaybe use "na.omit()" for downstream analysis'
-    ))
-  }
+  sapply(seq_along(transTo), function(x){
+    # x = 1
+    message(percent[x], " genes are mapped to ",  transTo[x])
+  }) %>% invisible()
 
-  return(new_id)
+
+  return(res)
 }

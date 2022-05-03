@@ -4,14 +4,12 @@
 \alias{genInfo}
 \title{Get gene related information}
 \usage{
-genInfo(id = NULL, org, unique = FALSE)
+genInfo(id = NULL, org = "hs")
 }
 \arguments{
 \item{id}{Gene id (symbol, ensembl or entrez id) or uniprot id. If this argument is NULL, return all gene info.}
 
-\item{org}{Short latin name from `ensOrg_name_data`.}
-
-\item{unique}{Logical to keep only one matched ID, default is FALSE.}
+\item{org}{Latin organism shortname from `ensOrg_name_data`. Default is human.}
 }
 \value{
 A `data.frame`.
@@ -21,12 +19,14 @@ Get gene related information
 }
 \examples{
 \donttest{
-# input id contains fake id and one-to-many match id
+# example1: input list with fake id and one-to-many mapping id
 x <- genInfo(id = c(
   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
-  "FAKEID", "TP53", "HBD", "NUDT10"
-), org = "hg", unique = TRUE)
-head(x)
+  "FAKEID", "TP53", "HBD", "NUDT10"))
+View(x)
+
+# example2: statistics of human gene biotypes
+genInfo(org = 'hs') \%>\% {table(.$gene_biotype)}
 
 }
 }

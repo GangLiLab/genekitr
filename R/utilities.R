@@ -115,48 +115,48 @@ mapEnsOrg <- function(organism) {
 }
 
 #---  decide gene id type ---#
-gentype <- function(id, org) {
+gentype <- function(id, data, org) {
   org <- mapEnsOrg(org)
-  all <- ensAnno(org)
-  if('symbol' %in% colnames(all)){
-    all_symbol <- all$symbol %>% stringi::stri_remove_empty_na()
-    n_sym = sum(id %in% all_symbol)
+  # data <- ensAnno(org)
+  if('symbol' %in% colnames(data)){
+    data_symbol <- data$symbol %>% stringi::stri_remove_empty_na()
+    n_sym = sum(id %in% data_symbol)
   }else{
     n_sym = 0L
   }
 
-  if('ensembl' %in% colnames(all)){
-    all_ensembl <- stringr::str_split(all$ensembl,'; ') %>% unlist() %>% stringi::stri_remove_empty_na()
-    n_ens = sum(id %in% all_ensembl)
+  if('ensembl' %in% colnames(data)){
+    data_ensembl <- stringr::str_split(data$ensembl,'; ') %>% unlist() %>% stringi::stri_remove_empty_na()
+    n_ens = sum(id %in% data_ensembl)
   }else{
     n_ens = 0L
   }
 
-  if('entrezid' %in% colnames(all)){
-    all_entrezid <- all$entrezid %>% stringi::stri_remove_empty_na()
-    n_ent = sum(id %in% all_entrezid)
+  if('entrezid' %in% colnames(data)){
+    data_entrezid <- data$entrezid %>% stringi::stri_remove_empty_na()
+    n_ent = sum(id %in% data_entrezid)
   }else{
     n_ent = 0L
   }
 
-  if('uniprot' %in% colnames(all)){
-    all_uniprot <- stringr::str_split(all$uniprot,'; ') %>% unlist()%>% stringi::stri_remove_empty_na()
-    n_uni = sum(id %in% all_uniprot)
+  if('uniprot' %in% colnames(data)){
+    data_uniprot <- stringr::str_split(data$uniprot,'; ') %>% unlist()%>% stringi::stri_remove_empty_na()
+    n_uni = sum(id %in% data_uniprot)
   }else{
     n_uni = 0L
   }
 
-  if('ncbi_alias' %in% colnames(all) ){
-    all_alias <- c(all$ncbi_alias, all$ensembl_alias) %>%
+  if('ncbi_alias' %in% colnames(data) ){
+    data_alias <- c(data$ncbi_alias, data$ensembl_alias) %>%
       strsplit("; ") %>%
       unlist() %>%
       stringi::stri_remove_empty_na()
-    n_ala = sum(id %in% all_alias)
+    n_ala = sum(id %in% data_alias)
   }else{
     n_ala = 0L
   }
 
-  rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
+  # rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
 
   if(sum(n_sym,n_ens,n_ent,n_uni,n_ala) == 0){
     stop("Wrong organism or input id has no match!")
@@ -234,13 +234,33 @@ ensAnno <- function(org, version = 106) {
     )
   }
 
-  if (!file.exists(paste0(data_dir, "/", org, "_anno.rda"))) {
-    url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.rda")
-    web_download(url, paste0(data_dir, "/", org, "_anno.rda"),  mode = "wb", quiet = TRUE)
+  if (!file.exists(paste0(data_dir, "/", org, "_anno.fst"))) {
+    url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.fst")
+    web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
   }
 
-  load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
-  get(paste0(org, "_anno"), envir = .GlobalEnv)
+  dat = fst::read.fst(paste0(data_dir, "/", org, "_anno.fst"))
+  invisible(dat)
+
+#   load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
+#   get(paste0(org, "_anno"), envir = .GlobalEnv)
+}
+
+#--- keytype order data ---#
+getOrder <- function(org,keytype,version = 106){
+  org <- mapEnsOrg(tolower(org))
+  data_dir = tools::R_user_dir('genekitr',which = 'data')
+  data_dir = paste0(data_dir,'/v',version)
+
+  if (!file.exists(paste0(data_dir,'/',org,'_',keytype,'_order.fst'))) {
+    url = paste0("http://112.74.191.19/genekitr/v",version,'/', org,'_',keytype,'_order.fst')
+    web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
+  }
+
+  dat = fst::read.fst(paste0(data_dir, "/", org,'_',keytype,'_order.fst'))
+  invisible(dat)
+  # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
+  # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
 }
 
 web_download <- function(url, destfile, try_time = 2L, ...) {
