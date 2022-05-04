@@ -4,7 +4,7 @@
 #' "symbol", "entrez", "ensembl" or "uniprot."
 #' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
 #' @param keepNA If some id has no match, keep it or not. Default is FALSE.
-#' @importFrom dplyr %>% filter pull select distinct arrange all_of
+#' @importFrom dplyr %>% filter pull select distinct arrange all_of filter_at vars any_vars
 #' @importFrom tibble add_row
 #' @importFrom stringr str_split
 #' @importFrom stats na.omit

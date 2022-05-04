@@ -13,10 +13,9 @@
 #' @examples
 #' \donttest{
 #' # example1: input list with fake id and one-to-many mapping id
-#' x <- genInfo(id = c(
+#' x = genInfo(id = c(
 #'   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
 #'   "FAKEID", "TP53", "HBD", "NUDT10"))
-#' View(x)
 #'
 #' # example2: statistics of human gene biotypes
 #' genInfo(org = 'hs') %>% {table(.$gene_biotype)}
@@ -32,7 +31,7 @@ genInfo <- function(id = NULL,
     gene_info <- ensAnno(org)
   }else{
     all <- ensAnno(org)
-    keytype <- gentype(id,all, org) %>% tolower()
+    keytype <- gentype(id = id,data = all, org = org) %>% tolower()
 
     ## get ensembl/entrez/uniprot/symbol order
     order_dat = getOrder(org, keytype) %>%
@@ -101,4 +100,4 @@ genInfo <- function(id = NULL,
   return(gene_info)
 }
 
-utils::globalVariables(c(":=","symbol","uniprot","input_id","symbol"))
+utils::globalVariables(c(":=","symbol","uniprot","input_id","symbol","chr","start","end"))

@@ -61,7 +61,7 @@ genGSEA <- function(genelist,
     geneset <- geneset %>%
       dplyr::select(gs_name, entrez_gene)
   } else {
-    names(genelist) <- transId(names(genelist), trans_to = "entrez", org)
+    names(genelist) <- transId(names(genelist), transTo = "entrez", org)
     geneset <- geneset %>%
       dplyr::select(gs_name, entrez_gene)
   }
@@ -77,11 +77,17 @@ genGSEA <- function(genelist,
 
   egmt =  egmt %>% as.data.frame() %>% as.enrichdat()
   if( use_symbol){
-    info = genInfo(unique(unlist(stringr::str_split(egmt$geneID,'\\/'))),org,unique = T)
-    new_geneID = stringr::str_split(egmt$geneID,'\\/') %>%
+    # transform id to symbol
+    egmt_id = stringr::str_split(egmt$geneID,'\\/') %>% unlist()
+    id_all = suppressMessages(transId(egmt_id,'symbol',org = org))
+
+    new_geneID <- stringr::str_split(egmt$geneID, "\\/") %>%
       lapply(., function(x) {
-        info %>% dplyr::filter(input_id %in% x) %>% dplyr::pull(symbol)
-      }) %>% sapply(., paste0, collapse = "/")
+        id_all %>% dplyr::filter(input_id %in% x) %>%
+          dplyr::pull(symbol)
+      }) %>%
+      sapply(., paste0, collapse = "/")
+
     egmt =  egmt %>%
       dplyr::mutate(geneID = new_geneID)
   }

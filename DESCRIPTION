@@ -19,13 +19,15 @@ Depends: R (>= 3.5)
 Imports: 
     clusterProfiler,
     dplyr,
+    fst,
     ggplot2,
     stringr,
     stringi,
     tidyr,
     tibble,
     VennDiagram,
-    rlang
+    rlang,
+    magrittr
 Suggests:
     BiocManager,
     cowplot,
@@ -38,7 +40,6 @@ Suggests:
     ggsci,
     ggupset,
     ggrepel,
-    magrittr,
     msigdbr,
     openxlsx,
     RColorBrewer,

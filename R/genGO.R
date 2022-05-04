@@ -1,6 +1,6 @@
 #' Gene GO enrichment analysis
 #'
-#' @param id A vector of gene id which can be entrez, ensembl or symbol.
+#' @param id A vector of gene id which can be entrezid, ensembl or symbol.
 #' @param group_list A list of gene id groups, default is NULL.
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all
@@ -70,10 +70,10 @@ genGO <- function(id,
   bioc_org <- mapBiocOrg(org)
   org <- mapEnsOrg(org)
   pkg <- paste0("org.", bioc_org, ".eg.db")
-  keyType <- gentype(id, org)
+  keyType <- gentype(id = id, org=org)
 
   #--- codes ---#
-  ## only gene ids
+  ## gene id without group info
   if(is.null(group_list)){
     ego <- suppressMessages(
       clusterProfiler::enrichGO(
@@ -93,14 +93,17 @@ genGO <- function(id,
     }
 
     if (use_symbol) {
-      info <- genInfo(id, org, unique = T)
+      # transform id to symbol
+      ego_id = stringr::str_split(ego$geneID, "\\/") %>% unlist()
+      id_all = suppressMessages(transId(ego_id,'symbol',org = org))
+
       new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
         lapply(., function(x) {
-          info %>%
-            dplyr::filter(input_id %in% x) %>%
+          id_all %>% dplyr::filter(input_id %in% x) %>%
             dplyr::pull(symbol)
         }) %>%
         sapply(., paste0, collapse = "/")
+
       new_ego <- ego %>%
         as.data.frame() %>%
         dplyr::mutate(geneID = new_geneID) %>%
@@ -113,7 +116,7 @@ genGO <- function(id,
         as.enrichdat()
     }
   }else{
-    ## gene id plus groups
+    ## gene id with group info
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
     lego <- clusterProfiler::compareCluster(eval(parse(text =paste0('id~',paste(colnames(df)[-ncol(df)],collapse = '+')))),
                                             data=df,
@@ -128,14 +131,17 @@ genGO <- function(id,
     }
 
     if (use_symbol) {
-      info <- genInfo(id, org, unique = T)
+      # transform id to symbol
+      ego_id = stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>% unlist()
+      id_all = suppressMessages(transId(id,'symbol',org = org))
+
       new_geneID <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>%
         lapply(., function(x) {
-          info %>%
-            dplyr::filter(input_id %in% x) %>%
+          id_all %>% dplyr::filter(input_id %in% x) %>%
             dplyr::pull(symbol)
         }) %>%
         sapply(., paste0, collapse = "/")
+
       new_ego <- lego %>%
         as.data.frame() %>%
         dplyr::mutate(geneID = new_geneID) %>%

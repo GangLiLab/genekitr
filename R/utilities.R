@@ -115,9 +115,10 @@ mapEnsOrg <- function(organism) {
 }
 
 #---  decide gene id type ---#
-gentype <- function(id, data, org) {
+gentype <- function(id, data = NULL, org) {
   org <- mapEnsOrg(org)
-  # data <- ensAnno(org)
+  if(is.null(data)) data <- ensAnno(org)
+
   if('symbol' %in% colnames(data)){
     data_symbol <- data$symbol %>% stringi::stri_remove_empty_na()
     n_sym = sum(id %in% data_symbol)
@@ -219,6 +220,7 @@ ensAnno <- function(org, version = 106) {
   # data_dir = rappdirs::user_data_dir(appname = 'genekitr')
   data_dir = tools::R_user_dir('genekitr',which = 'data')
   data_dir = paste0(data_dir,'/v',version)
+  destfile = paste0(data_dir, "/", org, "_anno.fst")
 
   if(!dir.exists(data_dir)){
     tryCatch(
@@ -234,12 +236,14 @@ ensAnno <- function(org, version = 106) {
     )
   }
 
-  if (!file.exists(paste0(data_dir, "/", org, "_anno.fst"))) {
+  if (!file.exists(destfile)) {
+    message('We need to download some data, please wait (for once)...')
     url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.fst")
-    web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
+    # web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
+    utils::download.file(url, destfile, quiet = TRUE)
   }
 
-  dat = fst::read.fst(paste0(data_dir, "/", org, "_anno.fst"))
+  dat = fst::read.fst(destfile)
   invisible(dat)
 
 #   load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
@@ -251,13 +255,15 @@ getOrder <- function(org,keytype,version = 106){
   org <- mapEnsOrg(tolower(org))
   data_dir = tools::R_user_dir('genekitr',which = 'data')
   data_dir = paste0(data_dir,'/v',version)
+  destfile = paste0(data_dir, "/", org,'_',keytype,'_order.fst')
 
-  if (!file.exists(paste0(data_dir,'/',org,'_',keytype,'_order.fst'))) {
+  if (!file.exists(destfile)) {
     url = paste0("http://112.74.191.19/genekitr/v",version,'/', org,'_',keytype,'_order.fst')
-    web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
+    # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
+    utils::download.file(url, destfile, quiet = TRUE)
   }
 
-  dat = fst::read.fst(paste0(data_dir, "/", org,'_',keytype,'_order.fst'))
+  dat = fst::read.fst(destfile)
   invisible(dat)
   # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
@@ -270,14 +276,16 @@ web_download <- function(url, destfile, try_time = 2L, ...) {
       if (abs(try_time - 3L) > 1) {
         message(abs(try_time - 3L),' attempt ...')
       }
-      utils::download.file(url, destfile, ...)
+
+      utils::download.file(url, destfile, quiet = TRUE,...)
+
     },
     error = function(e) {
       if (try_time == 0) {
         message("Failed after 2 attempts, please check internet connection!")
         invisible(NULL)
       } else {
-        web_download(url, destfile, try_time = try_time - 1L, ...)
+        web_download(url, destfile, try_time = try_time - 1L, quiet = TRUE,...)
       }
     }
   )

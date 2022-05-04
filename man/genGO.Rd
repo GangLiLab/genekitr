@@ -20,7 +20,7 @@ genGO(
 )
 }
 \arguments{
-\item{id}{A vector of gene id which can be entrez, ensembl or symbol.}
+\item{id}{A vector of gene id which can be entrezid, ensembl or symbol.}
 
 \item{group_list}{A list of gene id groups, default is NULL.}
 
