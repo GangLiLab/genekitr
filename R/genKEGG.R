@@ -107,6 +107,7 @@ genKEGG <- function(id,
       new_geneID <- stringr::str_split(keg$geneID, "\\/") %>%
         lapply(., function(x) {
           id_all %>% dplyr::filter(input_id %in% x) %>%
+            dplyr::arrange(match(input_id, x)) %>%
             dplyr::pull(symbol)
         }) %>%
         sapply(., paste0, collapse = "/")
@@ -147,6 +148,7 @@ genKEGG <- function(id,
       new_geneID <- stringr::str_split(lkeg@compareClusterResult$geneID, "\\/") %>%
         lapply(., function(x) {
           id_all %>% dplyr::filter(input_id %in% x) %>%
+            dplyr::arrange(match(input_id, x)) %>%
             dplyr::pull(symbol)
         }) %>%
         sapply(., paste0, collapse = "/")

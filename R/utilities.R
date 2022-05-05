@@ -237,13 +237,13 @@ ensAnno <- function(org, version = 106) {
   }
 
   if (!file.exists(destfile)) {
-    message('We need to download some data, please wait (for once)...')
+    message('We need to download some data, please wait (just once)...')
     url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.fst")
     # web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
     utils::download.file(url, destfile, quiet = TRUE)
   }
 
-  dat = fst::read.fst(destfile)
+  dat = suppressMessages(fst::read.fst(destfile))
   invisible(dat)
 
 #   load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
@@ -263,7 +263,7 @@ getOrder <- function(org,keytype,version = 106){
     utils::download.file(url, destfile, quiet = TRUE)
   }
 
-  dat = fst::read.fst(destfile)
+  dat = suppressMessages(fst::read.fst(destfile))
   invisible(dat)
   # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)

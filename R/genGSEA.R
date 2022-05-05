@@ -84,6 +84,7 @@ genGSEA <- function(genelist,
     new_geneID <- stringr::str_split(egmt$geneID, "\\/") %>%
       lapply(., function(x) {
         id_all %>% dplyr::filter(input_id %in% x) %>%
+          dplyr::arrange(match(input_id, x)) %>%
           dplyr::pull(symbol)
       }) %>%
       sapply(., paste0, collapse = "/")

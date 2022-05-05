@@ -35,7 +35,10 @@ transId <- function(id, transTo, org = 'hs' , keepNA = FALSE) {
 
   #--- args ---#
   org <- mapEnsOrg(organism = tolower(org))
-  id <- stringr::str_split(id,'\\.',simplify = T)[,1]
+  # if id has ensembl version, remove them
+  if(any(grepl('ENS[A-Z][0-9]{4,}',id))){
+    id <- stringr::str_split(id,'\\.',simplify = T)[,1]
+  }
 
   transTo <- sapply(tolower(transTo), function(x){
     if( grepl(x,"entrezid") ) x = "entrezid"
@@ -57,6 +60,8 @@ transId <- function(id, transTo, org = 'hs' , keepNA = FALSE) {
     res <- res %>%
       filter_at(vars(!input_id), any_vars(!is.na(.)))
   }
+  # convert factor to character
+  res[] <- lapply(res, as.character)
 
   ## calculate percent
   n_new = sapply(transTo, function(x){

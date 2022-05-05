@@ -100,6 +100,7 @@ genGO <- function(id,
       new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
         lapply(., function(x) {
           id_all %>% dplyr::filter(input_id %in% x) %>%
+            dplyr::arrange(match(input_id, x)) %>%
             dplyr::pull(symbol)
         }) %>%
         sapply(., paste0, collapse = "/")
@@ -138,6 +139,7 @@ genGO <- function(id,
       new_geneID <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>%
         lapply(., function(x) {
           id_all %>% dplyr::filter(input_id %in% x) %>%
+            dplyr::arrange(match(input_id, x)) %>%
             dplyr::pull(symbol)
         }) %>%
         sapply(., paste0, collapse = "/")
