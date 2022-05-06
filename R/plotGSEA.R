@@ -1,11 +1,12 @@
 #' GSEA plot
 #'
 #' @param gsea_list GSEA result from `genGSEA` function
-#' @param plot_type GSEA plot type, one of 'volcano', 'classic' or 'fgsea'.
+#' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea' or 'ridge'.
 #' @param show_pathway Which pathways included, user could specify number (default is 3) or
 #'   character name.
-#' @param show_genes Character to specify gene names included in plot when `plot_type` is "pathway".
-#' @param colors Character to specify colors when `plot_type` is "pathway".
+#' @param show_genes Character to specify gene names included in plot when `plot_type` is "classic".
+#' @param colors Character to specify colors when `plot_type` is "classic".
+#' @param legend_type Legend type from "p.adjust", "pvalue" or "qvalue" when `plot_type` is "ridge".
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline element_blank
@@ -23,27 +24,33 @@
 #' gse <- genGSEA(genelist = geneList, org = "human",
 #'                category = "H",use_symbol = TRUE, pvalueCutoff = 1)
 #' # volcano plot
-#' plotGSEA(gse, plot_type = c('volcano'), show_pathway = 3)
+#' plotGSEA(gse, plot_type = 'volcano', show_pathway = 3)
 #'
 #' # classic pathway plot
-#' plotGSEA(gse, plot_type = c('classic'), show_pathway = 1:2)
+#' plotGSEA(gse, plot_type = 'classic', show_pathway = 1:2)
 #'
 #' # fgsea for multiple pathway
-#' plotGSEA(gse, plot_type = c('fgsea'), show_pathway = 10)
+#' plotGSEA(gse, plot_type = 'fgsea', show_pathway = 10)
+#'
+#' # ridgeplot
+#' plotGSEA(gse, plot_type = 'ridge',
+#'   show_pathway = 10, legend_type = 'p.adjust')
 #'
 #' }
 #'
 
 plotGSEA <- function(gsea_list,
-                     plot_type = c('volcano','classic','fgsea'),
+                     plot_type = c('volcano','classic','fgsea','ridge'),
                      show_pathway = 3,
                      show_genes = NULL,
                      colors = NULL,
+                     legend_type = c("p.adjust", "pvalue", "qvalue"),
                      ...){
 
   #--- args ---#
   stopifnot(is.list(gsea_list))
   plot_type <- match.arg(plot_type)
+  legend_type <- match.arg(legend_type)
 
   if(plot_type == 'volcano'){
     gsea_df <- gsea_list$gsea_df
@@ -195,7 +202,50 @@ plotGSEA <- function(gsea_list,
 
   }
 
-  return(p)
+  if(plot_type == 'ridge'){
+    gsea_df <- gsea_list$gsea_df
+    if(is.numeric(show_pathway)){
+      if(nrow(gsea_df) < 2*show_pathway){
+        warning('GSEA result is too few... Please set show_pathway lower!')
+        show_pathway <- 1
+      }
+      show_pathway = gsea_df$Description[1:show_pathway]
+    }
+    new_gsea_df <- gsea_df %>%
+      dplyr::filter(Description%in%show_pathway) %>%
+      dplyr::select(Description,all_of(legend_type),geneID) %>%
+      tidyr::separate_rows(geneID,sep='\\/')
+
+    # if gsea has no entrezid, transID first
+    if(!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))){
+      id_map = suppressMessages(transId(new_gsea_df$geneID,'entrezid',gsea_list$org))
+      new_gsea_df = merge(new_gsea_df,id_map,by.x = 'geneID',by.y = 'input_id',
+                 all.x = T, all.y=F)
+    }else{
+      new_gsea_df = new_gsea_df %>% dplyr::rename(entrezid = geneID)
+    }
+
+    logfc = data.frame(entrezid = names(gsea_list$genelist),
+                       logfc = gsea_list$genelist)
+    plot_df = merge(new_gsea_df,logfc, by = 'entrezid') %>%
+      dplyr::select(-entrezid)
+
+    term_order = plot_df %>%
+      dplyr::group_by(Description) %>%
+      dplyr::summarise(logfc2 = sum(logfc)) %>%
+      dplyr::arrange(desc(logfc2))
+    plot_df$Description = factor(plot_df$Description,levels = rev(term_order$Description))
+
+    p = ggplot(plot_df, aes_string(x="logfc", y="Description", fill=legend_type)) +
+      ggridges::geom_density_ridges()  +
+      scale_fill_continuous(low="red", high="blue", name = legend_type,
+                            guide=guide_colorbar(reverse=TRUE))+
+      ylab(NULL) + xlab('logFC')+
+      plot_theme(remove_grid = T,...)
+
+  }
+
+  suppressMessages(print(p))
 
 }
 
@@ -239,7 +289,7 @@ calcScore <- function(geneset,genelist,item, exponent, fortify = TRUE, org) {
 }
 
 
-utils::globalVariables(c("NES","qvalue","group","Description","geom_line","x","y"))
+utils::globalVariables(c("NES","qvalue","group","Description","geom_line","x","y","desc", "geneID" ,"geom_tile" ,"logfc2"))
 
 
 

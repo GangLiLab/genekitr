@@ -1,7 +1,7 @@
-#' Dotplot for GO and KEGG enrichment analysis
+#' Plot for GO and KEGG enrichment analysis
 #'
 #' @param enrich_df `data.frame` of enrichment analysis result.
-#' @param plot_type One of "bar" and "dot"
+#' @param plot_type Choose from "bar", "dot", "heat", "chord"
 #' @param xlab_type X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
 #' @param legend_type Stats legend type, one of "pvalue", "p.adjust", "qvalue".
 #' @param low_color Legend color for low pvalue or qvalue, default is "red".
@@ -10,6 +10,7 @@
 #' @param xlim_left X-axis left limit, default is 0.
 #' @param xlim_right X-axis right limit, default is NA.
 #' @param wrap_length Numeric, wrap text if longer than this length, default is NULL.
+#' @param show_genes Select genes in heat plot. Default is "all".
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom dplyr pull %>% arrange mutate slice_head
@@ -18,6 +19,8 @@
 #'   facet_grid
 #' @importFrom stringr str_to_title
 #' @importFrom rlang .data
+#' @importFrom stats setNames
+#'
 #'
 #' @return A ggplot object
 #' @export
@@ -33,10 +36,15 @@
 #' plotEnrich(ego,plot_type = "dot")
 #'
 #' plotEnrich(ego,plot_type = "bar")
+#'
+#' plotEnrich(ego,plot_type = "heat",
+#'   show_genes = c('LRRTM2','LRRN1','SLC14A1','AQP3','GRIN2A'))
+#'
+#' plotEnrich(ego,plot_type = "chord", show_genes = "all")
 #' }
 #'
 plotEnrich <- function(enrich_df,
-                       plot_type = c('bar','dot'),
+                       plot_type = c('bar','dot','heat','chord'),
                        xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
                        legend_type = c("p.adjust", "pvalue", "qvalue"),
                        low_color = "red",
@@ -45,6 +53,7 @@ plotEnrich <- function(enrich_df,
                        xlim_left = 0,
                        xlim_right = NA,
                        wrap_length = NULL,
+                       show_genes = 'all',
                        ...) {
   #--- args ---#
   stopifnot(is.numeric(show_item))
@@ -107,6 +116,7 @@ plotEnrich <- function(enrich_df,
   }
 
   #--- plot ---#
+  ## dot plot
   if(plot_type == 'dot'){
     if(!compare_group){
       p <- ggplot(enrich_df, aes_string(x = xlab_type, y = "Description")) +
@@ -147,6 +157,7 @@ plotEnrich <- function(enrich_df,
 
   }
 
+  ## bar plot
   if(plot_type == 'bar'){
     p <- ggplot(data=enrich_df, aes_string(x = xlab_type, y = 'Description', fill = legend_type)) +
       geom_bar(stat="identity")+
@@ -164,17 +175,81 @@ plotEnrich <- function(enrich_df,
 
   }
 
+  ## heat plot
+  if(plot_type == 'heat'){
+    if(all(show_genes == 'all')){
+      plot_df = enrich_df %>% dplyr::select(Description,geneID) %>%
+        tidyr::separate_rows(geneID,sep = '\\/')
+    }else{
+      plot_df = enrich_df %>% dplyr::select(Description,geneID) %>%
+        tidyr::separate_rows(geneID,sep = '\\/') %>%
+        dplyr::filter(geneID %in% show_genes)
+    }
+
+    p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
+      geom_tile(color = 'white')+
+      xlab(NULL) + ylab(NULL) +
+      plot_theme(theme_type = 'bw',
+                 border_thick = 0,...)+
+      theme(panel.grid.major = element_blank(),
+            axis.text.x=element_text(angle = 50, hjust = 1))
+  }
+
+  ## chord plot
+  if(plot_type == 'chord'){
+    if(all(show_genes == 'all')){
+      plot_df = enrich_df %>% dplyr::select(Description,geneID) %>%
+        tidyr::separate_rows(geneID,sep = '\\/')
+    }else{
+      plot_df = enrich_df %>% dplyr::select(Description,geneID) %>%
+        tidyr::separate_rows(geneID,sep = '\\/') %>%
+        dplyr::filter(geneID %in% show_genes)
+    }
+
+    term = unique(plot_df$Description)
+    id = unique(plot_df$geneID)
+    dat = sapply(id, function(x){
+      check = plot_df %>% dplyr::filter(geneID %in% x) %>%
+        dplyr::pull(Description) %>%
+        unique()
+      ifelse(term%in%check,1,0)
+    }) %>% t() %>%
+      as.data.frame() %>%
+      stats::setNames(term)
+
+    my_cols= c("#B2DF8A","#FB9A99","#E31A1C","#B15928","#6A3D9A","#CAB2D6",
+               "#A6CEE3","#1F78B4","#FDBF6F","#999999","#FF7F00")
+    backup_cols = c("#223D6C","#D20A13","#FFD121","#088247","#11AA4D","#58CDD9",
+                    "#7A142C","#5D90BA","#029149","#431A3D","#91612D","#6E568C",
+                    "#E0367A","#D8D155","#64495D","#7CC767")
+    if(length(my_cols) < length(term)){
+      my_cols = c(my_cols,backup_cols)
+    }
+    cols = sample(my_cols,length(term),replace = F)
+
+    p = suppressWarnings(
+      GOplot::GOChord(dat,
+              space = 0.02,
+              gene.order = 'none',
+              gene.size = 3,
+              border.size = 0.1,
+              process.label = 8,
+              ribbon.col = cols)
+    )
+  }
+
 
   # wrap long text
   if (!is.null(wrap_length) & is.numeric(wrap_length)) {
     p <- p + scale_y_discrete(labels = text_wraper(wrap_length))
   }
 
-  return(p)
+  suppressWarnings(print(p))
+
 }
 
 
-#--- wrap text if too long ---#
+#--- sub-function: wrap text if too long ---#
 text_wraper <- function(width) {
   function(x) {
     lapply(strwrap(x, width = width, simplify = FALSE), paste, collapse = "\n")

@@ -9,7 +9,7 @@ genPubmed(id, keywords, field = "ALL")
 \arguments{
 \item{id}{Gene "symbol".}
 
-\item{keywords}{species "mm" or "hs".}
+\item{keywords}{search keywords}
 
 \item{field}{pubmed field from `showNCBI('pubmed')`, default is "ALL".}
 }

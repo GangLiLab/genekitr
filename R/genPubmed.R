@@ -1,7 +1,7 @@
 #' Gene related pubmed paper records
 #'
 #' @param id Gene "symbol".
-#' @param keywords species "mm" or "hs".
+#' @param keywords search keywords
 #' @param field pubmed field from `showNCBI('pubmed')`, default is "ALL".
 #' @importFrom tidyr unite
 #' @importFrom dplyr select mutate relocate everything %>%

@@ -15,31 +15,34 @@ Description: An analysis toolkit based on the gene. It mainly includes five
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 3.5)
+Depends: R (>= 4.0)
 Imports: 
     clusterProfiler,
     dplyr,
     fst,
     ggplot2,
+    magrittr,
     stringr,
     stringi,
     tidyr,
     tibble,
     VennDiagram,
-    rlang,
-    magrittr
+    rlang
 Suggests:
     BiocManager,
     cowplot,
     DOSE,
     data.table,
     easyPubMed,
+    europepmc,
     fgsea,
     futile.logger,
     ggplotify,
     ggsci,
     ggupset,
     ggrepel,
+    ggridges,
+    GOplot,
     msigdbr,
     openxlsx,
     RColorBrewer,

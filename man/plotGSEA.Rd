@@ -6,24 +6,27 @@
 \usage{
 plotGSEA(
   gsea_list,
-  plot_type = c("volcano", "classic", "fgsea"),
+  plot_type = c("volcano", "classic", "fgsea", "ridge"),
   show_pathway = 3,
   show_genes = NULL,
   colors = NULL,
+  legend_type = c("p.adjust", "pvalue", "qvalue"),
   ...
 )
 }
 \arguments{
 \item{gsea_list}{GSEA result from `genGSEA` function}
 
-\item{plot_type}{GSEA plot type, one of 'volcano', 'classic' or 'fgsea'.}
+\item{plot_type}{GSEA plot type, one of 'volcano', 'classic', 'fgsea' or 'ridge'.}
 
 \item{show_pathway}{Which pathways included, user could specify number (default is 3) or
 character name.}
 
-\item{show_genes}{Character to specify gene names included in plot when `plot_type` is "pathway".}
+\item{show_genes}{Character to specify gene names included in plot when `plot_type` is "classic".}
 
-\item{colors}{Character to specify colors when `plot_type` is "pathway".}
+\item{colors}{Character to specify colors when `plot_type` is "classic".}
+
+\item{legend_type}{Legend type from "p.adjust", "pvalue" or "qvalue" when `plot_type` is "ridge".}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }
@@ -41,13 +44,17 @@ data(geneList, package = "genekitr")
 gse <- genGSEA(genelist = geneList, org = "human",
                category = "H",use_symbol = TRUE, pvalueCutoff = 1)
 # volcano plot
-plotGSEA(gse, plot_type = c('volcano'), show_pathway = 3)
+plotGSEA(gse, plot_type = 'volcano', show_pathway = 3)
 
 # classic pathway plot
-plotGSEA(gse, plot_type = c('classic'), show_pathway = 1:2)
+plotGSEA(gse, plot_type = 'classic', show_pathway = 1:2)
 
 # fgsea for multiple pathway
-plotGSEA(gse, plot_type = c('fgsea'), show_pathway = 10)
+plotGSEA(gse, plot_type = 'fgsea', show_pathway = 10)
+
+# ridgeplot
+plotGSEA(gse, plot_type = 'ridge',
+  show_pathway = 10, legend_type = 'p.adjust')
 
 }
 

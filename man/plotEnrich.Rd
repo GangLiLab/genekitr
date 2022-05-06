@@ -2,11 +2,11 @@
 % Please edit documentation in R/plotEnrich.R
 \name{plotEnrich}
 \alias{plotEnrich}
-\title{Dotplot for GO and KEGG enrichment analysis}
+\title{Plot for GO and KEGG enrichment analysis}
 \usage{
 plotEnrich(
   enrich_df,
-  plot_type = c("bar", "dot"),
+  plot_type = c("bar", "dot", "heat", "chord"),
   xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
   legend_type = c("p.adjust", "pvalue", "qvalue"),
   low_color = "red",
@@ -15,13 +15,14 @@ plotEnrich(
   xlim_left = 0,
   xlim_right = NA,
   wrap_length = NULL,
+  show_genes = "all",
   ...
 )
 }
 \arguments{
 \item{enrich_df}{`data.frame` of enrichment analysis result.}
 
-\item{plot_type}{One of "bar" and "dot"}
+\item{plot_type}{Choose from "bar", "dot", "heat", "chord"}
 
 \item{xlab_type}{X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
 
@@ -39,13 +40,15 @@ plotEnrich(
 
 \item{wrap_length}{Numeric, wrap text if longer than this length, default is NULL.}
 
+\item{show_genes}{Select genes in heat plot. Default is "all".}
+
 \item{...}{other arguments transfer to `plot_theme` function}
 }
 \value{
 A ggplot object
 }
 \description{
-Dotplot for GO and KEGG enrichment analysis
+Plot for GO and KEGG enrichment analysis
 }
 \examples{
 \dontrun{
@@ -59,6 +62,11 @@ ego <- genGO(id,
 plotEnrich(ego,plot_type = "dot")
 
 plotEnrich(ego,plot_type = "bar")
+
+plotEnrich(ego,plot_type = "heat",
+  show_genes = c('LRRTM2','LRRN1','SLC14A1','AQP3','GRIN2A'))
+
+plotEnrich(ego,plot_type = "chord", show_genes = "all")
 }
 
 }
