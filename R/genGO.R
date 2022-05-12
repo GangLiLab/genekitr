@@ -3,17 +3,15 @@
 #' @param id A vector of gene id which can be entrezid, ensembl or symbol.
 #' @param group_list A list of gene id groups, default is NULL.
 #' @param org  Organism name from `biocOrg_name`.
-#' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all
-#'   three.
-#' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
+#' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all three.
 #' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
-#'   "BY", "fdr", "none".
+#' "BY", "fdr", "none".
 #' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
 #' @param qvalueCutoff Adjusted pvalue cutoff, default is 0.1.
 #' @param minGSSize Minimal size of each gene set for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each gene set for analyzing, default is 500.
 #' @param universe Background genes. If missing, then all gene list in
-#'   orgdb will be used as background.
+#' orgdb will be used as background.
 #' @param ... other argument to `enrichGO` function
 #' @importFrom dplyr select filter pull mutate %>%
 #' @importFrom stringr str_split
@@ -31,10 +29,9 @@
 #' # only gene ids
 #' id <- names(geneList)[1:100]
 #' ego <- genGO(id,
-#'   org = "human", ont = "cc", pvalueCutoff = 0.01,
-#'   qvalueCutoff = 0.1, use_symbol = FALSE
+#'   org = "human", ont = "bp", pvalueCutoff = 0.05,
+#'   qvalueCutoff = 0.05
 #' )
-#' head(ego)
 #'
 #' # gene id with groups
 #' id <- c(head(names(geneList),50),tail(names(geneList),50))
@@ -43,7 +40,7 @@
 #'
 #' gego <- genGO(id, group_list = group,
 #'   org = "human", ont = "bp", pvalueCutoff = 0.1,
-#'   qvalueCutoff = 1, use_symbol = FALSE
+#'   qvalueCutoff = 1
 #' )
 #'
 #' }
@@ -51,7 +48,6 @@ genGO <- function(id,
                   group_list = NULL,
                   org,
                   ont,
-                  use_symbol = TRUE,
                   pAdjustMethod = "BH",
                   pvalueCutoff = 0.05,
                   qvalueCutoff = 0.1,
@@ -71,9 +67,13 @@ genGO <- function(id,
   org <- mapEnsOrg(org)
   pkg <- paste0("org.", bioc_org, ".eg.db")
   keyType <- gentype(id = id, org=org)
+  # if(keyType != 'ENTREZID'){
+  #   id <- suppressMessages(transId(id,'entrez',org) %>%
+  #                            dplyr::pull(entrezid))
+  # }
 
   #--- codes ---#
-  ## gene id without group info
+  ## NO GROUP INFO
   if(is.null(group_list)){
     ego <- suppressMessages(
       clusterProfiler::enrichGO(
@@ -92,32 +92,26 @@ genGO <- function(id,
       stop("No GO terms enriched ...")
     }
 
-    if (use_symbol) {
-      # transform id to symbol
-      ego_id = stringr::str_split(ego$geneID, "\\/") %>% unlist()
-      id_all = suppressMessages(transId(ego_id,'symbol',org = org))
+    # transform id to symbol
+    ego_id = stringr::str_split(ego$geneID, "\\/") %>% unlist()
+    id_all = suppressMessages(transId(ego_id,'symbol',org = org,unique = T))
 
-      new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
-        lapply(., function(x) {
-          id_all %>% dplyr::filter(input_id %in% x) %>%
-            dplyr::arrange(match(input_id, x)) %>%
-            dplyr::pull(symbol)
-        }) %>%
-        sapply(., paste0, collapse = "/")
+    new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
+      lapply(., function(x) {
+        id_all %>% dplyr::filter(input_id %in% x) %>%
+          dplyr::arrange(match(input_id, x)) %>%
+          dplyr::pull(symbol)
+      }) %>%
+      sapply(., paste0, collapse = "/")
 
-      new_ego <- ego %>%
-        as.data.frame() %>%
-        dplyr::mutate(geneID = new_geneID) %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    } else {
-      new_ego <- ego %>%
-        as.data.frame() %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    }
+    new_ego <- ego %>%
+      as.data.frame() %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol,.after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
   }else{
-    ## gene id with group info
+    ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
     lego <- clusterProfiler::compareCluster(eval(parse(text =paste0('id~',paste(colnames(df)[-ncol(df)],collapse = '+')))),
                                             data=df,
@@ -131,32 +125,32 @@ genGO <- function(id,
       stop("No GO terms enriched ...")
     }
 
-    if (use_symbol) {
-      # transform id to symbol
-      ego_id = stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>% unlist()
-      id_all = suppressMessages(transId(id,'symbol',org = org))
+    # transform id to symbol
+    ego_id = stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>% unlist()
+    id_all = suppressMessages(transId(id,'symbol',org = org,unique = T))
 
-      new_geneID <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>%
-        lapply(., function(x) {
-          id_all %>% dplyr::filter(input_id %in% x) %>%
-            dplyr::arrange(match(input_id, x)) %>%
-            dplyr::pull(symbol)
-        }) %>%
-        sapply(., paste0, collapse = "/")
+    new_geneID <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>%
+      lapply(., function(x) {
+        id_all %>% dplyr::filter(input_id %in% x) %>%
+          dplyr::arrange(match(input_id, x)) %>%
+          dplyr::pull(symbol)
+      }) %>%
+      sapply(., paste0, collapse = "/")
 
-      new_ego <- lego %>%
-        as.data.frame() %>%
-        dplyr::mutate(geneID = new_geneID) %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    }else{
-      new_ego <- lego %>%
-        as.data.frame() %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    }
+    new_ego <- lego %>%
+      as.data.frame() %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol,.after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
   }
 
+  ## add rich factor
+  # The enrichment factor (Rich factor) is that the number of DEGs in the pathway term
+  # divided by the number of all annotated genes in the pathway term.
+  new_ego <- new_ego %>%
+    dplyr::mutate(RichFactor = Count/as.numeric(sub("/\\d+","", BgRatio))) %>%
+    dplyr::rename(!! paste(bioc_org,toupper(ont),'ID',sep = '_') := ID)
 
   return(new_ego)
 }

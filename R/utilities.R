@@ -214,8 +214,8 @@ ensOrg_name_data <- function(){
 }
 
 #--- ensembl anno data ---#
-ensAnno <- function(org, version = 106) {
-  # if(is.null(version)) version = 106
+ensAnno <- function(org, version) {
+  if(missing(version)) version = 106
   org <- mapEnsOrg(tolower(org))
   # data_dir = rappdirs::user_data_dir(appname = 'genekitr')
   data_dir = tools::R_user_dir('genekitr',which = 'data')
@@ -251,7 +251,9 @@ ensAnno <- function(org, version = 106) {
 }
 
 #--- keytype order data ---#
-getOrder <- function(org,keytype,version = 106){
+getOrder <- function(org,keytype,version){
+  if(missing(version)) version = 106
+
   org <- mapEnsOrg(tolower(org))
   data_dir = tools::R_user_dir('genekitr',which = 'data')
   data_dir = paste0(data_dir,'/v',version)
@@ -295,4 +297,7 @@ web_download <- function(url, destfile, try_time = 2L, ...) {
 utils::globalVariables(c(
   ".", "data_dir","biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
   "count","theme_classic","input_id","ensOrg_name","latin_short_name","ES","pathway",
-  "plotGseaTable","pval","scale_fill_continuous","scale_x_discrete", "ONTOLOGY","facet_grid"))
+  "plotGseaTable","pval","scale_fill_continuous","scale_x_discrete", "ONTOLOGY","facet_grid",
+  "BgRatio", "E", "ID", "V", "delete.edges", "enrichGenes", "geneID.y",
+  "geneID_symbol", "geom_edge_link", "geom_node_text", "ggraph", "graph.data.frame",
+  "guide_legend", "guides", "logfc", "melt", "new_ego", "scale_size_continuous","E<-", "V<-", "method"))

@@ -9,7 +9,6 @@ genGO(
   group_list = NULL,
   org,
   ont,
-  use_symbol = TRUE,
   pAdjustMethod = "BH",
   pvalueCutoff = 0.05,
   qvalueCutoff = 0.1,
@@ -26,10 +25,7 @@ genGO(
 
 \item{org}{Organism name from `biocOrg_name`.}
 
-\item{ont}{One of "bp", "mf", and "cc" subontologies, or "all" for all
-three.}
-
-\item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
+\item{ont}{One of "bp", "mf", and "cc" subontologies, or "all" for all three.}
 
 \item{pAdjustMethod}{One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 "BY", "fdr", "none".}
@@ -60,10 +56,9 @@ data(geneList, package = "genekitr")
 # only gene ids
 id <- names(geneList)[1:100]
 ego <- genGO(id,
-  org = "human", ont = "cc", pvalueCutoff = 0.01,
-  qvalueCutoff = 0.1, use_symbol = FALSE
+  org = "human", ont = "bp", pvalueCutoff = 0.05,
+  qvalueCutoff = 0.05
 )
-head(ego)
 
 # gene id with groups
 id <- c(head(names(geneList),50),tail(names(geneList),50))
@@ -72,7 +67,7 @@ group <- list(group1  = c(rep('up',50),rep('down',50)),
 
 gego <- genGO(id, group_list = group,
   org = "human", ont = "bp", pvalueCutoff = 0.1,
-  qvalueCutoff = 1, use_symbol = FALSE
+  qvalueCutoff = 1
 )
 
 }

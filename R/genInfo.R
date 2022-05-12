@@ -2,6 +2,7 @@
 #'
 #' @param id Gene id (symbol, ensembl or entrez id) or uniprot id. If this argument is NULL, return all gene info.
 #' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
+#' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @importFrom stringr str_detect
 #' @importFrom dplyr %>% filter relocate select mutate mutate_all na_if
 #' @importFrom tidyr unnest
@@ -22,7 +23,8 @@
 #'
 #' }
 genInfo <- function(id = NULL,
-                    org = 'hs') {
+                    org = 'hs',
+                    unique = FALSE) {
   #--- args ---#
   org <- mapEnsOrg(org)
 
@@ -34,20 +36,20 @@ genInfo <- function(id = NULL,
     keytype <- gentype(id = id,data = all, org = org) %>% tolower()
 
     ## get ensembl/entrez/uniprot/symbol order
-    order_dat = getOrder(org, keytype) %>%
-      filter(eval(parse(text = keytype))%in%id) %>%
-      mutate(!! keytype :=  factor(.[[keytype]], levels = unique(id))) %>%
-      arrange(.[[keytype]])
+    order_dat = getOrder(org, all_of(keytype)) %>%
+      dplyr::filter(eval(parse(text = keytype))%in%id) %>%
+      dplyr::mutate(!! keytype :=  factor(.[[keytype]], levels = unique(id))) %>%
+      dplyr::arrange(.[[keytype]])
 
     ## extract info from all data frame
     gene_info  =all[order_dat$rnum,] %>%
-      mutate(input_id=order_dat[[keytype]]) %>%
-      relocate('input_id',.before = everything()) %>%
+      dplyr::mutate(input_id=order_dat[[keytype]]) %>%
+      dplyr::relocate('input_id',.before = everything()) %>%
       merge(.,as.data.frame(id),
             by.x = 'input_id', by.y = 'id',
             all.y = T) %>%
-      filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
-      arrange(input_id)
+      dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
+      dplyr::arrange(input_id)
 
     ## check one-to-many match
     tomany_id <- names(table(gene_info$input_id))[table(gene_info$input_id) > 1]
@@ -63,37 +65,40 @@ genInfo <- function(id = NULL,
     }
   }
 
-  #   # if only keep one, choose the one with minimum NA
-  #   if (!keepAll & length(tomany_id) != 0) {
-  #     sub <- gene_info %>% dplyr::filter(input_id %in% tomany_id)
-  #     other <- gene_info %>% dplyr::filter(!input_id %in% tomany_id)
-  #
-  #     uniq_order <- sapply(tomany_id, function(x) {
-  #       check <- which(sub$input_id == x)
-  #       n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
-  #       if (min(n_na) == max(n_na) & keytype != "entrezid") {
-  #         check[order(as.numeric(sub$entrezid[check])) == 1]
-  #       } else if (min(n_na) == max(n_na) & keytype == "entrezid") {
-  #         check[order(as.numeric(sub$input_id[check])) == 1]
-  #       } else if (min(n_na) != max(n_na)) {
-  #         check[which.min(n_na)]
-  #       }
-  #     })
-  #     gene_info <- rbind(other, sub[uniq_order, ])
-  #     gene_info <- gene_info[match(id, gene_info$input_id), ]
-  #   } else {
-  #     id <- factor(id, ordered = T, levels = unique(id))
-  #     gene_info$input_id <- factor(gene_info$input_id, ordered = T, levels = unique(id))
-  #     gene_info <- gene_info[order(gene_info$input_id), ]
-  #   }
-
-  # reorder column
   if(!is.null(id)){
-    if(keytype %in% c('ensembl','entrezid','uniprot')){
-      gene_info <- gene_info %>% dplyr::select(!keytype)
-    }else{
-      gene_info <- gene_info %>% dplyr::relocate(symbol,.after = input_id)
+    # if only keep one, choose the one with minimum NA
+    if (unique & length(tomany_id) != 0) {
+      sub <- gene_info %>% dplyr::filter(input_id %in% tomany_id)
+      other <- gene_info %>% dplyr::filter(!input_id %in% tomany_id)
+
+      uniq_order <- sapply(tomany_id, function(x) {
+        check <- which(sub$input_id == x)
+        n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
+        if (min(n_na) == max(n_na) & keytype != "entrezid") {
+          check[order(as.numeric(sub$entrezid[check])) == 1]
+        } else if (min(n_na) == max(n_na) & keytype == "entrezid") {
+          check[order(as.numeric(sub$input_id[check])) == 1]
+        } else if (min(n_na) != max(n_na)) {
+          check[which.min(n_na)]
+        }
+      })
+      gene_info <- rbind(other, sub[uniq_order, ])
+      gene_info <- gene_info[match(id, gene_info$input_id), ]
+    } else {
+      id <- factor(id, ordered = T, levels = unique(id))
+      gene_info$input_id <- factor(gene_info$input_id, ordered = T, levels = unique(id))
+      gene_info <- gene_info[order(gene_info$input_id), ]
     }
+
+    # reorder column
+    if(!is.null(id)){
+      if(keytype %in% c('ensembl','entrezid','uniprot')){
+        gene_info <- gene_info %>% dplyr::select(!all_of(keytype))
+      }else{
+        gene_info <- gene_info %>% dplyr::relocate(symbol,.after = input_id)
+      }
+    }
+
   }
 
 

@@ -8,7 +8,6 @@ genKEGG(
   id,
   group_list = NULL,
   org,
-  use_symbol = TRUE,
   pAdjustMethod = "BH",
   pvalueCutoff = 0.05,
   qvalueCutoff = 0.1,
@@ -24,8 +23,6 @@ genKEGG(
 \item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{org}{KEGG organism name from `keggOrg_name`.}
-
-\item{use_symbol}{Logical to set result gene id as gene symbol, default is TRUE.}
 
 \item{pAdjustMethod}{One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 "BY", "fdr", "none".}
@@ -64,8 +61,7 @@ group <- list(group1  = c(rep('up',50),rep('down',50)),
               group2 = c(rep('A',40),rep('B',60)))
 gkeg <- genKEGG(id, group_list = group,
               org = "human", pvalueCutoff = 0.1,
-              qvalueCutoff = 0.1, use_symbol = FALSE
-)
+              qvalueCutoff = 0.1)
 
 }
 

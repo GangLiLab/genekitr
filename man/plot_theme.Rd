@@ -25,7 +25,8 @@ plot_theme(
 
 \item{font_type}{Character, specify the plot text font family, default is "sans".}
 
-\item{border_thick}{Numeric, border thickness, default is 1.}
+\item{border_thick}{Numeric, border thickness, default is 1.
+If set 0, remove both border and ticks.}
 
 \item{remove_grid}{Logical, remove background grid lines, default is FALSE.}
 

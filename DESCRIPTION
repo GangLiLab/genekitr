@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.7.0
+Version: 0.7.2
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
@@ -35,6 +35,7 @@ Suggests:
     data.table,
     easyPubMed,
     europepmc,
+    forcats,
     fgsea,
     futile.logger,
     ggplotify,
@@ -42,12 +43,16 @@ Suggests:
     ggupset,
     ggrepel,
     ggridges,
+    ggnewscale,
     GOplot,
+    GOSemSim,
     msigdbr,
     openxlsx,
     RColorBrewer,
     rappdirs,
     rentrez,
+    reshape2,
+    rrvgo,
     scales,
     stats,
     utils,

@@ -2,9 +2,9 @@
 #'
 #' @param gsea_list GSEA result from `genGSEA` function
 #' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea' or 'ridge'.
-#' @param show_pathway Which pathways included, user could specify number (default is 3) or
-#'   character name.
-#' @param show_genes Character to specify gene names included in plot when `plot_type` is "classic".
+#' @param show_pathway Select plotting pathways by specifying number or
+#'   pathway name.
+#' @param show_gene Character to specify gene names included in plot when `plot_type` is "classic".
 #' @param colors Character to specify colors when `plot_type` is "classic".
 #' @param legend_type Legend type from "p.adjust", "pvalue" or "qvalue" when `plot_type` is "ridge".
 #' @param ... other arguments transfer to `plot_theme` function
@@ -19,20 +19,25 @@
 #' @examples
 #' \dontrun{
 #' library(ggplot2)
-#' # get GSEA result
+#' ## get GSEA result
 #' data(geneList, package = "genekitr")
 #' gse <- genGSEA(genelist = geneList, org = "human",
 #'                category = "H",use_symbol = TRUE, pvalueCutoff = 1)
-#' # volcano plot
+#' ## volcano plot
+#' # get top3 of up and down pathways
 #' plotGSEA(gse, plot_type = 'volcano', show_pathway = 3)
+#' # choose pathway by character
+#' plotGSEA(gse, plot_type = 'volcano',
+#'   show_pathway = c("HALLMARK_ADIPOGENESIS","HALLMARK_XENOBIOTIC_METABOLISM",
+#'   "HALLMARK_INTERFERON_ALPHA_RESPONSE"))
 #'
-#' # classic pathway plot
+#' ## classic pathway plot
 #' plotGSEA(gse, plot_type = 'classic', show_pathway = 1:2)
 #'
-#' # fgsea for multiple pathway
-#' plotGSEA(gse, plot_type = 'fgsea', show_pathway = 10)
+#' ## fgsea for multiple pathway
+#' plotGSEA(gse, plot_type = 'fgsea', show_pathway = 3)
 #'
-#' # ridgeplot
+#' ## ridgeplot
 #' plotGSEA(gse, plot_type = 'ridge',
 #'   show_pathway = 10, legend_type = 'p.adjust')
 #'
@@ -42,7 +47,7 @@
 plotGSEA <- function(gsea_list,
                      plot_type = c('volcano','classic','fgsea','ridge'),
                      show_pathway = 3,
-                     show_genes = NULL,
+                     show_gene = NULL,
                      colors = NULL,
                      legend_type = c("p.adjust", "pvalue", "qvalue"),
                      ...){
@@ -56,9 +61,8 @@ plotGSEA <- function(gsea_list,
     gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES,decreasing = TRUE),]
     if(is.numeric(show_pathway)){
-      if(nrow(gsea_df) < 2*show_pathway){
-        warning('GSEA result is too few... Please set show_pathway lower!')
-        show_pathway <- 1
+      if(length(show_pathway) > 1){
+        gsea_df = gsea_df[show_pathway,]
       }
       gsea_df$group <- c(rep('high',show_pathway),rep('ignore',nrow(gsea_df)-2*show_pathway),rep('low',show_pathway))
     }else{
@@ -88,6 +92,7 @@ plotGSEA <- function(gsea_list,
 
     if(is.numeric(show_pathway)){
       show_pathway = gsea_df$Description[show_pathway]
+
     }else if(any(!show_pathway %in% gsea_df$Description)){
       stop(paste0(show_pathway[!show_pathway%in%gsea_df$Description],' not in GSEA result!'))
     }
@@ -138,8 +143,8 @@ plotGSEA <- function(gsea_list,
 
     df$y <- df$genelist
 
-    if(!is.null(show_genes)){
-      select_genes <- data.frame(gene =  show_genes)
+    if(!is.null(show_gene)){
+      select_genes <- data.frame(gene =  show_gene)
       select_genes <- merge(select_genes, df, by = "gene")
       select_genes <- select_genes[select_genes$position == 1,]
     }else{
@@ -205,11 +210,12 @@ plotGSEA <- function(gsea_list,
   if(plot_type == 'ridge'){
     gsea_df <- gsea_list$gsea_df
     if(is.numeric(show_pathway)){
-      if(nrow(gsea_df) < 2*show_pathway){
-        warning('GSEA result is too few... Please set show_pathway lower!')
-        show_pathway <- 1
+      if(length(show_pathway) > 1){
+        show_pathway = gsea_df$Description[show_pathway,]
+      }else{
+        show_pathway = gsea_df$Description[1:show_pathway]
       }
-      show_pathway = gsea_df$Description[1:show_pathway]
+
     }
     new_gsea_df <- gsea_df %>%
       dplyr::filter(Description%in%show_pathway) %>%
@@ -252,6 +258,7 @@ plotGSEA <- function(gsea_list,
 
 
 calcScore <- function(geneset,genelist,item, exponent, fortify = TRUE, org) {
+  genelist <- genelist[!duplicated(names(genelist))]
   geneset <- geneset %>% dplyr::filter(gs_name %in% item) %>% dplyr::pull('entrez_gene') %>% as.character()
   geneset <- intersect(geneset, names(genelist))
   L <- length(genelist)
@@ -274,7 +281,8 @@ calcScore <- function(geneset,genelist,item, exponent, fortify = TRUE, org) {
   df <- data.frame(x = seq_along(score), runningScore = score,
                    position = as.integer(hits))
 
-  df$gene = suppressMessages(transId(names(genelist),'symbol',org))
+  df$gene = suppressMessages(transId(names(genelist),'symbol',org,keepNA = T) %>%
+                               dplyr::pull(symbol))
 
   df$ymin <- 0
   df$ymax <- 0

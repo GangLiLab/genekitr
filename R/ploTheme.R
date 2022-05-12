@@ -7,6 +7,7 @@
 #' @param legend_text_size Numeric, legend text size
 #' @param font_type Character, specify the plot text font family, default is "sans".
 #' @param border_thick Numeric, border thickness, default is 1.
+#' If set 0, remove both border and ticks.
 #' @param remove_grid Logical, remove background grid lines, default is FALSE.
 #' @param remove_border Logical, remove border line, default is FALSE.
 #' @param remove_text Logical, remove all text, default is FALSE.

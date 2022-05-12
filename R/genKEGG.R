@@ -3,7 +3,6 @@
 #' @param id A vector of entrez gene.
 #' @param group_list A list of gene id groups, default is NULL.
 #' @param org  KEGG organism name from `keggOrg_name`.
-#' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
 #' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 #'   "BY", "fdr", "none".
 #' @param pvalueCutoff Numberic of adjusted pvalue cutoff, default is 0.05.
@@ -38,15 +37,13 @@
 #'               group2 = c(rep('A',40),rep('B',60)))
 #' gkeg <- genKEGG(id, group_list = group,
 #'               org = "human", pvalueCutoff = 0.1,
-#'               qvalueCutoff = 0.1, use_symbol = FALSE
-#' )
+#'               qvalueCutoff = 0.1)
 #'
 #' }
 #'
 genKEGG <- function(id,
                     group_list = NULL,
                     org,
-                    use_symbol = TRUE,
                     pAdjustMethod = "BH",
                     pvalueCutoff = 0.05,
                     qvalueCutoff = 0.1,
@@ -76,11 +73,10 @@ genKEGG <- function(id,
     }
   }else{
     trans_id <- id
-    use_symbol <- FALSE
   }
 
   #--- codes ---#
-  ## gene id without group info
+  ## NO GROUP INFO
   if(is.null(group_list)){
     keg <- suppressMessages(
       clusterProfiler::enrichKEGG(
@@ -99,32 +95,27 @@ genKEGG <- function(id,
       stop("No KEGG terms enriched ...")
     }
 
-    if (use_symbol) {
-      # transform entrez id to symbol
-      keg_id = stringr::str_split(keg$geneID, "\\/") %>% unlist()
-      id_all = suppressMessages(transId(keg_id,'symbol',org = org))
+    # transform entrez id to symbol
+    keg_id = stringr::str_split(keg$geneID, "\\/") %>% unlist()
+    id_all = suppressMessages(transId(keg_id,'symbol',org = org,unique = T))
 
-      new_geneID <- stringr::str_split(keg$geneID, "\\/") %>%
-        lapply(., function(x) {
-          id_all %>% dplyr::filter(input_id %in% x) %>%
-            dplyr::arrange(match(input_id, x)) %>%
-            dplyr::pull(symbol)
-        }) %>%
-        sapply(., paste0, collapse = "/")
+    new_geneID <- stringr::str_split(keg$geneID, "\\/") %>%
+      lapply(., function(x) {
+        id_all %>% dplyr::filter(input_id %in% x) %>%
+          dplyr::arrange(match(input_id, x)) %>%
+          dplyr::pull(symbol)
+      }) %>%
+      sapply(., paste0, collapse = "/")
 
-      new_keg <- keg %>%
-        as.data.frame() %>%
-        dplyr::mutate(geneID = new_geneID) %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    } else {
-      new_keg <- keg %>%
-        as.data.frame() %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    }
+    new_keg <- keg %>%
+      as.data.frame() %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol,.after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
+
   }else{
-    ## gene id with group info
+    ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
     lkeg <- clusterProfiler::compareCluster(eval(parse(text =paste0('id~',paste(colnames(df)[-ncol(df)],collapse = '+')))),
                                             data=df,
@@ -140,32 +131,30 @@ genKEGG <- function(id,
     if (nrow(as.data.frame(lkeg)) == 0) {
       stop("No KEGG terms enriched ...")
     }
-    if (use_symbol) {
-      # transform entrez id to symbol
-      keg_id = stringr::str_split(lkeg@compareClusterResult$geneID, "\\/") %>% unlist()
-      id_all = suppressMessages(transId(keg_id,'symbol',org = org))
+    # transform entrez id to symbol
+    keg_id = stringr::str_split(lkeg@compareClusterResult$geneID, "\\/") %>% unlist()
+    id_all = suppressMessages(transId(keg_id,'symbol',org = org,unique = T))
 
-      new_geneID <- stringr::str_split(lkeg@compareClusterResult$geneID, "\\/") %>%
-        lapply(., function(x) {
-          id_all %>% dplyr::filter(input_id %in% x) %>%
-            dplyr::arrange(match(input_id, x)) %>%
-            dplyr::pull(symbol)
-        }) %>%
-        sapply(., paste0, collapse = "/")
+    new_geneID <- stringr::str_split(lkeg@compareClusterResult$geneID, "\\/") %>%
+      lapply(., function(x) {
+        id_all %>% dplyr::filter(input_id %in% x) %>%
+          dplyr::arrange(match(input_id, x)) %>%
+          dplyr::pull(symbol)
+      }) %>%
+      sapply(., paste0, collapse = "/")
 
-      new_keg <- lkeg %>%
-        as.data.frame() %>%
-        dplyr::mutate(geneID = new_geneID) %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    } else {
-      new_keg <- lkeg %>%
-        as.data.frame() %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    }
+    new_keg <- lkeg %>%
+      as.data.frame() %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol,.after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
 
   }
+
+  # add rich factor
+  new_keg <- new_ego %>%
+    dplyr::mutate(RichFactor = Count/as.numeric(sub("/\\d+","", BgRatio)))
 
   return(new_keg)
 }

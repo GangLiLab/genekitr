@@ -3,6 +3,7 @@
 #' @param transTo Transform to what type. User could select one or more from
 #' "symbol", "entrez", "ensembl" or "uniprot."
 #' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
+#' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @param keepNA If some id has no match, keep it or not. Default is FALSE.
 #' @importFrom dplyr %>% filter pull select distinct arrange all_of filter_at vars any_vars
 #' @importFrom tibble add_row
@@ -31,7 +32,11 @@
 #' transId('ENSG00000141510.11','symbol')
 #' }
 #'
-transId <- function(id, transTo, org = 'hs' , keepNA = FALSE) {
+transId <- function(id,
+                    transTo,
+                    org = 'hs' ,
+                    unique = FALSE,
+                    keepNA = FALSE) {
 
   #--- args ---#
   org <- mapEnsOrg(organism = tolower(org))
@@ -53,7 +58,7 @@ transId <- function(id, transTo, org = 'hs' , keepNA = FALSE) {
   }
 
   #--- codes ---#
-  res <- genInfo(id, org) %>%
+  res <- genInfo(id, org, unique) %>%
     dplyr::select(input_id, all_of(transTo)) %>%
     distinct()
   if (!keepNA) {
@@ -72,7 +77,7 @@ transId <- function(id, transTo, org = 'hs' , keepNA = FALSE) {
       nrow()
   })
 
-  percent <- paste(round(100 * n_new / length(id), 2), "%", sep = "")
+  percent <- paste(round(100 * n_new / length(unique(id)), 2), "%", sep = "")
   sapply(seq_along(transTo), function(x){
     # x = 1
     message(percent[x], " genes are mapped to ",  transTo[x])

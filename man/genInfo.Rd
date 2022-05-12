@@ -4,12 +4,14 @@
 \alias{genInfo}
 \title{Get gene related information}
 \usage{
-genInfo(id = NULL, org = "hs")
+genInfo(id = NULL, org = "hs", unique = FALSE)
 }
 \arguments{
 \item{id}{Gene id (symbol, ensembl or entrez id) or uniprot id. If this argument is NULL, return all gene info.}
 
 \item{org}{Latin organism shortname from `ensOrg_name_data`. Default is human.}
+
+\item{unique}{Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.}
 }
 \value{
 A `data.frame`.

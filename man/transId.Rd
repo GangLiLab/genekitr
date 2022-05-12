@@ -4,7 +4,7 @@
 \alias{transId}
 \title{Transform gene id among symbol, entrezid,  ensembl and uniprot.}
 \usage{
-transId(id, transTo, org = "hs", keepNA = FALSE)
+transId(id, transTo, org = "hs", unique = FALSE, keepNA = FALSE)
 }
 \arguments{
 \item{id}{Gene ids.}
@@ -13,6 +13,8 @@ transId(id, transTo, org = "hs", keepNA = FALSE)
 "symbol", "entrez", "ensembl" or "uniprot."}
 
 \item{org}{Latin organism shortname from `ensOrg_name_data`. Default is human.}
+
+\item{unique}{Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.}
 
 \item{keepNA}{If some id has no match, keep it or not. Default is FALSE.}
 }

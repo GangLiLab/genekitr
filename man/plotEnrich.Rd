@@ -6,33 +6,47 @@
 \usage{
 plotEnrich(
   enrich_df,
-  plot_type = c("bar", "dot", "heat", "chord"),
-  xlab_type = c("FoldEnrich", "GeneRatio", "Count"),
+  logfc_df = NULL,
+  plot_type = c("bar", "dot", "lollipop", "geneHeat", "geneChord", "map", "goHeat",
+    "tangram", "wordcloud"),
+  xlab_type = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
   legend_type = c("p.adjust", "pvalue", "qvalue"),
-  low_color = "red",
-  high_color = "blue",
-  show_item = 10,
+  sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
+  top_color = "red",
+  bottom_color = "blue",
+  show_gene = "all",
   xlim_left = 0,
   xlim_right = NA,
   wrap_length = NULL,
-  show_genes = "all",
+  scale_ratio = 1,
+  layout,
+  org = NULL,
+  ont = NULL,
   ...
 )
 }
 \arguments{
-\item{enrich_df}{`data.frame` of enrichment analysis result.}
+\item{enrich_df}{Enrichment analysis `data.frame` result.}
 
-\item{plot_type}{Choose from "bar", "dot", "heat", "chord"}
+\item{logfc_df}{A two-column data frame, first column is enrichment analysis input id
+and the second is matching logFC value. Default is NULL. Used in "heat" and "chord" plot.}
+
+\item{plot_type}{Choose from "bar", "dot", "lollipop","geneHeat", "geneChord",
+"map","goHeat","tangram","wordcloud".}
 
 \item{xlab_type}{X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
 
 \item{legend_type}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
 
-\item{low_color}{Legend color for low pvalue or qvalue, default is "red".}
+\item{sim_method}{Method of calculating the similarity between nodes, one of one of "Resnik",
+"Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
+Used in "map","goHeat","tangram","wordcloud".}
 
-\item{high_color}{Legend color for high pvalue or qvalue, default is "blue".}
+\item{top_color}{Legend top color as low pvalue or high logFC, default is "red".}
 
-\item{show_item}{Numeric, select top N rows to show, default is 10.}
+\item{bottom_color}{Legend bottom color as high pvalue or low logFC, default is "blue".}
+
+\item{show_gene}{Select genes to show. Default is "all". Used in "heat" and "chord" plot.}
 
 \item{xlim_left}{X-axis left limit, default is 0.}
 
@@ -40,7 +54,14 @@ plotEnrich(
 
 \item{wrap_length}{Numeric, wrap text if longer than this length, default is NULL.}
 
-\item{show_genes}{Select genes in heat plot. Default is "all".}
+\item{scale_ratio}{Numeric, scale of nodes and line thickness. Default is 1. Used in "map" plot.}
+
+\item{layout}{Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
+"lgl", "kk", "mds", "nicely" (default),"randomly", "star".}
+
+\item{org}{Organism name from `biocOrg_name`.}
+
+\item{ont}{One of "BP", "MF", and "CC".}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }
@@ -55,18 +76,33 @@ Plot for GO and KEGG enrichment analysis
 library(ggplot2)
 data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
+logfc <- data.frame(gene = id, logfc = geneList[id])
 ego <- genGO(id,
   org = "human", ont = "bp", pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05, use_symbol = TRUE
-)
+  qvalueCutoff = 0.05)
 plotEnrich(ego,plot_type = "dot")
 
 plotEnrich(ego,plot_type = "bar")
 
-plotEnrich(ego,plot_type = "heat",
-  show_genes = c('LRRTM2','LRRN1','SLC14A1','AQP3','GRIN2A'))
+plotEnrich(ego,plot_type = "lollipop",
+bottom_color = "#325CAC", top_color = "#E69056", wrap_length = 25)
 
-plotEnrich(ego,plot_type = "chord", show_genes = "all")
+plotEnrich(ego,plot_type = "geneHeat")
+plotEnrich(ego,plot_type = "geneHeat",
+  show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6'))
+plotEnrich(ego,logfc_df = logfc, plot_type = "geneHeat",
+  wrap_length = 25)
+
+plotEnrich(ego,logfc_df = logfc, plot_type = "geneChord")
+
+plotEnrich(ego,plot_type = "map", layout = "circle",
+  scale_ratio = 1, legend_text_size = 8)
+
+plotEnrich(ego,plot_type = "goHeat",sim_method = 'Rel')
+
+plotEnrich(ego,plot_type = "tangram",sim_method = 'Rel')
+
+plotEnrich(ego,plot_type = "wordcloud",sim_method = 'Rel')
 }
 
 }

@@ -8,7 +8,7 @@ plotGSEA(
   gsea_list,
   plot_type = c("volcano", "classic", "fgsea", "ridge"),
   show_pathway = 3,
-  show_genes = NULL,
+  show_gene = NULL,
   colors = NULL,
   legend_type = c("p.adjust", "pvalue", "qvalue"),
   ...
@@ -19,10 +19,10 @@ plotGSEA(
 
 \item{plot_type}{GSEA plot type, one of 'volcano', 'classic', 'fgsea' or 'ridge'.}
 
-\item{show_pathway}{Which pathways included, user could specify number (default is 3) or
-character name.}
+\item{show_pathway}{Select plotting pathways by specifying number or
+pathway name.}
 
-\item{show_genes}{Character to specify gene names included in plot when `plot_type` is "classic".}
+\item{show_gene}{Character to specify gene names included in plot when `plot_type` is "classic".}
 
 \item{colors}{Character to specify colors when `plot_type` is "classic".}
 
@@ -39,20 +39,25 @@ GSEA plot
 \examples{
 \dontrun{
 library(ggplot2)
-# get GSEA result
+## get GSEA result
 data(geneList, package = "genekitr")
 gse <- genGSEA(genelist = geneList, org = "human",
                category = "H",use_symbol = TRUE, pvalueCutoff = 1)
-# volcano plot
+## volcano plot
+# get top3 of up and down pathways
 plotGSEA(gse, plot_type = 'volcano', show_pathway = 3)
+# choose pathway by character
+plotGSEA(gse, plot_type = 'volcano',
+  show_pathway = c("HALLMARK_ADIPOGENESIS","HALLMARK_XENOBIOTIC_METABOLISM",
+  "HALLMARK_INTERFERON_ALPHA_RESPONSE"))
 
-# classic pathway plot
+## classic pathway plot
 plotGSEA(gse, plot_type = 'classic', show_pathway = 1:2)
 
-# fgsea for multiple pathway
-plotGSEA(gse, plot_type = 'fgsea', show_pathway = 10)
+## fgsea for multiple pathway
+plotGSEA(gse, plot_type = 'fgsea', show_pathway = 3)
 
-# ridgeplot
+## ridgeplot
 plotGSEA(gse, plot_type = 'ridge',
   show_pathway = 10, legend_type = 'p.adjust')
 
