@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.7.2
+Version: 0.7.5
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
@@ -21,7 +21,10 @@ Imports:
     dplyr,
     fst,
     ggplot2,
+    ggraph,
+    igraph,
     magrittr,
+    utils,
     stringr,
     stringi,
     tidyr,
@@ -29,6 +32,7 @@ Imports:
     VennDiagram,
     rlang
 Suggests:
+    AnnotationDbi,
     BiocManager,
     cowplot,
     DOSE,
@@ -55,7 +59,6 @@ Suggests:
     rrvgo,
     scales,
     stats,
-    utils,
     testthat (>= 3.0.0),
     knitr,
     rmarkdown

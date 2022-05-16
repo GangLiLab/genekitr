@@ -7,10 +7,10 @@
 plotEnrich(
   enrich_df,
   logfc_df = NULL,
-  plot_type = c("bar", "dot", "lollipop", "geneHeat", "geneChord", "map", "goHeat",
-    "tangram", "wordcloud"),
-  xlab_type = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
-  legend_type = c("p.adjust", "pvalue", "qvalue"),
+  plot_type = c("bar", "wego", "dot", "bubble", "lollipop", "geneheat", "genechord",
+    "network", "gomap", "goheat", "gotangram", "wordcloud", "upset"),
+  term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
+  stats_metric = c("p.adjust", "pvalue", "qvalue"),
   sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
   top_color = "red",
   bottom_color = "blue",
@@ -19,9 +19,9 @@ plotEnrich(
   xlim_right = NA,
   wrap_length = NULL,
   scale_ratio = 1,
-  layout,
   org = NULL,
   ont = NULL,
+  layout,
   ...
 )
 }
@@ -31,16 +31,16 @@ plotEnrich(
 \item{logfc_df}{A two-column data frame, first column is enrichment analysis input id
 and the second is matching logFC value. Default is NULL. Used in "heat" and "chord" plot.}
 
-\item{plot_type}{Choose from "bar", "dot", "lollipop","geneHeat", "geneChord",
-"map","goHeat","tangram","wordcloud".}
+\item{plot_type}{Choose from "bar", "wego","bubble","dot", "lollipop","geneheat", "genechord",
+"network","gomap","goheat","gotangram","wordcloud","upset".}
 
-\item{xlab_type}{X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.}
+\item{term_metric}{Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and 'RichFactor'.}
 
-\item{legend_type}{Stats legend type, one of "pvalue", "p.adjust", "qvalue".}
+\item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
 \item{sim_method}{Method of calculating the similarity between nodes, one of one of "Resnik",
 "Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
-Used in "map","goHeat","tangram","wordcloud".}
+Used in "map","goheat","gotangram","wordcloud".}
 
 \item{top_color}{Legend top color as low pvalue or high logFC, default is "red".}
 
@@ -52,18 +52,18 @@ Used in "map","goHeat","tangram","wordcloud".}
 
 \item{xlim_right}{X-axis right limit, default is NA.}
 
-\item{wrap_length}{Numeric, wrap text if longer than this length, default is NULL.}
+\item{wrap_length}{Numeric, wrap text if longer than this length. Default is NULL.}
 
-\item{scale_ratio}{Numeric, scale of nodes and line thickness. Default is 1. Used in "map" plot.}
-
-\item{layout}{Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
-"lgl", "kk", "mds", "nicely" (default),"randomly", "star".}
+\item{scale_ratio}{Numeric, scale of node and line size. Default is 1. Used in "network" and "gomap".}
 
 \item{org}{Organism name from `biocOrg_name`.}
 
 \item{ont}{One of "BP", "MF", and "CC".}
 
-\item{...}{other arguments transfer to `plot_theme` function}
+\item{layout}{Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
+"lgl", "kk", "mds", "nicely" (default),"randomly", "star".}
+
+\item{...}{other arguments from `plot_theme` function}
 }
 \value{
 A ggplot object
@@ -73,6 +73,7 @@ Plot for GO and KEGG enrichment analysis
 }
 \examples{
 \dontrun{
+## example data
 library(ggplot2)
 data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
@@ -80,29 +81,41 @@ logfc <- data.frame(gene = id, logfc = geneList[id])
 ego <- genGO(id,
   org = "human", ont = "bp", pvalueCutoff = 0.05,
   qvalueCutoff = 0.05)
+all_ego <- genGO(id,
+  org = "human", ont = "all", pvalueCutoff = 0.05,
+  qvalueCutoff = 0.05)
+
+## example plots
 plotEnrich(ego,plot_type = "dot")
 
+plotEnrich(ego,plot_type = "bubble")
+
 plotEnrich(ego,plot_type = "bar")
+
+plotEnrich(all_ego,plot_type = 'wego')
 
 plotEnrich(ego,plot_type = "lollipop",
 bottom_color = "#325CAC", top_color = "#E69056", wrap_length = 25)
 
-plotEnrich(ego,plot_type = "geneHeat")
-plotEnrich(ego,plot_type = "geneHeat",
-  show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6'))
-plotEnrich(ego,logfc_df = logfc, plot_type = "geneHeat",
-  wrap_length = 25)
+plotEnrich(ego,plot_type = "geneheat")
 
-plotEnrich(ego,logfc_df = logfc, plot_type = "geneChord")
+show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6')
+plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
+plotEnrich(ego,logfc_df = logfc, plot_type = "geneheat",show_gene = show_gene)
 
-plotEnrich(ego,plot_type = "map", layout = "circle",
-  scale_ratio = 1, legend_text_size = 8)
+plotEnrich(ego,logfc_df = logfc,plot_type = "genechord",show_gene = show_gene)
 
-plotEnrich(ego,plot_type = "goHeat",sim_method = 'Rel')
+plotEnrich(ego,plot_type = "network", scale_ratio = 1.5)
 
-plotEnrich(ego,plot_type = "tangram",sim_method = 'Rel')
+plotEnrich(ego,plot_type = "gomap", wrap_length = 25)
+
+plotEnrich(ego,plot_type = "goheat",sim_method = 'Rel')
+
+plotEnrich(ego,plot_type = "gotangram",sim_method = 'Rel')
 
 plotEnrich(ego,plot_type = "wordcloud",sim_method = 'Rel')
+
+plotEnrich(ego,plot_type = "upset")
 }
 
 }

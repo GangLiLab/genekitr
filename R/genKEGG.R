@@ -153,7 +153,7 @@ genKEGG <- function(id,
   }
 
   # add rich factor
-  new_keg <- new_ego %>%
+  new_keg <- new_keg %>%
     dplyr::mutate(RichFactor = Count/as.numeric(sub("/\\d+","", BgRatio)))
 
   return(new_keg)

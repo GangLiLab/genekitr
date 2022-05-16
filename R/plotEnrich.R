@@ -3,38 +3,43 @@
 #' @param enrich_df Enrichment analysis `data.frame` result.
 #' @param logfc_df A two-column data frame, first column is enrichment analysis input id
 #' and the second is matching logFC value. Default is NULL. Used in "heat" and "chord" plot.
-#' @param plot_type Choose from "bar", "dot", "lollipop","geneHeat", "geneChord",
-#' "map","goHeat","tangram","wordcloud".
-#' @param xlab_type X-axis label type, one of 'GeneRatio','Count','FoldEnrich'.
-#' @param legend_type Stats legend type, one of "pvalue", "p.adjust", "qvalue".
+#' @param plot_type Choose from "bar", "wego","bubble","dot", "lollipop","geneheat", "genechord",
+#' "network","gomap","goheat","gotangram","wordcloud","upset".
+#' @param term_metric Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and 'RichFactor'.
+#' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
 #' "Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
-#' Used in "map","goHeat","tangram","wordcloud".
+#' Used in "map","goheat","gotangram","wordcloud".
 #' @param top_color Legend top color as low pvalue or high logFC, default is "red".
 #' @param bottom_color Legend bottom color as high pvalue or low logFC, default is "blue".
 #' @param show_gene Select genes to show. Default is "all". Used in "heat" and "chord" plot.
 #' @param xlim_left X-axis left limit, default is 0.
 #' @param xlim_right X-axis right limit, default is NA.
-#' @param wrap_length Numeric, wrap text if longer than this length, default is NULL.
-#' @param scale_ratio Numeric, scale of nodes and line thickness. Default is 1. Used in "map" plot.
-#' @param layout Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
-#' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
+#' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
+#' @param scale_ratio Numeric, scale of node and line size. Default is 1. Used in "network" and "gomap".
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "BP", "MF", and "CC".
-#' @param ... other arguments transfer to `plot_theme` function
+#' @param layout Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
+#' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
+#' @param ... other arguments from `plot_theme` function
 #'
 #' @importFrom dplyr pull %>% arrange mutate slice_head
 #' @importFrom ggplot2 ggplot aes_string geom_point scale_color_continuous scale_fill_continuous
-#'   guide_colorbar scale_y_discrete element_blank xlab labs xlim scale_x_discrete theme
-#'   facet_grid
+#' guide_colorbar scale_y_discrete element_blank xlab labs xlim scale_x_discrete theme aes_
+#' facet_grid
 #' @importFrom stringr str_to_sentence
 #' @importFrom rlang .data
 #' @importFrom stats setNames
+#' @importFrom utils tail
+#' @importFrom ggraph ggraph geom_node_text geom_edge_link circle geom_node_point
+#' geom_node_label
+#' @importFrom igraph graph.data.frame delete.edges E V
 #'
 #' @return A ggplot object
 #' @export
 #' @examples
 #' \dontrun{
+#' ## example data
 #' library(ggplot2)
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[1:100]
@@ -42,37 +47,49 @@
 #' ego <- genGO(id,
 #'   org = "human", ont = "bp", pvalueCutoff = 0.05,
 #'   qvalueCutoff = 0.05)
+#' all_ego <- genGO(id,
+#'   org = "human", ont = "all", pvalueCutoff = 0.05,
+#'   qvalueCutoff = 0.05)
+#'
+#' ## example plots
 #' plotEnrich(ego,plot_type = "dot")
 #'
+#' plotEnrich(ego,plot_type = "bubble")
+#'
 #' plotEnrich(ego,plot_type = "bar")
+#'
+#' plotEnrich(all_ego,plot_type = 'wego')
 #'
 #' plotEnrich(ego,plot_type = "lollipop",
 #' bottom_color = "#325CAC", top_color = "#E69056", wrap_length = 25)
 #'
-#' plotEnrich(ego,plot_type = "geneHeat")
-#' plotEnrich(ego,plot_type = "geneHeat",
-#'   show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6'))
-#' plotEnrich(ego,logfc_df = logfc, plot_type = "geneHeat",
-#'   wrap_length = 25)
+#' plotEnrich(ego,plot_type = "geneheat")
 #'
-#' plotEnrich(ego,logfc_df = logfc, plot_type = "geneChord")
+#' show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6')
+#' plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
+#' plotEnrich(ego,logfc_df = logfc, plot_type = "geneheat",show_gene = show_gene)
 #'
-#' plotEnrich(ego,plot_type = "map", layout = "circle",
-#'   scale_ratio = 1, legend_text_size = 8)
+#' plotEnrich(ego,logfc_df = logfc,plot_type = "genechord",show_gene = show_gene)
 #'
-#' plotEnrich(ego,plot_type = "goHeat",sim_method = 'Rel')
+#' plotEnrich(ego,plot_type = "network", scale_ratio = 1.5)
 #'
-#' plotEnrich(ego,plot_type = "tangram",sim_method = 'Rel')
+#' plotEnrich(ego,plot_type = "gomap", wrap_length = 25)
+#'
+#' plotEnrich(ego,plot_type = "goheat",sim_method = 'Rel')
+#'
+#' plotEnrich(ego,plot_type = "gotangram",sim_method = 'Rel')
 #'
 #' plotEnrich(ego,plot_type = "wordcloud",sim_method = 'Rel')
+#'
+#' plotEnrich(ego,plot_type = "upset")
 #' }
 #'
 plotEnrich <- function(enrich_df,
                        logfc_df = NULL,
-                       plot_type = c('bar','dot','lollipop','geneHeat','geneChord','map',
-                                     'goHeat','tangram','wordcloud'),
-                       xlab_type = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
-                       legend_type = c("p.adjust", "pvalue", "qvalue"),
+                       plot_type = c('bar','wego','dot','bubble','lollipop','geneheat','genechord',
+                                     'network','gomap','goheat','gotangram','wordcloud','upset'),
+                       term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
+                       stats_metric = c("p.adjust", "pvalue", "qvalue"),
                        sim_method =  c("JC","Resnik", "Lin", "Rel", "Jiang" , "Wang"),
                        top_color = "red",
                        bottom_color = "blue",
@@ -81,14 +98,15 @@ plotEnrich <- function(enrich_df,
                        xlim_right = NA,
                        wrap_length = NULL,
                        scale_ratio = 1,
-                       layout,
                        org = NULL,
                        ont = NULL,
+                       layout,
                        ...) {
   #--- args ---#
+  lst = list(...) # store outside arguments in list
   plot_type <- match.arg(plot_type)
-  xlab_type <- match.arg(xlab_type)
-  legend_type <- match.arg(legend_type)
+  term_metric <- match.arg(term_metric)
+  stats_metric <- match.arg(stats_metric)
   sim_method <- match.arg(sim_method)
   if(missing(layout)) layout = 'nicely'
 
@@ -96,20 +114,23 @@ plotEnrich <- function(enrich_df,
   all_go <- any(grepl('ONTOLOGY',colnames(enrich_df),ignore.case = T))
 
   if(compare_group) plot_type = 'dot'
-  if(all_go) plot_type = 'bar'
+  if(all_go & !plot_type %in% c('bar','wego')) {
+    warning(paste0('If you want to plot all ontologies data, please choose "plot_type" from "bar","wego"',
+                   '\nInstead, bar plot will be plotted...'))
+  }
 
   types <- c("GeneRatio", "Count", "FoldEnrich", "RichFactor")
   legends <- c("p.adjust", "pvalue", "qvalue")
 
-  if (!xlab_type %in% colnames(enrich_df)) {
+  if (!term_metric %in% colnames(enrich_df)) {
     stop(
-      xlab_type, " not included in this dataframe, try: ",
+      term_metric, " not included in this dataframe, try: ",
       paste(intersect(colnames(enrich_df), types), collapse = " | ")
     )
   }
-  if (!legend_type %in% colnames(enrich_df)) {
+  if (!stats_metric %in% colnames(enrich_df)) {
     stop(
-      legend_type, " not included in this dataframe, try: ",
+      stats_metric, " not included in this dataframe, try: ",
       paste(intersect(colnames(enrich_df), legends), collapse = " | ")
     )
   }
@@ -119,24 +140,24 @@ plotEnrich <- function(enrich_df,
   enrich_df$Description <- stringr::str_to_sentence(enrich_df$Description)
 
   ## set labels
-  xlab_title <- ifelse(xlab_type == "FoldEnrich", "Fold Enrichment",
-    ifelse(xlab_type == "GeneRatio", "Gene Ratio",
-           ifelse(xlab_type == "RichFactor", "Rich Factor", "Count"))
+  term_metric_label <- ifelse(term_metric == "FoldEnrich", "Fold Enrichment",
+    ifelse(term_metric == "GeneRatio", "Gene Ratio",
+           ifelse(term_metric == "RichFactor", "Rich Factor", "Count"))
   )
-  legend_title <- ifelse(legend_type == "pvalue", "Pvalue",
-    ifelse(legend_type == "p.adjust", "P.adjust", "FDR")
+  stats_metric_label <- ifelse(stats_metric == "pvalue", "Pvalue",
+    ifelse(stats_metric == "p.adjust", "P.adjust", "FDR")
   )
 
   ## set pathway as factor
   if(!compare_group & !all_go){
     enrich_df <- enrich_df %>%
-      dplyr::arrange(eval(parse(text = xlab_type))) %>%
+      dplyr::arrange(eval(parse(text = term_metric))) %>%
       dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T))
   }else if (!compare_group & all_go){
     enrich_df <- enrich_df %>%
       dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T)) %>%
       dplyr::group_by(ONTOLOGY) %>%
-      dplyr::arrange(eval(parse(text = xlab_type)),.by_group = T)
+      dplyr::arrange(eval(parse(text = term_metric)),.by_group = T)
   }
 
   ## set logfc colnames
@@ -148,35 +169,35 @@ plotEnrich <- function(enrich_df,
   #--- dot plot ---#
   if(plot_type == 'dot'){
     if(!compare_group){
-      p <- ggplot(enrich_df, aes_string(x = xlab_type, y = "Description")) +
+      p <- ggplot(enrich_df, aes_string(x = term_metric, y = "Description")) +
         geom_point(aes_string(
-          color = legend_type,
+          color = stats_metric,
           size = "Count"
         )) +
         scale_color_continuous(
-          low = top_color, high = bottom_color, name = legend_title,
+          low = top_color, high = bottom_color, name = stats_metric_label,
           guide = guide_colorbar(reverse = TRUE),
           labels = function(x) format(x, scientific = T)
         ) +
-        xlab(xlab_title) +
-        labs(color = legend_type)+
+        xlab(term_metric_label) +
+        labs(color = stats_metric)+
         xlim(xlim_left,xlim_right)+
         plot_theme(...)
     }else{
       xtick_lab <- paste0(enrich_df$Cluster,'\n(',enrich_df$Count,')')
       p <- ggplot(enrich_df, aes_string(x = 'Cluster', y = "Description")) +
         geom_point(aes_string(
-          color = legend_type,
-          size = xlab_type
+          color = stats_metric,
+          size = term_metric
         )) +
         scale_color_continuous(
-          low = top_color, high = bottom_color, name = legend_title,
+          low = top_color, high = bottom_color, name = stats_metric_label,
           guide = guide_colorbar(reverse = TRUE),
           labels = function(x) format(x, scientific = T)
         ) +
         scale_x_discrete(labels= xtick_lab)+
         xlab('Group') +
-        labs(color = legend_type)+
+        labs(color = stats_metric)+
         plot_theme(...)+
         theme(axis.text.x = element_text(
           angle = 45,
@@ -186,16 +207,40 @@ plotEnrich <- function(enrich_df,
 
   }
 
+  #--- bubble plot ---#
+  ## each bubble is a pathway term
+  ## x-axis: stats metric e.g. pvalue/qvalue/p.adjust
+  ## y-axis: fold enrichment
+  if(plot_type == 'bubble'){
+    # default main and lengend text size
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
+
+    mapping <- aes(x=-log10(eval(parse(text = stats_metric))),
+                     y = FoldEnrich)
+    p <- ggplot(enrich_df,mapping)+
+      geom_point(aes(size = Count, fill = Description), alpha =2,shape=21)+
+      scale_size(range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
+      scale_fill_discrete(guide = "none")+
+      ggrepel::geom_text_repel(aes(label = Description), size = lst$main_text_size/2.8,
+                               segment.color = 'black')+
+      scale_x_continuous(limits = c(0, ceiling(max(-log10(enrich_df[stats_metric])))+3),
+                         breaks = seq(0, ceiling(max(-log10(enrich_df[stats_metric])))+3, by = 3))+
+      xlab(paste0("-log10(",stats_metric_label,")"))+
+      ylab("Fold Enrichment")+
+      plot_theme(remove_legend = F,...)
+
+  }
+
   #--- bar plot ---#
   if(plot_type == 'bar'){
-    p <- ggplot(data=enrich_df, aes_string(x = xlab_type, y = 'Description', fill = legend_type)) +
+    p <- ggplot(data=enrich_df, aes_string(x = term_metric, y = 'Description', fill = stats_metric)) +
       geom_bar(stat="identity")+
       scale_fill_continuous(
-        low = top_color, high = bottom_color, name = legend_title,
+        low = top_color, high = bottom_color, name = stats_metric_label,
         guide = guide_colorbar(reverse = TRUE),
         labels = function(x) format(x, scientific = T))+
-      xlab(xlab_title)+
-      labs(color = legend_type)+
+      xlab(term_metric_label)+
+      labs(color = stats_metric)+
       xlim(xlim_left,xlim_right)+
       plot_theme(...)
 
@@ -204,26 +249,64 @@ plotEnrich <- function(enrich_df,
 
   }
 
+  #--- wego plot ---#
+  ## WEGO plot show all ontologies
+  if(plot_type == 'wego'){
+    if(!'ONTOLOGY'%in%colnames(enrich_df))
+      stop('WEGO plot only supports data with all three ontologies, please try other types...')
+
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
+
+    wego <- enrich_df %>% dplyr::select(1:3,"Count",'GeneRatio') %>%
+      dplyr::mutate(GeneRatio =  GeneRatio*100) %>%
+      dplyr::group_by(ONTOLOGY) %>%
+      dplyr::top_n(5, GeneRatio) %>%
+      dplyr::ungroup() %>%
+      dplyr::arrange(ONTOLOGY,GeneRatio) %>%
+      dplyr::mutate(Position =  dplyr::n():1) %>%
+      dplyr::mutate(ONTOLOGY =  dplyr::case_when(ONTOLOGY=='BP' ~ 'Biological Process',
+                                  ONTOLOGY=="CC" ~ "Cellular Component",
+                                  ONTOLOGY=="MF" ~ "Molecular Function"))
+
+    normalizer <- max(wego$Count)/max(wego$GeneRatio)
+
+    p <- ggplot(data = wego, aes(x = fct_reorder(Description, sort(Position)),
+                            y = GeneRatio, fill = ONTOLOGY)) +
+      ggsci::scale_fill_nejm()+
+      geom_col(data = wego, aes(x = forcats::fct_reorder(Description, sort(Position)),
+                                y = Count/normalizer)) +
+      scale_y_continuous(sec.axis = sec_axis(trans = ~.*normalizer, name = "Number of genes",
+                                             labels = function(b) { round(b , 0)})) +
+      plot_theme(remove_legend = T,...)+
+      scale_x_discrete(labels = text_wraper(30))+
+      xlab(NULL)+ylab('Gene Ratio(%)')+
+      facet_grid(.~ONTOLOGY,scales="free")+
+      theme(axis.text.x = element_text(angle = 70, hjust = 1),
+            strip.text.x = element_text(size = lst$main_text_size))
+
+  }
+
   #--- lollipop plot ---#
   if(plot_type == 'lollipop'){
     p <- ggplot(data=enrich_df,
-                aes(eval(parse(text = xlab_type)), forcats::fct_reorder(Description,eval(parse(text = xlab_type)))))+
+                aes(eval(parse(text = term_metric)), forcats::fct_reorder(Description,eval(parse(text = term_metric)))))+
       geom_segment(aes_string(xend = 0, yend = "Description",
-                              colour=legend_type))+
-      geom_point(aes_string(color = legend_type, size = "Count"))+
+                              colour=stats_metric))+
+      geom_point(aes_string(color = stats_metric, size = "Count"))+
       scale_color_continuous(
-        low = top_color, high = bottom_color, name = legend_title,
+        low = top_color, high = bottom_color, name = stats_metric_label,
         guide = guide_colorbar(reverse = TRUE),
         labels = function(x) format(x, scientific = T))+
-      scale_size_continuous(range = c(min(enrich_df$Count)-1, max(enrich_df$Count)/2))+
-      xlab(xlab_title) + ylab(NULL)+
-      labs(color = legend_type)+
+      scale_size_continuous(range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
+      xlab(term_metric_label) + ylab(NULL)+
+      labs(color = stats_metric)+
       plot_theme(...)
 
   }
 
-  #--- geneHeat plot ---#
-  if(plot_type == 'geneHeat'){
+  #--- geneheat plot ---#
+  ## heatmap to show interaction between go term and gene id
+  if(plot_type == 'geneheat'){
     id = enrich_df %>% dplyr::pull(geneID) %>%
       stringr::str_split('\\/') %>% unlist()
     id_symbol = enrich_df %>% dplyr::pull(geneID_symbol) %>%
@@ -253,8 +336,7 @@ plotEnrich <- function(enrich_df,
       p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
         geom_tile(color = 'white')+
         xlab(NULL) + ylab(NULL) +
-        plot_theme(theme_type = 'bw',
-                   border_thick = 0,...)+
+        plot_theme(border_thick = 0,...)+
         theme(panel.grid.major = element_blank(),
               axis.text.x=element_text(angle = 50, hjust = 1))
     }else{
@@ -270,8 +352,7 @@ plotEnrich <- function(enrich_df,
       p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
         geom_tile(aes_(fill = ~logfc), color = "white") +
         xlab(NULL) + ylab(NULL) +
-        plot_theme(theme_type = 'bw',
-                   border_thick = 0,...)+
+        plot_theme(border_thick = 0,...)+
         scale_fill_continuous(low=bottom_color, high=top_color,
                               name = "logFC")+
         theme(panel.grid.major = element_blank(),
@@ -280,8 +361,9 @@ plotEnrich <- function(enrich_df,
 
   }
 
-  #--- geneChord plot ---#
-  if(plot_type == 'geneChord'){
+  #--- genechord plot ---#
+  ## chord plot to show interaction between go term and gene id
+  if(plot_type == 'genechord'){
     id = enrich_df %>% dplyr::pull(geneID) %>%
       stringr::str_split('\\/') %>% unlist()
     id_symbol = enrich_df %>% dplyr::pull(geneID_symbol) %>%
@@ -331,13 +413,17 @@ plotEnrich <- function(enrich_df,
       as.data.frame() %>%
       stats::setNames(term)
 
+    # default main and lengend text size
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 3
+    if(!"legend_text_size"%in%names(lst)) lst$legend_text_size = 8
+
     if(is.null(logfc_df)){
       p = suppressWarnings(
         GOplot::GOChord(dat,
                         space = 0.02,
                         gene.order = 'none',
-                        gene.size = 3 ,
-                        process.label = 8,
+                        gene.size = lst$main_text_size ,
+                        process.label = lst$legend_text_size,
                         border.size = 0.1,
                         ribbon.col = cols)
       )
@@ -357,8 +443,8 @@ plotEnrich <- function(enrich_df,
         GOplot::GOChord(dat,
                         space = 0.02,
                         gene.order = 'logFC',
-                        gene.size = 3 ,
-                        process.label = 8,
+                        gene.size = lst$main_text_size ,
+                        process.label = lst$legend_text_size,
                         border.size = 0.1,
                         ribbon.col = cols,
                         lfc.col=c(top_color,'grey50',bottom_color))
@@ -366,10 +452,15 @@ plotEnrich <- function(enrich_df,
     }
   }
 
-  #--- map plot ---#
-  if(plot_type == 'map'){
+  #--- network plot ---#
+  ## plot enriched terms in network with edges connecting overlapping gene sets,
+  ## mutually overlapping gene sets are tend to cluster together
+  if(plot_type == 'network'){
     id <- enrich_df[,1]
     enrichGenes <- strsplit(enrich_df$geneID,'\\/') %>% setNames(id)
+
+    # kegg result just use JC method
+    if(!any(grepl('GO:',id))) sim_method = "JC"
 
     if(sim_method == "JC"){
       m = get_JC_data(enrich_df)
@@ -391,7 +482,12 @@ plotEnrich <- function(enrich_df,
     id_order <- unlist(sapply(V(g)$name, function(x) which(x == enrich_df$Description)))
     id_genes <- sapply(enrichGenes[id_order], length)
     V(g)$size <- id_genes
-    V(g)$color <- enrich_df[id_order, legend_type]
+    V(g)$color <- enrich_df[id_order, stats_metric]
+
+    # default main and lengend text size
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 3
+    if(!"legend_text_size"%in%names(lst)) lst$legend_text_size = 8
+
     # igraph to ggplot
     p <- ggraph(g, layout)+
       geom_edge_link(alpha=.8, aes_(width=~I(width)),
@@ -404,38 +500,129 @@ plotEnrich <- function(enrich_df,
                             guide = "legend",
                             range = c(min(V(g)$size)/2,max(V(g)$size)/2) * scale_ratio) +
       scale_fill_continuous(low = top_color, high = bottom_color,
-                            name = legend_type) +
+                            name = stats_metric_label) +
       theme(panel.background = element_blank()) +
       geom_node_text(aes_(label=~name), data = NULL,
-                     size = 3 * scale_ratio, bg.color = "white",
+                     size = lst$main_text_size,
+                     bg.color = "white",
                      repel=TRUE, segment.size = 0.2)+
       guides(fill = guide_colorbar(reverse = TRUE))+
-      plot_theme(remove_border = T,remove_text = T,border_thick = 0,...)
+      plot_theme(remove_border = T,remove_text = T,
+                 border_thick = 0,...)
 
   }
 
-  #--- goHeatmap/tangram/wordcloud ---#
-  if(plot_type %in% c('goHeat','tangram','wordcloud')){
+  #--- gomap plot ---#
+  ## show enriched terms structure (its parents and children terms)
+  if(plot_type == 'gomap'){
+    id <- enrich_df[,1]
+    enrichGenes <- strsplit(enrich_df$geneID,'\\/') %>% setNames(id)
+
+    # get all id ancestors
+    GOANCESTOR <- get_ancestor_data(enrich_df,ont=NULL)
+    id_anc <- AnnotationDbi::mget(id, GOANCESTOR)
+    anc1 <- id_anc[[1]]
+    for (i in 2:length(id_anc)) {
+      anc1 <- intersect(anc1, id_anc[[i]])
+    }
+    uanc <- unique(unlist(id_anc))
+    uanc <- uanc[!uanc %in% anc1]
+
+    # get plot edge and nodes data
+    utils::data("gotbl", package = "GOSemSim")
+    edge <- gotbl[gotbl$go_id %in% unique(c(id, uanc)),] %>%
+      dplyr::select(c(5,1,4))
+    node <- gotbl %>% dplyr::filter(go_id%in%unique(c(edge[,1], edge[,2]))) %>%
+      dplyr::select(1:3) %>%
+      dplyr::distinct() %>%
+      dplyr::mutate(color = enrich_df[go_id, stats_metric],
+                    size = sapply(enrichGenes[go_id], length))
+    rm(gotbl,envir = .GlobalEnv)
+
+    # only show top nodes/id-related parent and child nodes
+    show_node_top = table(edge$parent) %>% sort() %>% tail(3) %>% names()
+    show_node_parent = edge %>% dplyr::filter(go_id %in% id) %>%
+      dplyr::pull(parent)
+    show_node_child = edge %>% dplyr::filter(parent %in% id) %>%
+      dplyr::pull(go_id)
+    show_nodes = unique(c(id, show_node_top,show_node_parent, show_node_child))
+    sub_node = node %>%
+      dplyr::mutate(Term = ifelse(go_id%in%show_nodes,
+                                  stringr::str_to_sentence(Term), NA)) %>%
+      dplyr::mutate(Term = ifelse(is.na(Term),NA,
+                                  sapply(strwrap(Term, width = wrap_length, simplify = FALSE),
+                                         paste, collapse = "\n")))
+
+
+    g <- graph.data.frame(edge, directed=TRUE, vertices=sub_node)
+    E(g)$Relationship <- edge[,3]
+
+    # default main and lengend text size
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 3
+    if(!"legend_text_size"%in%names(lst)) lst$legend_text_size = 8
+
+    p <- ggraph(g, layout='sugiyama') +
+      geom_edge_link(aes_(linetype = ~Relationship),
+                     arrow = grid::arrow(length = unit(1, 'mm')),
+                     end_cap = circle(1, 'mm'),
+                     colour="darkgrey") +
+      geom_node_point(size = 3*scale_ratio, aes_(color=~color)) +
+      scale_color_continuous(low=top_color, high=bottom_color, name = stats_metric_label,
+                             guide=guide_colorbar(reverse=TRUE))+
+      geom_node_label(aes_(label=~Term, color=~color),
+                      size = lst$main_text_size,
+                      repel=TRUE, segment.size = 0.2,
+                      max.overlaps = 16) +
+      scale_fill_continuous(low=top_color, high=bottom_color, name = stats_metric_label,
+                            guide=guide_colorbar(reverse=TRUE), na.value="white")+
+      plot_theme(border_thick = 0,remove_text = T,...)
+
+  }
+
+  #--- goHeatmap/gotangram/wordcloud ---#
+  if(plot_type %in% c('goheat','gotangram','wordcloud')){
     if(!sim_method %in% c("Resnik", "Lin", "Rel", "Jiang" , "Wang")){
       stop('Please choose "sim_method" from: "Resnik", "Lin", "Rel", "Jiang" , "Wang"!')
     }
     l = get_sim_data(enrich_df,org=NULL,ont=NULL,sim_method)
     simMatrix = l[['m']]; reducedTerms = l[['r']]
-    if(plot_type == 'goHeat'){
+    if(plot_type == 'goheat'){
+      # default main and lengend text size
+      if(!"main_text_size"%in%names(lst)) lst$main_text_size = 6
+
       p <- rrvgo::heatmapPlot(simMatrix,
                        reducedTerms,
                        annotateParent=TRUE,
                        annotationLabel="parentTerm",
-                       fontsize=6)
+                       fontsize=lst$main_text_size)
     }
-    if(plot_type == 'tangram'){
-      p <- suppressMessages(rrvgo::treemapPlot(reducedTerms))
+    if(plot_type == 'gotangram'){
+      # default main and lengend text size
+      if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
+
+      p <- suppressMessages(rrvgo::treemapPlot(reducedTerms,
+                                               fontsize.labels = lst$main_text_size))
     }
     if(plot_type == 'wordcloud'){
-      p <- suppressWarnings(rrvgo::wordcloudPlot(reducedTerms, min.freq=1, colors="black"))
+      mypal <- RColorBrewer::brewer.pal(9,"Paired")
+      p <- suppressWarnings(rrvgo::wordcloudPlot(reducedTerms, min.freq=0,
+                                                 onlyParents = F,colors = mypal))
     }
   }
 
+  #--- upset plot ---#
+  if(plot_type == 'upset'){
+    plot_df = enrich_df %>% dplyr::select(Description,geneID) %>%
+      tidyr::separate_rows(geneID) %>%
+      split(.$geneID,.$Description) %>%
+      lapply(., function(x) x %>% dplyr::pull(Description)) %>%
+      tibble::tibble(Description =.)
+
+    p <- ggplot(plot_df, aes_(x = ~Description)) + geom_bar() +
+      plot_theme(main_text_size = 8,...) +
+      xlab(NULL) + ylab(NULL) +
+      ggupset::scale_x_upset(order_by = "freq")
+  }
 
   # wrap long text
   if (!is.null(wrap_length) & is.numeric(wrap_length)) {
@@ -447,7 +634,7 @@ plotEnrich <- function(enrich_df,
 }
 
 
-#--- sub-function: wrap text if too long ---#
+#--- sub-function---#
 text_wraper <- function(width) {
   function(x) {
     lapply(strwrap(x, width = width, simplify = FALSE), paste, collapse = "\n")
@@ -474,10 +661,7 @@ get_JC_data <- function(enrich_df){
   return(m)
 }
 
-get_sim_data <- function(enrich_df,
-                         org=NULL,
-                         ont=NULL,
-                         sim_method){
+get_sim_data <- function(enrich_df,org=NULL,ont=NULL,sim_method){
 
   nm <- strsplit(colnames(enrich_df)[1],"_") %>% unlist()
   if(all(tolower(nm) == 'id')){
@@ -516,6 +700,25 @@ get_sim_data <- function(enrich_df,
   scores <- setNames(-log10(enrich_df$qvalue), enrich_df[,1])
   r <- rrvgo::reduceSimMatrix(m,scores, orgdb=orgdb)
   return(list(m = m, r = r))
+}
+
+get_ancestor_data <- function(enrich_df,ont=NULL){
+
+  nm <- strsplit(colnames(enrich_df)[1],"_") %>% unlist()
+  if(all(tolower(nm) == 'id')){
+    stop(paste0('Please give ontology to "ont" from "BP","CC" and "MF"'))
+  }else{
+    ont = nm[2]
+  }
+
+  # save ancestor_data is saving time
+  data_dir = tools::R_user_dir('genekitr',which = 'data')
+  data_dir = paste0(data_dir,"/ancestor_data")
+  if(!dir.exists(data_dir)) dir.create(data_dir,recursive = TRUE)
+  destfile =  paste0(data_dir, "/",ont, "_ancestor.rda")
+  getAncestors <- utils::getFromNamespace("getAncestors", "GOSemSim")
+  GOANCESTOR <- getAncestors(ont)
+  return(GOANCESTOR)
 }
 
 loadOrgdb <- function(orgdb){

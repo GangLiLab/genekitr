@@ -5,7 +5,6 @@
 \title{Themes for all plots}
 \usage{
 plot_theme(
-  theme_type = c("bw", "classic"),
   main_text_size = 8,
   legend_text_size = 6,
   font_type = "sans",
@@ -17,8 +16,6 @@ plot_theme(
 )
 }
 \arguments{
-\item{theme_type}{ggplot theme,}
-
 \item{main_text_size}{Numeric, main text size}
 
 \item{legend_text_size}{Numeric, legend text size}
@@ -45,5 +42,5 @@ Change ggplot text, font, legend and border
 \examples{
 library(ggplot2)
 ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+
-  plot_theme(theme_type = 'bw', font_type = 'Times', border_thick = 2)
+  plot_theme(font_type = 'Times', border_thick = 2)
 }

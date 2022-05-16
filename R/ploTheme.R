@@ -2,7 +2,6 @@
 #'
 #' Change ggplot text, font, legend and border
 #'
-#' @param theme_type ggplot theme,
 #' @param main_text_size Numeric, main text size
 #' @param legend_text_size Numeric, legend text size
 #' @param font_type Character, specify the plot text font family, default is "sans".
@@ -18,10 +17,9 @@
 #' @examples
 #' library(ggplot2)
 #' ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+
-#'   plot_theme(theme_type = 'bw', font_type = 'Times', border_thick = 2)
+#'   plot_theme(font_type = 'Times', border_thick = 2)
 #' @export
-plot_theme <- function(theme_type = c('bw','classic'),
-                       main_text_size = 8,
+plot_theme <- function(main_text_size = 8,
                        legend_text_size = 6,
                        font_type = "sans",
                        border_thick = 1.5,
@@ -30,14 +28,7 @@ plot_theme <- function(theme_type = c('bw','classic'),
                        remove_text = FALSE,
                        remove_legend = FALSE
 ) {
-
-  theme_type <- match.arg(theme_type)
-
-  ptheme <- if(theme_type == 'bw'){
-    theme_bw()
-  }else{
-    theme_classic()
-  }
+  ptheme <-theme_bw()
 
   font_theme <- theme(
     axis.text.x = element_text(
@@ -64,7 +55,7 @@ plot_theme <- function(theme_type = c('bw','classic'),
     ),
     panel.border = element_rect(colour = "black", size = border_thick),
     axis.ticks = element_line(colour = "black", size = as.numeric(border_thick) / 3),
-    axis.ticks.length = unit(.1, "cm"),
+    axis.ticks.length = unit(.1, "cm")
   )
 
   # remove background grid line

@@ -300,4 +300,7 @@ utils::globalVariables(c(
   "plotGseaTable","pval","scale_fill_continuous","scale_x_discrete", "ONTOLOGY","facet_grid",
   "BgRatio", "E", "ID", "V", "delete.edges", "enrichGenes", "geneID.y",
   "geneID_symbol", "geom_edge_link", "geom_node_text", "ggraph", "graph.data.frame",
-  "guide_legend", "guides", "logfc", "melt", "new_ego", "scale_size_continuous","E<-", "V<-", "method"))
+  "guide_legend", "guides", "logfc", "melt", "new_ego", "scale_size_continuous","E<-", "V<-",
+  "method","Term", "arrow", "circle", "geom_node_label", "geom_node_point", "go_id", "gotbl", "parent",
+  "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
+  "scale_size", "scale_x_continuous", "sec_axis"))
