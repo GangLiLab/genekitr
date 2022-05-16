@@ -1,17 +1,18 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.7.5
+Version: 0.7.7
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
 BugReports: https://github.com/GangLiLab/genekitr/issues
-Description: An analysis toolkit based on the gene. It mainly includes five
-    features (search, transform, analysis, visualization, and export).
-    The user just needs to provide gene id ('entrez', 'symbol', 'ensembl' or 'uniprot') 
-    then can search gene-related information, transform id type, do enrichment 
-    analysis, visualize enrichment result, visualize multi-group overlap, 
-    and export result as excel sheets to easily share and communicate with others.
+Description: An analysis toolkit centered on genes. It mainly includes five
+    features (search, conversion, analysis, plotting, and export).
+    The user just needs to input feature id ('entrez', 'symbol', 'ensembl' or
+    'uniprot') to retrieve feature information and PubMed records, to convert id
+    types, to easily do enrichment analysis and publication-level plotting of GO,
+    KEGG and GSEA, to plot group interaction and export result as
+    excel sheets to easily share and communicate with others.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -52,6 +53,7 @@ Suggests:
     GOSemSim,
     msigdbr,
     openxlsx,
+    pathview,
     RColorBrewer,
     rappdirs,
     rentrez,

@@ -1,10 +1,9 @@
 #' Plot for GO and KEGG enrichment analysis
 #'
 #' @param enrich_df Enrichment analysis `data.frame` result.
-#' @param logfc_df A two-column data frame, first column is enrichment analysis input id
-#' and the second is matching logFC value. Default is NULL. Used in "heat" and "chord" plot.
+#' @param fold_change Fold change or logFC values with gene IDs as names. Used in "heat" and "chord" plot.
 #' @param plot_type Choose from "bar", "wego","bubble","dot", "lollipop","geneheat", "genechord",
-#' "network","gomap","goheat","gotangram","wordcloud","upset".
+#' "network","gomap","goheat","gotangram","wordcloud","upset", "keggpath".
 #' @param term_metric Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and 'RichFactor'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
@@ -43,7 +42,7 @@
 #' library(ggplot2)
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[1:100]
-#' logfc <- data.frame(gene = id, logfc = geneList[id])
+#' logfc <- geneList[id]
 #' ego <- genGO(id,
 #'   org = "human", ont = "bp", pvalueCutoff = 0.05,
 #'   qvalueCutoff = 0.05)
@@ -67,9 +66,9 @@
 #'
 #' show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6')
 #' plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
-#' plotEnrich(ego,logfc_df = logfc, plot_type = "geneheat",show_gene = show_gene)
+#' plotEnrich(ego,fold_change = logfc, plot_type = "geneheat",show_gene = show_gene)
 #'
-#' plotEnrich(ego,logfc_df = logfc,plot_type = "genechord",show_gene = show_gene)
+#' plotEnrich(ego,fold_change = logfc,plot_type = "genechord",show_gene = show_gene)
 #'
 #' plotEnrich(ego,plot_type = "network", scale_ratio = 1.5)
 #'
@@ -85,9 +84,9 @@
 #' }
 #'
 plotEnrich <- function(enrich_df,
-                       logfc_df = NULL,
+                       fold_change = NULL,
                        plot_type = c('bar','wego','dot','bubble','lollipop','geneheat','genechord',
-                                     'network','gomap','goheat','gotangram','wordcloud','upset'),
+                                     'network','gomap','goheat','gotangram','wordcloud','upset',"keggpath"),
                        term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
                        stats_metric = c("p.adjust", "pvalue", "qvalue"),
                        sim_method =  c("JC","Resnik", "Lin", "Rel", "Jiang" , "Wang"),
@@ -159,12 +158,6 @@ plotEnrich <- function(enrich_df,
       dplyr::group_by(ONTOLOGY) %>%
       dplyr::arrange(eval(parse(text = term_metric)),.by_group = T)
   }
-
-  ## set logfc colnames
-  if(!is.null(logfc_df)){
-    logfc_df <- logfc_df %>% stats::setNames(c('geneID','logfc'))
-  }
-
 
   #--- dot plot ---#
   if(plot_type == 'dot'){
@@ -332,7 +325,7 @@ plotEnrich <- function(enrich_df,
     }
 
 
-    if(is.null(logfc_df)){
+    if(is.null(fold_change)){
       p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
         geom_tile(color = 'white')+
         xlab(NULL) + ylab(NULL) +
@@ -341,12 +334,14 @@ plotEnrich <- function(enrich_df,
               axis.text.x=element_text(angle = 50, hjust = 1))
     }else{
       # add logfc
-      if(all(id_df$geneID %in% logfc_df$geneID)){
-        m1 = merge(id_df,logfc_df,by = 'geneID' )
+      fold_change <- data.frame(geneID = names(fold_change), logfc = fold_change)
+
+      if(all(id_df$geneID %in% fold_change$geneID)){
+        m1 = merge(id_df,fold_change,by = 'geneID' )
         plot_df = merge(plot_df,m1,by.x = 'geneID',by.y = 'geneID_symbol') %>%
           dplyr::select(-geneID.y)
       }else{
-        plot_df = merge(plot_df,logfc_df,by.x = 'geneID')
+        plot_df = merge(plot_df,fold_change,by.x = 'geneID')
       }
 
       p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
@@ -417,7 +412,7 @@ plotEnrich <- function(enrich_df,
     if(!"main_text_size"%in%names(lst)) lst$main_text_size = 3
     if(!"legend_text_size"%in%names(lst)) lst$legend_text_size = 8
 
-    if(is.null(logfc_df)){
+    if(is.null(fold_change)){
       p = suppressWarnings(
         GOplot::GOChord(dat,
                         space = 0.02,
@@ -430,11 +425,13 @@ plotEnrich <- function(enrich_df,
 
     }else{
       # add logfc
-      if(all(rownames(dat) %in% logfc_df$geneID)){
-        m1 = logfc_df %>% dplyr::filter(geneID%in%rownames(dat)) %>%
+      fold_change <- data.frame(geneID = names(fold_change), logfc = fold_change)
+
+      if(all(rownames(dat) %in% fold_change$geneID)){
+        m1 = fold_change %>% dplyr::filter(geneID%in%rownames(dat)) %>%
           dplyr::pull(logfc)
       }else{
-        m1 = merge(id_df,logfc_df,by.x = 'geneID') %>%
+        m1 = merge(id_df,fold_change,by.x = 'geneID') %>%
           dplyr::filter(geneID_symbol %in% rownames(dat)) %>%
           dplyr::pull(logfc)
       }
@@ -623,6 +620,33 @@ plotEnrich <- function(enrich_df,
       xlab(NULL) + ylab(NULL) +
       ggupset::scale_x_upset(order_by = "freq")
   }
+
+  #--- keggpath ---#
+  if(plot_type == 'keggpath'){
+    if(is.null(fold_change)) stop('Please give fold change or logFC values with gene IDs as names!')
+
+    org = substr(enrich_df[1,1],1,3) #e.g. hsa
+    ids = enrich_df$ID
+    if(!all(grepl("^[a-z]{3}.*",ids))) stop('Please give a kegg result...')
+
+    max_fc <- max(abs(fold_change))
+    bins <- ceiling(max_fc) * 2
+    p <- lapply(ids, function(i) {
+      print(paste0('Now plotting ',which(ids%in%i),'/',length(ids),': ',i))
+      pathview::pathview(gene.data=fold_change,
+               pathway.id = i,
+               species = org,
+               limit = list(gene=max_fc, cpd=1),
+               bins = list(gene=bins, cpd=10),
+               low = list(gene="blue", cpd="blue"),
+               high = list(gene="red", cpd="yellow"),
+               out.suffix='genekitr',
+               kegg.native=TRUE,
+               new.signature=FALSE)
+    })
+    invisible(p)
+  }
+
 
   # wrap long text
   if (!is.null(wrap_length) & is.numeric(wrap_length)) {

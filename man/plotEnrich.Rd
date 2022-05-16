@@ -6,9 +6,9 @@
 \usage{
 plotEnrich(
   enrich_df,
-  logfc_df = NULL,
+  fold_change = NULL,
   plot_type = c("bar", "wego", "dot", "bubble", "lollipop", "geneheat", "genechord",
-    "network", "gomap", "goheat", "gotangram", "wordcloud", "upset"),
+    "network", "gomap", "goheat", "gotangram", "wordcloud", "upset", "keggpath"),
   term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
   sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
@@ -28,11 +28,10 @@ plotEnrich(
 \arguments{
 \item{enrich_df}{Enrichment analysis `data.frame` result.}
 
-\item{logfc_df}{A two-column data frame, first column is enrichment analysis input id
-and the second is matching logFC value. Default is NULL. Used in "heat" and "chord" plot.}
+\item{fold_change}{Fold change or logFC values with gene IDs as names. Used in "heat" and "chord" plot.}
 
 \item{plot_type}{Choose from "bar", "wego","bubble","dot", "lollipop","geneheat", "genechord",
-"network","gomap","goheat","gotangram","wordcloud","upset".}
+"network","gomap","goheat","gotangram","wordcloud","upset", "keggpath".}
 
 \item{term_metric}{Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and 'RichFactor'.}
 
@@ -77,7 +76,7 @@ Plot for GO and KEGG enrichment analysis
 library(ggplot2)
 data(geneList, package = "genekitr")
 id <- names(geneList)[1:100]
-logfc <- data.frame(gene = id, logfc = geneList[id])
+logfc <- geneList[id]
 ego <- genGO(id,
   org = "human", ont = "bp", pvalueCutoff = 0.05,
   qvalueCutoff = 0.05)
@@ -101,9 +100,9 @@ plotEnrich(ego,plot_type = "geneheat")
 
 show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6')
 plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
-plotEnrich(ego,logfc_df = logfc, plot_type = "geneheat",show_gene = show_gene)
+plotEnrich(ego,fold_change = logfc, plot_type = "geneheat",show_gene = show_gene)
 
-plotEnrich(ego,logfc_df = logfc,plot_type = "genechord",show_gene = show_gene)
+plotEnrich(ego,fold_change = logfc,plot_type = "genechord",show_gene = show_gene)
 
 plotEnrich(ego,plot_type = "network", scale_ratio = 1.5)
 
