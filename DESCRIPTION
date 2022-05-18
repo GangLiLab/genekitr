@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.7.7
+Version: 0.7.8
 Authors@R: c(person("Yunze", "Liu", email = "jieandze1314@gmail.com", role = c("aut", "cre")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://github.com/GangLiLab/genekitr
@@ -20,16 +20,16 @@ Depends: R (>= 4.0)
 Imports: 
     clusterProfiler,
     dplyr,
+    europepmc,
     fst,
     ggplot2,
     ggraph,
     igraph,
     magrittr,
-    utils,
+    openxlsx,
     stringr,
     stringi,
     tidyr,
-    tibble,
     VennDiagram,
     rlang
 Suggests:
@@ -39,7 +39,6 @@ Suggests:
     DOSE,
     data.table,
     easyPubMed,
-    europepmc,
     forcats,
     fgsea,
     futile.logger,
@@ -52,7 +51,6 @@ Suggests:
     GOplot,
     GOSemSim,
     msigdbr,
-    openxlsx,
     pathview,
     RColorBrewer,
     rappdirs,
@@ -62,6 +60,7 @@ Suggests:
     scales,
     stats,
     testthat (>= 3.0.0),
+    tibble,
     knitr,
     rmarkdown
-RoxygenNote: 7.1.2
+RoxygenNote: 7.2.0

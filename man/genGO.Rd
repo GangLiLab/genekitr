@@ -54,11 +54,10 @@ Gene GO enrichment analysis
 data(geneList, package = "genekitr")
 
 # only gene ids
-id <- names(geneList)[1:100]
+id <- names(genelist)[abs(genelist) > 2]
 ego <- genGO(id,
-  org = "human", ont = "bp", pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05
-)
+  org = "human", ont = "bp", pvalueCutoff = 0.01,
+  qvalueCutoff = 0.01)
 
 # gene id with groups
 id <- c(head(names(geneList),50),tail(names(geneList),50))

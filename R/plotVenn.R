@@ -13,7 +13,7 @@
 #' @param ... other arguments transfer to `plot_theme` function
 #' @return  A ggplot object
 #' @importFrom VennDiagram venn.diagram
-#' @importFrom dplyr as_tibble filter select group_by summarize %>%
+#' @importFrom dplyr as_tibble filter select group_by summarize
 #' @importFrom tidyr gather
 #' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme
 #'   element_blank scale_y_continuous
@@ -54,9 +54,10 @@ plotVenn <- function(venn_list,
   # use_venn <- ifelse(length(venn_list) <= 4, TRUE, FALSE)
 
   if (!requireNamespace("futile.logger", quietly = TRUE)) {
-    stop("Package futile.logger needed for this function to work. Please install it.",
+    warning("Package futile.logger needed for this function to work. Installing...",
          call. = FALSE
     )
+    utils::install.packages('futile.logger')
   }
 
   #--- codes ---#
@@ -120,7 +121,6 @@ plotVenn <- function(venn_list,
                  remove_grid = remove_grid,
                  border_thick = border_thick,
                  ...)
-
   }
 
   return(p)

@@ -2,7 +2,8 @@
 #'
 #' @param term query terms e.g. gene id, GO/KEGG term or id
 #' @param keys other searching keys
-#' @return A list of `tibble`
+#' @importFrom europepmc epmc_search
+#' @return A list of `tibble` for pubmed records
 #' @export
 #' @examples
 #' \donttest{
@@ -14,6 +15,10 @@
 #' }
 #'
 getPubmed <- function(term,keys){
+  if (!requireNamespace("europepmc", quietly = TRUE)) {
+    utils::install.packages("europepmc")
+  }
+
   supp = paste0('AND ABSTRACT:',keys) %>% paste(collapse = ' ')
   res = lapply(term , function(i){
     europepmc::epmc_search(query = paste0('ABSTRACT:',i," ",supp))

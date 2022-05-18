@@ -3,9 +3,7 @@
 #' @param id Gene id (symbol, ensembl or entrez id) or uniprot id. If this argument is NULL, return all gene info.
 #' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
-#' @importFrom stringr str_detect
-#' @importFrom dplyr %>% filter relocate select mutate mutate_all na_if
-#' @importFrom tidyr unnest
+#' @importFrom dplyr filter mutate arrange relocate select
 #' @importFrom rlang .data
 #'
 #' @return A `data.frame`.

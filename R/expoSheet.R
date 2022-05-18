@@ -5,8 +5,9 @@
 #' @param filename A character string naming an xlsx file.
 #' @param dir A character string naming output directory.
 #' @param overwrite If TRUE, overwrite any existing file.
-#' @importFrom stringr str_detect
 #' @importFrom rlang .data
+#' @importFrom openxlsx createWorkbook addWorksheet writeData createStyle addStyle setColWidths
+#' saveWorkbook
 #'
 #' @return An Excel file.
 #' @export
@@ -27,9 +28,7 @@ expoSheet <- function(data_list,
 
   #--- args ---#
   if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    stop("Package openxlsx needed for this function to work. Please install it.",
-      call. = FALSE
-    )
+    utils::install.packages("openxlsx")
   }
   if (!"wb" %in% ls()) wb <- openxlsx::createWorkbook()
 

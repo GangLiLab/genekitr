@@ -1,18 +1,19 @@
 #' GSEA plot
 #'
 #' @param gsea_list GSEA result from `genGSEA` function
-#' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea' or 'ridge'.
+#' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea', 'ridge' or 'bar'.
 #' @param show_pathway Select plotting pathways by specifying number or
 #'   pathway name.
 #' @param show_gene Character to specify gene names included in plot when `plot_type` is "classic".
-#' @param colors Character to specify colors when `plot_type` is "classic".
+#' @param colors Character of colors. Used in "classic" and "bar"
 #' @param legend_type Legend type from "p.adjust", "pvalue" or "qvalue" when `plot_type` is "ridge".
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline element_blank
 #'   element_rect margin geom_linerange scale_y_continuous geom_segment geom_bar scale_fill_manual
-#'   geom_hline element_line geom_line
-#' @importFrom dplyr filter pull %>%
+#'   geom_hline element_line geom_line scale_colour_manual
+#' @importFrom dplyr filter arrange slice_head select rename group_by summarise case_when mutate pull
+#' all_of
 #'
 #' @return A ggplot object
 #' @export
@@ -41,11 +42,14 @@
 #' plotGSEA(gse, plot_type = 'ridge',
 #'   show_pathway = 10, legend_type = 'p.adjust')
 #'
+#' ## two-side barplot
+#' plotGSEA(gse, plot_type = 'bar')
+#'
 #' }
 #'
 
 plotGSEA <- function(gsea_list,
-                     plot_type = c('volcano','classic','fgsea','ridge'),
+                     plot_type = c('volcano','classic','fgsea','ridge','bar'),
                      show_pathway = 3,
                      show_gene = NULL,
                      colors = NULL,
@@ -53,6 +57,7 @@ plotGSEA <- function(gsea_list,
                      ...){
 
   #--- args ---#
+  lst = list(...) # store outside arguments in list
   stopifnot(is.list(gsea_list))
   plot_type <- match.arg(plot_type)
   legend_type <- match.arg(legend_type)
@@ -219,7 +224,7 @@ plotGSEA <- function(gsea_list,
     }
     new_gsea_df <- gsea_df %>%
       dplyr::filter(Description%in%show_pathway) %>%
-      dplyr::select(Description,all_of(legend_type),geneID) %>%
+      dplyr::select(Description,dplyr::all_of(legend_type),geneID) %>%
       tidyr::separate_rows(geneID,sep='\\/')
 
     # if gsea has no entrezid, transID first
@@ -248,6 +253,48 @@ plotGSEA <- function(gsea_list,
                             guide=guide_colorbar(reverse=TRUE))+
       ylab(NULL) + xlab('logFC')+
       plot_theme(remove_grid = T,...)
+
+  }
+
+  #--- two-side barplot ---#
+  ## bar with p.adjust>0.05 showed grey
+  if(plot_type == 'bar'){
+    gsea_df <- gsea_list$gsea_df %>%
+      dplyr::select(ID,NES,"p.adjust") %>%
+      dplyr::mutate(padj.group = cut(.$p.adjust, breaks = c(-Inf,0.05,Inf),labels = c(1,0)),
+                    nes.group = cut(.$NES, breaks = c(-Inf,0,Inf),labels = c(0,1)),
+                    comb.group = paste0(padj.group,nes.group)) %>%
+      dplyr::mutate(group = dplyr::case_when(comb.group == '10' ~ "A", # A is nes<0 & p<0.05
+                                             comb.group == '11' ~ 'B', # B is nes>0 & p<0.05
+                                             TRUE ~ 'C')) %>%       # C is grey
+      dplyr::arrange(NES) %>%
+      dplyr::mutate(index = 1:dplyr::n())
+
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 2
+
+    if(is.null(colors)){
+      colors <- c("\\#0072B5FF","\\#BC3C29FF","\\#A9A9A9")
+      colors <- stringr::str_remove_all(colors,'.*#') %>% paste0('#',.)
+    }
+
+    p <- ggplot(gsea_df,aes(x=index,y=NES,fill=group)) +
+      geom_bar(stat = 'identity',width = 0.8) +
+      scale_fill_manual(values = c("A"=colors[1],"B"=colors[2],"C"=colors[3])) +
+      scale_x_discrete(expand = expansion(add = .5)) +
+      scale_y_continuous(breaks=seq(floor(min(gsea_df$NES)), ceiling(max(gsea_df$NES)),
+                                    ceiling( (ceiling(max(gsea_df$NES)) - floor(min(gsea_df$NES))) /6) )) +
+      coord_flip() +
+      geom_text(data = subset(gsea_df, NES > 0),
+                aes(x=index, y=0, label=paste0(ID,"  "), color = padj.group),
+                size=lst$main_text_size/3.6,
+                hjust = "inward") +
+      geom_text(data = subset(gsea_df, NES < 0),
+                aes(x=index, y=0, label=paste0("  ",ID), color = padj.group),
+                size=lst$main_text_size/3.6,hjust = "outward") +
+      scale_colour_manual(values = c("black",colors[3])) +
+      labs(x = "", y = "Normalized Enrichment Score") +
+      plot_theme(remove_grid = T,remove_legend = T,...)
+
 
   }
 

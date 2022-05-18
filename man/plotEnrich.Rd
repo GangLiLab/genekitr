@@ -75,14 +75,15 @@ Plot for GO and KEGG enrichment analysis
 ## example data
 library(ggplot2)
 data(geneList, package = "genekitr")
-id <- names(geneList)[1:100]
+id <- names(genelist)[abs(genelist) > 2.5]
 logfc <- geneList[id]
+
 ego <- genGO(id,
-  org = "human", ont = "bp", pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05)
+  org = "human", ont = "bp", pvalueCutoff = 0.01,
+  qvalueCutoff = 0.01)
 all_ego <- genGO(id,
-  org = "human", ont = "all", pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05)
+  org = "human", ont = "all", pvalueCutoff = 0.01,
+  qvalueCutoff = 0.01)
 
 ## example plots
 plotEnrich(ego,plot_type = "dot")
@@ -98,7 +99,7 @@ bottom_color = "#325CAC", top_color = "#E69056", wrap_length = 25)
 
 plotEnrich(ego,plot_type = "geneheat")
 
-show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6')
+show_gene = c('AREG','CD24','EXO1','TGFA')
 plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
 plotEnrich(ego,fold_change = logfc, plot_type = "geneheat",show_gene = show_gene)
 

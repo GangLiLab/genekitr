@@ -12,10 +12,10 @@
 #' @param maxGSSize Maximal size of each geneSet for analyzing, default is 500.
 #' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
 #' @param ... Other argument to `GSEA` function
-#' @importFrom dplyr select filter pull mutate %>%
+#' @importFrom dplyr select filter arrange pull mutate
 #' @importFrom stringr str_split
+#' @importFrom stringi stri_remove_empty_na
 #' @importFrom clusterProfiler GSEA
-#' @importFrom stats na.omit
 #' @importFrom rlang .data
 #'
 #' @return GSEA list

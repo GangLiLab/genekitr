@@ -6,7 +6,7 @@
 \usage{
 plotGSEA(
   gsea_list,
-  plot_type = c("volcano", "classic", "fgsea", "ridge"),
+  plot_type = c("volcano", "classic", "fgsea", "ridge", "bar"),
   show_pathway = 3,
   show_gene = NULL,
   colors = NULL,
@@ -17,14 +17,14 @@ plotGSEA(
 \arguments{
 \item{gsea_list}{GSEA result from `genGSEA` function}
 
-\item{plot_type}{GSEA plot type, one of 'volcano', 'classic', 'fgsea' or 'ridge'.}
+\item{plot_type}{GSEA plot type, one of 'volcano', 'classic', 'fgsea', 'ridge' or 'bar'.}
 
 \item{show_pathway}{Select plotting pathways by specifying number or
 pathway name.}
 
 \item{show_gene}{Character to specify gene names included in plot when `plot_type` is "classic".}
 
-\item{colors}{Character to specify colors when `plot_type` is "classic".}
+\item{colors}{Character of colors. Used in "classic" and "bar"}
 
 \item{legend_type}{Legend type from "p.adjust", "pvalue" or "qvalue" when `plot_type` is "ridge".}
 
@@ -60,6 +60,9 @@ plotGSEA(gse, plot_type = 'fgsea', show_pathway = 3)
 ## ridgeplot
 plotGSEA(gse, plot_type = 'ridge',
   show_pathway = 10, legend_type = 'p.adjust')
+
+## two-side barplot
+plotGSEA(gse, plot_type = 'bar')
 
 }
 

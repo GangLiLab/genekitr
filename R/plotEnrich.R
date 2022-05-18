@@ -22,17 +22,20 @@
 #' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
 #' @param ... other arguments from `plot_theme` function
 #'
-#' @importFrom dplyr pull %>% arrange mutate slice_head
-#' @importFrom ggplot2 ggplot aes_string geom_point scale_color_continuous scale_fill_continuous
-#' guide_colorbar scale_y_discrete element_blank xlab labs xlim scale_x_discrete theme aes_
-#' facet_grid
-#' @importFrom stringr str_to_sentence
+#' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs geom_point
+#' geom_segment geom_bar geom_col geom_tile guide_colorbar guides scale_color_continuous
+#' scale_size_continuous scale_x_discrete scale_y_discrete scale_x_continuous scale_size
+#' scale_fill_discrete
+#' scale_fill_continuous scale_y_continuous sec_axis theme xlab ylab xlim
+#' @importFrom dplyr arrange mutate group_by top_n ungroup select case_when distinct rename pull
+#' @importFrom stringr str_to_sentence str_split
 #' @importFrom rlang .data
 #' @importFrom stats setNames
-#' @importFrom utils tail
 #' @importFrom ggraph ggraph geom_node_text geom_edge_link circle geom_node_point
 #' geom_node_label
-#' @importFrom igraph graph.data.frame delete.edges E V
+#' @importFrom igraph graph.data.frame delete.edges
+#' @importFrom igraph V "V<-"
+##'@importFrom igraph E "E<-"
 #'
 #' @return A ggplot object
 #' @export
@@ -41,14 +44,15 @@
 #' ## example data
 #' library(ggplot2)
 #' data(geneList, package = "genekitr")
-#' id <- names(geneList)[1:100]
+#' id <- names(genelist)[abs(genelist) > 2.5]
 #' logfc <- geneList[id]
+#'
 #' ego <- genGO(id,
-#'   org = "human", ont = "bp", pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.05)
+#'   org = "human", ont = "bp", pvalueCutoff = 0.01,
+#'   qvalueCutoff = 0.01)
 #' all_ego <- genGO(id,
-#'   org = "human", ont = "all", pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.05)
+#'   org = "human", ont = "all", pvalueCutoff = 0.01,
+#'   qvalueCutoff = 0.01)
 #'
 #' ## example plots
 #' plotEnrich(ego,plot_type = "dot")
@@ -64,7 +68,7 @@
 #'
 #' plotEnrich(ego,plot_type = "geneheat")
 #'
-#' show_gene = c('AQP7','ASIC2','GRIN2A','SLITRK6')
+#' show_gene = c('AREG','CD24','EXO1','TGFA')
 #' plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
 #' plotEnrich(ego,fold_change = logfc, plot_type = "geneheat",show_gene = show_gene)
 #'
@@ -237,7 +241,7 @@ plotEnrich <- function(enrich_df,
       xlim(xlim_left,xlim_right)+
       plot_theme(...)
 
-    if(all_go) p <- p + facet_grid(ONTOLOGY~., scales = "free")+
+    if(all_go) p <- p + ggplot2::facet_grid(ONTOLOGY~., scales = "free")+
         plot_theme(...)
 
   }
@@ -263,7 +267,7 @@ plotEnrich <- function(enrich_df,
 
     normalizer <- max(wego$Count)/max(wego$GeneRatio)
 
-    p <- ggplot(data = wego, aes(x = fct_reorder(Description, sort(Position)),
+    p <- ggplot(data = wego, aes(x = forcats::fct_reorder(Description, sort(Position)),
                             y = GeneRatio, fill = ONTOLOGY)) +
       ggsci::scale_fill_nejm()+
       geom_col(data = wego, aes(x = forcats::fct_reorder(Description, sort(Position)),
@@ -282,7 +286,8 @@ plotEnrich <- function(enrich_df,
   #--- lollipop plot ---#
   if(plot_type == 'lollipop'){
     p <- ggplot(data=enrich_df,
-                aes(eval(parse(text = term_metric)), forcats::fct_reorder(Description,eval(parse(text = term_metric)))))+
+                aes(eval(parse(text = term_metric)),
+                    forcats::fct_reorder(Description,eval(parse(text = term_metric)))))+
       geom_segment(aes_string(xend = 0, yend = "Description",
                               colour=stats_metric))+
       geom_point(aes_string(color = stats_metric, size = "Count"))+
@@ -359,6 +364,10 @@ plotEnrich <- function(enrich_df,
   #--- genechord plot ---#
   ## chord plot to show interaction between go term and gene id
   if(plot_type == 'genechord'){
+    if (!requireNamespace("GOplot", quietly = TRUE)) {
+      utils::install.packages("GOplot")
+    }
+
     id = enrich_df %>% dplyr::pull(geneID) %>%
       stringr::str_split('\\/') %>% unlist()
     id_symbol = enrich_df %>% dplyr::pull(geneID_symbol) %>%
@@ -453,6 +462,13 @@ plotEnrich <- function(enrich_df,
   ## plot enriched terms in network with edges connecting overlapping gene sets,
   ## mutually overlapping gene sets are tend to cluster together
   if(plot_type == 'network'){
+    pkgs = c("ggnewscale","ggraph","igraph")
+    invisible(sapply(pkgs, function(x){
+      if (!requireNamespace(x, quietly = TRUE)) {
+        utils::install.packages(x)
+      }
+    }))
+
     id <- enrich_df[,1]
     enrichGenes <- strsplit(enrich_df$geneID,'\\/') %>% setNames(id)
 
@@ -512,6 +528,16 @@ plotEnrich <- function(enrich_df,
   #--- gomap plot ---#
   ## show enriched terms structure (its parents and children terms)
   if(plot_type == 'gomap'){
+    if (!requireNamespace("ggraph", quietly = TRUE)) {
+      utils::install.packages("ggraph")
+    }
+    if (!requireNamespace("igraph", quietly = TRUE)) {
+      utils::install.packages("igraph")
+    }
+
+    requireNamespace("ggraph",quietly = T)
+    requireNamespace("igraph",quietly = T)
+
     id <- enrich_df[,1]
     enrichGenes <- strsplit(enrich_df$geneID,'\\/') %>% setNames(id)
 
@@ -537,7 +563,7 @@ plotEnrich <- function(enrich_df,
     rm(gotbl,envir = .GlobalEnv)
 
     # only show top nodes/id-related parent and child nodes
-    show_node_top = table(edge$parent) %>% sort() %>% tail(3) %>% names()
+    show_node_top = table(edge$parent) %>% sort() %>% utils::tail(3) %>% names()
     show_node_parent = edge %>% dplyr::filter(go_id %in% id) %>%
       dplyr::pull(parent)
     show_node_child = edge %>% dplyr::filter(parent %in% id) %>%
@@ -551,7 +577,7 @@ plotEnrich <- function(enrich_df,
                                          paste, collapse = "\n")))
 
 
-    g <- graph.data.frame(edge, directed=TRUE, vertices=sub_node)
+    g <- igraph::graph.data.frame(edge, directed=TRUE, vertices=sub_node)
     E(g)$Relationship <- edge[,3]
 
     # default main and lengend text size
@@ -578,6 +604,10 @@ plotEnrich <- function(enrich_df,
 
   #--- goHeatmap/gotangram/wordcloud ---#
   if(plot_type %in% c('goheat','gotangram','wordcloud')){
+    if (!requireNamespace("rrvgo", quietly = TRUE)) {
+      BiocManager::install('rrvgo')
+    }
+
     if(!sim_method %in% c("Resnik", "Lin", "Rel", "Jiang" , "Wang")){
       stop('Please choose "sim_method" from: "Resnik", "Lin", "Rel", "Jiang" , "Wang"!')
     }
@@ -609,6 +639,10 @@ plotEnrich <- function(enrich_df,
 
   #--- upset plot ---#
   if(plot_type == 'upset'){
+    if (!requireNamespace("ggupset", quietly = TRUE)) {
+      utils::install.packages('ggupset')
+    }
+
     plot_df = enrich_df %>% dplyr::select(Description,geneID) %>%
       tidyr::separate_rows(geneID) %>%
       split(.$geneID,.$Description) %>%
@@ -623,6 +657,11 @@ plotEnrich <- function(enrich_df,
 
   #--- keggpath ---#
   if(plot_type == 'keggpath'){
+    if (!requireNamespace("pathview", quietly = TRUE)) {
+      utils::install.packages('pathview')
+    }
+    requireNamespace("pathview",quietly = T)
+
     if(is.null(fold_change)) stop('Please give fold change or logFC values with gene IDs as names!')
 
     org = substr(enrich_df[1,1],1,3) #e.g. hsa
@@ -633,16 +672,16 @@ plotEnrich <- function(enrich_df,
     bins <- ceiling(max_fc) * 2
     p <- lapply(ids, function(i) {
       print(paste0('Now plotting ',which(ids%in%i),'/',length(ids),': ',i))
-      pathview::pathview(gene.data=fold_change,
-               pathway.id = i,
-               species = org,
-               limit = list(gene=max_fc, cpd=1),
-               bins = list(gene=bins, cpd=10),
-               low = list(gene="blue", cpd="blue"),
-               high = list(gene="red", cpd="yellow"),
-               out.suffix='genekitr',
-               kegg.native=TRUE,
-               new.signature=FALSE)
+      suppressMessages(pathview::pathview(gene.data=fold_change,
+                                          pathway.id = i,
+                                          species = org,
+                                          limit = list(gene=max_fc, cpd=1),
+                                          bins = list(gene=bins, cpd=10),
+                                          low = list(gene="blue", cpd="blue"),
+                                          high = list(gene="red", cpd="yellow"),
+                                          out.suffix='genekitr',
+                                          kegg.native=TRUE,
+                                          new.signature=FALSE))
     })
     invisible(p)
   }

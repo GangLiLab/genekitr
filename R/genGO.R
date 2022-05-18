@@ -13,10 +13,9 @@
 #' @param universe Background genes. If missing, then all gene list in
 #' orgdb will be used as background.
 #' @param ... other argument to `enrichGO` function
-#' @importFrom dplyr select filter pull mutate %>%
+#' @importFrom dplyr filter arrange pull mutate relocate rename
 #' @importFrom stringr str_split
 #' @importFrom clusterProfiler enrichGO
-#' @importFrom stats na.omit
 #' @importFrom rlang .data
 #'
 #' @return A `data.frame` contains gene ratio and fold enrichment.
@@ -27,11 +26,10 @@
 #' data(geneList, package = "genekitr")
 #'
 #' # only gene ids
-#' id <- names(geneList)[1:100]
+#' id <- names(genelist)[abs(genelist) > 2]
 #' ego <- genGO(id,
-#'   org = "human", ont = "bp", pvalueCutoff = 0.05,
-#'   qvalueCutoff = 0.05
-#' )
+#'   org = "human", ont = "bp", pvalueCutoff = 0.01,
+#'   qvalueCutoff = 0.01)
 #'
 #' # gene id with groups
 #' id <- c(head(names(geneList),50),tail(names(geneList),50))
@@ -156,4 +154,4 @@ genGO <- function(id,
 }
 
 
-utils::globalVariables(c("input_id"))
+utils::globalVariables('input_id')

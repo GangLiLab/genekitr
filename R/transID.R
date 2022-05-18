@@ -5,10 +5,7 @@
 #' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @param keepNA If some id has no match, keep it or not. Default is FALSE.
-#' @importFrom dplyr %>% filter pull select distinct arrange all_of filter_at vars any_vars
-#' @importFrom tibble add_row
-#' @importFrom stringr str_split
-#' @importFrom stats na.omit
+#' @importFrom dplyr filter pull select distinct arrange all_of filter_at vars any_vars
 #' @importFrom rlang .data
 #'
 #' @return A two-column data frame, first is input id and second is transformed id.
@@ -72,7 +69,7 @@ transId <- function(id,
   n_new = sapply(transTo, function(x){
     # x = transTo[1]
     res %>%  dplyr::select(input_id, all_of(x)) %>%
-      na.omit() %>%
+      stats::na.omit() %>%
       distinct(input_id) %>%
       nrow()
   })

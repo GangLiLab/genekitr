@@ -14,11 +14,9 @@
 #' @param universe Background genes. If missing, the orgdb all gene list will be
 #'   used as background.
 #' @param ... Other argument to `enrichKEGG` function
-#' @importFrom dplyr  %>% mutate filter
-#' @importFrom stringr  str_split
-#' @importFrom stringi stri_omit_na
+#' @importFrom dplyr pull filter arrange mutate relocate
+#' @importFrom stringr str_split
 #' @importFrom clusterProfiler enrichKEGG
-#' @importFrom stats na.omit
 #' @importFrom rlang .data
 #'
 #' @return A `data.frame`.
@@ -28,7 +26,7 @@
 #' \dontrun{
 #' # only gene ids
 #' data(geneList, package = "genekitr")
-#' id <- names(geneList)[1:1000]
+#' id <- names(geneList)[abs(geneList) > 2]
 #' keg <- genKEGG(id, org = "human")
 #'
 #' # gene id with groups

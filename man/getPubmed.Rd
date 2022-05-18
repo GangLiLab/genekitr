@@ -12,7 +12,7 @@ getPubmed(term, keys)
 \item{keys}{other searching keys}
 }
 \value{
-A list of `tibble`
+A list of `tibble` for pubmed records
 }
 \description{
 Get pubmed paper records by searching abstract
