@@ -1,5 +1,5 @@
 #' Volcano plot for differential expression analysis
-
+#'
 #' @param deg_df DEG dataframe with gene id, logFC and stat(e.g. pvalue/qvalue).
 #' @param stat_metric Statistic metric from "pvalue" or "p.adjust".
 #' @param stat_cutoff Statistic cutoff, default is 0.05.

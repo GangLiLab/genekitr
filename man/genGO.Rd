@@ -54,7 +54,7 @@ Gene GO enrichment analysis
 data(geneList, package = "genekitr")
 
 # only gene ids
-id <- names(genelist)[abs(genelist) > 2]
+id <- names(geneList)[abs(geneList) > 2]
 ego <- genGO(id,
   org = "human", ont = "bp", pvalueCutoff = 0.01,
   qvalueCutoff = 0.01)

@@ -26,7 +26,7 @@
 #' data(geneList, package = "genekitr")
 #'
 #' # only gene ids
-#' id <- names(genelist)[abs(genelist) > 2]
+#' id <- names(geneList)[abs(geneList) > 2]
 #' ego <- genGO(id,
 #'   org = "human", ont = "bp", pvalueCutoff = 0.01,
 #'   qvalueCutoff = 0.01)
@@ -57,7 +57,8 @@ genGO <- function(id,
   #--- args ---#
   stopifnot(is.character(id))
   if (missing(universe)) universe <- NULL
-  if(!is.null(group_list) & lapply(group_list, function(x) length(x) == length(id)) %>% unlist() %>% sum() == 0){
+  if(!is.null(group_list) & lapply(group_list, function(x) length(x) == length(id)) %>%
+     unlist() %>% sum() == 0){
     stop('Each element in "group_list" should have same length with gene id!')
   }
 
@@ -65,10 +66,12 @@ genGO <- function(id,
   org <- mapEnsOrg(org)
   pkg <- paste0("org.", bioc_org, ".eg.db")
   keyType <- gentype(id = id, org=org)
-  # if(keyType != 'ENTREZID'){
-  #   id <- suppressMessages(transId(id,'entrez',org) %>%
-  #                            dplyr::pull(entrezid))
-  # }
+  # here we convert all symbol and alias to symbol
+  if(keyType == 'SYMBOL'){
+    old_id <- id
+    id_dat <- suppressMessages(transId(id,'symbol',org,unique = T))
+    id <- id_dat %>% dplyr::pull(symbol)
+  }
 
   #--- codes ---#
   ## NO GROUP INFO
@@ -90,24 +93,46 @@ genGO <- function(id,
       stop("No GO terms enriched ...")
     }
 
-    # transform id to symbol
-    ego_id = stringr::str_split(ego$geneID, "\\/") %>% unlist()
-    id_all = suppressMessages(transId(ego_id,'symbol',org = org,unique = T))
+    # convert other id types to symbol
+    if(keyType != "SYMBOL"){
+      ego_id = stringr::str_split(ego$geneID, "\\/") %>% unlist()
+      id_all = suppressMessages(transId(ego_id,'symbol',org = org,unique = T))
 
-    new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
-      lapply(., function(x) {
-        id_all %>% dplyr::filter(input_id %in% x) %>%
-          dplyr::arrange(match(input_id, x)) %>%
-          dplyr::pull(symbol)
-      }) %>%
-      sapply(., paste0, collapse = "/")
+      new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
+        lapply(., function(x) {
+          id_all %>% dplyr::filter(input_id %in% x) %>%
+            dplyr::arrange(match(input_id, x)) %>%
+            dplyr::pull(symbol)
+        }) %>%
+        sapply(., paste0, collapse = "/")
+      new_ego <- ego %>%
+        as.data.frame() %>%
+        dplyr::mutate(geneID_symbol = new_geneID) %>%
+        dplyr::relocate(geneID_symbol,.after = geneID) %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }else if (!identical(id,old_id)){
+      # if id type is symbol and has alias, keep both
+      new_geneID <- stringi::stri_replace_all_fixed(ego$geneID,
+                             pattern = id,
+                             replacement = old_id,
+                             vectorize_all = FALSE)
+      new_ego <- ego %>%
+        as.data.frame() %>%
+        dplyr::rename(geneID_symbol = geneID) %>%
+        dplyr::mutate(geneID = new_geneID) %>%
+        dplyr::relocate(geneID_symbol,.after = geneID) %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
 
-    new_ego <- ego %>%
-      as.data.frame() %>%
-      dplyr::mutate(geneID_symbol = new_geneID) %>%
-      dplyr::relocate(geneID_symbol,.after = geneID) %>%
-      calcFoldEnrich() %>%
-      as.enrichdat()
+    }else{
+      new_ego <- ego %>%
+        as.data.frame() %>%
+        calcFoldEnrich() %>%
+        as.enrichdat()
+    }
+
+
   }else{
     ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)

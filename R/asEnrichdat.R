@@ -1,13 +1,13 @@
-#' Adjust dataframe for enrichment plot
+#' Modify dataframe for enrichment plot
 #'
-#' make sure colname contains Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
+#' To make sure colname contains Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
 #'
-#' @param enrich_df dataframe of enrichment analysis result .
+#' @param enrich_df Enrichment analysis `data.frame` result.
 #'
 #' @importFrom stringr str_remove_all str_split str_remove
 #' @importFrom dplyr mutate pull
 #' @importFrom rlang .data
-#' @return A `data.frame`.
+#' @return  `data.frame`
 #' @export
 
 as.enrichdat <- function(enrich_df) {

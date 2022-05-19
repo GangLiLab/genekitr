@@ -2,16 +2,16 @@
 % Please edit documentation in R/asEnrichdat.R
 \name{as.enrichdat}
 \alias{as.enrichdat}
-\title{Adjust dataframe for enrichment plot}
+\title{Modify dataframe for enrichment plot}
 \usage{
 as.enrichdat(enrich_df)
 }
 \arguments{
-\item{enrich_df}{dataframe of enrichment analysis result .}
+\item{enrich_df}{Enrichment analysis `data.frame` result.}
 }
 \value{
-A `data.frame`.
+`data.frame`
 }
 \description{
-make sure colname contains Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
+To make sure colname contains Description, Count, FoldEnrich/GeneRatio, pvalue/qvalue/p.adjust
 }
