@@ -30,12 +30,12 @@
 #' keg <- genKEGG(id, org = "human")
 #'
 #' # gene id with groups
-#' id <- c(head(names(geneList),50),tail(names(geneList),50))
-#' group <- list(group1  = c(rep('up',50),rep('down',50)),
-#'               group2 = c(rep('A',40),rep('B',60)))
+#' id <- c(head(names(geneList),100),tail(names(geneList),100))
+#' group <- list(group1  = c(rep('up',100),rep('down',100)),
+#'               group2 = c(rep('A',130),rep('B',70)))
 #' gkeg <- genKEGG(id, group_list = group,
-#'               org = "human", pvalueCutoff = 0.1,
-#'               qvalueCutoff = 0.1)
+#'               org = "human", pvalueCutoff = 0.05,
+#'               qvalueCutoff = 0.05)
 #'
 #' }
 #'
