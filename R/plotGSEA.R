@@ -139,7 +139,7 @@ plotGSEA <- function(gsea_list,
       geom_linerange(aes_(ymin=~ymin, ymax=~ymax, color=~Description)) +
       xlab(NULL) + ylab(NULL) +
       scale_color_manual(values = colors)+
-      plot_theme(remove_legend = T,remove_grid = T,remove_text = T,...)+
+      plot_theme(remove_legend = T,remove_grid = T,remove_main_text = T,...)+
       scale_y_continuous(expand=c(0,0))+
       theme(
         plot.margin = margin(t=-.1, b=0,unit="cm"),

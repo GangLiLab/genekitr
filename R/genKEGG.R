@@ -26,7 +26,7 @@
 #' \dontrun{
 #' # only gene ids
 #' data(geneList, package = "genekitr")
-#' id <- names(geneList)[abs(geneList) > 2]
+#' id <- names(geneList)[abs(geneList) > 1]
 #' keg <- genKEGG(id, org = "human")
 #'
 #' # gene id with groups

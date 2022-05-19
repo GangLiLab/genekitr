@@ -293,6 +293,7 @@ web_download <- function(url, destfile, try_time = 2L, ...) {
   )
 }
 
+
 #--- add global variables ---#
 utils::globalVariables(c(
   ".", "data_dir","biocOrg_name","full_name","short_name","keggOrg_name","item","type","sets",
@@ -304,4 +305,4 @@ utils::globalVariables(c(
   "method","Term", "arrow", "circle", "geom_node_label", "geom_node_point", "go_id", "gotbl", "parent",
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis","everything", "gene","coord_flip",
-  "expansion", "index", "nes.group", "padj.group"))
+  "expansion", "index", "nes.group", "padj.group", "change","label", "logFC","stat"))

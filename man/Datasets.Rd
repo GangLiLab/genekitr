@@ -4,6 +4,7 @@
 \name{Datasets}
 \alias{Datasets}
 \alias{geneList}
+\alias{deg}
 \alias{msig_org}
 \alias{msig_category}
 \alias{biocOrg_name}
@@ -14,6 +15,9 @@ geneList entrez gene list with decreasing fold change value}
 \description{
 Datasets
 geneList entrez gene list with decreasing fold change value
+
+Datasets
+Differential expression analysis result of GSE42872
 
 Datasets
 msig_species contains msigdb species information

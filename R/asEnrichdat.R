@@ -42,7 +42,7 @@ as.enrichdat <- function(enrich_df) {
       enrich_df <- enrich_df %>% dplyr::mutate(Count = gen_num)
     } else if (any(grepl("\\([1-9]{,4}\\)", colnames(enrich_df)))) {
       gen_num <- enrich_df[grepl("\\([1-9]{,4}\\)", colnames(enrich_df))] %>%
-        dplyr::pull(1) %>%
+        dplyr::pull(2) %>%
         as.numeric()
       enrich_df <- enrich_df %>% dplyr::mutate(Count = gen_num)
     } else {

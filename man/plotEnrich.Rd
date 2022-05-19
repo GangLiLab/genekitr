@@ -8,12 +8,12 @@ plotEnrich(
   enrich_df,
   fold_change = NULL,
   plot_type = c("bar", "wego", "dot", "bubble", "lollipop", "geneheat", "genechord",
-    "network", "gomap", "goheat", "gotangram", "wordcloud", "upset", "keggpath"),
+    "network", "gomap", "goheat", "gotangram", "wordcloud", "upset"),
   term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
   sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
-  top_color = "red",
-  bottom_color = "blue",
+  up_color = "red",
+  down_color = "blue",
   show_gene = "all",
   xlim_left = 0,
   xlim_right = NA,
@@ -28,12 +28,14 @@ plotEnrich(
 \arguments{
 \item{enrich_df}{Enrichment analysis `data.frame` result.}
 
-\item{fold_change}{Fold change or logFC values with gene IDs as names. Used in "heat" and "chord" plot.}
+\item{fold_change}{Fold change or logFC values with gene IDs as names. Used in "heat" and "chord"
+plot.}
 
 \item{plot_type}{Choose from "bar", "wego","bubble","dot", "lollipop","geneheat", "genechord",
-"network","gomap","goheat","gotangram","wordcloud","upset", "keggpath".}
+"network","gomap","goheat","gotangram","wordcloud","upset".}
 
-\item{term_metric}{Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and 'RichFactor'.}
+\item{term_metric}{Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and
+'RichFactor'.}
 
 \item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
@@ -41,9 +43,10 @@ plotEnrich(
 "Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
 Used in "map","goheat","gotangram","wordcloud".}
 
-\item{top_color}{Legend top color as low pvalue or high logFC, default is "red".}
+\item{up_color}{Color of stronger statistics (e.g. Pvalue 0.01) or higher logFC, default is "red".}
 
-\item{bottom_color}{Legend bottom color as high pvalue or low logFC, default is "blue".}
+\item{down_color}{Color of weaker statistics (e.g. Pvalue 1) or lower logFC, default is
+"blue".}
 
 \item{show_gene}{Select genes to show. Default is "all". Used in "heat" and "chord" plot.}
 
@@ -53,7 +56,8 @@ Used in "map","goheat","gotangram","wordcloud".}
 
 \item{wrap_length}{Numeric, wrap text if longer than this length. Default is NULL.}
 
-\item{scale_ratio}{Numeric, scale of node and line size. Default is 1. Used in "network" and "gomap".}
+\item{scale_ratio}{Numeric, scale of node and line size. Default is 1. Used in "network" and
+"gomap".}
 
 \item{org}{Organism name from `biocOrg_name`.}
 
@@ -75,7 +79,7 @@ Plot for GO and KEGG enrichment analysis
 ## example data
 library(ggplot2)
 data(geneList, package = "genekitr")
-id <- names(genelist)[abs(genelist) > 2.5]
+id <- names(geneList)[abs(geneList) > 2.5]
 logfc <- geneList[id]
 
 ego <- genGO(id,
@@ -95,7 +99,7 @@ plotEnrich(ego,plot_type = "bar")
 plotEnrich(all_ego,plot_type = 'wego')
 
 plotEnrich(ego,plot_type = "lollipop",
-bottom_color = "#325CAC", top_color = "#E69056", wrap_length = 25)
+down_color = "#325CAC", up_color = "#E69056", wrap_length = 25)
 
 plotEnrich(ego,plot_type = "geneheat")
 

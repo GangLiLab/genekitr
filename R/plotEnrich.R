@@ -1,28 +1,33 @@
 #' Plot for GO and KEGG enrichment analysis
 #'
 #' @param enrich_df Enrichment analysis `data.frame` result.
-#' @param fold_change Fold change or logFC values with gene IDs as names. Used in "heat" and "chord" plot.
+#' @param fold_change Fold change or logFC values with gene IDs as names. Used in "heat" and "chord"
+#' plot.
 #' @param plot_type Choose from "bar", "wego","bubble","dot", "lollipop","geneheat", "genechord",
-#' "network","gomap","goheat","gotangram","wordcloud","upset", "keggpath".
-#' @param term_metric Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and 'RichFactor'.
+#' "network","gomap","goheat","gotangram","wordcloud","upset".
+#' @param term_metric Pathway term metric from one of 'GeneRatio','Count','FoldEnrich' and
+#' 'RichFactor'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
 #' "Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
 #' Used in "map","goheat","gotangram","wordcloud".
-#' @param top_color Legend top color as low pvalue or high logFC, default is "red".
-#' @param bottom_color Legend bottom color as high pvalue or low logFC, default is "blue".
+#' @param up_color Color of stronger statistics (e.g. Pvalue 0.01) or higher logFC, default is "red".
+#' @param down_color Color of weaker statistics (e.g. Pvalue 1) or lower logFC, default is
+#' "blue".
 #' @param show_gene Select genes to show. Default is "all". Used in "heat" and "chord" plot.
 #' @param xlim_left X-axis left limit, default is 0.
 #' @param xlim_right X-axis right limit, default is NA.
 #' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
-#' @param scale_ratio Numeric, scale of node and line size. Default is 1. Used in "network" and "gomap".
+#' @param scale_ratio Numeric, scale of node and line size. Default is 1. Used in "network" and
+#' "gomap".
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "BP", "MF", and "CC".
 #' @param layout Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
 #' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
 #' @param ... other arguments from `plot_theme` function
 #'
-#' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs geom_point
+#' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs
+#' geom_point
 #' geom_segment geom_bar geom_col geom_tile guide_colorbar guides scale_color_continuous
 #' scale_size_continuous scale_x_discrete scale_y_discrete scale_x_continuous scale_size
 #' scale_fill_discrete
@@ -44,7 +49,7 @@
 #' ## example data
 #' library(ggplot2)
 #' data(geneList, package = "genekitr")
-#' id <- names(genelist)[abs(genelist) > 2.5]
+#' id <- names(geneList)[abs(geneList) > 2.5]
 #' logfc <- geneList[id]
 #'
 #' ego <- genGO(id,
@@ -64,7 +69,7 @@
 #' plotEnrich(all_ego,plot_type = 'wego')
 #'
 #' plotEnrich(ego,plot_type = "lollipop",
-#' bottom_color = "#325CAC", top_color = "#E69056", wrap_length = 25)
+#' down_color = "#325CAC", up_color = "#E69056", wrap_length = 25)
 #'
 #' plotEnrich(ego,plot_type = "geneheat")
 #'
@@ -90,12 +95,12 @@
 plotEnrich <- function(enrich_df,
                        fold_change = NULL,
                        plot_type = c('bar','wego','dot','bubble','lollipop','geneheat','genechord',
-                                     'network','gomap','goheat','gotangram','wordcloud','upset',"keggpath"),
+                                     'network','gomap','goheat','gotangram','wordcloud','upset'),
                        term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
                        stats_metric = c("p.adjust", "pvalue", "qvalue"),
                        sim_method =  c("JC","Resnik", "Lin", "Rel", "Jiang" , "Wang"),
-                       top_color = "red",
-                       bottom_color = "blue",
+                       up_color = "red",
+                       down_color = "blue",
                        show_gene = "all",
                        xlim_left = 0,
                        xlim_right = NA,
@@ -172,7 +177,7 @@ plotEnrich <- function(enrich_df,
           size = "Count"
         )) +
         scale_color_continuous(
-          low = top_color, high = bottom_color, name = stats_metric_label,
+          low = up_color, high = down_color, name = stats_metric_label,
           guide = guide_colorbar(reverse = TRUE),
           labels = function(x) format(x, scientific = T)
         ) +
@@ -188,7 +193,7 @@ plotEnrich <- function(enrich_df,
           size = term_metric
         )) +
         scale_color_continuous(
-          low = top_color, high = bottom_color, name = stats_metric_label,
+          low = up_color, high = down_color, name = stats_metric_label,
           guide = guide_colorbar(reverse = TRUE),
           labels = function(x) format(x, scientific = T)
         ) +
@@ -233,7 +238,7 @@ plotEnrich <- function(enrich_df,
     p <- ggplot(data=enrich_df, aes_string(x = term_metric, y = 'Description', fill = stats_metric)) +
       geom_bar(stat="identity")+
       scale_fill_continuous(
-        low = top_color, high = bottom_color, name = stats_metric_label,
+        low = up_color, high = down_color, name = stats_metric_label,
         guide = guide_colorbar(reverse = TRUE),
         labels = function(x) format(x, scientific = T))+
       xlab(term_metric_label)+
@@ -292,7 +297,7 @@ plotEnrich <- function(enrich_df,
                               colour=stats_metric))+
       geom_point(aes_string(color = stats_metric, size = "Count"))+
       scale_color_continuous(
-        low = top_color, high = bottom_color, name = stats_metric_label,
+        low = up_color, high = down_color, name = stats_metric_label,
         guide = guide_colorbar(reverse = TRUE),
         labels = function(x) format(x, scientific = T))+
       scale_size_continuous(range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
@@ -353,7 +358,7 @@ plotEnrich <- function(enrich_df,
         geom_tile(aes_(fill = ~logfc), color = "white") +
         xlab(NULL) + ylab(NULL) +
         plot_theme(border_thick = 0,...)+
-        scale_fill_continuous(low=bottom_color, high=top_color,
+        scale_fill_continuous(low=down_color, high=up_color,
                               name = "logFC")+
         theme(panel.grid.major = element_blank(),
               axis.text.x=element_text(angle = 50, hjust = 1))
@@ -453,7 +458,7 @@ plotEnrich <- function(enrich_df,
                         process.label = lst$legend_text_size,
                         border.size = 0.1,
                         ribbon.col = cols,
-                        lfc.col=c(top_color,'grey50',bottom_color))
+                        lfc.col=c(up_color,'grey50',down_color))
       )
     }
   }
@@ -512,7 +517,7 @@ plotEnrich <- function(enrich_df,
       scale_size_continuous(name = "Number of genes",
                             guide = "legend",
                             range = c(min(V(g)$size)/2,max(V(g)$size)/2) * scale_ratio) +
-      scale_fill_continuous(low = top_color, high = bottom_color,
+      scale_fill_continuous(low = up_color, high = down_color,
                             name = stats_metric_label) +
       theme(panel.background = element_blank()) +
       geom_node_text(aes_(label=~name), data = NULL,
@@ -520,7 +525,7 @@ plotEnrich <- function(enrich_df,
                      bg.color = "white",
                      repel=TRUE, segment.size = 0.2)+
       guides(fill = guide_colorbar(reverse = TRUE))+
-      plot_theme(remove_border = T,remove_text = T,
+      plot_theme(remove_border = T,remove_main_text = T,
                  border_thick = 0,...)
 
   }
@@ -590,15 +595,15 @@ plotEnrich <- function(enrich_df,
                      end_cap = circle(1, 'mm'),
                      colour="darkgrey") +
       geom_node_point(size = 3*scale_ratio, aes_(color=~color)) +
-      scale_color_continuous(low=top_color, high=bottom_color, name = stats_metric_label,
+      scale_color_continuous(low=up_color, high=down_color, name = stats_metric_label,
                              guide=guide_colorbar(reverse=TRUE))+
       geom_node_label(aes_(label=~Term, color=~color),
                       size = lst$main_text_size,
                       repel=TRUE, segment.size = 0.2,
                       max.overlaps = 16) +
-      scale_fill_continuous(low=top_color, high=bottom_color, name = stats_metric_label,
+      scale_fill_continuous(low=up_color, high=down_color, name = stats_metric_label,
                             guide=guide_colorbar(reverse=TRUE), na.value="white")+
-      plot_theme(border_thick = 0,remove_text = T,...)
+      plot_theme(border_thick = 0,remove_main_text = T,...)
 
   }
 
@@ -656,35 +661,36 @@ plotEnrich <- function(enrich_df,
   }
 
   #--- keggpath ---#
-  if(plot_type == 'keggpath'){
-    if (!requireNamespace("pathview", quietly = TRUE)) {
-      utils::install.packages('pathview')
-    }
-    requireNamespace("pathview",quietly = T)
-
-    if(is.null(fold_change)) stop('Please give fold change or logFC values with gene IDs as names!')
-
-    org = substr(enrich_df[1,1],1,3) #e.g. hsa
-    ids = enrich_df$ID
-    if(!all(grepl("^[a-z]{3}.*",ids))) stop('Please give a kegg result...')
-
-    max_fc <- max(abs(fold_change))
-    bins <- ceiling(max_fc) * 2
-    p <- lapply(ids, function(i) {
-      print(paste0('Now plotting ',which(ids%in%i),'/',length(ids),': ',i))
-      suppressMessages(pathview::pathview(gene.data=fold_change,
-                                          pathway.id = i,
-                                          species = org,
-                                          limit = list(gene=max_fc, cpd=1),
-                                          bins = list(gene=bins, cpd=10),
-                                          low = list(gene="blue", cpd="blue"),
-                                          high = list(gene="red", cpd="yellow"),
-                                          out.suffix='genekitr',
-                                          kegg.native=TRUE,
-                                          new.signature=FALSE))
-    })
-    invisible(p)
-  }
+  # if(plot_type == 'keggpath'){
+  #   # if (!requireNamespace("pathview", quietly = TRUE)) {
+  #   #   warning('Depends on pathview package. Installing...')
+  #   #   utils::install.packages('pathview')
+  #   # }
+  #
+  #   if(is.null(fold_change))
+  #     stop('Please give fold change or logFC values with gene IDs as names!')
+  #
+  #   org = substr(enrich_df[1,1],1,3) #e.g. hsa
+  #   ids = enrich_df$ID
+  #   if(!all(grepl("^[a-z]{3}.*",ids))) stop('Please give a kegg result...')
+  #
+  #   max_fc <- max(abs(fold_change))
+  #   bins <- ceiling(max_fc) * 2
+  #   p <- lapply(ids, function(i) {
+  #     print(paste0('Now plotting ',which(ids%in%i),'/',length(ids),': ',i))
+  #     suppressPackageStartupMessages(pathview::pathview(gene.data=fold_change,
+  #                                         pathway.id = i,
+  #                                         species = org,
+  #                                         limit = list(gene=max_fc, cpd=1),
+  #                                         bins = list(gene=bins, cpd=10),
+  #                                         low = list(gene="blue", cpd="blue"),
+  #                                         high = list(gene="red", cpd="yellow"),
+  #                                         out.suffix='genekitr',
+  #                                         kegg.native=TRUE,
+  #                                         new.signature=FALSE))
+  #   })
+  #   invisible(p)
+  # }
 
 
   # wrap long text

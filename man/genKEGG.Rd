@@ -52,7 +52,7 @@ Gene enrichment of KEGG analysis
 \dontrun{
 # only gene ids
 data(geneList, package = "genekitr")
-id <- names(geneList)[1:1000]
+id <- names(geneList)[abs(geneList) > 1]
 keg <- genKEGG(id, org = "human")
 
 # gene id with groups

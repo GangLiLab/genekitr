@@ -9,6 +9,16 @@
 NULL
 
 #' Datasets
+#' Differential expression analysis result of GSE42872
+#'
+#'
+#' @name Datasets
+#' @aliases deg
+#' @docType data
+#' @keywords datasets
+NULL
+
+#' Datasets
 #' msig_species contains msigdb species information
 #'
 #'

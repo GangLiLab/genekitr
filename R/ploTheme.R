@@ -9,8 +9,9 @@
 #' If set 0, remove both border and ticks.
 #' @param remove_grid Logical, remove background grid lines, default is FALSE.
 #' @param remove_border Logical, remove border line, default is FALSE.
-#' @param remove_text Logical, remove all text, default is FALSE.
-#' @param remove_legend Logical, remove legend, default is FALSE.
+#' @param remove_main_text Logical, remove all axis text, default is FALSE.
+#' @param remove_legend_text Logical, remove all legend text, default is FALSE.
+#' @param remove_legend Logical, remove entire legend, default is FALSE.
 #' @return ggplot theme
 #' @importFrom ggplot2 theme_bw theme margin unit element_text element_rect element_line
 #' @importFrom rlang .data
@@ -25,7 +26,8 @@ plot_theme <- function(main_text_size = 8,
                        border_thick = 1.5,
                        remove_grid = TRUE,
                        remove_border = FALSE,
-                       remove_text = FALSE,
+                       remove_main_text = FALSE,
+                       remove_legend_text = FALSE,
                        remove_legend = FALSE
 ) {
   ptheme <-theme_bw()
@@ -78,15 +80,25 @@ plot_theme <- function(main_text_size = 8,
   }
 
   # remove axis text
-  if (remove_text) {
-    txt_theme <- theme(
+  if (remove_main_text) {
+    main_txt_theme <- theme(
       axis.text.x = element_blank(),
       axis.text.y = element_blank(),
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
     )
   }else{
-    txt_theme = NULL
+    main_txt_theme = NULL
+  }
+
+  # remove legend text
+  if (remove_legend_text) {
+    legend_txt_theme <- theme(
+      legend.title= element_blank(),
+      legend.text= element_blank()
+    )
+  }else{
+    legend_txt_theme = NULL
   }
 
   # remove legend
@@ -98,7 +110,8 @@ plot_theme <- function(main_text_size = 8,
     leg_theme <- NULL
   }
 
-  all_theme <- ptheme + font_theme + bkg_theme + bod_theme + txt_theme + leg_theme
+  all_theme <- ptheme + font_theme + bkg_theme + bod_theme +
+    main_txt_theme+legend_txt_theme + leg_theme
 
   return(all_theme)
 }

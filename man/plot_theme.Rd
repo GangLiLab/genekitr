@@ -11,7 +11,8 @@ plot_theme(
   border_thick = 1.5,
   remove_grid = TRUE,
   remove_border = FALSE,
-  remove_text = FALSE,
+  remove_main_text = FALSE,
+  remove_legend_text = FALSE,
   remove_legend = FALSE
 )
 }
@@ -29,9 +30,11 @@ If set 0, remove both border and ticks.}
 
 \item{remove_border}{Logical, remove border line, default is FALSE.}
 
-\item{remove_text}{Logical, remove all text, default is FALSE.}
+\item{remove_main_text}{Logical, remove all axis text, default is FALSE.}
 
-\item{remove_legend}{Logical, remove legend, default is FALSE.}
+\item{remove_legend_text}{Logical, remove all legend text, default is FALSE.}
+
+\item{remove_legend}{Logical, remove entire legend, default is FALSE.}
 }
 \value{
 ggplot theme
