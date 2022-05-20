@@ -90,7 +90,8 @@ genGSEA <- function(genelist,
       sapply(., paste0, collapse = "/")
 
     egmt =  egmt %>%
-      dplyr::mutate(geneID = new_geneID)
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol,.after = geneID)
   }
 
   res <- list(genelist = genelist, geneset = geneset, gsea_df = egmt, exponent = exponent, org = org)
