@@ -12,23 +12,39 @@ knitr::opts_chunk$set(
 )
 ```
 
-# genekitr
+# Genekitr
 
-**genekitr** is an R analysis toolkit based on the gene. It mainly contains five features:
+## Overview
 
-- Search: Gene IDs as input then get gene-related information (exp. location, gene name, gene alias, GC content ...) as well as search gene-related PubMed records
+**Genekitr** is a gene analysis toolkit based on R. It mainly contains five features:
 
-- Transform: Transform gene ID type among "symbol", "entrezid", "ensembl" and "uniprot"
+- Search: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
 
-- Analysis: Gene enrichment analysis including ORA (GO and KEGG) and GSEA
+- Convert: ID conversion among "Symbol & Alias", "NCBI Entrez", "Ensembl" and "Uniprot"
 
-- Visualize: Visualization for enrichment analysis and gene overlaps
+- Analysis: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
 
-- Export: Gene IDs and analysis results could be exported as various sheets in one Excel file, which could be easily read and shared with others
+- Plot: 14 GO plots, 7 KEGG plots, 5 GSEA plots and 2 Venn plots which support modification on text, color, border, axis and legend to make your own plot
 
-**Why develop this R package?**
+- Export: easily export multiple data sets as various sheets in one excel file
 
-Features：
+## Why develop genekitr?
+
+No matter what omics you analysis, genes are the basic research unit just like cells in our body. Genes issue is very common and a little tedious.
+
+**Now let's welcome our host Mr.Doodle to introduce his daily work...**
+
+##### Scene 1: repeat work
+
+PI gave Doodle 30 gene and let him check their location (better with sequences) and detailed names. Doodle searched on NCBI one by one, copy & paste into excel. 1 hour later, Doodle sent the file to PI and PI smiled, "Well done! Now I have another 50!"
+
+##### Scene 2: embarrassed name
+PI gave Doodle a differential expression analysis matrix and a target gene list file. PI let him find if target gene is up-regulated after treatment. After a while, Doodle found there is no PDL1 gene in the matrix but indeed exists in the gene list. "Do we actually have PDL1 gene?" he asked PI and PI smiled, "Of course! You need to check gene CD274 instead of PDL1, which is just an alias!" Doodle was confused: how to distinguish from real gene name and alias?
+
+##### Scene 3: 
+
+
+
 
 - Many gene alias could not be recognized. For example, BCC7(human) is actually TP53; Tp53(mouse) is actually Trp53, Trp53inp2 & Ano9. Many popular gene symbol like PD1/PDL1 has own gene ID PDCD1/CD274, which could be omitted in downstream analysis.
 
