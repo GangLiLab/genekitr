@@ -39,10 +39,10 @@ No matter what omics you analysis, genes are the basic research unit just like c
 PI gave Doodle 30 gene and let him check their location (better with sequences) and detailed names. Doodle searched on NCBI one by one, copy & paste into excel. 1 hour later, Doodle sent the file to PI and PI smiled, "Well done! Now I have another 50!"
 
 ##### Scene 2: embarrassed name
-PI gave Doodle a differential expression analysis matrix and a target gene list file. PI let him find if target gene is up-regulated after treatment. After a while, Doodle found there is no PDL1 gene in the matrix but indeed exists in the gene list. "Do we actually have PDL1 gene?" he asked PI and PI smiled, "Of course! You need to check gene CD274 instead of PDL1, which is just an alias!" Doodle was confused: how to distinguish from real gene name and alias?
+PI gave Doodle a DEG (differential expression analysis) matrix and a target gene list file. PI let him find if target gene is up-regulated after treatment. After a while, Doodle found there is no PDL1 gene in the matrix but indeed exists in the gene list. "Do we actually have PDL1 gene?" he asked PI and PI smiled, "Of course! You need to check gene CD274 instead of PDL1, which is just an alias!" Doodle was confused: how to distinguish from real gene name and alias?
 
-##### Scene 3: 
-
+##### Scene 3: outdated database
+Doodle got the up-regulated gene symbols of the last DEG matrix to do KEGG analysis. KEGG only support entrez id so firstly he needs to convert symbol to entrez. He found some symbol do not have matched entrezid, but NCBI has. Doodle remembered he used org.db v3.12 but current is v3.15. After he updated the annotation package, he finally got all matched id. While the problem is already solved, Doodle still wonder if there's any method could help him get updated result instead of self-check?
 
 
 
