@@ -8,13 +8,20 @@
 
 ## Overview
 
-**Genekitr** is a **gene** analysis tool**kit** based on **R**. It mainly contains five features:
+**Genekitr** is a **gene** analysis tool**kit** based on **R**. It mainly contains **five features:**
 
-- Search: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
-- Convert: ID conversion among "Symbol & Alias", "NCBI Entrez", "Ensembl" and "Uniprot"
-- Analysis: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
-- Plot: 14 GO plots, 7 KEGG plots, 5 GSEA plots and 2 Venn plots with flexible modification on text, color, border, axis and legend. Feel free to make your own plots.
-- Export: easily export multiple data sets as various sheets in one excel file
+- **Search**: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
+- **Convert**: ID conversion among "Symbol & Alias", "NCBI Entrez", "Ensembl" and "Uniprot"
+
+- **Analysis**: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
+
+- **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots and 2 Venn plots with flexible modification on text, color, border, axis and legend. Feel free to make your own plots.
+- **Export**: easily export multiple data sets as various sheets in one excel file
+
+Genekitr supports **many species:**
+
+- Search & ID conversion support 219 Ensembl vertebrate and bacteria species (including 18 species with NCBI data), and 120 Ensembl plant species (including 1 species with NCBI data)
+- GO supports 19 species, KEGG supports 7254 species and GSEA supports 20 species
 
 
 
