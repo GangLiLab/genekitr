@@ -1,434 +1,111 @@
+<img src="https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-043213.png" align="left" width="200"/>
 
-<!-- README.md is generated from README.Rmd. Please edit Rmd file -->
+[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
 
-# genekitr
+![Alt](https://repobeats.axiom.co/api/embed/e42ba06d30de893670c70324f19398ef0a7c26fa.svg "Repobeats analytics image")
 
-**genekitr** is an R analysis toolkit based on the gene. It mainly
-contains five features:
 
--   Search: Gene IDs as input then get gene-related information (exp.
-    location, gene name, gene alias, GC content …) as well as search
-    gene-related PubMed records
 
--   Transform: Transform gene ID type among “symbol”, “entrezid”,
-    “ensembl” and “uniprot”
+## Overview
 
--   Analysis: Gene enrichment analysis including ORA (GO and KEGG) and
-    GSEA
+**Genekitr** is a **gene** analysis tool**kit** based on **R**. It mainly contains five features:
 
--   Visualize: Visualization for enrichment analysis and gene overlaps
+- Search: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
+- Convert: ID conversion among "Symbol & Alias", "NCBI Entrez", "Ensembl" and "Uniprot"
+- Analysis: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
+- Plot: 14 GO plots, 7 KEGG plots, 5 GSEA plots and 2 Venn plots with flexible modification on text, color, border, axis and legend. Feel free to make your own plots.
+- Export: easily export multiple data sets as various sheets in one excel file
 
--   Export: Gene IDs and analysis results could be exported as various
-    sheets in one Excel file, which could be easily read and shared with
-    others
 
-**Why develop this R package?**
 
-Features：
+## Tell a story ~ why develop genekitr?
 
--   Many gene alias could not be recognized. For example, BCC7(human) is
-    actually TP53; Tp53(mouse) is actually Trp53, Trp53inp2 & Ano9. Many
-    popular gene symbol like PD1/PDL1 has own gene ID PDCD1/CD274, which
-    could be omitted in downstream analysis.
+No matter what omics data you research, **genes are the basic research unit just like cells in our body**. Genes issue is very common and a little tedious.
 
--   Some popular gene ID transforming package only support dozens of
-    model species. But here we support 190 species
+> Next, I want to tell you a story about Mr. Doodle who is a computational biology student.
+> **Now let's welcome our host Mr.Doodle to introduce his daily work...**
 
--   Some R package sets many arguments as input, but we only use
-    simplest argument. For example, user only need to input gene ID then
-    the function will determine gene type automatically.
+### Scene 1: repeat work 
 
--   Keep updating annotating resource with online database (Ensembl &
-    Uniprot). For now, we use the current Ensemble v104.
+PI gave Doodle 30 gene and let him check their location (better with sequences) and detailed names. Doodle searched on NCBI one by one, copy & paste into excel. 1 hour later, Doodle sent the file to PI and PI smiled, "Well done! Now I have another 50!" 
+**Doodle wonder how to avoid this repeat searching work?**
 
--   Some package exports result as an object which not frendly for users
-    to export and share with others. We export the analysis results as
-    dataframes which could easily share and plot.
+### Scene 2: embarrassing name 
+PI gave Doodle a DEG (differential expression analysis) matrix and a target gene list file. PI let him find if target gene is up-regulated after treatment. After a while, Doodle found there is no PDL1 gene in the matrix but indeed exists in the gene list. "Do we actually have PDL1 gene?" he asked PI and PI smiled, "Of course! You need to check gene CD274 instead of PDL1, which is just an alias!" **Doodle was confused: how to distinguish from real gene name and alias?**
 
--   Built in plotting functions could produce pre-published figures then
-    users only need to simply modify using AI.
+### Scene 3: outdated database 
+Doodle got the up-regulated gene symbols of the last DEG matrix to do KEGG analysis. KEGG only support entrez id so firstly he needs to convert symbol to entrez. He found some symbol do not have matched entrezid, but NCBI has. Doodle remembered he used org.db v3.12 but current is v3.15. After he updated the annotation package, he finally got all matched id. 
+**Doodle wonder if there's any method could help him get updated result instead of self-check every time?**
 
-## Table of Contents
+### Scene 4: imcompatible format 
+PI did enrichment analysis alone on [GeneOntology](http://geneontology.org/) website and let Doodle do visulization according to that result. "Could you please help to plot the pathway bubble plot and also I want to show x-axis as FoldEnrichment." PI smiled. Doodle wanted to use clusterProfilter R package to plot but he found it only accepts its own object. So he just bite the bullet and self-coding using ggplot2. 
+**Doodle wonder why don't have a tool supports common enrichment data frames?**
 
--   [Installation](#installation)
--   [Quick guide](#quick-guide)
--   [Vignette](#vignette)
--   [Citation](#citation)
--   [Welcome to contribute](#welcome-to-contribute)
+### Scene 5: annoying plot theme 
 
-## Installation
+Doodle finished the bubble plot at last and sent to PI. After 15 minutes, PI sent him a message with a smile: "seems plot text size is too small and could you give me a white background with border size 4 pt?" Doodle ajusted `ggplot` theme function and modified 10 minutes. After a while, PI sent a message again, "I saw the second version, maybe border is too thick, could you replot?" 
+**Doodle wonder if there's a function could help him process plot theme instead of changing current code again and again?**
 
-Install CRAN stable version:
+### Scene 6: limited plot types
 
-``` r
+Once Doodle got GO enrichment analysis result, PI let him think how to show them nicely. Doodle found every tool has own specific plot e.g. [WEGO](https://wego.genomics.cn/) could  compare BP, CC and MF terms; [GOplot](https://wencke.github.io/)  has chord plot to show the relationship of gene and GO terms; [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html) support enriched map and network which could explore the relationship among enrich terms. One big problem is their input data is not compatible so it is unconvinient to plot WEGO plot using clusterProfiler object. **Doodle wonder if there's any method could involve beautiful plots from different tool with one universal data format?**
+
+### Scene 7: chaotic export files
+
+Doodle has finished differential expression analysis and GO/KEGG enrichment analysis, PI let him sent all result files to him. Doodle firstly save all results into three excel files and named "DEG_data.xlsx", "GO_enrich.xlsx" and "KEGG_enrich.xlsx", then he packed three files into one zipped folder and named with date, finally he sent to PI. After a while, PI sent him a message: "Could you put all three result into one excel file?" 
+**Doodle wonder if there's way to save all data into one file without too much manual operation?**
+
+> **If you have ever had one or more similar problems like Mr. Doodle, you may need `genekitr` !**
+
+## 🛠 Installation
+
+#### Install CRAN stable version:
+
+```R
 install.packages("genekitr")
 ```
 
-Install GitHub dev version:
+#### Install GitHub development version:
 
-``` r
-# install.packages("remotes")
+```R
 remotes::install_github("GangLiLab/genekitr")
-# To build local vignette:
-# remotes::install_github("GangLiLab/genekitr", build_vignettes = TRUE, dependencies = TRUE)
 ```
 
-## Quick guide
+#### Install Gitee (for CHN mainland users):
 
-To quickly go through the package usage, we will use built-in gene list
-from GEO airway
-
-([GSE52778](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE52778))
-DEG analysis.
-
-### Search
-
-##### Search gene related information
-
-`org` argument could accept fullname or shortname of specific organism.
-For example, we could
-
-use common name: `human/hs/hg/hsa` to describe human.
-
-``` r
-library(genekitr)
-#> 
-library(dplyr)
-#> 
-#> Attaching package: 'dplyr'
-#> The following objects are masked from 'package:stats':
-#> 
-#>     filter, lag
-#> The following objects are masked from 'package:base':
-#> 
-#>     intersect, setdiff, setequal, union
-data(geneList)
-id = names(geneList)[1:100]
-head(id)
-#> [1] "2847"   "148145" "1591"   "2903"   "26045"  "10268"
-ginfo = genInfo(id, org = 'human')
-dplyr::as_tibble(head(ginfo))
-#> # A tibble: 6 × 21
-#>   input_id symbol    ensembl  uniprot   chr   start end   width strand gene_name
-#>   <ord>    <chr>     <chr>    <chr>     <chr> <chr> <chr> <chr> <chr>  <chr>    
-#> 1 2847     MCHR1     ENSG000… Q99705; … 22    4067… 4068… 4065  1      melanin …
-#> 2 148145   LINC00906 ENSG000… <NA>      19    2888… 2897… 87445 1      long int…
-#> 3 1591     CYP24A1   ENSG000… Q07973    20    5415… 5417… 20541 -1     cytochro…
-#> 4 2903     GRIN2A    ENSG000… Q12879; … 16    9753… 1018… 4295… -1     glutamat…
-#> 5 26045    LRRTM2    ENSG000… O43300; … 5     1388… 1388… 6448  -1     leucine …
-#> 6 10268    RAMP3     ENSG000… O60896; … 7     4515… 4518… 28512 1      receptor…
-#> # … with 11 more variables: ncbi_alias <chr>, ensembl_alias <chr>,
-#> #   gc_content <chr>, gene_biotype <chr>, transcript_count <chr>,
-#> #   hgnc_id <chr>, omim <chr>, ccds <chr>, reactome <chr>, ucsc <chr>,
-#> #   mirbase_id <chr>
+```R
+remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")
 ```
 
-##### Get specific type genes
-
-For example, we want to retrieve all human protein-coding ids. Just
-leave argument `id` empty.
-
-``` r
-pro_hg = genInfo(org = 'human') %>% 
-  dplyr::filter(gene_biotype  == 'protein_coding') %>% dplyr::pull(symbol)
-head(pro_hg) 
-#> [1] "A1BG"    "NAT2"    "ADA"     "CDH2"    "AKT3"    "GAGE12F"
-# number of human protein id
-length(pro_hg)
-#> [1] 19398
-```
-
-##### Search gene PubMed records
-
-``` r
-pub = genPubmed(
-  id = c("Cyp2c23", "Fhit", "Gal3st2b","Insl3", "Gbp4"),
-  keywords = "stem cell", field = "tiab")
-#> Search example: Cyp2c23 [TIAB] AND stem cell [TIAB]
-dplyr::as_tibble(head(pub))
-#> # A tibble: 6 × 6
-#>   gene    title                      date    doi            pmid  journal       
-#>   <chr>   <chr>                      <chr>   <chr>          <chr> <chr>         
-#> 1 Cyp2c23 NA                         NA      "NA"           NA    NA            
-#> 2 Fhit    Changes in Methylation Pa… 2021_0… "10.1155/2021… 3455… Stem cells in…
-#> 3 Fhit    Methylation status of the… 2020_1… "10.3892/ol.2… 2613… Oncology lett…
-#> 4 Fhit    Totipotent stem cells bea… 2009_0… "10.1111/j.13… 1901… British journ…
-#> 5 Fhit    Fhit-deficient hematopoie… 2008_0… "10.1158/0008… 1848… Cancer resear…
-#> 6 Fhit    Induction by 7,12-dimethy… 2006_1… ""             1686… International…
-```
-
-### Transform
-
-Regardless of input ID type, function will detect automatically.
-
-User only need to specify which type you want, the left things just give
-`transId`.
-
-##### Transform ID from entrezid to symbol
-
-``` r
-id[1:5]
-#> [1] "2847"   "148145" "1591"   "2903"   "26045"
-transId(id[1:5], trans_to = 'symbol',org='hs')
-#> 
-#> 100% genes are mapped from entrezid to symbol
-#> [1] "MCHR1"     "LINC00906" "CYP24A1"   "GRIN2A"    "LRRTM2"
-```
-
-##### Transform gene alias
-
-``` r
-transId(c('BCC7','PDL1','PD1'), trans_to = 'symbol',org='human')
-#> 
-#> 100% genes are mapped from symbol to symbol
-#> [1] "TP53"  "CD274" "PDCD1"
-
-# We could get all matched id when one-to-many occurs
-transId(c('BCC7','PDL1','PD1'), trans_to = 'symbol',org='hg',unique = F)
-#> Some ID occurs one-to-many match, like "PD1"
-#> If you want to get one-to-one match, please set "unique=TRUE"
-#> 
-#> 100% genes are mapped from symbol to symbol
-#>   input_id symbol
-#> 1     BCC7   TP53
-#> 2     PDL1  CD274
-#> 3      PD1  PDCD1
-#> 4      PD1   SNCA
-#> 5      PD1 SPATA2
-```
-
-##### Transform protein id to gene id
-
-``` r
-# to symbol
-transId(c('Q12879','Q86V25','Q8N386','Q5T7N3'),'sym','hs')
-#> 
-#> 100% genes are mapped from uniprot to symbol
-#> [1] "GRIN2A" "VASH2"  "LRRC25" "KANK4"
-# to ensembl
-transId(c('Q12879','Q86V25','Q8N386','Q5T7N3'),'ens','hs')
-#> 
-#> 100% genes are mapped from uniprot to ensembl
-#> [1] "ENSG00000183454" "ENSG00000143494" "ENSG00000175489" "ENSG00000132854"
-```
-
-##### Transform ensembl id to symbol
-
-``` r
-transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989'),'sym','hg')
-#> 
-#> 100% genes are mapped from ensembl to symbol
-#> [1] "LRRTM2" "RSAD2"  "DGKB"   "WNT2"
-```
-
-##### Transform ensembl id to protein id
-
-``` r
-transId(c('ENSG00000146006','ENSG00000134321','ENSG00000136267','ENSG00000105989'),'uniprot','hg')
-#> 
-#> 100% genes are mapped from ensembl to uniprot
-#> [1] "O43300; E5RIQ2; E5RHE5"                            
-#> [2] "Q8WXG1; C9J674; A0A7P0TA11; A0A7P0Z4E2; A0A7P0T918"
-#> [3] "Q9Y6T7; B7ZL83; B5MCD5; B5MBY2; C9JA18"            
-#> [4] "P09544; A0A3B3ITC9; C9JUI2; F8WDR1; L8EA39"
-```
 
-### Analysis
 
-All enrichment analysis \*\* just give a gene list \*\* (especially GSEA
-need the gene list with a decreasing fold change)
+## 📚 Vignettes
 
-#### over representation analysis (ORA)
 
-##### GO analysis
 
-User could choose ontology among “bp”, “cc”, “mf” or “all”.
 
-If set `use_symbol = TRUE`, the result will return gene symbol for easy
-understanding.
 
-If you are not sure the organism name, please type `biocOrg_name` and
-choose full name or short name
+## ✍️ Authors
 
-``` r
-ego_bp = genGO(id[1:100], org = 'human', ont = 'bp',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
+[Yunze Liu](https://www.jieandze1314.com/)
 
-# user could choose all three ontology
-ego_all = genGO(id[1:100], org = 'human', ont = 'all',pvalueCutoff = 0.05,qvalueCutoff = 0.05, use_symbol = T)
-```
+[![](https://img.shields.io/badge/follow%20me%20on-WeChat-orange.svg)](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-015641.png)
 
-##### KEGG analysis
 
-If you are not sure the organism name, please type `keggOrg_name` and
-choose full name or short name
 
-``` r
-ekeg = genKEGG(id, org = 'hg',use_symbol = T)
+## 🔖 Citation
 
-# If we want to compare different groups of genes, we only need to add a gene group list
-group = list(groupA = c(rep("up",50),rep("down",50)),
-             groupB = c(rep("A",30), rep("B",70)))
-ekeg_compare =  genKEGG(c(head(id,50),tail(id,50)), group_list = group,
-                    org = 'human',pvalueCutoff = 0.15,qvalueCutoff = 0.15, use_symbol = T)
-```
+Wait to update...
 
-#### gene set enrichment analysis (GSEA) analysis
 
-`category` argument could choose from ‘C1’,‘C2’,‘C3’,
-‘C4’,‘C5’,‘C6’,‘C7’,‘C8’ and ‘H’
 
-If you are not sure `subcategory`, you can only choose `category` and
-leave `subcategory` as blank.
+## 💓 Welcome to contribute
 
-The message will tell what options you could choose in the main
-`category`.
+If you are interested in `genekitr`, welcome contribute your ideas as follows:
 
-``` r
-egsea = genGSEA(genelist = geneList,org = 'hs', 
-                category = "H",
-                use_symbol = T, pvalueCutoff = 1)
-#> H has no subcategory, continue...
-```
+* Git clone this project
+* Double click `genekitr.Rproj` to open RStudio
+* Modify source code in `R/` folder
+* Run `devtools::check()` to make sure no errors, warnings or notes
+* Pull request and describe clearly your changes
 
-### Visulaize
-
-##### Gene overlap
-
-If we only have two or three groups of genes, the function will plot
-Venn diagram;
-
-If we have at least four groups of genes, the default option will be
-UpSet diagram.
-
-``` r
-# if only have three groups
-set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set3 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-sm_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3)
-plotVenn(sm_gene_list,
-  text_size = 1.5, alpha_degree = 1,
-  remove_grid = TRUE)
-#> Color length should be same with venn_list, auto assign colors...
-```
-
-![](man/figures/venn-1.png)<!-- -->
-
-``` r
-# if only have five groups
-set4 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set5 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-la_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3,
-  gset4 = set4, gset5 = set5)
-plotVenn(la_gene_list,
-  text_size = 15, alpha_degree = 0.2, border_thick = 2,
-  remove_grid = TRUE, use_venn = FALSE)
-```
-
-![](man/figures/venn-2.png)<!-- -->
-
-##### Enrichment plot
-
--   Support barplot, dotplot
-
--   x-axis support: GeneRatio/Count/FoldEnrich
-
--   stats support: pvalue/p.adjust/qvalue(FDR)
-
--   easily modify plot line & text pattern
-
-``` r
-plotEnrich(ego_bp,plot_type = 'bar',remove_grid = T, main_text_size = 8,
-  legend_text_size = 6,border_thick = 1.5)
-```
-
-![](man/figures/enrich_bar1-1.png)<!-- -->
-
-``` r
-plotEnrich(ego_all,plot_type = 'bar', xlab_type = 'GeneRatio',legend_type = 'qvalue',
-           remove_grid = T, main_text_size = 8, legend_text_size = 6,border_thick = 1.5)
-```
-
-![](man/figures/enrich_bar2-1.png)<!-- -->
-
-##### Enrichment dotplot
-
-``` r
-plotEnrich(ego_bp,plot_type = 'dot',xlab_type = 'GeneRatio',legend_type = 'qvalue',
-          remove_grid = T, main_text_size = 8, legend_text_size = 6)
-```
-
-![](man/figures/enrich_dot-1.png)<!-- -->
-
-``` r
-plotEnrich(ekeg_compare)
-```
-
-![](man/figures/enrich_dot2-1.png)<!-- -->
-
-##### gsea plot
-
--   support: volcano/classic/multi-pathway(fgsea)
-
-``` r
-plotGSEA(egsea,plot_type = 'volcano', show_pathway = 3)
-```
-
-![](man/figures/gsea-1.png)<!-- -->
-
-``` r
-plotGSEA(egsea, plot_type = 'classic', show_pathway = c("HALLMARK_UV_RESPONSE_DN","HALLMARK_INTERFERON_ALPHA_RESPONSE"),
-         show_genes = c("SELL"))
-```
-
-![](man/figures/gsea-2.png)<!-- -->
-
-``` r
-# default shows top3 up & down pathways
-plotGSEA(egsea, plot_type = 'fgsea')
-```
-
-![](man/figures/gsea-3.png)<!-- -->
-
-### Export
-
-If you want to export many data sets in one file, you could use
-`expoSheet`
-
-For example, since we got 100 genes’ GO and KEGG result, then we want to
-export them with gene information:
-
-``` r
-expoSheet(
-  dat_list = list(ginfo, ego_bp, ego_all,ekeg), name_list = list("GeneInfo","GO-BP", "GO-All","KEGG"),
-  filename = "gene_enrich.xlsx", dir = tempdir())
-```
-
-The result will be:
-
-<img src='man/figures/exp0.png' height="500" alt="exp0"/>
-
-## Vignette
-
-### English
-
--   Wait to update…
-
-### Chinese
-
--   wait to update…
-
-## Citation
-
-Wait for paper …
-
-## Welcome to contribute
-
-If you are interested in this tool, welcome contribute your ideas as
-follows:
-
--   Git clone this project
--   Double click `genekitr.Rproj` to open RStudio
--   Modify source code in `R/` folder
--   Run `devtools::check()` to make sure no errors, warnings or notes
--   Pull request and describe clearly your changes
