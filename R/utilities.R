@@ -240,7 +240,16 @@ ensAnno <- function(org, version) {
     message('We need to download some data, please wait (just once)...')
     url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.fst")
     # web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
-    utils::download.file(url, destfile, quiet = TRUE)
+
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
+      },
+      error = function(e) {
+        message(paste0('Auto download failed...\nPlease download via: ',url,
+                       '\nThen save to: ',data_dir))
+      }
+    )
   }
 
   dat = suppressMessages(fst::read.fst(destfile))
@@ -262,7 +271,16 @@ getOrder <- function(org,keytype,version){
   if (!file.exists(destfile)) {
     url = paste0("http://112.74.191.19/genekitr/v",version,'/', org,'_',keytype,'_order.fst')
     # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
-    utils::download.file(url, destfile, quiet = TRUE)
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
+      },
+      error = function(e) {
+       message(paste0('Auto download failed...\nPlease download via: ',url,
+                      '\nThen save to: ',data_dir))
+      }
+    )
+
   }
 
   dat = suppressMessages(fst::read.fst(destfile))

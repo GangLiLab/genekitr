@@ -84,9 +84,7 @@ plotGSEA <- function(gsea_list,
     gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES,decreasing = TRUE),]
     if(is.numeric(show_pathway)){
-      if(length(show_pathway) > 1){
-        plot_df = gsea_df[show_pathway,]
-      }
+      plot_df = gsea_df
       plot_df$group <- c(rep('high',show_pathway),rep('ignore',nrow(plot_df)-2*show_pathway),rep('low',show_pathway))
     }else{
       nes <- plot_df[gsea_df$Description %in% show_pathway,'NES']
@@ -379,7 +377,7 @@ calcScore <- function(geneset,genelist,item, exponent, fortify = TRUE, org) {
   df <- data.frame(x = seq_along(score), runningScore = score,
                    position = as.integer(hits))
 
-  df$gene = suppressMessages(transId(names(genelist),'symbol',org,keepNA = T) %>%
+  df$gene = suppressMessages(transId(names(genelist),'symbol',org,keepNA = T,unique = T) %>%
                                dplyr::pull(symbol))
 
   df$ymin <- 0

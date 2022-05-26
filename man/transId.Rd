@@ -16,7 +16,7 @@ transId(id, transTo, org = "hs", unique = FALSE, keepNA = FALSE)
 
 \item{unique}{Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.}
 
-\item{keepNA}{If some id has no match, keep it or not. Default is FALSE.}
+\item{keepNA}{If some id has no match at all, keep it or not. Default is FALSE.}
 }
 \value{
 A two-column data frame, first is input id and second is transformed id.

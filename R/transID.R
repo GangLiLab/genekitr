@@ -4,7 +4,7 @@
 #' "symbol", "entrez", "ensembl" or "uniprot."
 #' @param org Latin organism shortname from `ensOrg_name`. Default is human.
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
-#' @param keepNA If some id has no match, keep it or not. Default is FALSE.
+#' @param keepNA If some id has no match at all, keep it or not. Default is FALSE.
 #' @importFrom dplyr filter pull select distinct arrange all_of filter_at vars any_vars
 #' @importFrom rlang .data
 #'
