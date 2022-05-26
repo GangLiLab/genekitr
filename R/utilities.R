@@ -108,7 +108,7 @@ mapEnsOrg <- function(organism) {
     org = ensorg %>% dplyr::filter(eval(parse(text = colnames(.)[check_all])) %in% organism) %>%
       dplyr::pull(latin_short_name)
   }else{
-    stop("\nCheck the latin_short_name in `ensOrg_name_data()`")
+    stop("\nCheck the latin_short_name in `genekitr::ensOrg_name`")
   }
 
   return(org)

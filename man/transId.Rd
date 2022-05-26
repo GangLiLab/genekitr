@@ -12,7 +12,7 @@ transId(id, transTo, org = "hs", unique = FALSE, keepNA = FALSE)
 \item{transTo}{Transform to what type. User could select one or more from
 "symbol", "entrez", "ensembl" or "uniprot."}
 
-\item{org}{Latin organism shortname from `ensOrg_name_data`. Default is human.}
+\item{org}{Latin organism shortname from `ensOrg_name`. Default is human.}
 
 \item{unique}{Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.}
 

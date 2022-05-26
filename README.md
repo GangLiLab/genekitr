@@ -1,6 +1,6 @@
 <img src="https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-043213.png" align="left" width="200"/>
 
-[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
+[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-0.8.4-green.svg)](https://github.com/GangLiLab/genekitr)[![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
 
 ![Alt](https://repobeats.axiom.co/api/embed/e42ba06d30de893670c70324f19398ef0a7c26fa.svg "Repobeats analytics image")
 
@@ -20,8 +20,8 @@
 
 Genekitr supports **many species:**
 
-- Search & ID conversion support 219 Ensembl vertebrate and bacteria species (including 18 species with NCBI data), and 120 Ensembl plant species (including 1 species with NCBI data)
-- GO supports 19 species, KEGG supports 7254 species and GSEA supports 20 species
+- Search & ID conversion support 198 Ensembl vertebrate and bacteria species (including 17species with NCBI data), and 120 Ensembl plant species (including 1 species with NCBI data)
+- GO supports 18 species, KEGG supports 7254 species and GSEA supports 20 species
 
 
 

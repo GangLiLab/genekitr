@@ -1,7 +1,7 @@
 #' Get gene related information
 #'
 #' @param id Gene id (symbol, ensembl or entrez id) or uniprot id. If this argument is NULL, return all gene info.
-#' @param org Latin organism shortname from `ensOrg_name_data`. Default is human.
+#' @param org Latin organism shortname from `ensOrg_name`. Default is human.
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @importFrom dplyr filter mutate arrange relocate select
 #' @importFrom rlang .data
