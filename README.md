@@ -8,20 +8,24 @@
 
 ## Overview
 
-**Genekitr** is a **gene** analysis tool**kit** based on **R**. It mainly contains **five features:**
+> **Genekitr** is a **gene** analysis tool**kit** based on **R**. 
+
+#### Five core features:
 
 - **Search**: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
-- **Convert**: ID conversion among "Symbol & Alias", "NCBI Entrez", "Ensembl" and "Uniprot"
+- **Convert**: ID conversion among `Symbol & Alias`, `NCBI Entrez`, `Ensembl` and `Uniprot`
 
 - **Analysis**: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
 
-- **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. Feel free to make your own plots.
+- **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. All plot function input is dataframe format and supports GeneOntology web result. Feel free to make your own plots.
 - **Export**: easily export multiple data sets as various sheets in one excel file
 
-Genekitr supports **many species:**
 
-- Search & ID conversion support 198 Ensembl vertebrate and bacteria species (including 17species with NCBI data), and 120 Ensembl plant species (including 1 species with NCBI data)
-- GO supports 18 species, KEGG supports 7254 species and GSEA supports 20 species
+
+#### Supported species:
+
+- Search & ID conversion:  **<u>198 Ensembl vertebrate and bacteria species</u>** (including 17species with NCBI data), and **<u>120 Ensembl plant species</u>** (including 1 species with NCBI data)
+- Enrichment analysis: GO supports **18** species, KEGG supports **7254** species and GSEA supports **20** species
 
 
 
@@ -37,9 +41,7 @@ Here, I want to tell you a story about Mr. Doodle, a computational biology stude
 
 PI gave Doodle 30 genes and let him check their locations (better with sequences) and exact names. Doodle searched on NCBI one by one and copied & paste it into excel. Doodle sent the file to PI one hour later, and PI smiled, "Well done! Now I have another 50!" 
 
-```diff
-! Doodle wonders how to avoid this repeat searching work? (and bold)
-```
+##### Doodle wonders how to avoid this repeat searching work?
 
 ### Scene 2: embarrassing name 
 
@@ -109,7 +111,7 @@ remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")
 
 
 
-## ✍️ Authors
+## ✍️ Author
 
 [Yunze Liu](https://www.jieandze1314.com/)
 
