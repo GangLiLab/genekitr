@@ -38,8 +38,7 @@
 #'
 #' gego <- genGO(id, group_list = group,
 #'   org = "human", ont = "bp", pvalueCutoff = 0.1,
-#'   qvalueCutoff = 1
-#' )
+#'   qvalueCutoff = 1)
 #'
 #' }
 genGO <- function(id,

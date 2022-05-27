@@ -83,11 +83,11 @@ plotGSEA <- function(gsea_list,
   if(plot_type == 'volcano'){
     gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES,decreasing = TRUE),]
+    plot_df <- gsea_df
     if(is.numeric(show_pathway)){
-      plot_df = gsea_df
       plot_df$group <- c(rep('high',show_pathway),rep('ignore',nrow(plot_df)-2*show_pathway),rep('low',show_pathway))
     }else{
-      nes <- plot_df[gsea_df$Description %in% show_pathway,'NES']
+      nes <- plot_df[plot_df$Description %in% show_pathway,'NES']
       plot_df$group <- 'ignore'
       plot_df[plot_df$Description %in% show_pathway,'group'] <- sapply(nes, function(x) ifelse(x>0,'high','low'))
     }

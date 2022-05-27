@@ -66,8 +66,7 @@ group <- list(group1  = c(rep('up',50),rep('down',50)),
 
 gego <- genGO(id, group_list = group,
   org = "human", ont = "bp", pvalueCutoff = 0.1,
-  qvalueCutoff = 1
-)
+  qvalueCutoff = 1)
 
 }
 }

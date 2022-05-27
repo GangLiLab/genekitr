@@ -1,6 +1,6 @@
 <img src="https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-043213.png" align="left" width="200"/>
 
-[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-0.8.4-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
+[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-0.8.5-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
 
 ![Alt](https://repobeats.axiom.co/api/embed/e42ba06d30de893670c70324f19398ef0a7c26fa.svg "Repobeats analytics image")
 
@@ -37,7 +37,9 @@ Here, I want to tell you a story about Mr. Doodle, a computational biology stude
 
 PI gave Doodle 30 genes and let him check their locations (better with sequences) and exact names. Doodle searched on NCBI one by one and copied & paste it into excel. Doodle sent the file to PI one hour later, and PI smiled, "Well done! Now I have another 50!" 
 
-<b style='color:#486CBE'>**Doodle wonders how to avoid this repeat searching work?**</b>
+```diff
+! Doodle wonders how to avoid this repeat searching work? (and bold)
+```
 
 ### Scene 2: embarrassing name 
 

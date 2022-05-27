@@ -53,10 +53,8 @@ la_gene_list <- list(
 )
 plotVenn(sm_gene_list,
   text_size = 1.5, alpha_degree = 1,
-  remove_grid = TRUE, color = ggsci::pal_lancet()(3)
-)
+  remove_grid = TRUE, color = ggsci::pal_lancet()(3))
 plotVenn(la_gene_list,
   text_size = 15, alpha_degree = 0.2, border_thick = 2,
-  remove_grid = TRUE, use_venn = FALSE
-)
+  remove_grid = TRUE, use_venn = FALSE)
 }
