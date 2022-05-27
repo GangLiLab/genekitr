@@ -24,7 +24,7 @@
 
 #### Supported species:
 
-- Search & ID conversion:  **<u>198 Ensembl vertebrate and bacteria species</u>** (including 17species with NCBI data), and **<u>120 Ensembl plant species</u>** (including 1 species with NCBI data)
+- Search & ID conversion:  **196** vertebrate species, **120** plant species and **2** bacteria species
 - Enrichment analysis: GO supports **18** species, KEGG supports **7254** species and GSEA supports **20** species
 
 
