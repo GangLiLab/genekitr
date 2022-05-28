@@ -85,19 +85,19 @@ Doodle has finished differential expression analysis and GO/KEGG enrichment anal
 
 ## 🛠 Installation
 
-#### Install CRAN stable version:
+#### Install stable version from CRAN:
 
 ```R
 install.packages("genekitr")
 ```
 
-#### Install GitHub development version:
+#### Install development version from GitHub:
 
 ```R
 remotes::install_github("GangLiLab/genekitr")
 ```
 
-#### Install Gitee (for CHN mainland users):
+#### Install development version Gitee (for CHN mainland users):
 
 ```R
 remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")

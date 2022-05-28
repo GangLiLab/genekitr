@@ -1,7 +1,7 @@
 #' Get pubmed paper records by searching abstract
 #'
 #' @param term query terms e.g. gene id, GO/KEGG pathway
-#' @param keys other searching keys. Default is NULL
+#' @param add_term other searching terms Default is NULL
 #' @param num limit the number of records . Default is 100.
 #' @importFrom europepmc epmc_search
 #' @return A list of `tibble` for pubmed records
@@ -9,18 +9,18 @@
 #' @examples
 #' \donttest{
 #' term <- c("Tp53","Brca1","Tet2")
-#' keys <- c('stem cell','mouse')
-#' l <- getPubmed(term,keys)
+#' add_term <- c('stem cell','mouse')
+#' l <- getPubmed(term,add_term,num=30)
 #' # very easy to output
 #' expoSheet(l,name_list = term, filename = 'test.xlsx',dir = tempdir())
 #' }
 #'
-getPubmed <- function(term,keys=NULL,num=100){
+getPubmed <- function(term,add_term=NULL,num=100){
   if (!requireNamespace("europepmc", quietly = TRUE)) {
     utils::install.packages("europepmc")
   }
-  if(!is.null(keys)){
-    supp = paste0('AND ABSTRACT:',keys) %>% paste(collapse = ' ')
+  if(!is.null(add_term)){
+    supp = paste0('AND ABSTRACT:',add_term) %>% paste(collapse = ' ')
   }else{
     supp = NULL
   }
