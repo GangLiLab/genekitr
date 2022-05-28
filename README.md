@@ -97,7 +97,7 @@ install.packages("genekitr")
 remotes::install_github("GangLiLab/genekitr")
 ```
 
-#### Install development version Gitee (for CHN mainland users):
+#### Install development version from Gitee (for CHN mainland users):
 
 ```R
 remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")
