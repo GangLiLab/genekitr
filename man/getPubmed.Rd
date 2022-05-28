@@ -4,12 +4,14 @@
 \alias{getPubmed}
 \title{Get pubmed paper records by searching abstract}
 \usage{
-getPubmed(term, keys)
+getPubmed(term, keys = NULL, num = 100)
 }
 \arguments{
-\item{term}{query terms e.g. gene id, GO/KEGG term or id}
+\item{term}{query terms e.g. gene id, GO/KEGG pathway}
 
-\item{keys}{other searching keys}
+\item{keys}{other searching keys. Default is NULL}
+
+\item{num}{limit the number of records . Default is 100.}
 }
 \value{
 A list of `tibble` for pubmed records
