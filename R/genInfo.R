@@ -105,6 +105,8 @@ genInfo <- function(id = NULL,
     gene_info <- gene_info %>%
       filter_at(vars(!input_id), any_vars(!is.na(.)))
   }
+  # convert factor to character
+  gene_info[] <- lapply(gene_info, as.character)
 
   return(gene_info)
 }

@@ -67,10 +67,10 @@ genGSEA <- function(genelist,
   }
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist,
-    TERM2GENE = geneset,
-    pvalueCutoff = pvalueCutoff,
-    verbose = F,
-    ...
+                                                 TERM2GENE = geneset,
+                                                 pvalueCutoff = pvalueCutoff,
+                                                 verbose = F,
+                                                 ...
   ))
 
   exponent <-  egmt@params[["exponent"]]
@@ -161,7 +161,6 @@ getMsigdb <- function(org,
 
 utils::globalVariables(c("gs_name","gene_symbol","entrez_gene","input_id","symbol",
                          "msig_org","msig_category","gs_cat","gs_subcat"))
-
 
 
 
