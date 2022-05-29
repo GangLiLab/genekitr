@@ -236,11 +236,29 @@ ensAnno <- function(org, version) {
     )
   }
 
+  url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.fst")
+  web_f_size <- RCurl::getURL(url, nobody=1L, header=1L) %>%
+    strsplit("\r\n") %>% unlist() %>%
+    stringr::str_extract("Content-Length.*[0-9]") %>%
+    stringr::str_remove_all("Content-Length: ") %>%
+    stringi::stri_remove_empty_na() %>%
+    as.numeric()
+  local_f_size <- file.size(destfile)
+
   if (!file.exists(destfile)) {
     message('We need to download some data, please wait (just once)...')
-    url = paste0("http://112.74.191.19/genekitr/v",version,'/', org, "_anno.fst")
     # web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
-
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
+      },
+      error = function(e) {
+        message(paste0('Auto download failed...\nPlease download via: ',url,
+                       '\nThen save to: ',data_dir))
+      }
+    )
+  }else if(web_f_size != local_f_size){
+    message('Detected new version data, updating...')
     tryCatch(
       {
         utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
@@ -268,8 +286,16 @@ getOrder <- function(org,keytype,version){
   data_dir = paste0(data_dir,'/v',version)
   destfile = paste0(data_dir, "/", org,'_',keytype,'_order.fst')
 
+  url = paste0("http://112.74.191.19/genekitr/v",version,'/', org,'_',keytype,'_order.fst')
+  web_f_size <- RCurl::getURL(url, nobody=1L, header=1L) %>%
+    strsplit("\r\n") %>% unlist() %>%
+    stringr::str_extract("Content-Length.*[0-9]") %>%
+    stringr::str_remove_all("Content-Length: ") %>%
+    stringi::stri_remove_empty_na() %>%
+    as.numeric()
+  local_f_size <- file.size(destfile)
+
   if (!file.exists(destfile)) {
-    url = paste0("http://112.74.191.19/genekitr/v",version,'/', org,'_',keytype,'_order.fst')
     # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
     tryCatch(
       {
@@ -281,6 +307,17 @@ getOrder <- function(org,keytype,version){
       }
     )
 
+  }else if(web_f_size != local_f_size){
+    message('Detected new version data, updating...')
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
+      },
+      error = function(e) {
+        message(paste0('Auto download failed...\nPlease download via: ',url,
+                       '\nThen save to: ',data_dir))
+      }
+    )
   }
 
   dat = suppressMessages(fst::read.fst(destfile))
@@ -289,27 +326,27 @@ getOrder <- function(org,keytype,version){
   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
 }
 
-web_download <- function(url, destfile, try_time = 2L, ...) {
-  Sys.sleep(0.01)
-  tryCatch(
-    {
-      if (abs(try_time - 3L) > 1) {
-        message(abs(try_time - 3L),' attempt ...')
-      }
-
-      utils::download.file(url, destfile, quiet = TRUE,...)
-
-    },
-    error = function(e) {
-      if (try_time == 0) {
-        message("Failed after 2 attempts, please check internet connection!")
-        invisible(NULL)
-      } else {
-        web_download(url, destfile, try_time = try_time - 1L, quiet = TRUE,...)
-      }
-    }
-  )
-}
+# web_download <- function(url, destfile, try_time = 2L, ...) {
+#   Sys.sleep(0.01)
+#   tryCatch(
+#     {
+#       if (abs(try_time - 3L) > 1) {
+#         message(abs(try_time - 3L),' attempt ...')
+#       }
+#
+#       utils::download.file(url, destfile, quiet = TRUE,...)
+#
+#     },
+#     error = function(e) {
+#       if (try_time == 0) {
+#         message("Failed after 2 attempts, please check internet connection!")
+#         invisible(NULL)
+#       } else {
+#         web_download(url, destfile, try_time = try_time - 1L, quiet = TRUE,...)
+#       }
+#     }
+#   )
+# }
 
 
 #--- add global variables ---#
