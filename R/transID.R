@@ -55,14 +55,15 @@ transId <- function(id,
   }
 
   #--- codes ---#
-  res <- genInfo(id, org, unique, keepNA) %>%
+  res <- suppressMessages(genInfo(id, org, unique, keepNA) %>%
     dplyr::select(input_id, all_of(transTo)) %>%
-    distinct()
+    distinct())
+
   if (!keepNA) {
     res <- res %>%
       filter_at(vars(!input_id), any_vars(!is.na(.)))
   }
-  # # convert factor to character
+  # convert factor to character
   res[] <- lapply(res, as.character)
 
   ## calculate percent
