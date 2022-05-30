@@ -360,4 +360,5 @@ utils::globalVariables(c(
   "method","Term", "arrow", "circle", "geom_node_label", "geom_node_point", "go_id", "gotbl", "parent",
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis","everything", "gene","coord_flip",
-  "expansion", "index", "nes.group", "padj.group", "change","label", "logFC","stat","pvalue"))
+  "expansion", "index", "nes.group", "padj.group", "change","label", "logFC","stat","pvalue",
+  "cluster", "go"))

@@ -736,14 +736,46 @@ get_JC_data <- function(enrich_df){
 
 get_sim_data <- function(enrich_df,org=NULL,ont=NULL,sim_method){
 
-  nm <- strsplit(colnames(enrich_df)[1],"_") %>% unlist()
-  if(all(tolower(nm) == 'id')){
-    stop(paste0('Please give organism name to "org" such as "Hs", "Mm"...\n',
-                'also give ontology to "ont" from "BP","CC" and "MF"'))
-  }else{
-    org =  nm[1]; ont = nm[2]
+  org_name <- genekitr::biocOrg_name
+
+  if(is.null(org)){
+    tryCatch(
+      {
+        nm <- strsplit(colnames(enrich_df)[1],"_") %>% unlist()
+        org =  nm[1]
+      },
+      error = function(e) {
+        message('Please give the organism short name from genekitr::biocOrg_name!')
+      }
+    )
+  }else if (!tolower(org)%in% org_name ){
+      stop('Please give the organism short name from genekitr::biocOrg_name!')
   }
-  orgdb <- paste0("org.",org, ".eg.db")
+
+  if(is.null(ont)){
+    tryCatch(
+      {
+        nm <- strsplit(colnames(enrich_df)[1],"_") %>% unlist()
+        ont =  nm[2]
+      },
+      error = function(e) {
+        message('Please give the ontology name from "BP", "CC" and "MF"!')
+      }
+    )
+  }else if (!tolower(ont)%in% c('bp','cc','mf') ){
+    stop('Please give the ontology name from "BP", "CC" and "MF"!')
+  }
+
+  ont = toupper(ont)
+
+#   if(all(tolower(nm) == 'id')){
+#     stop(paste0('Please give organism name to "org" such as "Hs", "Mm"...\n',
+#                 'also give ontology to "ont" from "BP","CC" and "MF"'))
+#   }else{
+#     org =  nm[1]; ont = nm[2]
+#   }
+
+  orgdb <- paste0("org.",stringr::str_to_title(org), ".eg.db")
   id <- enrich_df[, 1]
   # save godata is saving time
   data_dir = tools::R_user_dir('genekitr',which = 'data')
