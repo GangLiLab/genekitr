@@ -65,3 +65,13 @@ NULL
 #' @docType data
 #' @keywords datasets
 NULL
+
+#' Datasets
+#' hsapiens_probe_platform contains human probe platforms
+#'
+#'
+#' @name Datasets
+#' @aliases hsapiens_probe_platform
+#' @docType data
+#' @keywords datasets
+NULL

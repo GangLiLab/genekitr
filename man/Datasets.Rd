@@ -10,6 +10,7 @@
 \alias{biocOrg_name}
 \alias{keggOrg_name}
 \alias{ensOrg_name}
+\alias{hsapiens_probe_platform}
 \title{Datasets
 geneList entrez gene list with decreasing fold change value}
 \description{
@@ -34,5 +35,8 @@ https://www.genome.jp/kegg/catalog/org_list.html
 
 Datasets
 ensOrg_name contains organism name of ensembl
+
+Datasets
+hsapiens_probe_platform contains human probe platforms
 }
 \keyword{datasets}

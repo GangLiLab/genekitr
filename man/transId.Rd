@@ -19,7 +19,7 @@ transId(id, transTo, org = "hs", unique = FALSE, keepNA = FALSE)
 \item{keepNA}{If some id has no match at all, keep it or not. Default is FALSE.}
 }
 \value{
-A two-column data frame, first is input id and second is transformed id.
+data frame, first column is input id and others are converted id.
 }
 \description{
 Transform gene id among symbol, entrezid,  ensembl and uniprot.

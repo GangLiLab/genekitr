@@ -213,6 +213,12 @@ ensOrg_name_data <- function(){
   get("ensOrg_name", envir = .GlobalEnv)
 }
 
+#--- probe platform data ---#
+hsapiens_probe_data <- function() {
+  utils::data(list = "hsapiens_probe_platform", package = "genekitr")
+  get("hsapiens_probe_platform", envir = .GlobalEnv)
+}
+
 #--- ensembl anno data ---#
 ensAnno <- function(org, version) {
   if(missing(version)) version = 106
@@ -254,7 +260,7 @@ ensAnno <- function(org, version) {
       },
       error = function(e) {
         message(paste0('Auto download failed...\nPlease download via: ',url,
-                       '\nThen save to: ',data_dir))
+                       '\nThen save to: ',data_dir,'\n'))
       }
     )
   }else if(web_f_size != local_f_size){
@@ -265,7 +271,7 @@ ensAnno <- function(org, version) {
       },
       error = function(e) {
         message(paste0('Auto download failed...\nPlease download via: ',url,
-                       '\nThen save to: ',data_dir))
+                       '\nThen save to: ',data_dir,'\n'))
       }
     )
   }
@@ -275,6 +281,60 @@ ensAnno <- function(org, version) {
 
 #   load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
 #   get(paste0(org, "_anno"), envir = .GlobalEnv)
+}
+
+#--- probe anno data ---#
+probAnno <- function(org,version){
+  if(missing(version)) version = 106
+  if (org == "hg" | org == "human" | org == "hsa" | org == "hs") org <- "hsapiens"
+  if (org == "mm" | org == "mouse") org <- "mmusculus"
+  if (org == "rn" | org == "rat" ) org <- "rnorvegicus"
+
+  if(! org %in% c('hsapiens','mmusculus','rnorvegicus')) stop('We only support "human", "mouse" and "rat".')
+
+  data_dir = tools::R_user_dir('genekitr',which = 'data')
+  data_dir = paste0(data_dir,'/v',version)
+  destfile = paste0(data_dir, "/", org,'_probe.fst')
+
+  url = paste0("http://112.74.191.19/genekitr/v",version,'/', org,'_probe.fst')
+  web_f_size <- RCurl::getURL(url, nobody=1L, header=1L) %>%
+    strsplit("\r\n") %>% unlist() %>%
+    stringr::str_extract("Content-Length.*[0-9]") %>%
+    stringr::str_remove_all("Content-Length: ") %>%
+    stringi::stri_remove_empty_na() %>%
+    as.numeric()
+  local_f_size <- file.size(destfile)
+
+  if (!file.exists(destfile)) {
+    message('We need to download some data, please wait (just once)...')
+    # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
+      },
+      error = function(e) {
+        message(paste0('Auto download failed...\nPlease download via: ',url,
+                       '\nThen save to: ',data_dir,'\n'))
+      }
+    )
+
+  }else if(web_f_size != local_f_size){
+    message('Detected new version data, updating...')
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
+      },
+      error = function(e) {
+        message(paste0('Auto download failed...\nPlease download via: ',url,
+                       '\nThen save to: ',data_dir,'\n'))
+      }
+    )
+  }
+
+  dat = suppressMessages(fst::read.fst(destfile))
+  invisible(dat)
+  # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
+  # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
 }
 
 #--- keytype order data ---#
@@ -303,19 +363,19 @@ getOrder <- function(org,keytype,version){
       },
       error = function(e) {
        message(paste0('Auto download failed...\nPlease download via: ',url,
-                      '\nThen save to: ',data_dir))
+                      '\nThen save to: ',data_dir,'\n'))
       }
     )
 
   }else if(web_f_size != local_f_size){
-    message('Detected new version data, updating...')
+    # message('Detected new version data, updating...')
     tryCatch(
       {
         utils::download.file(url, destfile, quiet = TRUE, mode = 'wb')
       },
       error = function(e) {
         message(paste0('Auto download failed...\nPlease download via: ',url,
-                       '\nThen save to: ',data_dir))
+                       '\nThen save to: ',data_dir,'\n'))
       }
     )
   }
@@ -325,6 +385,8 @@ getOrder <- function(org,keytype,version){
   # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
 }
+
+
 
 # web_download <- function(url, destfile, try_time = 2L, ...) {
 #   Sys.sleep(0.01)
@@ -361,4 +423,4 @@ utils::globalVariables(c(
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis","everything", "gene","coord_flip",
   "expansion", "index", "nes.group", "padj.group", "change","label", "logFC","stat","pvalue",
-  "cluster", "go"))
+  "cluster", "go","Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id"))

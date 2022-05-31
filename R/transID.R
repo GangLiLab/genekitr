@@ -8,7 +8,7 @@
 #' @importFrom dplyr filter pull select distinct arrange all_of filter_at vars any_vars
 #' @importFrom rlang .data
 #'
-#' @return A two-column data frame, first is input id and second is transformed id.
+#' @return data frame, first column is input id and others are converted id.
 #' @export
 #'
 #' @examples
