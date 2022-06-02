@@ -72,6 +72,10 @@ genGO <- function(id,
     id <- id_dat %>% dplyr::pull(symbol)
   }
 
+  if(!is.null(universe)){
+    universe <- suppressMessages(transId(universe,transTo = keyType,org,unique = T)[,2])
+  }
+
   #--- codes ---#
   ## NO GROUP INFO
   if(is.null(group_list)){

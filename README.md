@@ -13,7 +13,7 @@
 #### Five core features:
 
 - **Search**: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
-- **Convert**: ID conversion among `Symbol & Alias`, `NCBI Entrez`, `Ensembl` ,`Uniprot` and `Probe`
+- **Convert**: ID conversion among `Symbol & Alias`, `NCBI Entrez`, `Ensembl` ,`Uniprot` and `  Microarray probe`
 
 - **Analysis**: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
 
