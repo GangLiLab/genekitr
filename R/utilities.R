@@ -423,4 +423,4 @@ utils::globalVariables(c(
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis","everything", "gene","coord_flip",
   "expansion", "index", "nes.group", "padj.group", "change","label", "logFC","stat","pvalue",
-  "cluster", "go","Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id"))
+  "cluster", "go","Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id","hsapiens_probe_platform"))

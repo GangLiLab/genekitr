@@ -47,8 +47,8 @@ transProbe <- function(id,
     platform <- which.max(apply(probe_dat,2,function(x){
       sum(id %in% x)
     })) %>% names()
-    message(paste0("Genekitr thinks your ids derive from: ",platform,
-                   '\nIf not, please specify your platform from `genekitr::',org,'_probe_platform`...'))
+    message(paste0("Genekitr assumes probe ids derive from: ",platform,
+                   '\nIf not, please specify the platform from `genekitr::',org,'_probe_platform`...'))
 
   }else if(!tolower(platform) %in% colnames(probe_dat)){
     stop(paste0('Please select platform from `genekitr::',org,'_probe_platform`'))
@@ -93,6 +93,9 @@ transProbe <- function(id,
     res <- merge(ens_res,new_dat,by = 'ensembl',all.x = T,all.y = F) %>%
       dplyr::relocate(probe_id,.before = dplyr::everything())
     res = res[match(id, res$probe_id),]
+    if(!'ensembl' %in% transTo){
+      res = res %>% dplyr::select(-ensembl)
+    }
   }else{
     res <- ens_res
   }
@@ -113,13 +116,11 @@ get_bioc_probe <- function(id, to_type, bioc_pkg){
 
   if (!requireNamespace(bioc_pkg, quietly = TRUE)) {
     BiocManager::install(bioc_pkg)
-    requireNamespace(bioc_pkg)
-  }else(
-    requireNamespace(bioc_pkg)
-  )
+    # pacman::p_load(bioc_pkg, character.only = TRUE)
+  }
 
   bioc_dat <-  AnnotationDbi::toTable(
-    eval(parse(text = paste(gsub('.db','',bioc_pkg),to_type,sep='')))) %>%
+    eval(parse(text = paste(bioc_pkg,"::",gsub('.db','',bioc_pkg),to_type,sep='')))) %>%
     dplyr::filter(probe_id %in% id)
 
   return(bioc_dat)

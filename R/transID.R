@@ -55,9 +55,17 @@ transId <- function(id,
   }
 
   #--- codes ---#
-  res <- suppressMessages(genInfo(id, org, unique, keepNA) %>%
-    dplyr::select(input_id, all_of(transTo)) %>%
-    distinct())
+  tryCatch(
+    {
+      res <- suppressMessages(genInfo(id, org, unique, keepNA) %>%
+                                dplyr::select(input_id, all_of(transTo)) %>%
+                                distinct())
+    },
+    error = function(e) {
+      message('Maybe your "trans_to" argument is wrong, please check again...')
+    }
+  )
+
 
   if (!keepNA) {
     res <- res %>%
