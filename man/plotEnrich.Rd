@@ -18,9 +18,9 @@ plotEnrich(
   xlim_left = 0,
   xlim_right = NA,
   wrap_length = NULL,
-  scale_ratio = 1,
   org = NULL,
   ont = NULL,
+  scale_ratio,
   layout,
   ...
 )
@@ -56,12 +56,11 @@ Used in "map","goheat","gotangram","wordcloud".}
 
 \item{wrap_length}{Numeric, wrap text if longer than this length. Default is NULL.}
 
-\item{scale_ratio}{Numeric, scale of node and line size. Default is 1. Used in "network" and
-"gomap".}
-
 \item{org}{Organism name from `biocOrg_name`.}
 
 \item{ont}{One of "BP", "MF", and "CC".}
+
+\item{scale_ratio}{Numeric, scale of node and line size.}
 
 \item{layout}{Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
 "lgl", "kk", "mds", "nicely" (default),"randomly", "star".}

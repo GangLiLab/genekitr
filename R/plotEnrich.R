@@ -18,10 +18,9 @@
 #' @param xlim_left X-axis left limit, default is 0.
 #' @param xlim_right X-axis right limit, default is NA.
 #' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
-#' @param scale_ratio Numeric, scale of node and line size. Default is 1. Used in "network" and
-#' "gomap".
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "BP", "MF", and "CC".
+#' @param scale_ratio Numeric, scale of node and line size.
 #' @param layout Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
 #' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
 #' @param ... other arguments from `plot_theme` function
@@ -109,9 +108,9 @@ plotEnrich <- function(enrich_df,
                        xlim_left = 0,
                        xlim_right = NA,
                        wrap_length = NULL,
-                       scale_ratio = 1,
                        org = NULL,
                        ont = NULL,
+                       scale_ratio,
                        layout,
                        ...) {
   #--- args ---#
@@ -174,12 +173,14 @@ plotEnrich <- function(enrich_df,
 
   #--- dot plot ---#
   if(plot_type == 'dot'){
+    if(missing(scale_ratio)) scale_ratio = 0.3
     if(!compare_group){
       p <- ggplot(enrich_df, aes_string(x = term_metric, y = "Description")) +
         geom_point(aes_string(
           color = stats_metric,
           size = "Count"
         )) +
+        scale_size(range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
         scale_color_continuous(
           low = up_color, high = down_color, name = stats_metric_label,
           guide = guide_colorbar(reverse = TRUE),
@@ -196,6 +197,7 @@ plotEnrich <- function(enrich_df,
           color = stats_metric,
           size = term_metric
         )) +
+        scale_size(range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
         scale_color_continuous(
           low = up_color, high = down_color, name = stats_metric_label,
           guide = guide_colorbar(reverse = TRUE),
@@ -218,6 +220,7 @@ plotEnrich <- function(enrich_df,
   ## x-axis: stats metric e.g. pvalue/qvalue/p.adjust
   ## y-axis: fold enrichment
   if(plot_type == 'bubble'){
+    if(missing(scale_ratio)) scale_ratio = 0.3
     # default main and lengend text size
     if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
 
@@ -294,6 +297,7 @@ plotEnrich <- function(enrich_df,
 
   #--- lollipop plot ---#
   if(plot_type == 'lollipop'){
+    if(missing(scale_ratio)) scale_ratio = 0.3
     p <- ggplot(data=enrich_df,
                 aes(eval(parse(text = term_metric)),
                     forcats::fct_reorder(Description,eval(parse(text = term_metric)))))+
@@ -471,6 +475,7 @@ plotEnrich <- function(enrich_df,
   ## plot enriched terms in network with edges connecting overlapping gene sets,
   ## mutually overlapping gene sets are tend to cluster together
   if(plot_type == 'network'){
+    if(missing(scale_ratio)) scale_ratio = 1
     pkgs = c("ggnewscale","ggraph","igraph")
     invisible(sapply(pkgs, function(x){
       if (!requireNamespace(x, quietly = TRUE)) {
@@ -537,6 +542,7 @@ plotEnrich <- function(enrich_df,
   #--- gomap plot ---#
   ## show enriched terms structure (its parents and children terms)
   if(plot_type == 'gomap'){
+    if(missing(scale_ratio)) scale_ratio = 1
     if (!requireNamespace("ggraph", quietly = TRUE)) {
       utils::install.packages("ggraph")
     }
