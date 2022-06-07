@@ -8,6 +8,8 @@
 #' 'RichFactor'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
+#' @param xlim_left X-axis left limit
+#' @param xlim_right X-axis right limit
 #' @param color Plot colors.
 #' @param ... other arguments from `plot_theme` function
 #' @importFrom ggplot2 ggplot scale_y_discrete scale_x_reverse theme element_blank geom_bar aes
@@ -23,6 +25,8 @@ plotEnrichAdv <- function(up_enrich_df,
                           term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
                           stats_metric = c("p.adjust", "pvalue", "qvalue"),
                           wrap_length = NULL,
+                          xlim_left = NULL,
+                          xlim_right = NULL,
                           color,
                           ...){
   #--- args ---#
@@ -82,9 +86,16 @@ plotEnrichAdv <- function(up_enrich_df,
       dplyr::mutate(Description = factor(Description, levels = unique(Description),
                                          ordered = TRUE))
 
-    tmp = with(df, labeling::extended(range(new_x)[1], range(new_x)[2], m = 5))
-    lm = tmp[c(1, length(tmp))]
-    lm = c(floor(min(df$new_x)), ceiling(max(df$new_x)))
+    if(is.null(xlim_left) & is.null(xlim_right)){
+      tmp = with(df, labeling::extended(range(new_x)[1], range(new_x)[2], m = 5))
+      lm = tmp[c(1, length(tmp))]
+      lm = c(floor(min(df$new_x)), ceiling(max(df$new_x)))
+    }else {
+      if(is.null(xlim_left)) xlim_left = abs(floor(min(df$new_x))+1)
+      if(is.null(xlim_right)) xlim_right = 15
+      tmp = seq(-abs(xlim_left),xlim_right,10)
+      lm = c(-abs(xlim_left),xlim_right)
+    }
 
     p <- suppressMessages(ggplot(df,aes(x=Description,y=new_x,fill=change)) +
       geom_bar(stat = 'identity',width = 0.8) +
@@ -93,8 +104,9 @@ plotEnrichAdv <- function(up_enrich_df,
                           labels = c("Down-regulated pathways","Up-regulated pathways")) +
         guides ( fill = guide_legend(reverse = TRUE) ) +
         scale_x_discrete(expand = expansion(add = .5)) +
-        coord_flip() + ylim(lm) +
-        scale_y_continuous(breaks = tmp, labels = abs(tmp)) +
+        coord_flip() +
+        scale_y_continuous(breaks = tmp, labels = abs(tmp),
+                           limits = lm) +
         geom_text(data = subset(df, change == 'up'),
                 aes(x=Description, y=0, label=paste0(Description,"  "), color = change),
                 size=lst$main_text_size/3.6,

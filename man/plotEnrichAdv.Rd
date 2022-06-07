@@ -12,6 +12,8 @@ plotEnrichAdv(
   term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
   wrap_length = NULL,
+  xlim_left = NULL,
+  xlim_right = NULL,
   color,
   ...
 )
@@ -30,6 +32,10 @@ together; "two" represents up and down are plotted seperately.}
 \item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
 \item{wrap_length}{Numeric, wrap text if longer than this length. Default is NULL.}
+
+\item{xlim_left}{X-axis left limit}
+
+\item{xlim_right}{X-axis right limit}
 
 \item{color}{Plot colors.}
 
