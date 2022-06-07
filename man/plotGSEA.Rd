@@ -10,7 +10,7 @@ plotGSEA(
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
   show_pathway = 3,
   show_gene = NULL,
-  colors = NULL,
+  color = NULL,
   ...
 )
 }
@@ -26,7 +26,7 @@ or pathway name.}
 
 \item{show_gene}{Select genes to show. Default is "all". Used in "classic" plot.}
 
-\item{colors}{Color vector. Deafault is NULL.}
+\item{color}{Color vector. Deafault is NULL.}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }
@@ -63,7 +63,7 @@ plotGSEA(gse, plot_type = 'ridge',
 
 ## two-side barplot
 plotGSEA(gse, plot_type = 'bar',main_text_size = 8,
-colors = c('navyblue','orange'))
+color = c('navyblue','orange'))
 
 }
 

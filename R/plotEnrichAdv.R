@@ -26,6 +26,7 @@ plotEnrichAdv <- function(up_enrich_df,
                           color,
                           ...){
   #--- args ---#
+  lst = list(...) # store outside arguments in list
   stopifnot("The input enrichment analysis is not data frame!"=
               is.data.frame(up_enrich_df)|is.data.frame(down_enrich_df))
   plot_type <- match.arg(plot_type)
@@ -71,6 +72,7 @@ plotEnrichAdv <- function(up_enrich_df,
 
   }else{
     if(missing(color)) color = c("#3665a6", "#a32a31")
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
 
     up_go = dplyr::mutate(up_enrich_df,change = 'up')
     down_go = dplyr::mutate(down_enrich_df,change = 'down')
@@ -84,20 +86,29 @@ plotEnrichAdv <- function(up_enrich_df,
     lm = tmp[c(1, length(tmp))]
     lm = c(floor(min(df$new_x)), ceiling(max(df$new_x)))
 
-    p <- suppressMessages(ggplot(df, aes(x = Description, y = new_x)) +
-      geom_bar(stat = "identity",
-               aes(fill = change), width = 0.7) +
-      scale_fill_manual(values = color,
-                        name = "change",
-                        labels = c("Down-regulated pathways","Up-regulated pathways")) +
-      coord_flip() +  ylim(lm) +
-      scale_x_discrete(labels = function(x)
-        stringr::str_wrap(x, width = 30)) +
-      scale_y_continuous(breaks = tmp, labels = abs(tmp)) +
-      ylab(x_label)+
-      guides ( fill = guide_legend(reverse = TRUE) ) +
-      plot_theme(...)+
-      theme(legend.title=element_blank()))
+    p <- suppressMessages(ggplot(df,aes(x=Description,y=new_x,fill=change)) +
+      geom_bar(stat = 'identity',width = 0.8) +
+        scale_fill_manual(values = color,
+                          name = "change",
+                          labels = c("Down-regulated pathways","Up-regulated pathways")) +
+        guides ( fill = guide_legend(reverse = TRUE) ) +
+        scale_x_discrete(expand = expansion(add = .5)) +
+        coord_flip() + ylim(lm) +
+        scale_y_continuous(breaks = tmp, labels = abs(tmp)) +
+        geom_text(data = subset(df, change == 'up'),
+                aes(x=Description, y=0, label=paste0(Description,"  "), color = change),
+                size=lst$main_text_size/3.6,
+                hjust = "inward", show.legend = FALSE) +
+        geom_text(data = subset(df, change == 'down'),
+                aes(x=Description, y=0, label=paste0("  ",Description), color = change),
+                size=lst$main_text_size/3.6,hjust = "outward",show.legend = FALSE) +
+        scale_colour_manual(values = c("black","black"))+
+        labs(x = "", y = x_label) +
+        plot_theme(remove_grid = T,remove_legend = F,...)+
+        theme(axis.text.y=element_blank(),
+            axis.ticks.y=element_blank(),
+            legend.title=element_blank()
+      ))
   }
 
   # wrap long text

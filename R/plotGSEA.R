@@ -6,7 +6,7 @@
 #' @param show_pathway Select plotting pathways by specifying number (will choose top N pathways)
 #' or pathway name.
 #' @param show_gene Select genes to show. Default is "all". Used in "classic" plot.
-#' @param colors Color vector. Deafault is NULL.
+#' @param color Color vector. Deafault is NULL.
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline
@@ -44,7 +44,7 @@
 #'
 #' ## two-side barplot
 #' plotGSEA(gse, plot_type = 'bar',main_text_size = 8,
-#' colors = c('navyblue','orange'))
+#' color = c('navyblue','orange'))
 #'
 #' }
 #'
@@ -54,7 +54,7 @@ plotGSEA <- function(gsea_list,
                      stats_metric = c("p.adjust", "pvalue", "qvalue"),
                      show_pathway = 3,
                      show_gene = NULL,
-                     colors = NULL,
+                     color = NULL,
                      ...){
 
   #--- args ---#
@@ -92,14 +92,14 @@ plotGSEA <- function(gsea_list,
       plot_df[plot_df$Description %in% show_pathway,'group'] <- sapply(nes, function(x) ifelse(x>0,'high','low'))
     }
 
-    if(is.null(colors)) {
-      message('"colors" is NULL, now using "red","grey" and "green"...')
-      colors = c("red","grey66","darkgreen")
+    if(is.null(color)) {
+      message('"color" is NULL, now using "red","grey" and "green"...')
+      color = c("red","grey66","darkgreen")
       }
     p <- ggplot(plot_df, aes(x = NES,y=-log10(eval(parse(text = stats_metric))),color=group)) +
       geom_point(alpha=0.6,size=3.5) +
       xlab("NES") + ylab(paste0("-log10(",stats_metric_label,')')) +
-      scale_color_manual(values = colors)+
+      scale_color_manual(values = color)+
       ggrepel::geom_text_repel(data = plot_df[plot_df$group != 'ignore',],
                       aes(label = Description),
                       size =3,
@@ -124,17 +124,17 @@ plotGSEA <- function(gsea_list,
       stop(paste0(show_pathway[!show_pathway%in%gsea_df$Description],' not in GSEA result!'))
     }
 
-    if(is.null(colors)){
-      colors <- c("\\#5DA5DAFF","\\#FAA43AFF","\\#60BD68FF","\\#F15854FF","\\#B276B2FF",
+    if(is.null(color)){
+      color <- c("\\#5DA5DAFF","\\#FAA43AFF","\\#60BD68FF","\\#F15854FF","\\#B276B2FF",
                   "\\#8D4B08FF","\\#DECF3FFF","\\#F17CB0FF","\\#66E3D9FF","\\#00FF7FFF",
                   "\\#E31A1CFF","\\#FFFF99FF")
-      colors <- stringr::str_remove_all(colors,'.*#') %>% paste0('#',.)
+      color <- stringr::str_remove_all(color,'.*#') %>% paste0('#',.)
     }
 
     plot_df <- do.call(rbind, lapply(show_pathway, function(x)
       calcScore(geneset,genelist,x, exponent,fortify = TRUE, org)))
     description_color <- table(plot_df$Description) %>% names() # match pathway and color
-    names(description_color) = colors[seq_along(description_color)]
+    names(description_color) = color[seq_along(description_color)]
 
     p1 <- ggplot(plot_df, aes_(x = ~x)) + xlab(NULL) +
       geom_line(aes_(y = ~runningScore, color= ~Description), size=1) +
@@ -177,7 +177,7 @@ plotGSEA <- function(gsea_list,
     p2 <- ggplot(plot_df, aes_(x = ~x)) +
       geom_linerange(aes_(ymin=~ymin, ymax=~ymax, color=~Description)) +
       xlab(NULL) + ylab(NULL) +
-      scale_color_manual(values = colors)+
+      scale_color_manual(values = color)+
       plot_theme(remove_legend = T,remove_grid = T,remove_main_text = T,...)+
       scale_y_continuous(expand=c(0,0))+
       theme(
@@ -321,14 +321,14 @@ plotGSEA <- function(gsea_list,
 
     if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
 
-    if(is.null(colors)){
-      colors <- c("\\#0072B5FF","\\#BC3C29FF","\\#A9A9A9")
-      colors <- stringr::str_remove_all(colors,'.*#') %>% paste0('#',.)
+    if(is.null(color)){
+      color <- c("\\#0072B5FF","\\#BC3C29FF","\\#A9A9A9")
+      color <- stringr::str_remove_all(color,'.*#') %>% paste0('#',.)
     }
 
     p <- ggplot(gsea_df,aes(x=index,y=NES,fill=group)) +
       geom_bar(stat = 'identity',width = 0.8) +
-      scale_fill_manual(values = c("A"=colors[1],"B"=colors[2],"C"=colors[3])) +
+      scale_fill_manual(values = c("A"=color[1],"B"=color[2],"C"=color[3])) +
       scale_x_discrete(expand = expansion(add = .5)) +
       scale_y_continuous(breaks=seq(floor(min(gsea_df$NES)), ceiling(max(gsea_df$NES)),
                                     ceiling( (ceiling(max(gsea_df$NES)) - floor(min(gsea_df$NES))) /6) )) +
@@ -340,7 +340,7 @@ plotGSEA <- function(gsea_list,
       geom_text(data = subset(gsea_df, NES < 0),
                 aes(x=index, y=0, label=paste0("  ",ID), color = padj.group),
                 size=lst$main_text_size/3.6,hjust = "outward") +
-      scale_colour_manual(values = c("black",colors[3])) +
+      scale_colour_manual(values = c("black",color[3])) +
       labs(x = "", y = "Normalized Enrichment Score") +
       plot_theme(remove_grid = T,remove_legend = T,...)
 
