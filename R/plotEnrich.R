@@ -308,13 +308,14 @@ plotEnrich <- function(enrich_df,
                 aes(eval(parse(text = term_metric)),
                     forcats::fct_reorder(Description,eval(parse(text = term_metric)))))+
       geom_segment(aes_string(xend = 0, yend = "Description",
-                              colour=stats_metric))+
+                              colour=stats_metric, size = 2*scale_ratio),show.legend = F)+
       geom_point(aes_string(color = stats_metric, size = "Count"))+
+      theme(legend.key = element_rect(fill = "transparent"))+
+      scale_size_continuous(name = "Count",range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
       scale_color_continuous(
         low = up_color, high = down_color, name = stats_metric_label,
         guide = guide_colorbar(reverse = TRUE),
         labels = function(x) format(x, scientific = T))+
-      scale_size_continuous(range = c(min(enrich_df$Count)/2,max(enrich_df$Count)/2) * scale_ratio)+
       xlab(term_metric_label) + ylab(NULL)+
       labs(color = stats_metric)+
       plot_theme(...)
@@ -592,7 +593,7 @@ plotEnrich <- function(enrich_df,
     show_nodes = unique(c(id, show_node_top,show_node_parent, show_node_child))
     sub_node = node %>%
       dplyr::mutate(Term = ifelse(go_id%in%show_nodes,
-                                  stringr::str_to_sentence(Term), NA)) %>%
+                                  stringr::str_replace(Term, "^\\w{1}", toupper), NA)) %>%
       dplyr::mutate(Term = ifelse(is.na(Term),NA,
                                   sapply(strwrap(Term, width = wrap_length, simplify = FALSE),
                                          paste, collapse = "\n")))

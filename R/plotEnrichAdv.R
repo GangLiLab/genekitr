@@ -70,7 +70,7 @@ plotEnrichAdv <- function(up_enrich_df,
     p <- cowplot::plot_grid(left, right, ncol=2)
 
   }else{
-    if(missing(color)) color = c("#2874C5", "#f87669")
+    if(missing(color)) color = c("#3665a6", "#a32a31")
 
     up_go = dplyr::mutate(up_enrich_df,change = 'up')
     down_go = dplyr::mutate(down_enrich_df,change = 'down')
