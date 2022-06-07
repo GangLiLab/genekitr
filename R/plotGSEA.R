@@ -319,7 +319,7 @@ plotGSEA <- function(gsea_list,
       dplyr::arrange(NES) %>%
       dplyr::mutate(index = 1:dplyr::n())
 
-    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 2
+    if(!"main_text_size"%in%names(lst)) lst$main_text_size = 8
 
     if(is.null(colors)){
       colors <- c("\\#0072B5FF","\\#BC3C29FF","\\#A9A9A9")

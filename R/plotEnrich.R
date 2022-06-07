@@ -25,14 +25,12 @@
 #' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
 #' @param ... other arguments from `plot_theme` function
 #'
-#' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs
-#' geom_point
+#' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs geom_point
 #' geom_segment geom_bar geom_col geom_tile guide_colorbar guides scale_color_continuous
 #' scale_size_continuous scale_x_discrete scale_y_discrete scale_x_continuous scale_size
-#' scale_fill_discrete
-#' scale_fill_continuous scale_y_continuous sec_axis theme xlab ylab xlim
+#' scale_fill_discrete scale_fill_continuous scale_y_continuous sec_axis theme xlab ylab xlim
 #' @importFrom dplyr arrange mutate group_by top_n ungroup select case_when distinct rename pull
-#' @importFrom stringr str_to_sentence str_split
+#' @importFrom stringr str_replace str_split
 #' @importFrom rlang .data
 #' @importFrom stats setNames
 #' @importFrom ggraph ggraph geom_node_text geom_edge_link circle geom_node_point
@@ -148,7 +146,15 @@ plotEnrich <- function(enrich_df,
 
   #--- codes ---#
   ## uppercase first letter of description
-  enrich_df$Description <- stringr::str_to_sentence(enrich_df$Description)
+  tryCatch(
+    {
+      enrich_df$Description <- stringr::str_replace(enrich_df$Description, "^\\w{1}", toupper)
+    },
+    error = function(e) {
+      message(paste0("We need the 'Description' column which means pathway detailed description","\n",
+                     "Maybe you should rename the column name..."))
+    }
+  )
 
   ## set labels
   term_metric_label <- ifelse(term_metric == "FoldEnrich", "Fold Enrichment",
@@ -839,4 +845,6 @@ loadOrgdb <- function(orgdb){
   }
   eval(parse(text = paste0(orgdb, "::", orgdb)))
 }
+
+
 
