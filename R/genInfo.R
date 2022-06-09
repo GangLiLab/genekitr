@@ -48,7 +48,7 @@ genInfo <- function(id = NULL,
       merge(.,as.data.frame(id),
             by.x = 'input_id', by.y = 'id',
             all.y = T) %>%
-      dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
+      # dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
       dplyr::arrange(input_id)
 
     ## check one-to-many match
