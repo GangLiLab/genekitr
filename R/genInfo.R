@@ -71,26 +71,38 @@ genInfo <- function(id = NULL,
       sub <- gene_info %>% dplyr::filter(input_id %in% tomany_id)
       other <- gene_info %>% dplyr::filter(!input_id %in% tomany_id)
 
-      # if has entrezid column, choose minimal entrezid as unique one
-      if("entrezid"%in%colnames(gene_info)){
+      # if has entrezid and ensembl column, first choose minimal entrezid
+      if(all(c("entrezid",'chr')%in%colnames(gene_info))){
         uniq_order <- sapply(tomany_id, function(x) {
           check <- which(sub$input_id == x)
           n_ent <- as.numeric(sub[check, 'entrezid'])
-          min_n <- which(n_ent%in%min(n_ent))
-          check[min_n]
+          if(!max(n_ent) == min(n_ent)){
+            min_n <- which(n_ent%in%min(n_ent))
+            res = check[min_n]
+            if(length(min_n)>1){
+              # if entrez is same, then check chr
+              real_chr <- which(grepl('^[0-9]$',sub[check, 'chr']))
+              res = check[real_chr]
+            }
+          }else{
+            real_chr <- which(grepl('^[0-9]$',sub[check, 'chr']))
+            res = check[real_chr]
+          }
+          return(res)
         })
       }else{
-        # else use minimal NA
+        # if no entrez or ensembl, then check minimal NA
         uniq_order <- sapply(tomany_id, function(x) {
           check <- which(sub$input_id == x)
           n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
           if (min(n_na) == max(n_na) & keytype != "entrezid") {
-            check[order(as.numeric(sub$entrezid[check])) == 1]
+            res = check[order(as.numeric(sub$entrezid[check])) == 1]
           } else if (min(n_na) == max(n_na) & keytype == "entrezid") {
-            check[order(as.numeric(sub$input_id[check])) == 1]
+            res = check[order(as.numeric(sub$input_id[check])) == 1]
           } else if (min(n_na) != max(n_na)) {
-            check[which.min(n_na)]
+            res = check[which.min(n_na)]
           }
+          return(res)
         })
       }
 
