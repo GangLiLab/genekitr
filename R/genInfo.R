@@ -74,6 +74,7 @@ genInfo <- function(id = NULL,
       # if has entrezid and ensembl column, first choose minimal entrezid
       if(all(c("entrezid",'chr')%in%colnames(gene_info))){
         uniq_order <- sapply(tomany_id, function(x) {
+          res = c()
           check <- which(sub$input_id == x)
           n_ent <- as.numeric(sub[check, 'entrezid'])
           if(!max(n_ent) == min(n_ent)){
@@ -81,19 +82,29 @@ genInfo <- function(id = NULL,
             res = check[min_n]
             if(length(min_n)>1){
               # if entrez is same, then check chr
-              real_chr <- which(grepl('^[0-9]$',sub[check, 'chr']))
-              if(length(real_chr)>1) real_chr = real_chr[1]
-              res = check[real_chr]
+              if(any(grepl('^[0-9].*$',sub[check, 'chr']))){
+                real_chr <- which(grepl('^[0-9].*$',sub[check, 'chr']))
+                if(length(real_chr)>1) real_chr = real_chr[1]
+                res = check[real_chr]
+              }else{
+                real_chr = check[1]
+              }
             }
           }else{
-            real_chr <- which(grepl('^[0-9].*$',sub[check, 'chr']))
-            res = check[real_chr]
+            if(any(grepl('^[0-9].*$',sub[check, 'chr']))){
+              real_chr <- which(grepl('^[0-9].*$',sub[check, 'chr']))
+              if(length(real_chr)>1) real_chr = real_chr[1]
+              res = check[real_chr]
+            }else{
+              res = check[1]
+            }
           }
           return(res)
-        })
+        }) %>% as.character()
       }else{
         # if no entrez or ensembl, then check minimal NA
         uniq_order <- sapply(tomany_id, function(x) {
+          res = c()
           check <- which(sub$input_id == x)
           n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
           if (min(n_na) == max(n_na) & keytype != "entrezid") {
@@ -104,7 +115,7 @@ genInfo <- function(id = NULL,
             res = check[which.min(n_na)]
           }
           return(res)
-        })
+        }) %>% as.character()
       }
 
       gene_info <- rbind(other, sub[uniq_order, ])
