@@ -82,10 +82,11 @@ genInfo <- function(id = NULL,
             if(length(min_n)>1){
               # if entrez is same, then check chr
               real_chr <- which(grepl('^[0-9]$',sub[check, 'chr']))
+              if(length(real_chr)>1) real_chr = real_chr[1]
               res = check[real_chr]
             }
           }else{
-            real_chr <- which(grepl('^[0-9]$',sub[check, 'chr']))
+            real_chr <- which(grepl('^[0-9].*$',sub[check, 'chr']))
             res = check[real_chr]
           }
           return(res)
