@@ -11,7 +11,7 @@ plotEnrich(
     "network", "gomap", "goheat", "gotangram", "wordcloud", "upset"),
   term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
-  sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
+  sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang"),
   up_color = "red",
   down_color = "blue",
   show_gene = "all",
@@ -40,7 +40,7 @@ plot.}
 \item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
 \item{sim_method}{Method of calculating the similarity between nodes, one of one of "Resnik",
-"Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
+"Lin", "Rel", "Jiang" , "Wang" methods.
 Used in "map","goheat","gotangram","wordcloud".}
 
 \item{up_color}{Color of stronger statistics (e.g. Pvalue 0.01) or higher logFC, default is "red".}

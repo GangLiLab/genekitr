@@ -6,7 +6,7 @@
 \usage{
 simGO(
   enrich_df,
-  sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
+  sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang"),
   org = NULL,
   ont = NULL
 )
@@ -15,7 +15,7 @@ simGO(
 \item{enrich_df}{Enrichment analysis `data.frame` result.}
 
 \item{sim_method}{Method of calculating the similarity between nodes, one of one of "Resnik",
-"Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.}
+"Lin", "Rel", "Jiang" , "Wang" methods.}
 
 \item{org}{Organism name from `biocOrg_name`.}
 
