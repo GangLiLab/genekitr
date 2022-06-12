@@ -33,10 +33,12 @@
 #' )
 #' plotVenn(sm_gene_list,
 #'   text_size = 1.5, alpha_degree = 1,
-#'   remove_grid = TRUE, color = ggsci::pal_lancet()(3))
+#'   remove_grid = TRUE, color = ggsci::pal_lancet()(3)
+#' )
 #' plotVenn(la_gene_list,
 #'   text_size = 15, alpha_degree = 0.2, border_thick = 2,
-#'   remove_grid = TRUE, use_venn = FALSE)
+#'   remove_grid = TRUE, use_venn = FALSE
+#' )
 plotVenn <- function(venn_list,
                      use_venn = TRUE,
                      color = NULL,
@@ -53,9 +55,9 @@ plotVenn <- function(venn_list,
 
   if (!requireNamespace("futile.logger", quietly = TRUE)) {
     warning("Package futile.logger needed for this function to work. Installing...",
-         call. = FALSE
+      call. = FALSE
     )
-    utils::install.packages('futile.logger')
+    utils::install.packages("futile.logger")
   }
 
   #--- codes ---#
@@ -115,10 +117,12 @@ plotVenn <- function(venn_list,
       geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
       ggupset::scale_x_upset(name = "") +
       ggplot2::scale_y_continuous(name = "") +
-      plot_theme(main_text_size = text_size,
-                 remove_grid = remove_grid,
-                 border_thick = border_thick,
-                 ...)
+      plot_theme(
+        main_text_size = text_size,
+        remove_grid = remove_grid,
+        border_thick = border_thick,
+        ...
+      )
   }
 
   return(p)

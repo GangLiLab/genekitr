@@ -49,11 +49,11 @@ expoSheet <- function(data_list,
       sheet = name_list[[i]], style = headerStyle,
       rows = 1, cols = seq_len(ncol(data_list[[i]])), gridExpand = TRUE
     )
-    openxlsx::setColWidths(wb, sheet = name_list[[i]],
-                           cols = seq_len(ncol(data_list[[i]])), widths = "auto")
+    openxlsx::setColWidths(wb,
+      sheet = name_list[[i]],
+      cols = seq_len(ncol(data_list[[i]])), widths = "auto"
+    )
   }))
 
   openxlsx::saveWorkbook(wb, paste0(dir, filename), overwrite)
 }
-
-

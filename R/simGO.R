@@ -12,15 +12,18 @@
 #' @export
 #'
 simGO <- function(enrich_df,
-                  sim_method = c("JC","Resnik", "Lin", "Rel", "Jiang" , "Wang"),
-                  org=NULL,
-                  ont=NULL){
+                  sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
+                  org = NULL,
+                  ont = NULL) {
   sim_method <- match.arg(sim_method)
 
-  simterm = get_sim_data(enrich_df,sim_method = sim_method,
-                                   org=org, ont=ont) %>% .[["r"]] %>%
+  simterm <- get_sim_data(enrich_df,
+    sim_method = sim_method,
+    org = org, ont = ont
+  ) %>%
+    .[["r"]] %>%
     dplyr::arrange(cluster) %>%
-    dplyr::distinct(parent,.keep_all = TRUE) %>%
+    dplyr::distinct(parent, .keep_all = TRUE) %>%
     dplyr::pull(go)
 
   egosim <- enrich_df %>% dplyr::filter(.[[1]] %in% simterm)
@@ -28,6 +31,3 @@ simGO <- function(enrich_df,
 
   return(egosim)
 }
-
-
-

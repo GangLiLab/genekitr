@@ -24,14 +24,18 @@
 #' @examples
 #' \donttest{
 #' data(geneList, package = "genekitr")
-#' gse <- genGSEA(genelist = geneList, org = "human",
-#'   category = "H",use_symbol = TRUE)
+#' gse <- genGSEA(
+#'   genelist = geneList, org = "human",
+#'   category = "H", use_symbol = TRUE
+#' )
 #' }
 #'
 genGSEA <- function(genelist,
                     org,
-                    category = c("C1", "C2", "C3", "C4",
-                                 "C5", "C6", "C7", "C8", "H"),
+                    category = c(
+                      "C1", "C2", "C3", "C4",
+                      "C5", "C6", "C7", "C8", "H"
+                    ),
                     subcategory = NULL,
                     use_symbol = TRUE,
                     minGSSize = 10,
@@ -67,31 +71,34 @@ genGSEA <- function(genelist,
   }
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist,
-                                                 TERM2GENE = geneset,
-                                                 pvalueCutoff = pvalueCutoff,
-                                                 verbose = F,
-                                                 ...
+    TERM2GENE = geneset,
+    pvalueCutoff = pvalueCutoff,
+    verbose = F,
+    ...
   ))
 
-  exponent <-  egmt@params[["exponent"]]
+  exponent <- egmt@params[["exponent"]]
 
-  egmt =  egmt %>% as.data.frame() %>% as.enrichdat()
-  if( use_symbol){
+  egmt <- egmt %>%
+    as.data.frame() %>%
+    as.enrichdat()
+  if (use_symbol) {
     # transform id to symbol
-    egmt_id = stringr::str_split(egmt$geneID,'\\/') %>% unlist()
-    id_all = suppressMessages(transId(egmt_id,'symbol',org = org))
+    egmt_id <- stringr::str_split(egmt$geneID, "\\/") %>% unlist()
+    id_all <- suppressMessages(transId(egmt_id, "symbol", org = org))
 
     new_geneID <- stringr::str_split(egmt$geneID, "\\/") %>%
       lapply(., function(x) {
-        id_all %>% dplyr::filter(input_id %in% x) %>%
+        id_all %>%
+          dplyr::filter(input_id %in% x) %>%
           dplyr::arrange(match(input_id, x)) %>%
           dplyr::pull(symbol)
       }) %>%
       sapply(., paste0, collapse = "/")
 
-    egmt =  egmt %>%
+    egmt <- egmt %>%
       dplyr::mutate(geneID_symbol = new_geneID) %>%
-      dplyr::relocate(geneID_symbol,.after = geneID)
+      dplyr::relocate(geneID_symbol, .after = geneID)
   }
 
   res <- list(genelist = genelist, geneset = geneset, gsea_df = egmt, exponent = exponent, org = org)
@@ -159,9 +166,7 @@ getMsigdb <- function(org,
 
 
 
-utils::globalVariables(c("gs_name","gene_symbol","entrez_gene","input_id","symbol",
-                         "msig_org","msig_category","gs_cat","gs_subcat"))
-
-
-
-
+utils::globalVariables(c(
+  "gs_name", "gene_symbol", "entrez_gene", "input_id", "symbol",
+  "msig_org", "msig_category", "gs_cat", "gs_subcat"
+))

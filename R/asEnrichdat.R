@@ -124,4 +124,4 @@ as.enrichdat <- function(enrich_df) {
   return(enrich_df)
 }
 
-utils::globalVariables(c("Count","setSize"))
+utils::globalVariables(c("Count", "setSize"))

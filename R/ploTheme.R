@@ -17,8 +17,9 @@
 #' @importFrom rlang .data
 #' @examples
 #' library(ggplot2)
-#' ggplot(mtcars, aes(x=wt, y=mpg))+ geom_point()+
-#'   plot_theme(font_type = 'Times', border_thick = 2)
+#' ggplot(mtcars, aes(x = wt, y = mpg)) +
+#'   geom_point() +
+#'   plot_theme(font_type = "Times", border_thick = 2)
 #' @export
 plot_theme <- function(main_text_size = 8,
                        legend_text_size = 6,
@@ -28,9 +29,8 @@ plot_theme <- function(main_text_size = 8,
                        remove_border = FALSE,
                        remove_main_text = FALSE,
                        remove_legend_text = FALSE,
-                       remove_legend = FALSE
-) {
-  ptheme <-theme_bw()
+                       remove_legend = FALSE) {
+  ptheme <- theme_bw()
 
   font_theme <- theme(
     axis.text.x = element_text(
@@ -66,8 +66,8 @@ plot_theme <- function(main_text_size = 8,
       panel.grid.major = element_blank(),
       panel.grid.minor = element_blank()
     )
-  }else{
-    bkg_theme = NULL
+  } else {
+    bkg_theme <- NULL
   }
 
   # remove border line
@@ -75,8 +75,8 @@ plot_theme <- function(main_text_size = 8,
     bod_theme <- theme(
       panel.border = element_blank(),
     )
-  }else{
-    bod_theme = NULL
+  } else {
+    bod_theme <- NULL
   }
 
   # remove axis text
@@ -87,18 +87,18 @@ plot_theme <- function(main_text_size = 8,
       axis.title.x = element_blank(),
       axis.title.y = element_blank(),
     )
-  }else{
-    main_txt_theme = NULL
+  } else {
+    main_txt_theme <- NULL
   }
 
   # remove legend text
   if (remove_legend_text) {
     legend_txt_theme <- theme(
-      legend.title= element_blank(),
-      legend.text= element_blank()
+      legend.title = element_blank(),
+      legend.text = element_blank()
     )
-  }else{
-    legend_txt_theme = NULL
+  } else {
+    legend_txt_theme <- NULL
   }
 
   # remove legend
@@ -106,12 +106,12 @@ plot_theme <- function(main_text_size = 8,
     leg_theme <- theme(
       legend.position = "none"
     )
-  }else{
+  } else {
     leg_theme <- NULL
   }
 
   all_theme <- ptheme + font_theme + bkg_theme + bod_theme +
-    main_txt_theme+legend_txt_theme + leg_theme
+    main_txt_theme + legend_txt_theme + leg_theme
 
   return(all_theme)
 }

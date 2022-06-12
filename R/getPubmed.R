@@ -8,28 +8,30 @@
 #' @export
 #' @examples
 #' \donttest{
-#' term <- c("Tp53","Brca1","Tet2")
-#' add_term <- c('stem cell','mouse')
-#' l <- getPubmed(term,add_term,num=30)
+#' term <- c("Tp53", "Brca1", "Tet2")
+#' add_term <- c("stem cell", "mouse")
+#' l <- getPubmed(term, add_term, num = 30)
 #' # very easy to output
-#' expoSheet(l,name_list = term, filename = 'test.xlsx',dir = tempdir())
+#' expoSheet(l, name_list = term, filename = "test.xlsx", dir = tempdir())
 #' }
 #'
-getPubmed <- function(term,add_term=NULL,num=100){
+getPubmed <- function(term, add_term = NULL, num = 100) {
   if (!requireNamespace("europepmc", quietly = TRUE)) {
     utils::install.packages("europepmc")
   }
-  if(!is.null(add_term)){
-    supp = paste0('AND ABSTRACT:',add_term) %>% paste(collapse = ' ')
-  }else{
-    supp = NULL
+  if (!is.null(add_term)) {
+    supp <- paste0("AND ABSTRACT:", add_term) %>% paste(collapse = " ")
+  } else {
+    supp <- NULL
   }
 
-  res = lapply(term , function(i){
-    europepmc::epmc_search(query = paste0('ABSTRACT:',i," ",supp),
-                           limit = num)
+  res <- lapply(term, function(i) {
+    europepmc::epmc_search(
+      query = paste0("ABSTRACT:", i, " ", supp),
+      limit = num
+    )
   })
-  names(res) = term
+  names(res) <- term
 
   return(res)
 }
@@ -37,20 +39,20 @@ getPubmed <- function(term,add_term=NULL,num=100){
 
 
 #--- sub function for plotting ---#
-getPubmedTrend <- function(term,add_term=NULL,period){
+getPubmedTrend <- function(term, add_term = NULL, period) {
   if (!requireNamespace("europepmc", quietly = TRUE)) {
     utils::install.packages("europepmc")
   }
-  if(!is.null(add_term)){
-    supp = paste0('AND ABSTRACT:',add_term) %>% paste(collapse = ' ')
-  }else{
-    supp = NULL
+  if (!is.null(add_term)) {
+    supp <- paste0("AND ABSTRACT:", add_term) %>% paste(collapse = " ")
+  } else {
+    supp <- NULL
   }
 
-  res = lapply(term , function(i){
-    europepmc::epmc_hits_trend(paste0('ABSTRACT:',i," ",supp), period = period, synonym = FALSE)
+  res <- lapply(term, function(i) {
+    europepmc::epmc_hits_trend(paste0("ABSTRACT:", i, " ", supp), period = period, synonym = FALSE)
   })
-  names(res) = term
+  names(res) <- term
 
   return(res)
 }
