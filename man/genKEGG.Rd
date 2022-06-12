@@ -56,13 +56,16 @@ id <- names(geneList)[abs(geneList) > 1]
 keg <- genKEGG(id, org = "human")
 
 # gene id with groups
-id <- c(head(names(geneList),100),tail(names(geneList),100))
-group <- list(group1  = c(rep('up',100),rep('down',100)),
-              group2 = c(rep('A',130),rep('B',70)))
-gkeg <- genKEGG(id, group_list = group,
-              org = "human", pvalueCutoff = 0.05,
-              qvalueCutoff = 0.05)
-
+id <- c(head(names(geneList), 100), tail(names(geneList), 100))
+group <- list(
+  group1 = c(rep("up", 100), rep("down", 100)),
+  group2 = c(rep("A", 130), rep("B", 70))
+)
+gkeg <- genKEGG(id,
+  group_list = group,
+  org = "human", pvalueCutoff = 0.05,
+  qvalueCutoff = 0.05
+)
 }
 
 }

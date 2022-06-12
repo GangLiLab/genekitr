@@ -41,30 +41,35 @@ GSEA plot
 library(ggplot2)
 ## get GSEA result
 data(geneList, package = "genekitr")
-gse <- genGSEA(genelist = geneList, org = "human",
-               category = "H",use_symbol = TRUE, pvalueCutoff = 0.05)
+gse <- genGSEA(
+  genelist = geneList, org = "human",
+  category = "H", use_symbol = TRUE, pvalueCutoff = 0.05
+)
 ## volcano plot
 # get top3 of up and down pathways
-plotGSEA(gse, plot_type = 'volcano', show_pathway = 3)
+plotGSEA(gse, plot_type = "volcano", show_pathway = 3)
 # choose pathway by character
-pathways = c("HALLMARK_P53_PATHWAY","HALLMARK_GLYCOLYSIS","HALLMARK_DNA_REPAIR")
-plotGSEA(gse, plot_type = 'volcano',show_pathway = pathways)
+pathways <- c("HALLMARK_P53_PATHWAY", "HALLMARK_GLYCOLYSIS", "HALLMARK_DNA_REPAIR")
+plotGSEA(gse, plot_type = "volcano", show_pathway = pathways)
 
 ## classic pathway plot
-genes = c("MET", "TP53", "PMM2")
-plotGSEA(gse, plot_type = 'classic', show_pathway = pathways, show_gene = genes)
+genes <- c("MET", "TP53", "PMM2")
+plotGSEA(gse, plot_type = "classic", show_pathway = pathways, show_gene = genes)
 
 ## fgsea for multiple pathway
-plotGSEA(gse, plot_type = 'fgsea', show_pathway = 3)
+plotGSEA(gse, plot_type = "fgsea", show_pathway = 3)
 
 ## ridgeplot
-plotGSEA(gse, plot_type = 'ridge',
-  show_pathway = 10, stats_metric = 'p.adjust')
+plotGSEA(gse,
+  plot_type = "ridge",
+  show_pathway = 10, stats_metric = "p.adjust"
+)
 
 ## two-side barplot
-plotGSEA(gse, plot_type = 'bar',main_text_size = 8,
-color = c('navyblue','orange'))
-
+plotGSEA(gse,
+  plot_type = "bar", main_text_size = 8,
+  color = c("navyblue", "orange")
+)
 }
 
 }

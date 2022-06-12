@@ -9,7 +9,7 @@
 #' 'RichFactor'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
-#' "Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
+#' "Lin", "Rel", "Jiang" , "Wang" methods.
 #' Used in "map","goheat","gotangram","wordcloud".
 #' @param up_color Color of stronger statistics (e.g. Pvalue 0.01) or higher logFC, default is "red".
 #' @param down_color Color of weaker statistics (e.g. Pvalue 1) or lower logFC, default is
@@ -105,7 +105,7 @@ plotEnrich <- function(enrich_df,
                        ),
                        term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
                        stats_metric = c("p.adjust", "pvalue", "qvalue"),
-                       sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
+                       sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang"),
                        up_color = "red",
                        down_color = "blue",
                        show_gene = "all",

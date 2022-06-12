@@ -24,8 +24,8 @@ Transform probe id to symbol, entrezid,  ensembl or uniprot.
 }
 \examples{
 \dontrun{
-data(deg,package = 'genekitr')
-id = deg$probe_id
+data(deg, package = "genekitr")
+id <- deg$probe_id
 transProbe(id, transTo = "symbol")
 }
 }

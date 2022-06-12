@@ -85,44 +85,48 @@ logfc <- geneList[id]
 
 ego <- genGO(id,
   org = "human", ont = "bp", pvalueCutoff = 0.01,
-  qvalueCutoff = 0.01)
-ego <- ego[1:10,]
+  qvalueCutoff = 0.01
+)
+ego <- ego[1:10, ]
 all_ego <- genGO(id,
   org = "human", ont = "all", pvalueCutoff = 0.01,
-  qvalueCutoff = 0.01)
+  qvalueCutoff = 0.01
+)
 
 ## example plots
-plotEnrich(ego,plot_type = "dot")
+plotEnrich(ego, plot_type = "dot")
 
-plotEnrich(ego,plot_type = "bubble",scale_ratio = 0.4)
+plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
 
-plotEnrich(ego,plot_type = "bar")
+plotEnrich(ego, plot_type = "bar")
 
-plotEnrich(all_ego,plot_type = 'wego')
+plotEnrich(all_ego, plot_type = "wego")
 
-plotEnrich(ego,plot_type = "lollipop",
-down_color = "#325CAC", up_color = "#E69056",
-wrap_length = 25, scale_ratio = 0.4)
+plotEnrich(ego,
+  plot_type = "lollipop",
+  down_color = "#325CAC", up_color = "#E69056",
+  wrap_length = 25, scale_ratio = 0.4
+)
 
-plotEnrich(ego,plot_type = "geneheat")
+plotEnrich(ego, plot_type = "geneheat")
 
-show_gene = c('BRCA2','CDK1','JUN','MCM8','TIPIN')
-plotEnrich(ego,plot_type = "geneheat",show_gene = show_gene)
-plotEnrich(ego,fold_change = logfc, plot_type = "geneheat",show_gene = show_gene)
+show_gene <- c("BRCA2", "CDK1", "JUN", "MCM8", "TIPIN")
+plotEnrich(ego, plot_type = "geneheat", show_gene = show_gene)
+plotEnrich(ego, fold_change = logfc, plot_type = "geneheat", show_gene = show_gene)
 
-plotEnrich(ego,fold_change = logfc,plot_type = "genechord",show_gene = show_gene)
+plotEnrich(ego, fold_change = logfc, plot_type = "genechord", show_gene = show_gene)
 
-plotEnrich(ego,plot_type = "network", scale_ratio = 0.5)
+plotEnrich(ego, plot_type = "network", scale_ratio = 0.5)
 
-plotEnrich(ego,plot_type = "gomap", wrap_length = 25)
+plotEnrich(ego, plot_type = "gomap", wrap_length = 25)
 
-plotEnrich(ego,plot_type = "goheat",sim_method = 'Rel')
+plotEnrich(ego, plot_type = "goheat", sim_method = "Rel")
 
-plotEnrich(ego,plot_type = "gotangram",sim_method = 'Rel')
+plotEnrich(ego, plot_type = "gotangram", sim_method = "Rel")
 
-plotEnrich(ego,plot_type = "wordcloud",sim_method = 'Rel')
+plotEnrich(ego, plot_type = "wordcloud", sim_method = "Rel")
 
-plotEnrich(ego,plot_type = "upset")
+plotEnrich(ego, plot_type = "upset")
 }
 
 }

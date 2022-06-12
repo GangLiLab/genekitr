@@ -24,12 +24,15 @@ Get gene related information
 \examples{
 \donttest{
 # example1: input list with fake id and one-to-many mapping id
-x = genInfo(id = c(
+x <- genInfo(id = c(
   "MCM10", "CDC20", "S100A9", "MMP1", "BCC7",
-  "FAKEID", "TP53", "HBD", "NUDT10"))
+  "FAKEID", "TP53", "HBD", "NUDT10"
+))
 
 # example2: statistics of human gene biotypes
-genInfo(org = 'hs') \%>\% {table(.$gene_biotype)}
-
+genInfo(org = "hs") \%>\%
+  {
+    table(.$gene_biotype)
+  }
 }
 }

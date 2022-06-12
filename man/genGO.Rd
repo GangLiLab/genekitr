@@ -57,16 +57,20 @@ data(geneList, package = "genekitr")
 id <- names(geneList)[abs(geneList) > 2]
 ego <- genGO(id,
   org = "human", ont = "bp", pvalueCutoff = 0.01,
-  qvalueCutoff = 0.01)
+  qvalueCutoff = 0.01
+)
 
 # gene id with groups
-id <- c(head(names(geneList),50),tail(names(geneList),50))
-group <- list(group1  = c(rep('up',50),rep('down',50)),
-  group2 = c(rep('A',40),rep('B',60)))
+id <- c(head(names(geneList), 50), tail(names(geneList), 50))
+group <- list(
+  group1 = c(rep("up", 50), rep("down", 50)),
+  group2 = c(rep("A", 40), rep("B", 60))
+)
 
-gego <- genGO(id, group_list = group,
+gego <- genGO(id,
+  group_list = group,
   org = "human", ont = "bp", pvalueCutoff = 0.1,
-  qvalueCutoff = 1)
-
+  qvalueCutoff = 1
+)
 }
 }

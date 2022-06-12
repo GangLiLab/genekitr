@@ -2,7 +2,7 @@
 #'
 #' @param enrich_df Enrichment analysis `data.frame` result.
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
-#' "Lin", "Rel", "Jiang" , "Wang" and "JC" (Jaccard similarity coefficient) methods.
+#' "Lin", "Rel", "Jiang" , "Wang" methods.
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "bp", "mf", and "cc".
 #'
@@ -12,7 +12,7 @@
 #' @export
 #'
 simGO <- function(enrich_df,
-                  sim_method = c("JC", "Resnik", "Lin", "Rel", "Jiang", "Wang"),
+                  sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang"),
                   org = NULL,
                   ont = NULL) {
   sim_method <- match.arg(sim_method)
