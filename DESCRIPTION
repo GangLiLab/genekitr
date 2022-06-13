@@ -9,7 +9,7 @@ Authors@R:
              email = "jieandze1314@gmail.com",
              comment = c(ORCID = "0000-0002-7414-8556")))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
-URL: https://github.com/GangLiLab/genekitr
+URL: https://www.genekitr.fun/
 BugReports: https://github.com/GangLiLab/genekitr/issues
 Description: An analysis toolkit focused on genes. It mainly includes five
     features (search, convert, analysis, plot, and export).
