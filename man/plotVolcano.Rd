@@ -50,7 +50,7 @@ plotVolcano(deg, "p.adjust", remove_legend = T, dot_size = 3)
 # show some genes
 plotVolcano(deg, "p.adjust",
   remove_legend = T,
-  show_gene = c("CD36", "DUSP6", "NUPR1", "IER3")
+  show_gene = c("CD36", "DUSP6", "IER3","CDH7")
 )
 }
 

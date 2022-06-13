@@ -41,11 +41,11 @@ If gene group over 4, plot will be visulized using UpSet plot.
 }
 \examples{
 library(ggplot2)
-set1 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set2 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set3 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set4 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
-set5 <- paste0(rep("gene", 100), sample(c(1:1000), 100))
+set1 <- paste0(rep("gene", 100), sample(1:1000, 100))
+set2 <- paste0(rep("gene", 100), sample(1:1000, 100))
+set3 <- paste0(rep("gene", 100), sample(1:1000, 100))
+set4 <- paste0(rep("gene", 100), sample(1:1000, 100))
+set5 <- paste0(rep("gene", 100), sample(1:1000, 100))
 sm_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3)
 la_gene_list <- list(
   gset1 = set1, gset2 = set2, gset3 = set3,

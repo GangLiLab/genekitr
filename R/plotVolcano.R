@@ -24,7 +24,7 @@
 #' # show some genes
 #' plotVolcano(deg, "p.adjust",
 #'   remove_legend = T,
-#'   show_gene = c("CD36", "DUSP6", "NUPR1", "IER3")
+#'   show_gene = c("CD36", "DUSP6", "IER3","CDH7")
 #' )
 #' }
 #'
@@ -65,13 +65,10 @@ plotVolcano <- function(deg_df,
 
   # check gene
   check_gene <- which(grepl("gene|entrezid|symbol|ensembl", tolower(colnames(deg_df))))
-  if (length(check_gene) > 1) {
-    message(
-      "Detect many gene columns: ",
-      paste(colnames(deg_df)[check_gene], collapse = "|"),
-      "\nAutomatically choose the first one..."
-    )
-    check_gene <- check_gene[1]
+  if (length(check_gene) > 1 & !is.null(show_gene)) {
+    for(i in check_gene){
+      if(any(show_gene%in%deg_df[,i])) check_gene <- seq(ncol(deg_df))[i]
+    }
   }
 
   ## subset
