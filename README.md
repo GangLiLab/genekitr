@@ -105,7 +105,7 @@ Doodle has finished differential expression analysis and GO/KEGG enrichment anal
 
 <b style='color:#486CBE'>**Doodle wonders if there is a way to save all data into one file without much manual operation?**</b>
 
-> **If you have ever had one or more similar problems like Mr. Doodle, you may need `genekitr` !**
+> **If you have ever had one or more similar problems like Mr. Doodle, try `genekitr` !**
 
 
 
