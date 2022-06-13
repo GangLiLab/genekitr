@@ -69,6 +69,8 @@ plotVolcano <- function(deg_df,
     for(i in check_gene){
       if(any(show_gene%in%deg_df[,i])) check_gene <- seq(ncol(deg_df))[i]
     }
+  }else{
+    check_gene = check_gene[1]
   }
 
   ## subset
