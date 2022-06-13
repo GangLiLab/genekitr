@@ -49,7 +49,7 @@ remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")
 
 
 
-## 📚 Vignettes
+## 📚 Vignette
 
 https://www.genekitr.fun/
 
