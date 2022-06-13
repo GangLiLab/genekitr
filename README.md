@@ -20,12 +20,38 @@
 - **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. All plot function input is dataframe format and supports GeneOntology web result. Feel free to make your own plots.
 - **Export**: easily export multiple data sets as various sheets in one excel file
 
-
-
 #### Supported organisms:
 
 - Search & ID conversion:  **196** vertebrate species, **120** plant species and **2** bacteria species
 - Enrichment analysis: GO supports **18** species, KEGG supports **7254** species and GSEA supports **20** species
+
+
+
+## 🛠 Installation
+
+#### Install stable version from CRAN:
+
+```R
+install.packages("genekitr")
+```
+
+#### Install development version from GitHub:
+
+```R
+remotes::install_github("GangLiLab/genekitr")
+```
+
+#### Install development version from Gitee (for CHN mainland users):
+
+```R
+remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")
+```
+
+
+
+## 📚 Vignettes
+
+Working on it...
 
 
 
@@ -80,34 +106,6 @@ Doodle has finished differential expression analysis and GO/KEGG enrichment anal
 <b style='color:#486CBE'>**Doodle wonders if there is a way to save all data into one file without much manual operation?**</b>
 
 > **If you have ever had one or more similar problems like Mr. Doodle, you may need `genekitr` !**
-
-
-
-## 🛠 Installation
-
-#### Install stable version from CRAN:
-
-```R
-install.packages("genekitr")
-```
-
-#### Install development version from GitHub:
-
-```R
-remotes::install_github("GangLiLab/genekitr")
-```
-
-#### Install development version from Gitee (for CHN mainland users):
-
-```R
-remotes::install_git("https://gitee.com/genekitr/pacakge_genekitr")
-```
-
-
-
-## 📚 Vignettes
-
-Working on it...
 
 
 
