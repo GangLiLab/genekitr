@@ -11,8 +11,8 @@
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
 #' "Lin", "Rel", "Jiang" , "Wang" methods.
 #' Used in "map","goheat","gotangram","wordcloud".
-#' @param up_color Color of stronger statistics (e.g. Pvalue 0.01) or higher logFC, default is "red".
-#' @param down_color Color of weaker statistics (e.g. Pvalue 1) or lower logFC, default is
+#' @param up_color Color of higher statistical power (e.g. Pvalue 0.01) or higher logFC, default is "red".
+#' @param down_color Color of lower statistical power (e.g. Pvalue 1) or lower logFC, default is
 #' "blue".
 #' @param show_gene Select genes to show. Default is "all". Used in "heat" and "chord" plot.
 #' @param xlim_left X-axis left limit, default is 0.
@@ -92,7 +92,7 @@
 #'
 #' plotEnrich(ego, plot_type = "gotangram", sim_method = "Rel")
 #'
-#' plotEnrich(ego, plot_type = "wordcloud", sim_method = "Rel")
+#' plotEnrich(ego, plot_type = "wordcloud")
 #'
 #' plotEnrich(ego, plot_type = "upset")
 #' }
@@ -258,7 +258,7 @@ plotEnrich <- function(enrich_df,
       ) +
       xlab(paste0("-log10(", stats_metric_label, ")")) +
       ylab("Fold Enrichment") +
-      plot_theme(remove_legend = F, ...)
+      plot_theme( ...)
   }
 
   #--- bar plot ---#
@@ -719,12 +719,11 @@ plotEnrich <- function(enrich_df,
       plot_theme(border_thick = 0, remove_main_text = T, ...)
   }
 
-  #--- goHeatmap/gotangram/wordcloud ---#
-  if (plot_type %in% c("goheat", "gotangram", "wordcloud")) {
+  #--- goHeatmap/gotangram ---#
+  if (plot_type %in% c("goheat", "gotangram")) {
     if (!requireNamespace("rrvgo", quietly = TRUE)) {
       BiocManager::install("rrvgo")
     }
-
     if (!sim_method %in% c("Resnik", "Lin", "Rel", "Jiang", "Wang")) {
       stop('Please choose "sim_method" from: "Resnik", "Lin", "Rel", "Jiang" , "Wang"!')
     }
@@ -750,14 +749,25 @@ plotEnrich <- function(enrich_df,
         fontsize.labels = lst$main_text_size
       ))
     }
-    if (plot_type == "wordcloud") {
-      mypal <- RColorBrewer::brewer.pal(9, "Paired")
-      p <- suppressWarnings(rrvgo::wordcloudPlot(reducedTerms,
-        min.freq = 0,
-        onlyParents = F, colors = mypal
-      ))
-    }
   }
+
+  #--- wordcloud ---#
+  if (plot_type == 'wordcloud'){
+    if (!requireNamespace("wordcloud", quietly = TRUE)) {
+      utils::install.packages("wordcloud")
+    }
+
+    mypal <- RColorBrewer::brewer.pal(9, "Paired")
+    dat <- data.frame(term = enrich_df$Description)
+    x <- tm::Corpus(tm::VectorSource(dat$term))
+    tdm <- tm::TermDocumentMatrix(x, control = list(removePunctuation = TRUE,
+                                                    stopwords = TRUE))
+    m <- as.matrix(tdm)
+    v <- sort(rowSums(m), decreasing = TRUE)
+    d <- data.frame(word = names(v), freq = v)
+    p <- invisible(wordcloud::wordcloud(d$word, d$freq, min.freq = 0,colors = mypal))
+  }
+
 
   #--- upset plot ---#
   if (plot_type == "upset") {

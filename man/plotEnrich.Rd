@@ -43,9 +43,9 @@ plot.}
 "Lin", "Rel", "Jiang" , "Wang" methods.
 Used in "map","goheat","gotangram","wordcloud".}
 
-\item{up_color}{Color of stronger statistics (e.g. Pvalue 0.01) or higher logFC, default is "red".}
+\item{up_color}{Color of higher statistical power (e.g. Pvalue 0.01) or higher logFC, default is "red".}
 
-\item{down_color}{Color of weaker statistics (e.g. Pvalue 1) or lower logFC, default is
+\item{down_color}{Color of lower statistical power (e.g. Pvalue 1) or lower logFC, default is
 "blue".}
 
 \item{show_gene}{Select genes to show. Default is "all". Used in "heat" and "chord" plot.}
@@ -124,7 +124,7 @@ plotEnrich(ego, plot_type = "goheat", sim_method = "Rel")
 
 plotEnrich(ego, plot_type = "gotangram", sim_method = "Rel")
 
-plotEnrich(ego, plot_type = "wordcloud", sim_method = "Rel")
+plotEnrich(ego, plot_type = "wordcloud")
 
 plotEnrich(ego, plot_type = "upset")
 }
