@@ -7,51 +7,47 @@
 #'   option is upsetplot for large list.
 #' @param color Colors for gene lists, default is NULL.
 #' @param alpha_degree Alpha transparency of each circle's area, default is 0.3.
-#' @param text_size Text size, default is 1.
-#' @param border_thick Numeric, border thickness, default is 1.
-#' @param remove_grid Logical, remove circle or grid lines, default is `FALSE`.
 #' @param ... other arguments transfer to `plot_theme` function
 #' @return  A ggplot object
 #' @importFrom VennDiagram venn.diagram
-#' @importFrom dplyr as_tibble filter select group_by summarize
-#' @importFrom tidyr gather
 #' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme
-#'   element_blank scale_y_continuous
+#'   element_blank scale_y_continuous geom_segment geom_point element_text
 #' @importFrom rlang .data
 #' @export
 #' @examples
 #' library(ggplot2)
-#' set1 <- paste0(rep("gene", 100), sample(1:1000, 100))
-#' set2 <- paste0(rep("gene", 100), sample(1:1000, 100))
-#' set3 <- paste0(rep("gene", 100), sample(1:1000, 100))
-#' set4 <- paste0(rep("gene", 100), sample(1:1000, 100))
-#' set5 <- paste0(rep("gene", 100), sample(1:1000, 100))
+#' set1 <- paste0(rep("gene", 30), sample(1:1000, 30))
+#' set2 <- paste0(rep("gene", 40), sample(1:1000, 40))
+#' set3 <- paste0(rep("gene", 50), sample(1:1000, 50))
+#' set4 <- paste0(rep("gene", 60), sample(1:1000, 60))
+#' set5 <- paste0(rep("gene", 70), sample(1:1000, 70))
 #' sm_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3)
 #' la_gene_list <- list(
 #'   gset1 = set1, gset2 = set2, gset3 = set3,
 #'   gset4 = set4, gset5 = set5
 #' )
 #' plotVenn(sm_gene_list,
-#'   text_size = 1.5, alpha_degree = 1,
-#'   remove_grid = TRUE, color = ggsci::pal_lancet()(3)
+#'   use_venn = TRUE,
+#'   color = ggsci::pal_lancet()(3),
+#'   alpha_degree = 1,
+#'   main_text_size = 1.5,
+#'   border_thick = 0
 #' )
 #' plotVenn(la_gene_list,
-#'   text_size = 15, alpha_degree = 0.2, border_thick = 2,
-#'   remove_grid = TRUE, use_venn = FALSE
+#'   use_venn = FALSE,
+#'   main_text_size = 15,
+#'   legend_text_size = 8,
+#'   legend_position = 'left'
 #' )
 plotVenn <- function(venn_list,
                      use_venn = TRUE,
                      color = NULL,
                      alpha_degree = 0.3,
-                     text_size = 1,
-                     border_thick = 1,
-                     remove_grid = FALSE,
                      ...) {
 
   #--- args ---#
   stopifnot(is.list(venn_list))
-  # if gene list too long, use upset plot
-  # use_venn <- ifelse(length(venn_list) <= 4, TRUE, FALSE)
+  lst <- list(...) # store outside arguments in list
 
   if (!requireNamespace("futile.logger", quietly = TRUE)) {
     warning("Package futile.logger needed for this function to work. Installing...",
@@ -61,7 +57,10 @@ plotVenn <- function(venn_list,
   }
 
   #--- codes ---#
+  ## Venn Diagram
   if (use_venn) {
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 1
+    if (!"border_thick" %in% names(lst)) lst$border_thick <- 1
     # suppress venn.diagram log
     futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
 
@@ -75,55 +74,146 @@ plotVenn <- function(venn_list,
       }
     }
 
-    # hide background grid line
-    if (remove_grid) border_thick <- 0
-
     p <- VennDiagram::venn.diagram(
       x = venn_list,
       filename = NULL,
       category.names = names(venn_list),
       output = TRUE,
-      cat.cex = text_size,
-      main.cex = text_size,
-      cex = text_size,
-      lwd = border_thick,
+      cat.cex = lst$main_text_size,
+      main.cex = lst$main_text_size,
+      cex = lst$main_text_size,
+      lwd =  lst$border_thick,
       col = color,
       cat.col = color,
       fill = sapply(color, function(x) scales::alpha(x, alpha_degree))
     ) %>%
       cowplot::as_grob() %>%
       ggplotify::as.ggplot()
-  } else {
-    # use ggupset
-    # https://github.com/const-ae/ggupset
 
-    if (text_size < 10) {
-      message("Text size is too low, auto set: text_size=10 ...")
-      text_size <- 10
+    } else {
+     ## ComplexUpset Diagram
+    if (!requireNamespace("ComplexUpset", quietly = TRUE)) {
+      utils::install.packages("ComplexUpset")
     }
-    p <- sapply(venn_list, function(x) unique(unlist(venn_list)) %in% x) %>%
-      t() %>%
-      as.data.frame() %>%
-      stats::setNames(., unique(unlist(venn_list))) %>%
-      as.matrix() %>%
-      dplyr::as_tibble(rownames = "sets") %>%
-      tidyr::gather(item, type, -sets) %>%
-      dplyr::filter(type) %>%
-      dplyr::select(-type) %>%
-      dplyr::group_by(item) %>%
-      dplyr::summarize(sets = list(sets)) %>%
-      ggplot(aes(x = sets)) +
-      geom_bar() +
-      geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
-      ggupset::scale_x_upset(name = "") +
-      ggplot2::scale_y_continuous(name = "") +
-      plot_theme(
-        main_text_size = text_size,
-        remove_grid = remove_grid,
-        border_thick = border_thick,
-        ...
+
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
+    if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
+    if (!"legend_position" %in% names(lst)) lst$legend_position <- 'left'
+
+    if(is.null(color))
+      color <- c(
+        "#B2DF8A", "#FB9A99", "#E31A1C", "#B15928", "#6A3D9A", "#CAB2D6",
+        "#A6CEE3", "#1F78B4", "#FDBF6F", "#999999", "#FF7F00",
+        "#223D6C", "#D20A13", "#FFD121", "#088247", "#11AA4D", "#58CDD9",
+        "#7A142C", "#5D90BA", "#029149", "#431A3D", "#91612D", "#6E568C",
+        "#E0367A", "#D8D155", "#64495D", "#7CC767"
       )
+
+
+    dat <- venn_list %>% as.upset() %>%
+      do.call(cbind,.) %>% as.data.frame()
+    p <- ComplexUpset::upset(dat, colnames(dat), name = '', width_ratio=0.1,
+          queries=lapply(colnames(dat), function(x){
+            ComplexUpset::upset_query(set = x,
+                        fill = color[which(colnames(dat)%in%x)])
+          }),
+          base_annotations=list(
+            'Intersection size'=(
+              ComplexUpset::intersection_size(
+                # label height great than this will be placed inside bar
+                bar_number_threshold=0.95,
+                width=0.5,
+                text = list(size = lst$legend_text_size/2 )
+              )+ scale_y_continuous(expand=expansion(mult=c(0, 0.05)))+
+                plot_theme()+
+                theme(axis.text.x=element_blank(),
+                      axis.ticks.x=element_blank(),
+                      axis.title.x=element_blank(),
+                      axis.title.y=element_blank(),
+                      axis.text.y = element_text(size = (lst$legend_text_size + 3)))
+            )
+          ),
+          matrix=ComplexUpset::intersection_matrix(
+            geom=geom_point(
+              shape='circle filled',
+              size=3,
+              stroke=0.5
+            ),
+            segment = geom_segment(size = 0.7,color = 'grey46')
+          ),
+          set_sizes=(
+            ComplexUpset::upset_set_size(geom=geom_bar(width=0.5),
+                           position = lst$legend_position)+
+            theme(
+              axis.line.x=element_line(colour='black'),
+              axis.ticks.x=element_line(),
+              axis.title.x=element_blank(),
+              axis.text.x=element_text(size = lst$legend_text_size)
+            )
+          ),
+          stripes=ComplexUpset::upset_stripes(
+            geom=ggplot2::geom_segment(size=5),
+            colors=c('grey95', 'white')
+          ),
+          sort_sets='ascending',
+          sort_intersections='ascending',
+          themes = ComplexUpset::upset_modify_themes(
+            list(
+              'intersections_matrix'=theme(text=element_text(size=lst$main_text_size))
+            )
+          )
+
+    )
+
+    # p <- sapply(venn_list, function(x) unique(unlist(venn_list)) %in% x) %>%
+    #   t() %>%
+    #   as.data.frame() %>%
+    #   stats::setNames(., unique(unlist(venn_list))) %>%
+    #   as.matrix() %>%
+    #   dplyr::as_tibble(rownames = "sets") %>%
+    #   tidyr::gather(item, type, -sets) %>%
+    #   dplyr::filter(type) %>%
+    #   dplyr::select(-type) %>%
+    #   dplyr::group_by(item) %>%
+    #   dplyr::summarize(sets = list(sets)) %>%
+    #   ggplot(aes(x = sets)) +
+    #   geom_bar() +
+    #   geom_text(stat = "count", aes(label = after_stat(count)), vjust = -1, size = 3) +
+    #   ggupset::scale_x_upset(name = "") +
+    #   ggplot2::scale_y_continuous(name = "") +
+    #   plot_theme(
+    #     main_text_size = text_size,
+    #     remove_grid = remove_grid,
+    #     border_thick = border_thick,
+    #     ...
+    #   )
   }
 
   return(p)
 }
+
+
+# obj: dataframe or list
+# inter_by: select column to intersect
+# name_by: select column as shown names in plot
+as.upset <- function(obj,
+                     inter_by = "geneID",
+                     name_by = "Description"){
+  if(is.data.frame(obj)){
+    allg_lst <- obj[,inter_by] %>%
+      stringr::str_split(.,'\\/')
+    names(allg_lst) = obj[,name_by]
+
+    allg <- allg_lst %>% unlist() %>% unique()
+    res <- lapply(allg_lst, function(x) allg%in%x)
+    return(res)
+  }else if(is.list(obj)){
+    allg <- obj %>% unlist() %>% unique()
+    res <- lapply(obj, function(x) allg%in%x)
+    return(res)
+  }
+
+}
+
+
+

@@ -4,16 +4,7 @@
 \alias{plotVenn}
 \title{Venn plot for groups of genes}
 \usage{
-plotVenn(
-  venn_list,
-  use_venn = TRUE,
-  color = NULL,
-  alpha_degree = 0.3,
-  text_size = 1,
-  border_thick = 1,
-  remove_grid = FALSE,
-  ...
-)
+plotVenn(venn_list, use_venn = TRUE, color = NULL, alpha_degree = 0.3, ...)
 }
 \arguments{
 \item{venn_list}{A list of gene id.}
@@ -25,12 +16,6 @@ option is upsetplot for large list.}
 
 \item{alpha_degree}{Alpha transparency of each circle's area, default is 0.3.}
 
-\item{text_size}{Text size, default is 1.}
-
-\item{border_thick}{Numeric, border thickness, default is 1.}
-
-\item{remove_grid}{Logical, remove circle or grid lines, default is `FALSE`.}
-
 \item{...}{other arguments transfer to `plot_theme` function}
 }
 \value{
@@ -41,22 +26,27 @@ If gene group over 4, plot will be visulized using UpSet plot.
 }
 \examples{
 library(ggplot2)
-set1 <- paste0(rep("gene", 100), sample(1:1000, 100))
-set2 <- paste0(rep("gene", 100), sample(1:1000, 100))
-set3 <- paste0(rep("gene", 100), sample(1:1000, 100))
-set4 <- paste0(rep("gene", 100), sample(1:1000, 100))
-set5 <- paste0(rep("gene", 100), sample(1:1000, 100))
+set1 <- paste0(rep("gene", 30), sample(1:1000, 30))
+set2 <- paste0(rep("gene", 40), sample(1:1000, 40))
+set3 <- paste0(rep("gene", 50), sample(1:1000, 50))
+set4 <- paste0(rep("gene", 60), sample(1:1000, 60))
+set5 <- paste0(rep("gene", 70), sample(1:1000, 70))
 sm_gene_list <- list(gset1 = set1, gset2 = set2, gset3 = set3)
 la_gene_list <- list(
   gset1 = set1, gset2 = set2, gset3 = set3,
   gset4 = set4, gset5 = set5
 )
 plotVenn(sm_gene_list,
-  text_size = 1.5, alpha_degree = 1,
-  remove_grid = TRUE, color = ggsci::pal_lancet()(3)
+  use_venn = TRUE,
+  color = ggsci::pal_lancet()(3),
+  alpha_degree = 1,
+  main_text_size = 1.5,
+  border_thick = 0
 )
 plotVenn(la_gene_list,
-  text_size = 15, alpha_degree = 0.2, border_thick = 2,
-  remove_grid = TRUE, use_venn = FALSE
+  use_venn = FALSE,
+  main_text_size = 15,
+  legend_text_size = 8,
+  legend_position = 'left'
 )
 }

@@ -505,11 +505,13 @@ plotEnrich <- function(enrich_df,
     # default main and lengend text size
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 3
     if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
+    if(!"gene_space" %in% names(lst)) lst$gene_space <- 0.3
 
     if (is.null(fold_change)) {
       p <- suppressWarnings(
         GOplot::GOChord(dat,
           space = 0.02,
+          gene.space = lst$gene_space,
           gene.order = "none",
           gene.size = lst$main_text_size,
           process.label = lst$legend_text_size,
@@ -534,6 +536,7 @@ plotEnrich <- function(enrich_df,
       p <- suppressWarnings(
         GOplot::GOChord(dat,
           space = 0.02,
+          gene.space = lst$gene_space,
           gene.order = "logFC",
           gene.size = lst$main_text_size,
           process.label = lst$legend_text_size,
@@ -543,6 +546,7 @@ plotEnrich <- function(enrich_df,
         )
       )
     }
+    p <- p+ theme(legend.title=element_text(size=lst$legend_text_size))
   }
 
   #--- network plot ---#
@@ -784,7 +788,7 @@ plotEnrich <- function(enrich_df,
 
     p <- ggplot(plot_df, aes_(x = ~Description)) +
       geom_bar() +
-      plot_theme(main_text_size = 8, ...) +
+      plot_theme(...) +
       xlab(NULL) +
       ylab(NULL) +
       ggupset::scale_x_upset(order_by = "freq")
