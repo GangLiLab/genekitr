@@ -9,7 +9,7 @@
 #' 'RichFactor'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
-#' "Lin", "Rel", "Jiang" , "Wang" methods.
+#' "Lin", "Rel", "Jiang" , "Wang" or "JC" (Jaccard’s similarity index). Only "JC" supports KEGG data.
 #' Used in "map","goheat","gotangram","wordcloud".
 #' @param up_color Color of higher statistical power (e.g. Pvalue 0.01) or higher logFC, default is "red".
 #' @param down_color Color of lower statistical power (e.g. Pvalue 1) or lower logFC, default is
@@ -105,7 +105,7 @@ plotEnrich <- function(enrich_df,
                        ),
                        term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
                        stats_metric = c("p.adjust", "pvalue", "qvalue"),
-                       sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang"),
+                       sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang", "JC"),
                        up_color = "red",
                        down_color = "blue",
                        show_gene = "all",
@@ -778,6 +778,9 @@ plotEnrich <- function(enrich_df,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
     if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
     if (!"legend_position" %in% names(lst)) lst$legend_position <- 'left'
+
+    plot_df <-  enrich_df %>% as.upset() %>%
+      do.call(cbind,.) %>% as.data.frame()
 
     p <- plotVenn(enrich_df, use_venn = FALSE,...)
   }

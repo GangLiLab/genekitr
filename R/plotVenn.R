@@ -108,8 +108,13 @@ plotVenn <- function(venn_list,
         "#E0367A", "#D8D155", "#64495D", "#7CC767"
       )
 
-    dat <- venn_list %>% as.upset() %>%
-      do.call(cbind,.) %>% as.data.frame()
+    if(is.list(venn_list)){
+      dat <- venn_list %>% as.upset() %>%
+        do.call(cbind,.) %>% as.data.frame()
+    }else{
+      dat <- venn_list
+    }
+
 
     p <- ComplexUpset::upset(dat, colnames(dat), name = '', width_ratio=0.1,
           queries=lapply(colnames(dat), function(x){
