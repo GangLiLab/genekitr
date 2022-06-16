@@ -46,7 +46,6 @@ plotVenn <- function(venn_list,
                      ...) {
 
   #--- args ---#
-  stopifnot(is.list(venn_list))
   lst <- list(...) # store outside arguments in list
 
   if (!requireNamespace("futile.logger", quietly = TRUE)) {
@@ -109,9 +108,9 @@ plotVenn <- function(venn_list,
         "#E0367A", "#D8D155", "#64495D", "#7CC767"
       )
 
-
     dat <- venn_list %>% as.upset() %>%
       do.call(cbind,.) %>% as.data.frame()
+
     p <- ComplexUpset::upset(dat, colnames(dat), name = '', width_ratio=0.1,
           queries=lapply(colnames(dat), function(x){
             ComplexUpset::upset_query(set = x,

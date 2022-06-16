@@ -94,7 +94,7 @@
 #'
 #' plotEnrich(ego, plot_type = "wordcloud")
 #'
-#' plotEnrich(ego, plot_type = "upset")
+#' plotEnrich(ego, plot_type = "upset",main_text_size = 15,legend_text_size = 8)
 #' }
 #'
 plotEnrich <- function(enrich_df,
@@ -775,23 +775,11 @@ plotEnrich <- function(enrich_df,
 
   #--- upset plot ---#
   if (plot_type == "upset") {
-    if (!requireNamespace("ggupset", quietly = TRUE)) {
-      utils::install.packages("ggupset")
-    }
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
+    if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
+    if (!"legend_position" %in% names(lst)) lst$legend_position <- 'left'
 
-    plot_df <- enrich_df %>%
-      dplyr::select(Description, geneID) %>%
-      tidyr::separate_rows(geneID) %>%
-      split(.$geneID, .$Description) %>%
-      lapply(., function(x) x %>% dplyr::pull(Description)) %>%
-      tibble::tibble(Description = .)
-
-    p <- ggplot(plot_df, aes_(x = ~Description)) +
-      geom_bar() +
-      plot_theme(...) +
-      xlab(NULL) +
-      ylab(NULL) +
-      ggupset::scale_x_upset(order_by = "freq")
+    p <- plotVenn(enrich_df, use_venn = FALSE,...)
   }
 
   #--- keggpath ---#
