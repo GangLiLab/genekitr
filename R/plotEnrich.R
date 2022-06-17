@@ -765,7 +765,8 @@ plotEnrich <- function(enrich_df,
     simMatrix <- l[["m"]]
     reducedTerms <- l[["r"]]
 
-    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 6
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
+    if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
     if (!"remove_legend" %in% names(lst)) lst$remove_legend <- FALSE
     my_cols <- c(
       "#B2DF8A", "#FB9A99", "#E31A1C", "#B15928", "#6A3D9A", "#CAB2D6",
@@ -790,7 +791,9 @@ plotEnrich <- function(enrich_df,
                             annotation_names_row = F,
                             show_colnames = F,
                             treeheight_col = 0,
-                            legend = !lst$remove_legend,
+                            fontsize = lst$legend_text_size,
+                            fontsize_row = lst$main_text_size,
+                            legend = !lst$remove_legend
                             # treeheight_row = 0
                             )
   }
@@ -865,7 +868,7 @@ plotEnrich <- function(enrich_df,
     p <- p + scale_y_discrete(labels = text_wraper(wrap_length))
   }
 
-  if(plot_type != "gotangram") suppressWarnings(print(p))
+  if(plot_type != "gotangram") return(p)
 
 }
 
