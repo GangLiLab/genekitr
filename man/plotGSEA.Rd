@@ -10,7 +10,7 @@ plotGSEA(
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
   show_pathway = 3,
   show_gene = NULL,
-  color = NULL,
+  colour = NULL,
   ...
 )
 }
@@ -26,7 +26,7 @@ or pathway name.}
 
 \item{show_gene}{Select genes to show. Default is "all". Used in "classic" plot.}
 
-\item{color}{Color vector. Deafault is NULL.}
+\item{colour}{Colour vector. Deafault is NULL.}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }
@@ -56,7 +56,7 @@ plotGSEA(gse, plot_type = "volcano", show_pathway = pathways)
 genes <- c("MET", "TP53", "PMM2")
 plotGSEA(gse, plot_type = "classic", show_pathway = pathways, show_gene = genes)
 
-## fgsea for multiple pathway
+## fgsea table plot
 plotGSEA(gse, plot_type = "fgsea", show_pathway = 3)
 
 ## ridgeplot
@@ -68,7 +68,7 @@ plotGSEA(gse,
 ## two-side barplot
 plotGSEA(gse,
   plot_type = "bar", main_text_size = 8,
-  color = c("navyblue", "orange")
+  colour = c("navyblue", "orange")
 )
 }
 

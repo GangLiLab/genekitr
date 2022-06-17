@@ -6,7 +6,7 @@
 #' @param show_pathway Select plotting pathways by specifying number (will choose top N pathways)
 #' or pathway name.
 #' @param show_gene Select genes to show. Default is "all". Used in "classic" plot.
-#' @param color Color vector. Deafault is NULL.
+#' @param colour Colour vector. Deafault is NULL.
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline
@@ -37,7 +37,7 @@
 #' genes <- c("MET", "TP53", "PMM2")
 #' plotGSEA(gse, plot_type = "classic", show_pathway = pathways, show_gene = genes)
 #'
-#' ## fgsea for multiple pathway
+#' ## fgsea table plot
 #' plotGSEA(gse, plot_type = "fgsea", show_pathway = 3)
 #'
 #' ## ridgeplot
@@ -49,7 +49,7 @@
 #' ## two-side barplot
 #' plotGSEA(gse,
 #'   plot_type = "bar", main_text_size = 8,
-#'   color = c("navyblue", "orange")
+#'   colour = c("navyblue", "orange")
 #' )
 #' }
 #'
@@ -58,7 +58,7 @@ plotGSEA <- function(gsea_list,
                      stats_metric = c("p.adjust", "pvalue", "qvalue"),
                      show_pathway = 3,
                      show_gene = NULL,
-                     color = NULL,
+                     colour = NULL,
                      ...) {
 
   #--- args ---#
@@ -81,38 +81,41 @@ plotGSEA <- function(gsea_list,
     ifelse(stats_metric == "p.adjust", "P.adjust", "FDR")
   )
 
-
   #--- volcano plot ---#
   # x-axis: NES
   # y-axis: stats value
   if (plot_type == "volcano") {
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
+
     gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES, decreasing = TRUE), ]
     plot_df <- gsea_df
     if (is.numeric(show_pathway)) {
-      plot_df$group <- c(rep("high", show_pathway), rep("ignore", nrow(plot_df) - 2 * show_pathway), rep("low", show_pathway))
+      plot_df$group <- c(rep("Up", show_pathway), rep("ignore", nrow(plot_df) - 2 * show_pathway), rep("Down", show_pathway))
     } else {
       nes <- plot_df[plot_df$Description %in% show_pathway, "NES"]
       plot_df$group <- "ignore"
-      plot_df[plot_df$Description %in% show_pathway, "group"] <- sapply(nes, function(x) ifelse(x > 0, "high", "low"))
+      plot_df[plot_df$Description %in% show_pathway, "group"] <- sapply(nes, function(x) ifelse(x > 0, "Up", "Down"))
     }
 
-    if (is.null(color)) {
-      message('"color" is NULL, now using "red","grey" and "green"...')
-      color <- c("red", "grey66", "darkgreen")
+    if (is.null(colour)) {
+      message('"colour" is NULL, now using "red","grey" and "green"...')
+      colour <- c( "red","darkgreen", "grey66")
     }
     p <- ggplot(plot_df, aes(x = NES, y = -log10(eval(parse(text = stats_metric))), color = group)) +
       geom_point(alpha = 0.6, size = 3.5) +
       xlab("NES") +
       ylab(paste0("-log10(", stats_metric_label, ")")) +
-      scale_color_manual(values = color) +
       ggrepel::geom_text_repel(
         data = plot_df[plot_df$group != "ignore", ],
         aes(label = Description),
-        size = 3,
+        size = (lst$main_text_size/4),
         color = "black",
         show.legend = F
       ) +
+      xlab("Normalized enrichment score")+
+      ylim(0,NA)+
+      scale_color_manual(breaks = c("Up", "Down"),values = colour,name = '')+
       plot_theme(...)
   }
 
@@ -131,20 +134,20 @@ plotGSEA <- function(gsea_list,
       stop(paste0(show_pathway[!show_pathway %in% gsea_df$Description], " not in GSEA result!"))
     }
 
-    if (is.null(color)) {
-      color <- c(
+    if (is.null(colour)) {
+      colour <- c(
         "\\#5DA5DAFF", "\\#FAA43AFF", "\\#60BD68FF", "\\#F15854FF", "\\#B276B2FF",
         "\\#8D4B08FF", "\\#DECF3FFF", "\\#F17CB0FF", "\\#66E3D9FF", "\\#00FF7FFF",
         "\\#E31A1CFF", "\\#FFFF99FF"
       )
-      color <- stringr::str_remove_all(color, ".*#") %>% paste0("#", .)
+      colour <- stringr::str_remove_all(colour, ".*#") %>% paste0("#", .)
     }
 
     plot_df <- do.call(rbind, lapply(show_pathway, function(x) {
       calcScore(geneset, genelist, x, exponent, fortify = TRUE, org)
     }))
     description_color <- table(plot_df$Description) %>% names() # match pathway and color
-    names(description_color) <- color[seq_along(description_color)]
+    names(description_color) <- colour[seq_along(description_color)]
 
     p1 <- ggplot(plot_df, aes_(x = ~x)) +
       xlab(NULL) +
@@ -191,7 +194,7 @@ plotGSEA <- function(gsea_list,
       geom_linerange(aes_(ymin = ~ymin, ymax = ~ymax, color = ~Description)) +
       xlab(NULL) +
       ylab(NULL) +
-      scale_color_manual(values = color) +
+      scale_color_manual(values = colour) +
       plot_theme(remove_legend = T, remove_grid = T, remove_main_text = T, ...) +
       scale_y_continuous(expand = c(0, 0)) +
       theme(
@@ -291,6 +294,7 @@ plotGSEA <- function(gsea_list,
 
   #--- ridge plot ---#
   if (plot_type == "ridge") {
+
     gsea_df <- gsea_list$gsea_df
     if (is.numeric(show_pathway)) {
       if (length(show_pathway) > 1) {
@@ -360,14 +364,14 @@ plotGSEA <- function(gsea_list,
 
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
-    if (is.null(color)) {
-      color <- c("\\#0072B5FF", "\\#BC3C29FF", "\\#A9A9A9")
-      color <- stringr::str_remove_all(color, ".*#") %>% paste0("#", .)
+    if (is.null(colour)) {
+      colour <- c("\\#0072B5FF", "\\#BC3C29FF", "\\#A9A9A9")
+      colour <- stringr::str_remove_all(colour, ".*#") %>% paste0("#", .)
     }
 
     p <- ggplot(gsea_df, aes(x = index, y = NES, fill = group)) +
       geom_bar(stat = "identity", width = 0.8) +
-      scale_fill_manual(values = c("A" = color[1], "B" = color[2], "C" = color[3])) +
+      scale_fill_manual(values = c("A" = colour[1], "B" = colour[2], "C" = colour[3])) +
       scale_x_discrete(expand = expansion(add = .5)) +
       scale_y_continuous(breaks = seq(
         floor(min(gsea_df$NES)), ceiling(max(gsea_df$NES)),
@@ -385,7 +389,7 @@ plotGSEA <- function(gsea_list,
         aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
         size = lst$main_text_size / 3.6, hjust = "outward"
       ) +
-      scale_colour_manual(values = c("black", color[3])) +
+      scale_colour_manual(values = c("black", colour[3])) +
       labs(x = "", y = "Normalized Enrichment Score") +
       plot_theme(remove_grid = T, remove_legend = T, ...)
   }

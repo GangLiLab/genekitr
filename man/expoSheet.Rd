@@ -6,7 +6,7 @@
 \usage{
 expoSheet(
   data_list,
-  name_list,
+  data_name,
   filename = NULL,
   dir = tempdir(),
   overwrite = TRUE
@@ -15,7 +15,7 @@ expoSheet(
 \arguments{
 \item{data_list}{List of datasets.}
 
-\item{name_list}{List of data names.}
+\item{data_name}{Character of data names.}
 
 \item{filename}{A character string naming an xlsx file.}
 
@@ -34,7 +34,7 @@ Export list of datasets into different Excel sheets
 library(openxlsx)
 expoSheet(
   data_list = list(mtcars, ToothGrowth),
-  name_list = list("mtcars", "tooth"),
+  data_name = c("mtcars", "tooth"),
   filename = "test.xlsx", dir = tempdir()
 )
 }

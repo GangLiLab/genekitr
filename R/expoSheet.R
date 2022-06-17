@@ -1,7 +1,7 @@
 #' Export list of datasets into different Excel sheets
 #'
 #' @param data_list List of datasets.
-#' @param name_list List of data names.
+#' @param data_name Character of data names.
 #' @param filename A character string naming an xlsx file.
 #' @param dir A character string naming output directory.
 #' @param overwrite If TRUE, overwrite any existing file.
@@ -16,12 +16,12 @@
 #' library(openxlsx)
 #' expoSheet(
 #'   data_list = list(mtcars, ToothGrowth),
-#'   name_list = list("mtcars", "tooth"),
+#'   data_name = c("mtcars", "tooth"),
 #'   filename = "test.xlsx", dir = tempdir()
 #' )
 #' }
 expoSheet <- function(data_list,
-                      name_list,
+                      data_name,
                       filename = NULL,
                       dir = tempdir(),
                       overwrite = TRUE) {
@@ -32,7 +32,7 @@ expoSheet <- function(data_list,
   }
   if (!"wb" %in% ls()) wb <- openxlsx::createWorkbook()
 
-  if (length(data_list) != length(name_list)) {
+  if (length(data_list) != length(data_name)) {
     stop("Datasets number is not equal with names!")
   }
 
@@ -40,19 +40,26 @@ expoSheet <- function(data_list,
 
   #--- codes ---#
   invisible(lapply(seq_along(data_list), function(i) {
-    openxlsx::addWorksheet(wb, name_list[[i]])
-    openxlsx::writeData(wb, sheet = name_list[[i]], x = data_list[[i]])
+    # i = 1
+    openxlsx::addWorksheet(wb, data_name[i])
+    openxlsx::writeData(wb, sheet = data_name[i], x = data_list[[i]])
 
     ## styling sheet
     headerStyle <- openxlsx::createStyle(textDecoration = "Bold")
-    openxlsx::addStyle(wb,
-      sheet = name_list[[i]], style = headerStyle,
-      rows = 1, cols = seq_len(ncol(data_list[[i]])), gridExpand = TRUE
-    )
-    openxlsx::setColWidths(wb,
-      sheet = name_list[[i]],
-      cols = seq_len(ncol(data_list[[i]])), widths = "auto"
-    )
+    if(!is.null(ncol(data_list[[i]]))){
+      openxlsx::addStyle(wb,
+                         sheet = data_name[i], style = headerStyle,
+                         rows = 1, cols = seq_len(ncol(data_list[[i]])), gridExpand = TRUE
+      )
+    }
+
+    if(!is.null(ncol(data_list[[i]]))){
+      openxlsx::setColWidths(wb,
+                             sheet = data_name[i],
+                             cols = seq_len(ncol(data_list[[i]])), widths = "auto"
+      )
+    }
+
   }))
 
   openxlsx::saveWorkbook(wb, paste0(dir, filename), overwrite)
