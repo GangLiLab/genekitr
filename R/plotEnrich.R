@@ -106,8 +106,8 @@ plotEnrich <- function(enrich_df,
                        term_metric = c("FoldEnrich", "GeneRatio", "Count", "RichFactor"),
                        stats_metric = c("p.adjust", "pvalue", "qvalue"),
                        sim_method = c("Resnik", "Lin", "Rel", "Jiang", "Wang", "JC"),
-                       up_color = "red",
-                       down_color = "blue",
+                       up_color = "#E31A1C",
+                       down_color = "#1F78B4",
                        show_gene = "all",
                        xlim_left = 0,
                        xlim_right = NA,
@@ -188,7 +188,7 @@ plotEnrich <- function(enrich_df,
       dplyr::arrange(eval(parse(text = term_metric)), .by_group = T)
   }
 
-  #--- dot plot ---#
+  #--- GO/KEGG: dot plot ---#
   if (plot_type == "dot") {
     if (missing(scale_ratio)) scale_ratio <- 0.3
     if (!compare_group) {
@@ -231,7 +231,7 @@ plotEnrich <- function(enrich_df,
     }
   }
 
-  #--- bubble plot ---#
+  #--- GO/KEGG: bubble plot ---#
   ## each bubble is a pathway term
   ## x-axis: stats metric e.g. pvalue/qvalue/p.adjust
   ## y-axis: fold enrichment
@@ -261,7 +261,7 @@ plotEnrich <- function(enrich_df,
       plot_theme( ...)
   }
 
-  #--- bar plot ---#
+  #--- GO/KEGG: bar plot ---#
   if (plot_type == "bar") {
     p <- ggplot(data = enrich_df, aes_string(x = term_metric, y = "Description", fill = stats_metric)) +
       geom_bar(stat = "identity") +
@@ -281,58 +281,7 @@ plotEnrich <- function(enrich_df,
     }
   }
 
-  #--- wego plot ---#
-  ## WEGO plot show all ontologies
-  if (plot_type == "wego") {
-    if (!"ONTOLOGY" %in% colnames(enrich_df)) {
-      stop("WEGO plot only supports data with all three ontologies, please try other types...")
-    }
-
-    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
-
-    wego <- enrich_df %>%
-      dplyr::select(1:3, "Count", "GeneRatio") %>%
-      dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
-      dplyr::group_by(ONTOLOGY) %>%
-      dplyr::top_n(5, GeneRatio) %>%
-      dplyr::ungroup() %>%
-      dplyr::arrange(ONTOLOGY, GeneRatio) %>%
-      dplyr::mutate(Position = dplyr::n():1) %>%
-      dplyr::mutate(ONTOLOGY = dplyr::case_when(
-        ONTOLOGY == "BP" ~ "Biological Process",
-        ONTOLOGY == "CC" ~ "Cellular Component",
-        ONTOLOGY == "MF" ~ "Molecular Function"
-      ))
-
-    normalizer <- max(wego$Count) / max(wego$GeneRatio)
-
-    p <- ggplot(data = wego, aes(
-      x = forcats::fct_reorder(Description, sort(Position)),
-      y = GeneRatio, fill = ONTOLOGY
-    )) +
-      ggsci::scale_fill_nejm() +
-      geom_col(data = wego, aes(
-        x = forcats::fct_reorder(Description, sort(Position)),
-        y = Count / normalizer
-      )) +
-      scale_y_continuous(sec.axis = sec_axis(
-        trans = ~ . * normalizer, name = "Number of genes",
-        labels = function(b) {
-          round(b, 0)
-        }
-      )) +
-      plot_theme(remove_legend = T, ...) +
-      scale_x_discrete(labels = text_wraper(30)) +
-      xlab(NULL) +
-      ylab("Gene Ratio(%)") +
-      facet_grid(. ~ ONTOLOGY, scales = "free") +
-      theme(
-        axis.text.x = element_text(angle = 70, hjust = 1),
-        strip.text.x = element_text(size = lst$main_text_size)
-      )
-  }
-
-  #--- lollipop plot ---#
+  #--- GO/KEGG: lollipop plot ---#
   if (plot_type == "lollipop") {
     if (missing(scale_ratio)) scale_ratio <- 0.3
     p <- ggplot(
@@ -360,7 +309,7 @@ plotEnrich <- function(enrich_df,
       plot_theme(...)
   }
 
-  #--- geneheat plot ---#
+  #--- GO/KEGG: geneheat plot ---#
   ## heatmap to show interaction between go term and gene id
   if (plot_type == "geneheat") {
     id <- enrich_df %>%
@@ -433,7 +382,7 @@ plotEnrich <- function(enrich_df,
     }
   }
 
-  #--- genechord plot ---#
+  #--- GO/KEGG: genechord plot ---#
   ## chord plot to show interaction between go term and gene id
   if (plot_type == "genechord") {
     if (!requireNamespace("GOplot", quietly = TRUE)) {
@@ -501,6 +450,7 @@ plotEnrich <- function(enrich_df,
       t() %>%
       as.data.frame() %>%
       stats::setNames(term)
+    dat = dat[show_gene,]
 
     # default main and lengend text size
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 3
@@ -526,10 +476,12 @@ plotEnrich <- function(enrich_df,
       if (all(rownames(dat) %in% fold_change$geneID)) {
         m1 <- fold_change %>%
           dplyr::filter(geneID %in% rownames(dat)) %>%
+          dplyr::arrange(match(geneID_symbol, rownames(dat))) %>%
           dplyr::pull(logfc)
       } else {
         m1 <- merge(id_df, fold_change, by.x = "geneID") %>%
           dplyr::filter(geneID_symbol %in% rownames(dat)) %>%
+          dplyr::arrange(match(geneID_symbol, rownames(dat))) %>%
           dplyr::pull(logfc)
       }
       dat <- dat %>% dplyr::mutate(logFC = m1)
@@ -542,14 +494,14 @@ plotEnrich <- function(enrich_df,
           process.label = lst$legend_text_size,
           border.size = 0.1,
           ribbon.col = cols,
-          lfc.col = c(up_color, "grey50", down_color)
+          lfc.col = c( up_color,"grey50",down_color )
         )
       )
     }
-    p <- p+ theme(legend.title=element_text(size=lst$legend_text_size))
+    # p <- p+ theme(legend.title=element_text(size=lst$legend_text_size))
   }
 
-  #--- network plot ---#
+  #--- GO/KEGG: network plot ---#
   ## plot enriched terms in network with edges connecting overlapping gene sets,
   ## mutually overlapping gene sets are tend to cluster together
   if (plot_type == "network") {
@@ -628,7 +580,87 @@ plotEnrich <- function(enrich_df,
       )
   }
 
-  #--- gomap plot ---#
+  #--- GO/KEGG: wordcloud ---#
+  if (plot_type == 'wordcloud'){
+    if (!requireNamespace("wordcloud", quietly = TRUE)) {
+      utils::install.packages("wordcloud")
+    }
+
+    mypal <- RColorBrewer::brewer.pal(9, "Paired")
+    dat <- data.frame(term = enrich_df$Description)
+    x <- tm::Corpus(tm::VectorSource(dat$term))
+    tdm <- tm::TermDocumentMatrix(x, control = list(removePunctuation = TRUE,
+                                                    stopwords = TRUE))
+    m <- as.matrix(tdm)
+    v <- sort(rowSums(m), decreasing = TRUE)
+    d <- data.frame(word = names(v), freq = v)
+    p <- invisible(wordcloud::wordcloud(d$word, d$freq, min.freq = 0,colors = mypal))
+  }
+
+  #--- GO/KEGG: upset plot ---#
+  if (plot_type == "upset") {
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
+    if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
+    if (!"legend_position" %in% names(lst)) lst$legend_position <- 'left'
+
+    plot_df <-  enrich_df %>% as.upset() %>%
+      do.call(cbind,.) %>% as.data.frame()
+
+    p <- plotVenn(enrich_df, use_venn = FALSE,...)
+  }
+
+  #--- GO: wego plot ---#
+  ## WEGO plot show all ontologies
+  if (plot_type == "wego") {
+    if (!"ONTOLOGY" %in% colnames(enrich_df)) {
+      stop("WEGO plot only supports data with all three ontologies, please try other types...")
+    }
+
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
+
+    wego <- enrich_df %>%
+      dplyr::select(1:3, "Count", "GeneRatio") %>%
+      dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
+      dplyr::group_by(ONTOLOGY) %>%
+      dplyr::top_n(5, GeneRatio) %>%
+      dplyr::ungroup() %>%
+      dplyr::arrange(ONTOLOGY, GeneRatio) %>%
+      dplyr::mutate(Position = dplyr::n():1) %>%
+      dplyr::mutate(ONTOLOGY = dplyr::case_when(
+        ONTOLOGY == "BP" ~ "Biological Process",
+        ONTOLOGY == "CC" ~ "Cellular Component",
+        ONTOLOGY == "MF" ~ "Molecular Function"
+      ))
+
+    normalizer <- max(wego$Count) / max(wego$GeneRatio)
+
+    p <- ggplot(data = wego, aes(
+      x = forcats::fct_reorder(Description, sort(Position)),
+      y = GeneRatio, fill = ONTOLOGY
+    )) +
+      ggsci::scale_fill_nejm() +
+      geom_col(data = wego, aes(
+        x = forcats::fct_reorder(Description, sort(Position)),
+        y = Count / normalizer
+      )) +
+      scale_y_continuous(sec.axis = sec_axis(
+        trans = ~ . * normalizer, name = "Number of genes",
+        labels = function(b) {
+          round(b, 0)
+        }
+      )) +
+      plot_theme(remove_legend = T, ...) +
+      scale_x_discrete(labels = text_wraper(30)) +
+      xlab(NULL) +
+      ylab("Gene Ratio(%)") +
+      facet_grid(. ~ ONTOLOGY, scales = "free") +
+      theme(
+        axis.text.x = element_text(angle = 70, hjust = 1),
+        strip.text.x = element_text(size = lst$main_text_size)
+      )
+  }
+
+  #--- GO: term map plot ---#
   ## show enriched terms structure (its parents and children terms)
   if (plot_type == "gomap") {
     if (missing(scale_ratio)) scale_ratio <- 1
@@ -642,6 +674,7 @@ plotEnrich <- function(enrich_df,
     requireNamespace("ggraph", quietly = T)
     requireNamespace("igraph", quietly = T)
 
+    rownames(enrich_df) = enrich_df[,1]
     id <- enrich_df[, 1]
     enrichGenes <- strsplit(enrich_df$geneID, "\\/") %>% setNames(id)
 
@@ -723,67 +756,76 @@ plotEnrich <- function(enrich_df,
       plot_theme(border_thick = 0, remove_main_text = T, ...)
   }
 
-  #--- goHeatmap/gotangram ---#
-  if (plot_type %in% c("goheat", "gotangram")) {
-    if (!requireNamespace("rrvgo", quietly = TRUE)) {
-      BiocManager::install("rrvgo")
-    }
+  #--- GO: term heatmap---#
+  if(plot_type == "goheat"){
     if (!sim_method %in% c("Resnik", "Lin", "Rel", "Jiang", "Wang")) {
       stop('Please choose "sim_method" from: "Resnik", "Lin", "Rel", "Jiang" , "Wang"!')
     }
     l <- get_sim_data(enrich_df, org = NULL, ont = NULL, sim_method)
     simMatrix <- l[["m"]]
     reducedTerms <- l[["r"]]
-    if (plot_type == "goheat") {
-      # default main and lengend text size
-      if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 6
 
-      p <- rrvgo::heatmapPlot(simMatrix,
-        reducedTerms,
-        annotateParent = TRUE,
-        annotationLabel = "parentTerm",
-        fontsize = lst$main_text_size
-      )
-    }
-    if (plot_type == "gotangram") {
-      # default main and lengend text size
-      if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 6
+    if (!"remove_legend" %in% names(lst)) lst$remove_legend <- FALSE
+    my_cols <- c(
+      "#B2DF8A", "#FB9A99", "#E31A1C", "#B15928", "#6A3D9A", "#CAB2D6",
+      "#A6CEE3", "#1F78B4", "#FDBF6F", "#999999", "#FF7F00",
+      "#223D6C", "#D20A13", "#FFD121", "#088247", "#11AA4D", "#58CDD9",
+      "#7A142C", "#5D90BA", "#029149", "#431A3D", "#91612D", "#6E568C",
+      "#E0367A", "#D8D155", "#64495D", "#7CC767"
+    )
 
-      p <- suppressMessages(rrvgo::treemapPlot(reducedTerms,
-        fontsize.labels = lst$main_text_size
-      ))
-    }
+    anno <- data.frame(ParentTerm = factor(reducedTerms[match(rownames(simMatrix),
+                                                             reducedTerms$go), "parentTerm"]),
+                      row.names = rownames(simMatrix))
+    anno_col <- list(ParentTerm = my_cols[1:length(unique(anno$ParentTerm))])
+    anno$ParentTerm <- factor(stringr::str_replace(anno$ParentTerm, "^\\w{1}", toupper))
+    names(anno_col$ParentTerm) <- levels(anno$ParentTerm)
+
+
+    p <- pheatmap::pheatmap(simMatrix,
+                            # color = colorRampPalette(c("#1F78B4", "white", "#E31A1C"))(50),
+                            annotation_row = anno,
+                            annotation_colors = anno_col,
+                            annotation_names_row = F,
+                            show_colnames = F,
+                            treeheight_col = 0,
+                            legend = !lst$remove_legend,
+                            # treeheight_row = 0
+                            )
   }
 
-  #--- wordcloud ---#
-  if (plot_type == 'wordcloud'){
-    if (!requireNamespace("wordcloud", quietly = TRUE)) {
-      utils::install.packages("wordcloud")
+  #--- GO: term tangram ---#
+  if (plot_type == "gotangram") {
+    if (!sim_method %in% c("Resnik", "Lin", "Rel", "Jiang", "Wang")) {
+      stop('Please choose "sim_method" from: "Resnik", "Lin", "Rel", "Jiang" , "Wang"!')
     }
+    my_cols <- c(
+      "#B2DF8A", "#FB9A99", "#E31A1C", "#B15928", "#6A3D9A", "#CAB2D6",
+      "#A6CEE3", "#1F78B4", "#FDBF6F", "#999999", "#FF7F00",
+      "#223D6C", "#D20A13", "#FFD121", "#088247", "#11AA4D", "#58CDD9",
+      "#7A142C", "#5D90BA", "#029149", "#431A3D", "#91612D", "#6E568C",
+      "#E0367A", "#D8D155", "#64495D", "#7CC767"
+    )
 
-    mypal <- RColorBrewer::brewer.pal(9, "Paired")
-    dat <- data.frame(term = enrich_df$Description)
-    x <- tm::Corpus(tm::VectorSource(dat$term))
-    tdm <- tm::TermDocumentMatrix(x, control = list(removePunctuation = TRUE,
-                                                    stopwords = TRUE))
-    m <- as.matrix(tdm)
-    v <- sort(rowSums(m), decreasing = TRUE)
-    d <- data.frame(word = names(v), freq = v)
-    p <- invisible(wordcloud::wordcloud(d$word, d$freq, min.freq = 0,colors = mypal))
+    l <- get_sim_data(enrich_df, org = NULL, ont = NULL, sim_method)
+    simMatrix <- l[["m"]]
+    reducedTerms <- l[["r"]]
+
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
+
+    p <- treemap::treemap(reducedTerms,
+                          index = c("parentTerm", "term"),
+                          vSize = "score", type = "index", title = "",
+                          palette = RColorBrewer::brewer.pal(length(unique(reducedTerms$parent)),'Set2'),
+                          fontsize.labels = lst$main_text_size,
+                          fontcolor.labels = c("#FFFFFFDD", "#00000080"),
+                          bg.labels = 0,
+                          border.col = "#00000080")
+
+
   }
 
-
-  #--- upset plot ---#
-  if (plot_type == "upset") {
-    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
-    if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
-    if (!"legend_position" %in% names(lst)) lst$legend_position <- 'left'
-
-    plot_df <-  enrich_df %>% as.upset() %>%
-      do.call(cbind,.) %>% as.data.frame()
-
-    p <- plotVenn(enrich_df, use_venn = FALSE,...)
-  }
 
   #--- keggpath ---#
   # if(plot_type == 'keggpath'){
@@ -823,7 +865,8 @@ plotEnrich <- function(enrich_df,
     p <- p + scale_y_discrete(labels = text_wraper(wrap_length))
   }
 
-  suppressWarnings(print(p))
+  if(plot_type != "gotangram") suppressWarnings(print(p))
+
 }
 
 
