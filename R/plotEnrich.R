@@ -23,6 +23,7 @@
 #' @param scale_ratio Numeric, scale of node and line size.
 #' @param layout Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
 #' "lgl", "kk", "mds", "nicely" (default),"randomly", "star".
+#' @param n_term Number of terms (used in WEGO plot)
 #' @param ... other arguments from `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs geom_point
@@ -116,6 +117,7 @@ plotEnrich <- function(enrich_df,
                        ont = NULL,
                        scale_ratio,
                        layout,
+                       n_term,
                        ...) {
   #--- args ---#
   lst <- list(...) # store outside arguments in list
@@ -616,13 +618,14 @@ plotEnrich <- function(enrich_df,
       stop("WEGO plot only supports data with all three ontologies, please try other types...")
     }
 
+    if(missing(n_term)) n_term = 5
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     wego <- enrich_df %>%
       dplyr::select(1:3, "Count", "GeneRatio") %>%
       dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
       dplyr::group_by(ONTOLOGY) %>%
-      dplyr::top_n(5, GeneRatio) %>%
+      dplyr::top_n(n_term, GeneRatio) %>%
       dplyr::ungroup() %>%
       dplyr::arrange(ONTOLOGY, GeneRatio) %>%
       dplyr::mutate(Position = dplyr::n():1) %>%

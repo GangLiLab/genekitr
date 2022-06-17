@@ -22,6 +22,7 @@ plotEnrich(
   ont = NULL,
   scale_ratio,
   layout,
+  n_term,
   ...
 )
 }
@@ -64,6 +65,8 @@ Used in "map","goheat","gotangram","wordcloud".}
 
 \item{layout}{Grapgh layout in "map" plot, e,g, "circle", "dh", "drl", "fr","graphopt", "grid",
 "lgl", "kk", "mds", "nicely" (default),"randomly", "star".}
+
+\item{n_term}{Number of terms (used in WEGO plot)}
 
 \item{...}{other arguments from `plot_theme` function}
 }
