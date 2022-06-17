@@ -332,10 +332,15 @@ plotGSEA <- function(gsea_list,
       dplyr::arrange(desc(logfc2))
     plot_df$Description <- factor(plot_df$Description, levels = rev(term_order$Description))
 
+    if(is.null(colour)){
+      colour = c("#E31A1C","#1F78B4")
+    }
+    up_color = colour[1]; down_color = colour[2]
+
     p <- ggplot(plot_df, aes_string(x = "logfc", y = "Description", fill = stats_metric)) +
       ggridges::geom_density_ridges() +
       scale_fill_continuous(
-        low = "red", high = "blue", name = stats_metric,
+        low = up_color, high = down_color, name = stats_metric,
         guide = guide_colorbar(reverse = TRUE)
       ) +
       ylab(NULL) +
@@ -390,7 +395,7 @@ plotGSEA <- function(gsea_list,
         size = lst$main_text_size / 3.6, hjust = "outward"
       ) +
       scale_colour_manual(values = c("black", colour[3])) +
-      labs(x = "", y = "Normalized Enrichment Score") +
+      labs(x = "", y = "Normalized enrichment score") +
       plot_theme(remove_grid = T, remove_legend = T, ...)
   }
 
