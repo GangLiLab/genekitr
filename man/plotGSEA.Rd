@@ -8,7 +8,7 @@ plotGSEA(
   gsea_list,
   plot_type = c("volcano", "classic", "fgsea", "ridge", "bar"),
   stats_metric = c("p.adjust", "pvalue", "qvalue"),
-  show_pathway = 3,
+  show_pathway = NULL,
   show_gene = NULL,
   colour = NULL,
   ...
@@ -21,12 +21,12 @@ plotGSEA(
 
 \item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
-\item{show_pathway}{Select plotting pathways by specifying number (will choose top N pathways)
+\item{show_pathway}{Select plotting pathways by number (will choose top N pathways)
 or pathway name.}
 
 \item{show_gene}{Select genes to show. Default is "all". Used in "classic" plot.}
 
-\item{colour}{Colour vector. Deafault is NULL.}
+\item{colour}{Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }

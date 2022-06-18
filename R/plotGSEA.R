@@ -3,10 +3,10 @@
 #' @param gsea_list GSEA result from `genGSEA` function
 #' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea', 'ridge' or 'bar'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
-#' @param show_pathway Select plotting pathways by specifying number (will choose top N pathways)
+#' @param show_pathway Select plotting pathways by number (will choose top N pathways)
 #' or pathway name.
 #' @param show_gene Select genes to show. Default is "all". Used in "classic" plot.
-#' @param colour Colour vector. Deafault is NULL.
+#' @param colour Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline
@@ -56,7 +56,7 @@
 plotGSEA <- function(gsea_list,
                      plot_type = c("volcano", "classic", "fgsea", "ridge", "bar"),
                      stats_metric = c("p.adjust", "pvalue", "qvalue"),
-                     show_pathway = 3,
+                     show_pathway = NULL,
                      show_gene = NULL,
                      colour = NULL,
                      ...) {
@@ -86,6 +86,7 @@ plotGSEA <- function(gsea_list,
   # y-axis: stats value
   if (plot_type == "volcano") {
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
+    if(is.null(show_pathway)) show_pathway = 3
 
     gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES, decreasing = TRUE), ]
@@ -124,9 +125,14 @@ plotGSEA <- function(gsea_list,
   if (plot_type == "classic") {
     gsea_df <- gsea_list$gsea_df
     geneset <- gsea_list$geneset
-    genelist <- gsea_list$genelist
-    exponent <- gsea_list$exponent
-    org <- gsea_list$org
+    gl = gsea_list$genelist
+    gl1 = gl[,2]
+    names(gl1) = gl[,1]
+    genelist = gl1
+    exponent <- as.numeric(gsea_list$exponent)
+    org <- as.character(gsea_list$org)
+
+    if(is.null(show_pathway)) show_pathway = 3
 
     if (is.numeric(show_pathway)) {
       show_pathway <- gsea_df$Description[show_pathway]
@@ -260,10 +266,15 @@ plotGSEA <- function(gsea_list,
 
   #--- fgsea plot ---#
   if (plot_type == "fgsea") {
+    if(is.null(show_pathway)) show_pathway = 3
+
     geneset_list <- gsea_list$geneset %>%
       split(.$gs_name) %>%
       lapply("[[", 2)
-    genelist <- gsea_list$genelist
+    gl = gsea_list$genelist
+    gl1 = gl[,2]
+    names(gl1) = gl[,1]
+    genelist = gl1
 
     fres <- suppressWarnings(fgsea::fgsea(
       pathways = geneset_list,
@@ -294,6 +305,7 @@ plotGSEA <- function(gsea_list,
 
   #--- ridge plot ---#
   if (plot_type == "ridge") {
+    if(is.null(show_pathway)) show_pathway = 3
 
     gsea_df <- gsea_list$gsea_df
     if (is.numeric(show_pathway)) {
@@ -319,10 +331,9 @@ plotGSEA <- function(gsea_list,
       new_gsea_df <- new_gsea_df %>% dplyr::rename(entrezid = geneID)
     }
 
-    logfc <- data.frame(
-      entrezid = names(gsea_list$genelist),
-      logfc = gsea_list$genelist
-    )
+    logfc <- gsea_list$genelist %>% dplyr::rename(entrezid = ID)
+
+
     plot_df <- merge(new_gsea_df, logfc, by = "entrezid") %>%
       dplyr::select(-entrezid)
 
@@ -353,7 +364,7 @@ plotGSEA <- function(gsea_list,
   ## bar with p.adjust>0.05 showed grey
   if (plot_type == "bar") {
     gsea_df <- gsea_list$gsea_df %>%
-      dplyr::select(ID, NES, "p.adjust") %>%
+      dplyr::select(Description, NES, "p.adjust") %>%
       dplyr::mutate(
         padj.group = cut(.$p.adjust, breaks = c(-Inf, 0.05, Inf), labels = c(1, 0)),
         nes.group = cut(.$NES, breaks = c(-Inf, 0, Inf), labels = c(0, 1)),
@@ -370,7 +381,7 @@ plotGSEA <- function(gsea_list,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     if (is.null(colour)) {
-      colour <- c("\\#0072B5FF", "\\#BC3C29FF", "\\#A9A9A9")
+      colour <- c("\\#1F78B4", "\\#E31A1C", "\\#A9A9A9")
       colour <- stringr::str_remove_all(colour, ".*#") %>% paste0("#", .)
     }
 
@@ -385,13 +396,13 @@ plotGSEA <- function(gsea_list,
       coord_flip() +
       geom_text(
         data = subset(gsea_df, NES > 0),
-        aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
+        aes(x = index, y = 0, label = paste0(Description, "  "), color = padj.group),
         size = lst$main_text_size / 3.6,
         hjust = "inward"
       ) +
       geom_text(
         data = subset(gsea_df, NES < 0),
-        aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+        aes(x = index, y = 0, label = paste0("  ", Description), color = padj.group),
         size = lst$main_text_size / 3.6, hjust = "outward"
       ) +
       scale_colour_manual(values = c("black", colour[3])) +

@@ -101,7 +101,12 @@ genGSEA <- function(genelist,
       dplyr::relocate(geneID_symbol, .after = geneID)
   }
 
-  res <- list(genelist = genelist, geneset = geneset, gsea_df = egmt, exponent = exponent, org = org)
+  # save as list
+  genelist_df = data.frame(ID = names(genelist), logfc = genelist)
+  exponent = data.frame(exponent = exponent)
+  org = data.frame(org = org)
+
+  res <- list(gsea_df = egmt, genelist = genelist_df, geneset = geneset,  exponent = exponent, org = org)
 
   return(res)
 }
