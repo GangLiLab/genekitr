@@ -11,6 +11,7 @@ plotGSEA(
   show_pathway = NULL,
   show_gene = NULL,
   colour = NULL,
+  wrap_length = NULL,
   ...
 )
 }
@@ -27,6 +28,8 @@ or pathway name.}
 \item{show_gene}{Select genes to show. Default is "all". Used in "classic" plot.}
 
 \item{colour}{Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.}
+
+\item{wrap_length}{Numeric, wrap text if longer than this length. Default is NULL.}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }

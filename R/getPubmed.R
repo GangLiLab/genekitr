@@ -12,7 +12,7 @@
 #' add_term <- c("stem cell", "mouse")
 #' l <- getPubmed(term, add_term, num = 30)
 #' # very easy to output
-#' expoSheet(l, name_list = term, filename = "test.xlsx", dir = tempdir())
+#' expoSheet(l, data_name = term, filename = "test.xlsx", dir = tempdir())
 #' }
 #'
 getPubmed <- function(term, add_term = NULL, num = 100) {

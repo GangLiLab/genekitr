@@ -7,6 +7,7 @@
 #' or pathway name.
 #' @param show_gene Select genes to show. Default is "all". Used in "classic" plot.
 #' @param colour Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.
+#' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline
@@ -59,6 +60,7 @@ plotGSEA <- function(gsea_list,
                      show_pathway = NULL,
                      show_gene = NULL,
                      colour = NULL,
+                     wrap_length = NULL,
                      ...) {
 
   #--- args ---#
@@ -412,7 +414,6 @@ plotGSEA <- function(gsea_list,
 
   suppressMessages(print(p))
 }
-
 
 
 calcScore <- function(geneset, genelist, item, exponent, fortify = TRUE, org) {

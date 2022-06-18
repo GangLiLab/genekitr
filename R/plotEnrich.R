@@ -619,6 +619,7 @@ plotEnrich <- function(enrich_df,
     }
 
     if(missing(n_term)) n_term = 5
+    if(is.null(wrap_length)) wrap_length = 30
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     wego <- enrich_df %>%
@@ -653,7 +654,7 @@ plotEnrich <- function(enrich_df,
         }
       )) +
       plot_theme(remove_legend = T, ...) +
-      scale_x_discrete(labels = text_wraper(30)) +
+      scale_x_discrete(labels = text_wraper(wrap_length)) +
       xlab(NULL) +
       ylab("Gene Ratio(%)") +
       facet_grid(. ~ ONTOLOGY, scales = "free") +
@@ -867,7 +868,7 @@ plotEnrich <- function(enrich_df,
 
 
   # wrap long text
-  if (!is.null(wrap_length) & is.numeric(wrap_length)) {
+  if (!is.null(wrap_length) & is.numeric(wrap_length) & plot_type != 'wego') {
     p <- p + scale_y_discrete(labels = text_wraper(wrap_length))
   }
 
