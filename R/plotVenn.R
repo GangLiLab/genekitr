@@ -97,6 +97,7 @@ plotVenn <- function(venn_list,
 
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
     if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
+    if (!"border_thick" %in% names(lst)) lst$border_thick <- 2
     if (!"legend_position" %in% names(lst)) lst$legend_position <- 'left'
 
     if(is.null(color))
@@ -134,7 +135,8 @@ plotVenn <- function(venn_list,
                       axis.ticks.x=element_blank(),
                       axis.title.x=element_blank(),
                       axis.title.y=element_blank(),
-                      axis.text.y = element_text(size = (lst$legend_text_size + 3)))
+                      axis.text.y = element_text(size = (lst$legend_text_size + 3)),
+                      panel.border =element_rect(colour = "black", size = lst$border_thick))
             )
           ),
           matrix=ComplexUpset::intersection_matrix(
