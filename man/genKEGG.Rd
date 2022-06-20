@@ -6,21 +6,19 @@
 \usage{
 genKEGG(
   id,
-  group_list = NULL,
   org,
   pAdjustMethod = "BH",
   pvalueCutoff = 0.05,
   qvalueCutoff = 0.1,
   minGSSize = 10,
   maxGSSize = 500,
+  group_list = NULL,
   universe,
   ...
 )
 }
 \arguments{
 \item{id}{A vector of entrez gene.}
-
-\item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{org}{KEGG organism name from `keggOrg_name`.}
 
@@ -36,6 +34,8 @@ default is 10.}
 
 \item{maxGSSize}{Numberic of maximal size of each geneSet for analyzing,
 default is 500.}
+
+\item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{universe}{Background genes. If missing, the orgdb all gene list will be
 used as background.}

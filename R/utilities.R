@@ -1,8 +1,9 @@
 #---  get organism Bioconductor shortname ---#
 mapBiocOrg <- function(organism) {
-  organism <- tolower(organism)
+  # organism <- tolower(organism)
   if (organism == "hg" | organism == "human" | organism == "hsa" | organism == "hs") organism <- "hs"
   if (organism == "mm" | organism == "mouse") organism <- "mm"
+  if (organism == "rat") organism <- "rn"
 
   # support organisms: http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
   biocorg <- biocOrg_name_data()
@@ -43,7 +44,7 @@ mapKeggOrg <- function(organism) {
   if ((organism %in% kgorg$short_name && !is.common)) {
     org <- organism
   } else if (nchar(organism) >= 3) {
-    out <- kgorg[grepl(paste0("(\\b", organism, "\\b)"), kgorg$full_name), ]
+    out <- kgorg[grepl(paste0("(\\b", organism, "\\b)"), kgorg$full_name,ignore.case = T), ]
     if (nrow(out) > 1) {
       stop(
         "\nPlease choose the SHORT NAME from below: \n",
@@ -55,7 +56,7 @@ mapKeggOrg <- function(organism) {
       stop("\nCheck the organism name again!")
     }
   } else {
-    out <- kgorg[grepl(paste0("^", organism, ""), kgorg$short_name), ]
+    out <- kgorg[grepl(paste0("^", organism, ""), kgorg$short_name,ignore.case = T), ]
     if (nrow(out) != 0) {
       stop(
         "\nPlease choose the SHORT NAME from below: \n",

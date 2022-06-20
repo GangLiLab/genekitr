@@ -43,13 +43,13 @@
 #' }
 #'
 genKEGG <- function(id,
-                    group_list = NULL,
                     org,
                     pAdjustMethod = "BH",
                     pvalueCutoff = 0.05,
                     qvalueCutoff = 0.1,
                     minGSSize = 10,
                     maxGSSize = 500,
+                    group_list = NULL,
                     universe,
                     ...) {
 

@@ -6,7 +6,6 @@
 \usage{
 genGO(
   id,
-  group_list = NULL,
   org,
   ont,
   pAdjustMethod = "BH",
@@ -14,14 +13,13 @@ genGO(
   qvalueCutoff = 0.1,
   minGSSize = 10,
   maxGSSize = 500,
+  group_list = NULL,
   universe,
   ...
 )
 }
 \arguments{
 \item{id}{A vector of gene id which can be entrezid, ensembl or symbol.}
-
-\item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{org}{Organism name from `biocOrg_name`.}
 
@@ -37,6 +35,8 @@ genGO(
 \item{minGSSize}{Minimal size of each gene set for analyzing, default is 10.}
 
 \item{maxGSSize}{Maximal size of each gene set for analyzing, default is 500.}
+
+\item{group_list}{A list of gene id groups, default is NULL.}
 
 \item{universe}{Background genes. If missing, then all gene list in
 orgdb will be used as background.}

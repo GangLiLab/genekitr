@@ -46,7 +46,6 @@
 #' )
 #' }
 genGO <- function(id,
-                  group_list = NULL,
                   org,
                   ont,
                   pAdjustMethod = "BH",
@@ -54,6 +53,7 @@ genGO <- function(id,
                   qvalueCutoff = 0.1,
                   minGSSize = 10,
                   maxGSSize = 500,
+                  group_list = NULL,
                   universe,
                   ...) {
 
