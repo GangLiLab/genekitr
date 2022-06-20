@@ -1,6 +1,6 @@
 #' Gene GO enrichment analysis
 #'
-#' @param id A vector of gene id which can be entrezid, ensembl or symbol.
+#' @param id A vector of gene id which can be entrezid, ensembl, symbol or uniprot.
 #' @param group_list A list of gene id groups, default is NULL.
 #' @param org  Organism name from `biocOrg_name`.
 #' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all three.
@@ -70,9 +70,10 @@ genGO <- function(id,
   org <- mapEnsOrg(org)
   pkg <- paste0("org.", bioc_org, ".eg.db")
   keyType <- gentype(id = id, org = org)
+
   # here we convert all symbol and alias to symbol
+  old_id <- id
   if (keyType == "SYMBOL") {
-    old_id <- id
     id_dat <- suppressMessages(transId(id, "symbol", org, unique = T))
     id <- id_dat %>% dplyr::pull(symbol)
   }
@@ -81,7 +82,7 @@ genGO <- function(id,
     universe <- suppressMessages(transId(universe, transTo = keyType, org, unique = T)[, 2])
   }
 
-  #--- codes ---#
+  #--- analyse ---#
   ## NO GROUP INFO
   if (is.null(group_list)) {
     ego <- suppressMessages(
@@ -96,54 +97,10 @@ genGO <- function(id,
         ...
       )
     )
-
-    if (nrow(as.data.frame(ego)) == 0) {
-      stop("No GO terms enriched ...")
-    }
-
-    # convert other id types to symbol
-    if (keyType != "SYMBOL") {
-      ego_id <- stringr::str_split(ego$geneID, "\\/") %>% unlist()
-      id_all <- suppressMessages(transId(ego_id, "symbol", org = org, unique = T))
-
-      new_geneID <- stringr::str_split(ego$geneID, "\\/") %>%
-        lapply(., function(x) {
-          id_all %>%
-            dplyr::filter(input_id %in% x) %>%
-            dplyr::arrange(match(input_id, x)) %>%
-            dplyr::pull(symbol)
-        }) %>%
-        sapply(., paste0, collapse = "/")
-      new_ego <- ego %>%
-        as.data.frame() %>%
-        dplyr::mutate(geneID_symbol = new_geneID) %>%
-        dplyr::relocate(geneID_symbol, .after = geneID) %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    } else if (!identical(id, old_id)) {
-      # if id type is symbol and has alias, keep both
-      new_geneID <- stringi::stri_replace_all_fixed(ego$geneID,
-        pattern = id,
-        replacement = old_id,
-        vectorize_all = FALSE
-      )
-      new_ego <- ego %>%
-        as.data.frame() %>%
-        dplyr::rename(geneID_symbol = geneID) %>%
-        dplyr::mutate(geneID = new_geneID) %>%
-        dplyr::relocate(geneID_symbol, .after = geneID) %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    } else {
-      new_ego <- ego %>%
-        as.data.frame() %>%
-        calcFoldEnrich() %>%
-        as.enrichdat()
-    }
   } else {
     ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
-    lego <- clusterProfiler::compareCluster(eval(parse(text = paste0("id~", paste(colnames(df)[-ncol(df)], collapse = "+")))),
+    ego <- clusterProfiler::compareCluster(eval(parse(text = paste0("id~", paste(colnames(df)[-ncol(df)], collapse = "+")))),
       data = df,
       fun = "enrichGO", OrgDb = pkg,
       pvalueCutoff = pvalueCutoff,
@@ -151,33 +108,44 @@ genGO <- function(id,
       qvalueCutoff = qvalueCutoff,
       ...
     )
+  }
 
-    if (nrow(as.data.frame(lego)) == 0) {
-      stop("No GO terms enriched ...")
-    }
+  if (nrow(as.data.frame(ego)) == 0) {
+    stop("No GO terms enriched ...")
+  }else{
+    ego = as.data.frame(ego)
+  }
 
-    # transform id to symbol
-    ego_id <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>% unlist()
-    id_all <- suppressMessages(transId(id, "symbol", org = org, unique = T))
+  #--- get geneID_symbol ---#
+    # new id
+  new_geneID <- get_symbol(ego$geneID,org)
 
-    new_geneID <- stringr::str_split(lego@compareClusterResult$geneID, "\\/") %>%
-      lapply(., function(x) {
-        id_all %>%
-          dplyr::filter(input_id %in% x) %>%
-          dplyr::arrange(match(input_id, x)) %>%
-          dplyr::pull(symbol)
-      }) %>%
-      sapply(., paste0, collapse = "/")
+    # input SYMBOL and no alias
+  if( keyType == "SYMBOL" & identical(old_id, id) ){
+    new_ego <- ego %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
 
-    new_ego <- lego %>%
-      as.data.frame() %>%
+  } else if(keyType == "SYMBOL" & !identical(old_id, id) ){
+    # input SYMBOL and have alias
+    old_geneID <- replace_id(id_dat,ego$geneID)
+
+    new_ego <- ego %>%
+      dplyr::mutate(geneID = old_geneID) %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol, .after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
+  } else {
+    # input other types
+  new_ego <- ego %>%
       dplyr::mutate(geneID_symbol = new_geneID) %>%
       dplyr::relocate(geneID_symbol, .after = geneID) %>%
       calcFoldEnrich() %>%
       as.enrichdat()
   }
 
-  ## add rich factor
+  #--- add rich factor ---#
   # The enrichment factor (Rich factor) is that the number of DEGs in the pathway term
   # divided by the number of all annotated genes in the pathway term.
   new_ego <- new_ego %>%

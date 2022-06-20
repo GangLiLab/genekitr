@@ -22,7 +22,7 @@
 
 #### Supported organisms:
 
-- Search & ID conversion:  **196** vertebrate species, **120** plant species and **2** bacteria species
+- Search & ID conversion:  **195** vertebrate species, **120** plant species and **2** bacteria species
 - Enrichment analysis: GO supports **18** species, KEGG supports **7254** species and GSEA supports **20** species
 
 

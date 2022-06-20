@@ -19,7 +19,7 @@ genGO(
 )
 }
 \arguments{
-\item{id}{A vector of gene id which can be entrezid, ensembl or symbol.}
+\item{id}{A vector of gene id which can be entrezid, ensembl, symbol or uniprot.}
 
 \item{org}{Organism name from `biocOrg_name`.}
 

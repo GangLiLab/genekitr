@@ -73,6 +73,8 @@ plotVenn <- function(venn_list,
       }
     }
 
+    if(is.null(names(venn_list))) names(venn_list) = paste0('group',1:length(venn_list))
+
     p <- VennDiagram::venn.diagram(
       x = venn_list,
       filename = NULL,

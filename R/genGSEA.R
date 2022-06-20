@@ -7,7 +7,6 @@
 #'   'C4','C5','C6','C7','C8','H'.
 #' @param subcategory MSigDB sub-collection abbreviation, choose from
 #'   `msig_category`.
-#' @param use_symbol Logical to set result gene id as gene symbol, default is TRUE.
 #' @param minGSSize Minimal size of each geneSet for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each geneSet for analyzing, default is 500.
 #' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
@@ -25,8 +24,9 @@
 #' \donttest{
 #' data(geneList, package = "genekitr")
 #' gse <- genGSEA(
-#'   genelist = geneList, org = "human",
-#'   category = "H", use_symbol = TRUE
+#'   genelist = geneList,
+#'   org = "human",
+#'   category = "H"
 #' )
 #' }
 #'
@@ -37,7 +37,6 @@ genGSEA <- function(genelist,
                       "C5", "C6", "C7", "C8", "H"
                     ),
                     subcategory = NULL,
-                    use_symbol = TRUE,
                     minGSSize = 10,
                     maxGSSize = 500,
                     pvalueCutoff = 0.05,
@@ -55,20 +54,30 @@ genGSEA <- function(genelist,
   if (is.unsorted(rev(genelist))) stop("genelist should be a decreasing sorted vector...")
 
   #--- codes ---#
+  ens_org <- msig_org[with(msig_org, grepl(org, paste(species_name, species_common_name),ignore.case = T)),1] %>% mapEnsOrg()
   geneset <- getMsigdb(org, category, subcategory)
+  id <- names(genelist)
+  keyType <- gentype(id = id, org = org)
 
-  # use entrez id or symbol
-  if (any(names(genelist) %in% geneset$gene_symbol)) {
-    geneset <- geneset %>%
-      dplyr::select(gs_name, gene_symbol)
-  } else if (any(names(genelist) %in% geneset$entrez_gene)) {
-    geneset <- geneset %>%
-      dplyr::select(gs_name, entrez_gene)
-  } else {
-    names(genelist) <- transId(names(genelist), transTo = "entrez", org)
-    geneset <- geneset %>%
-      dplyr::select(gs_name, entrez_gene)
+  # use entrez id or symbol (if not, trans to entrez)
+  id <- names(genelist)
+  old_id <- id
+  if (keyType == "SYMBOL") {
+    id_dat1 <- suppressMessages(transId(id, "symbol", ens_org, unique = T))
+    id <- id_dat1 %>% dplyr::pull(symbol)
   }
+
+  if (keyType != "ENTREZID") {
+    message(paste0(keyType), " gene will be mapped to entrez id")
+    id_dat2 <- suppressMessages(transId(id, "entrezid", ens_org, unique = T))
+    entrez_id <- id_dat2 %>% dplyr::pull(entrezid)
+  } else {
+    entrez_id <- id
+  }
+
+  names(genelist) <- entrez_id
+  geneset <- geneset %>%
+    dplyr::select(gs_name, entrez_gene)
 
   egmt <- suppressWarnings(clusterProfiler::GSEA(genelist,
     TERM2GENE = geneset,
@@ -81,27 +90,56 @@ genGSEA <- function(genelist,
 
   egmt <- egmt %>%
     as.data.frame() %>%
-    as.enrichdat()
-  if (use_symbol) {
-    # transform id to symbol
-    egmt_id <- stringr::str_split(egmt$geneID, "\\/") %>% unlist()
-    id_all <- suppressMessages(transId(egmt_id, "symbol", org = org))
+    as.enrichdat() %>%
+    dplyr::select(-GeneRatio)
 
-    new_geneID <- stringr::str_split(egmt$geneID, "\\/") %>%
-      lapply(., function(x) {
-        id_all %>%
-          dplyr::filter(input_id %in% x) %>%
-          dplyr::arrange(match(input_id, x)) %>%
-          dplyr::pull(symbol)
-      }) %>%
-      sapply(., paste0, collapse = "/")
+
+  #--- get geneID_symbol ---#
+  # new id
+  new_geneID <- get_symbol(egmt$geneID,ens_org)
+
+  # input SYMBOL and no alias
+  if( keyType == "SYMBOL" & identical(old_id, id) ){
+    egmt <- egmt %>%
+      dplyr::mutate(geneID = new_geneID) %>%
+      # dplyr::relocate(geneID, .after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
+
+  } else if(keyType == "SYMBOL" & !identical(old_id, id)){
+    old_geneID <- replace_id(id_dat2,egmt$geneID) %>%
+      replace_id(id_dat1,.)
 
     egmt <- egmt %>%
+      dplyr::mutate(geneID = old_geneID) %>%
       dplyr::mutate(geneID_symbol = new_geneID) %>%
-      dplyr::relocate(geneID_symbol, .after = geneID)
+      dplyr::relocate(geneID_symbol, .after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
+
+  } else if(keyType == "ENTREZID"){
+    egmt <- egmt %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol, .after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
+
+  } else {
+    # input other types (including alias)
+    old_geneID <- replace_id(id_dat2,egmt$geneID)
+
+    egmt <- egmt %>%
+      dplyr::mutate(geneID = old_geneID) %>%
+      dplyr::mutate(geneID_symbol = new_geneID) %>%
+      dplyr::relocate(geneID_symbol, .after = geneID) %>%
+      calcFoldEnrich() %>%
+      as.enrichdat()
   }
 
-  # save as list
+
+
+  #--- save as list ---#
+  egmt = egmt %>% dplyr::select(-GeneRatio)
   genelist_df = data.frame(ID = names(genelist), logfc = genelist)
   exponent = data.frame(exponent = exponent)
   org = data.frame(org = org)

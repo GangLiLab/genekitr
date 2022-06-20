@@ -33,6 +33,7 @@ mapKeggOrg <- function(organism) {
   organism <- tolower(organism)
   if (organism == "hg" | organism == "human" | organism == "hs") organism <- "hsa"
   if (organism == "mm" | organism == "mouse") organism <- "mmu"
+  if (organism == "rn" | organism == "rat") organism <- "rno"
 
   # some common name happens to be same with kegg short name
   is.common <- ifelse(organism %in% c("rat", "cow", "dog"), TRUE, FALSE)
@@ -443,5 +444,5 @@ utils::globalVariables(c(
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis", "everything", "gene", "coord_flip",
   "expansion", "index", "nes.group", "padj.group", "change", "label", "logFC", "stat", "pvalue",
-  "cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x"
+  "cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id"
 ))

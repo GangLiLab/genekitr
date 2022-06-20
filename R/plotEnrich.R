@@ -192,6 +192,7 @@ plotEnrich <- function(enrich_df,
 
   #--- GO/KEGG: dot plot ---#
   if (plot_type == "dot") {
+    ## no group
     if (missing(scale_ratio)) scale_ratio <- 0.3
     if (!compare_group) {
       p <- ggplot(enrich_df, aes_string(x = term_metric, y = "Description")) +
@@ -210,7 +211,19 @@ plotEnrich <- function(enrich_df,
         xlim(xlim_left, xlim_right) +
         plot_theme(...)
     } else {
-      xtick_lab <- paste0(enrich_df$Cluster, "\n(", enrich_df$Count, ")")
+      ## compare groups
+      if(missing(n_term)) n_term = 5
+      enrich_df <- enrich_df %>%
+        dplyr::arrange(desc(FoldEnrich)) %>%
+        dplyr::group_by(Cluster) %>%
+        dplyr::slice_head(n=n_term)
+
+      calc <- enrich_df%>%
+        dplyr::group_by(Cluster) %>%
+        dplyr::summarise(sum_count = sum(Count)) %>%
+        as.data.frame()
+
+      xtick_lab <- paste0(as.character(calc[,1]), "\n(", calc[,2], ")")
       p <- ggplot(enrich_df, aes_string(x = "Cluster", y = "Description")) +
         geom_point(aes_string(
           color = stats_metric,

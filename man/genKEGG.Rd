@@ -18,7 +18,7 @@ genKEGG(
 )
 }
 \arguments{
-\item{id}{A vector of entrez gene.}
+\item{id}{A vector of gene id which can be entrezid, ensembl, symbol or uniprot.}
 
 \item{org}{KEGG organism name from `keggOrg_name`.}
 
