@@ -71,6 +71,10 @@ transId <- function(id,
     res <- res %>%
       filter_at(vars(!input_id), any_vars(!is.na(.)))
   }
+
+  # replace back greek letter
+  res$input_id = replace_back(res$input_id)
+
   # convert factor to character
   res[] <- lapply(res, as.character)
 
