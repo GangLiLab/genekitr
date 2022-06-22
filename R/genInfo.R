@@ -36,6 +36,8 @@ genInfo <- function(id = NULL,
     gene_info <- ensAnno(org)
   } else {
     all <- ensAnno(org)
+
+    id <- replace_greek(id)
     keytype <- gentype(id = id, data = all, org = org) %>% tolower()
 
     ## get ensembl/entrez/uniprot/symbol order
@@ -149,5 +151,26 @@ genInfo <- function(id = NULL,
 
   return(gene_info)
 }
+
+replace_greek <-function(id){
+  g1 = stringi::stri_escape_unicode("α")
+  g2 = stringi::stri_escape_unicode("β")
+  g3 = stringi::stri_escape_unicode('γ')
+  g4 = stringi::stri_escape_unicode('δ')
+  g5 = stringi::stri_escape_unicode('ε')
+  g6 = stringi::stri_escape_unicode('λ')
+  g7 = stringi::stri_escape_unicode('κ')
+  g8 = stringi::stri_escape_unicode('σ')
+
+  id <- stringr::str_replace_all(id, g1, 'alpha')
+  id <- stringr::str_replace_all(id, g2, 'beta')
+  id <- stringr::str_replace_all(id, g3, 'gamma')
+  id <- stringr::str_replace_all(id, g4, 'delta')
+  id <- stringr::str_replace_all(id, g5, 'epsilon')
+  id <- stringr::str_replace_all(id, g6, 'lambda')
+  id <- stringr::str_replace_all(id, g7, 'kappa')
+  id <- stringr::str_replace_all(id, g8, 'sigma')
+}
+
 
 utils::globalVariables(c(":=", "symbol", "uniprot", "input_id", "symbol", "chr", "start", "end"))
