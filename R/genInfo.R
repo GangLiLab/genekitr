@@ -157,42 +157,25 @@ genInfo <- function(id = NULL,
 }
 
 replace_greek <-function(id){
-  g1 = stringi::stri_escape_unicode("α")
-  g2 = stringi::stri_escape_unicode("β")
-  g3 = stringi::stri_escape_unicode('γ')
-  g4 = stringi::stri_escape_unicode('δ')
-  g5 = stringi::stri_escape_unicode('ε')
-  g6 = stringi::stri_escape_unicode('λ')
-  g7 = stringi::stri_escape_unicode('κ')
-  g8 = stringi::stri_escape_unicode('σ')
-
-  id <- stringr::str_replace_all(id, g1, 'alpha')
-  id <- stringr::str_replace_all(id, g2, 'beta')
-  id <- stringr::str_replace_all(id, g3, 'gamma')
-  id <- stringr::str_replace_all(id, g4, 'delta')
-  id <- stringr::str_replace_all(id, g5, 'epsilon')
-  id <- stringr::str_replace_all(id, g6, 'lambda')
-  id <- stringr::str_replace_all(id, g7, 'kappa')
-  id <- stringr::str_replace_all(id, g8, 'sigma')
+  id <- stringr::str_replace_all(id, "\\u03b1", 'alpha')
+  id <- stringr::str_replace_all(id, "\\u03b2", 'beta')
+  id <- stringr::str_replace_all(id, "\\u03b3", 'gamma')
+  id <- stringr::str_replace_all(id, "\\u03b4", 'delta')
+  id <- stringr::str_replace_all(id, "\\u03b5", 'epsilon')
+  id <- stringr::str_replace_all(id, "\\u03bb", 'lambda')
+  id <- stringr::str_replace_all(id, "\\u03ba", 'kappa')
+  id <- stringr::str_replace_all(id, "\\u03c3", 'sigma')
 }
-replace_back <-function(id){
-  g1 = stringi::stri_escape_unicode("α")
-  g2 = stringi::stri_escape_unicode("β")
-  g3 = stringi::stri_escape_unicode('γ')
-  g4 = stringi::stri_escape_unicode('δ')
-  g5 = stringi::stri_escape_unicode('ε')
-  g6 = stringi::stri_escape_unicode('λ')
-  g7 = stringi::stri_escape_unicode('κ')
-  g8 = stringi::stri_escape_unicode('σ')
 
-  id <- stringr::str_replace_all(id, 'alpha'  , g1)
-  id <- stringr::str_replace_all(id, 'beta'   , g2)
-  id <- stringr::str_replace_all(id, 'gamma'  , g3 )
-  id <- stringr::str_replace_all(id, 'delta'  , g4 )
-  id <- stringr::str_replace_all(id, 'epsilon', g5  )
-  id <- stringr::str_replace_all(id, 'lambda' , g6  )
-  id <- stringr::str_replace_all(id, 'kappa'  , g7 )
-  id <- stringr::str_replace_all(id, 'sigma'  , g8 )
+replace_back <-function(id){
+  id <- stringr::str_replace_all(id, 'alpha',  "\\u03b1")
+  id <- stringr::str_replace_all(id, 'beta',   "\\u03b2")
+  id <- stringr::str_replace_all(id, 'gamma',  "\\u03b3" )
+  id <- stringr::str_replace_all(id, 'delta',  "\\u03b4" )
+  id <- stringr::str_replace_all(id, 'epsilon', "\\u03b5"  )
+  id <- stringr::str_replace_all(id, 'lambda', "\\u03bb"  )
+  id <- stringr::str_replace_all(id, 'kappa',  "\\u03ba" )
+  id <- stringr::str_replace_all(id, 'sigma',  "\\u03c3" )
 }
 
 
