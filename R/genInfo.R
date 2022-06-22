@@ -148,7 +148,9 @@ genInfo <- function(id = NULL,
   }
 
   # replace back greek letter
-  gene_info$input_id = replace_back(gene_info$input_id)
+  if(!is.null(id)){
+    gene_info$input_id = replace_back(gene_info$input_id)
+  }
 
   # convert factor to character
   gene_info[] <- lapply(gene_info, as.character)
