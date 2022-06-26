@@ -77,34 +77,47 @@ genInfo <- function(id = NULL,
       sub <- gene_info %>% dplyr::filter(input_id %in% tomany_id)
       other <- gene_info %>% dplyr::filter(!input_id %in% tomany_id)
 
-      # if has entrezid and ensembl column, first choose minimal entrezid
+      # if has entrezid and ensembl column: with exact symbol > minimal entrezid > assembled chr
       if (all(c("entrezid", "chr") %in% colnames(gene_info))) {
         uniq_order <- sapply(tomany_id, function(x) {
+          # x = tomany_id[3]
           res <- c()
           check <- which(sub$input_id == x)
-          n_ent <- as.numeric(sub[check, "entrezid"])
-          if (!max(n_ent) == min(n_ent)) {
-            min_n <- which(n_ent %in% min(n_ent))
-            res <- check[min_n]
-            if (length(min_n) > 1) {
-              # if entrez is same, then check chr
+
+          if( keytype == 'symbol' && 'symbol' %in% colnames(gene_info) ){
+            sym <- sub[check, "symbol"]
+            if(any(sym%in%x)){
+              res <- check[which(sym%in%x)]
+              if(length(res) >1) res <- c()
+            }
+          }
+
+          if(is.null(res)){
+            n_ent <- as.numeric(sub[check, "entrezid"])
+            if (!max(n_ent) == min(n_ent)) {
+              min_n <- which(n_ent %in% min(n_ent))
+              res <- check[min_n]
+              if (length(min_n) > 1) {
+                # if entrez is same, then check chr
+                if (any(grepl("^[0-9].*$", sub[check, "chr"]))) {
+                  real_chr <- which(grepl("^[0-9].*$", sub[check, "chr"]))
+                  if (length(real_chr) > 1) real_chr <- real_chr[1]
+                } else {
+                  real_chr <- check[1]
+                }
+                res <- check[real_chr]
+              }
+            } else {
               if (any(grepl("^[0-9].*$", sub[check, "chr"]))) {
                 real_chr <- which(grepl("^[0-9].*$", sub[check, "chr"]))
                 if (length(real_chr) > 1) real_chr <- real_chr[1]
                 res <- check[real_chr]
               } else {
-                real_chr <- check[1]
+                res <- check[1]
               }
             }
-          } else {
-            if (any(grepl("^[0-9].*$", sub[check, "chr"]))) {
-              real_chr <- which(grepl("^[0-9].*$", sub[check, "chr"]))
-              if (length(real_chr) > 1) real_chr <- real_chr[1]
-              res <- check[real_chr]
-            } else {
-              res <- check[1]
-            }
           }
+
           return(res)
         }) %>% as.character()
       } else {
@@ -112,6 +125,8 @@ genInfo <- function(id = NULL,
         uniq_order <- sapply(tomany_id, function(x) {
           res <- c()
           check <- which(sub$input_id == x)
+
+
           n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
           if (min(n_na) == max(n_na) & keytype != "entrezid") {
             res <- check[order(as.numeric(sub$entrezid[check])) == 1]

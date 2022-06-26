@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.9.5
+Version: 0.9.6
 Authors@R: 
     c(person(given = "Yunze",
              family = "Liu",

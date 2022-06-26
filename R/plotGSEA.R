@@ -137,9 +137,9 @@ plotGSEA <- function(gsea_list,
     if(is.null(show_pathway)) show_pathway = 3
 
     if (is.numeric(show_pathway)) {
-      show_pathway <- gsea_df$Description[show_pathway]
-    } else if (any(!show_pathway %in% gsea_df$Description)) {
-      stop(paste0(show_pathway[!show_pathway %in% gsea_df$Description], " not in GSEA result!"))
+      show_pathway <- gsea_df$ID[show_pathway]
+    } else if (any(!show_pathway %in% gsea_df$ID)) {
+      stop(paste0(show_pathway[!show_pathway %in% gsea_df$ID], " not in GSEA result!"))
     }
 
     if (is.null(colour)) {
@@ -312,14 +312,14 @@ plotGSEA <- function(gsea_list,
     gsea_df <- gsea_list$gsea_df
     if (is.numeric(show_pathway)) {
       if (length(show_pathway) > 1) {
-        show_pathway <- gsea_df$Description[show_pathway, ]
+        show_pathway <- gsea_df$ID[show_pathway, ]
       } else {
-        show_pathway <- gsea_df$Description[1:show_pathway]
+        show_pathway <- gsea_df$ID[1:show_pathway]
       }
     }
     new_gsea_df <- gsea_df %>%
-      dplyr::filter(Description %in% show_pathway) %>%
-      dplyr::select(Description, dplyr::all_of(stats_metric), geneID) %>%
+      dplyr::filter(ID %in% show_pathway) %>%
+      dplyr::select(ID, dplyr::all_of(stats_metric), geneID) %>%
       tidyr::separate_rows(geneID, sep = "\\/")
 
     # if gsea has no entrezid, transID first
@@ -340,17 +340,17 @@ plotGSEA <- function(gsea_list,
       dplyr::select(-entrezid)
 
     term_order <- plot_df %>%
-      dplyr::group_by(Description) %>%
+      dplyr::group_by(ID) %>%
       dplyr::summarise(logfc2 = sum(logfc)) %>%
       dplyr::arrange(desc(logfc2))
-    plot_df$Description <- factor(plot_df$Description, levels = rev(term_order$Description))
+    plot_df$ID <- factor(plot_df$ID, levels = rev(term_order$ID))
 
     if(is.null(colour)){
       colour = c("#E31A1C","#1F78B4")
     }
     up_color = colour[1]; down_color = colour[2]
 
-    p <- ggplot(plot_df, aes_string(x = "logfc", y = "Description", fill = stats_metric)) +
+    p <- ggplot(plot_df, aes_string(x = "logfc", y = "ID", fill = stats_metric)) +
       ggridges::geom_density_ridges() +
       scale_fill_continuous(
         low = up_color, high = down_color, name = stats_metric,
@@ -366,7 +366,7 @@ plotGSEA <- function(gsea_list,
   ## bar with p.adjust>0.05 showed grey
   if (plot_type == "bar") {
     gsea_df <- gsea_list$gsea_df %>%
-      dplyr::select(Description, NES, "p.adjust") %>%
+      dplyr::select(ID, NES, "p.adjust") %>%
       dplyr::mutate(
         padj.group = cut(.$p.adjust, breaks = c(-Inf, 0.05, Inf), labels = c(1, 0)),
         nes.group = cut(.$NES, breaks = c(-Inf, 0, Inf), labels = c(0, 1)),
@@ -395,18 +395,38 @@ plotGSEA <- function(gsea_list,
         floor(min(gsea_df$NES)), ceiling(max(gsea_df$NES)),
         ceiling((ceiling(max(gsea_df$NES)) - floor(min(gsea_df$NES))) / 6)
       )) +
-      coord_flip() +
-      geom_text(
-        data = subset(gsea_df, NES > 0),
-        aes(x = index, y = 0, label = paste0(Description, "  "), color = padj.group),
-        size = lst$main_text_size / 3.6,
-        hjust = "inward"
-      ) +
-      geom_text(
-        data = subset(gsea_df, NES < 0),
-        aes(x = index, y = 0, label = paste0("  ", Description), color = padj.group),
-        size = lst$main_text_size / 3.6, hjust = "outward"
-      ) +
+      coord_flip()
+
+    pos_new <- sum(gsea_df$NES>0); neg_nes <- sum(gsea_df$NES<0)
+
+    if(pos_new<=neg_nes){
+      p <- p +
+        geom_text(
+          data = subset(gsea_df, NES > 0),
+          aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
+          size = lst$main_text_size / 3.6,
+          hjust = "inward"
+        ) +
+        geom_text(
+          data = subset(gsea_df, NES < 0),
+          aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+          size = lst$main_text_size / 3.6, hjust = "outward"
+        )
+    }else{
+      p <- p +
+        geom_text(
+          data = subset(gsea_df, NES > 0),
+          aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
+          size = lst$main_text_size / 3.6,
+          hjust = "outward"
+        ) +
+        geom_text(
+          data = subset(gsea_df, NES < 0),
+          aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+          size = lst$main_text_size / 3.6, hjust = "inward"
+        )
+    }
+    p <- p +
       scale_colour_manual(values = c("black", colour[3])) +
       labs(x = "", y = "Normalized enrichment score") +
       plot_theme(remove_grid = T, remove_legend = T, ...)

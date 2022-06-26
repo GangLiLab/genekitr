@@ -54,12 +54,13 @@ genKEGG <- function(id,
                     ...) {
 
   #--- args ---#
-  stopifnot(is.character(id))
+  # stopifnot(is.character(id))
+  id <- as.character(id)
   if (missing(universe)) universe <- NULL
 
   kegg_org <- mapKeggOrg(org)
   full_latin <- getKeggLatin(kegg_org)
-  ensorg_data <- ensOrg_name_data()
+  # ensorg_data <- ensOrg_name_data()
   ens_org <- mapEnsOrg(full_latin)
   # rm(ensOrg_name, envir = .GlobalEnv)
 
@@ -104,17 +105,27 @@ genKEGG <- function(id,
   } else {
     ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = entrez_id)
-    keg <- clusterProfiler::compareCluster(eval(parse(text = paste0("id~", paste(colnames(df)[-ncol(df)], collapse = "+")))),
-      data = df,
-      fun = "enrichKEGG", organism = kegg_org,
-      pvalueCutoff = pvalueCutoff,
-      pAdjustMethod = pAdjustMethod,
-      qvalueCutoff = qvalueCutoff,
-      universe = universe,
-      minGSSize = minGSSize,
-      maxGSSize = maxGSSize,
-      ...
-    )
+    keg <- df %>%
+      dplyr::mutate(Cluster = apply(df[,1:(ncol(df)-1)],1,paste,collapse=".")) %>%
+      dplyr::select(id, Cluster) %>%
+      split(.$Cluster) %>%
+      lapply(function(x) x %>% dplyr::pull(id)) %>%
+      lapply(function(x)
+        suppressMessages(clusterProfiler::enrichKEGG(
+          gene = x, organism = kegg_org, keyType = "kegg",
+          pvalueCutoff = pvalueCutoff,
+          pAdjustMethod = pAdjustMethod,
+          qvalueCutoff = qvalueCutoff,
+          universe = universe,
+          minGSSize = minGSSize,
+          maxGSSize = maxGSSize,
+          ...
+        )) %>%
+          as.data.frame()) %>%
+      do.call(rbind,.) %>%
+      dplyr::mutate(Cluster = gsub("\\.[^\\.]*$", "", rownames(.), perl=TRUE)) %>%
+      dplyr::relocate(Cluster,.before = dplyr::everything()) %>%
+      `rownames<-`(seq_len(nrow(.)))
   }
 
   if (nrow(as.data.frame(keg)) == 0) {

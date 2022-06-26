@@ -31,8 +31,8 @@ mapBiocOrg <- function(organism) {
 #---  get organism KEGG shortname ---#
 mapKeggOrg <- function(organism) {
   organism <- tolower(organism)
-  if (organism == "hg" | organism == "human" | organism == "hs") organism <- "hsa"
-  if (organism == "mm" | organism == "mouse") organism <- "mmu"
+  if (organism == "hg" | organism == "human" | organism == "hs" | organism == "hsapiens" ) organism <- "hsa"
+  if (organism == "mm" | organism == "mouse" | organism == "mmusculus") organism <- "mmu"
   if (organism == "rn" | organism == "rat") organism <- "rno"
 
   # some common name happens to be same with kegg short name

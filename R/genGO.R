@@ -58,7 +58,8 @@ genGO <- function(id,
                   ...) {
 
   #--- args ---#
-  stopifnot(is.character(id))
+  # stopifnot(is.character(id))
+  id <- as.character(id)
   if (missing(universe)) universe <- NULL
   if (!is.null(group_list) & lapply(group_list, function(x) length(x) == length(id)) %>%
     unlist() %>%
@@ -100,14 +101,27 @@ genGO <- function(id,
   } else {
     ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
-    ego <- clusterProfiler::compareCluster(eval(parse(text = paste0("id~", paste(colnames(df)[-ncol(df)], collapse = "+")))),
-      data = df,
-      fun = "enrichGO", OrgDb = pkg,
-      pvalueCutoff = pvalueCutoff,
-      pAdjustMethod = pAdjustMethod,
-      qvalueCutoff = qvalueCutoff,
-      ...
-    )
+    ego <- df %>%
+      dplyr::mutate(Cluster = apply(df[,1:(ncol(df)-1)],1,paste,collapse=".")) %>%
+      dplyr::select(id, Cluster) %>%
+      split(.$Cluster) %>%
+      lapply(function(x) x %>% dplyr::pull(id)) %>%
+      lapply(function(x)
+        clusterProfiler::enrichGO(
+          gene = x, OrgDb = pkg, keyType = keyType, ont = toupper(ont),
+          pvalueCutoff = pvalueCutoff,
+          pAdjustMethod = pAdjustMethod,
+          universe = universe,
+          qvalueCutoff = qvalueCutoff,
+          minGSSize = minGSSize,
+          maxGSSize = maxGSSize,
+          ...
+        ) %>%
+          as.data.frame()) %>%
+      do.call(rbind,.) %>%
+      dplyr::mutate(Cluster = gsub("\\.[^\\.]*$", "", rownames(.), perl=TRUE)) %>%
+      dplyr::relocate(Cluster,.before = dplyr::everything()) %>%
+      `rownames<-`(seq_len(nrow(.)))
   }
 
   if (nrow(as.data.frame(ego)) == 0) {
@@ -117,7 +131,7 @@ genGO <- function(id,
   }
 
   #--- get geneID_symbol ---#
-    # new id
+  # new id
   new_geneID <- get_symbol(ego$geneID,org)
 
     # input SYMBOL and no alias
