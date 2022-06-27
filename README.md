@@ -1,6 +1,6 @@
 <img src="https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-043213.png" align="left" width="200"/>
 
-[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-0.9.6-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
+[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-0.9.7-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
 
 ![Alt](https://repobeats.axiom.co/api/embed/e42ba06d30de893670c70324f19398ef0a7c26fa.svg "Repobeats analytics image")
 
@@ -15,7 +15,7 @@
 - **Search**: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
 - **Convert**: ID conversion among `Symbol & Alias`, `NCBI Entrez`, `Ensembl` ,`Uniprot` and `  Microarray probe`
 
-- **Analysis**: gene enrichment analysis including ORA (GO and KEGG) and GSEA which also supports multi-group comparison
+- **Analysis**: gene enrichment analysis including ORA (GO/ KEGG/ DO/ NCG/ DisGeNET/ WikiPathways) and GSEA which also supports multi-group comparison
 
 - **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. All plot function input is dataframe format and supports GeneOntology web result. Feel free to make your own plots.
 - **Export**: easily export multiple data sets as various sheets in one excel file
