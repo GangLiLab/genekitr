@@ -407,6 +407,74 @@ getOrder <- function(org, keytype, version) {
   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
 }
 
+#--- wikipathways data ---#
+# wget -r -np -nH -R index.html https://wikipathways-data.wmcloud.org/20220610/gmt
+getWiki <- function(org) {
+  date = '20220610'
+  data_dir <- tools::R_user_dir("genekitr", which = "data")
+  data_dir <- paste0(data_dir, "/wikipathways")
+  destfile <- paste0(data_dir, "/",  gsub(' ','_',org), ".gmt")
+
+  if (!dir.exists(data_dir)) {
+    tryCatch(
+      {
+        dir.create(data_dir, recursive = TRUE)
+      },
+      error = function(e) {
+        message(paste0(
+          "Seems like you cannot access dir: ", data_dir,
+          "\nPlease spefify a valid dir to save data..."
+        ))
+        data_dir <- readline(prompt = "Enter directory: ")
+        dir.create(data_dir, recursive = TRUE)
+      }
+    )
+  }
+
+  url <- paste0("http://112.74.191.19/genekitr/wikipathways", "/wikipathways-",date,'-gmt-', gsub(' ','_',org),  ".gmt")
+  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
+    strsplit("\r\n") %>%
+    unlist() %>%
+    stringr::str_extract("Content-Length.*[0-9]") %>%
+    stringr::str_remove_all("Content-Length: ") %>%
+    stringi::stri_remove_empty_na() %>%
+    as.numeric()
+  local_f_size <- file.size(destfile)
+
+  if (!file.exists(destfile)) {
+    # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
+      },
+      error = function(e) {
+        message(paste0(
+          "Auto download failed...\nPlease download via: ", url,
+          "\nThen save to: ", data_dir, "\n"
+        ))
+      }
+    )
+  } else if (web_f_size != local_f_size) {
+    # message('Detected new version data, updating...')
+    tryCatch(
+      {
+        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
+      },
+      error = function(e) {
+        message(paste0(
+          "Auto download failed...\nPlease download via: ", url,
+          "\nThen save to: ", data_dir, "\n"
+        ))
+      }
+    )
+  }
+
+  dat <- suppressMessages(clusterProfiler::read.gmt.wp(destfile))
+  return(dat)
+  # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
+  # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
+}
+
 
 
 # web_download <- function(url, destfile, try_time = 2L, ...) {

@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.9.6
+Version: 0.9.7
 Authors@R: 
     c(person(given = "Yunze",
              family = "Liu",
@@ -25,6 +25,7 @@ Depends: R (>= 4.0)
 Imports: 
     clusterProfiler,
     dplyr,
+    DOSE,
     europepmc,
     fst,
     ggplot2,
@@ -42,7 +43,6 @@ Suggests:
     BiocManager,
     cowplot,
     ComplexUpset,
-    DOSE,
     data.table,
     forcats,
     fgsea,

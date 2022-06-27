@@ -31,7 +31,7 @@ entrez, ensembl or symbol.}
 
 \item{maxGSSize}{Maximal size of each geneSet for analyzing, default is 500.}
 
-\item{pvalueCutoff}{Adjusted pvalue cutoff, default is 0.05.}
+\item{pvalueCutoff}{pvalue cutoff, default is 0.05.}
 
 \item{...}{Other argument to `GSEA` function}
 }

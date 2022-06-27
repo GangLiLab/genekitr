@@ -1,12 +1,12 @@
-#' Gene enrichment of KEGG analysis
+#' Gene ORA-KEGG enrichment analysis
 #'
 #' @param id A vector of gene id which can be entrezid, ensembl, symbol or uniprot.
 #' @param group_list A list of gene id groups, default is NULL.
 #' @param org  KEGG organism name from `keggOrg_name`.
 #' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 #'   "BY", "fdr", "none".
-#' @param pvalueCutoff Numberic of adjusted pvalue cutoff, default is 0.05.
-#' @param qvalueCutoff Numberic of adjusted pvalue cutoff, default is 0.1.
+#' @param pvalueCutoff Numberic of pvalue cutoff, default is 0.05.
+#' @param qvalueCutoff Numberic of adjusted pvalue cutoff, default is 0.05.
 #' @param minGSSize Numberic of minimal size of each geneSet for analyzing,
 #'   default is 10.
 #' @param maxGSSize Numberic of maximal size of each geneSet for analyzing,
@@ -46,7 +46,7 @@ genKEGG <- function(id,
                     org,
                     pAdjustMethod = "BH",
                     pvalueCutoff = 0.05,
-                    qvalueCutoff = 0.1,
+                    qvalueCutoff = 0.05,
                     minGSSize = 10,
                     maxGSSize = 500,
                     group_list = NULL,
@@ -114,7 +114,6 @@ genKEGG <- function(id,
     }
 
     keg <- df %>%
-      dplyr::mutate(Cluster = apply(df[,1:(ncol(df)-1)],1,paste,collapse=".")) %>%
       dplyr::select(id, Cluster) %>%
       split(.$Cluster) %>%
       lapply(function(x) x %>% dplyr::pull(id)) %>%

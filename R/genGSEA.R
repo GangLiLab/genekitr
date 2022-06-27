@@ -9,7 +9,7 @@
 #'   `msig_category`.
 #' @param minGSSize Minimal size of each geneSet for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each geneSet for analyzing, default is 500.
-#' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
+#' @param pvalueCutoff pvalue cutoff, default is 0.05.
 #' @param ... Other argument to `GSEA` function
 #' @importFrom dplyr select filter arrange pull mutate
 #' @importFrom stringr str_split

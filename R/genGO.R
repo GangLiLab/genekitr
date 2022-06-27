@@ -1,4 +1,4 @@
-#' Gene GO enrichment analysis
+#' Gene ORA GO enrichment analysis
 #'
 #' @param id A vector of gene id which can be entrezid, ensembl, symbol or uniprot.
 #' @param group_list A list of gene id groups, default is NULL.
@@ -6,8 +6,8 @@
 #' @param ont  One of "bp", "mf", and "cc" subontologies, or "all" for all three.
 #' @param pAdjustMethod One of "holm", "hochberg", "hommel", "bonferroni", "BH",
 #' "BY", "fdr", "none".
-#' @param pvalueCutoff Adjusted pvalue cutoff, default is 0.05.
-#' @param qvalueCutoff Adjusted pvalue cutoff, default is 0.1.
+#' @param pvalueCutoff pvalue cutoff, default is 0.05.
+#' @param qvalueCutoff Adjusted pvalue cutoff, default is 0.05.
 #' @param minGSSize Minimal size of each gene set for analyzing, default is 10.
 #' @param maxGSSize Maximal size of each gene set for analyzing, default is 500.
 #' @param universe Background genes. If missing, then all gene list in
@@ -50,7 +50,7 @@ genGO <- function(id,
                   ont,
                   pAdjustMethod = "BH",
                   pvalueCutoff = 0.05,
-                  qvalueCutoff = 0.1,
+                  qvalueCutoff = 0.05,
                   minGSSize = 10,
                   maxGSSize = 500,
                   group_list = NULL,
