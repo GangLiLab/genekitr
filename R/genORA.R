@@ -30,9 +30,9 @@
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[abs(geneList) > 1]
 #' # Disease ontology (DO)
-#' edo <- genORA(id, type = "do")
+#' edo <- genORA(id = c('BCC7','PD1','PDL1','TET2'), type = "do")
 #' # Network of Cancer Gene (NCG)
-#' encg <- genORA(names(geneList), type = "ncg")
+#' encg <- genORA(id = c('BCC7','PD1','PDL1','TET2'), type = "ncg")
 #' # DisGeNET (DGN)
 #' edgn <- genORA(id, type = "dgn", pvalueCutoff = 0.01, qvalueCutoff = 0.01)
 #' # WikiPathways (wiki)
@@ -53,7 +53,7 @@ genORA <- function(id,
                    org = 'human',
                    pAdjustMethod = "BH",
                    pvalueCutoff = 0.05,
-                   qvalueCutoff = 0.05,
+                   qvalueCutoff = 0.15,
                    minGSSize = 10,
                    maxGSSize = 500,
                    group_list = NULL,
@@ -72,17 +72,18 @@ genORA <- function(id,
 
   if(type == 'wiki'){
     # rWikiPathways::listOrganisms()
+    org <- stringr::str_replace(org, "^\\w{1}", toupper)
     all_org <- c("Arabidopsis thaliana", "Bos taurus", "Caenorhabditis elegans", "Canis familiaris",
                  "Danio rerio","Drosophila melanogaster", "Equus caballus",
                  "Gallus gallus", "Homo sapiens","Mus musculus", "Pan troglodytes", "Populus trichocarpa",
                  "Rattus norvegicus", "Saccharomyces cerevisiae", "Solanum lycopersicum",
                  "Sus scrofa")
     all_org = all_org[all_org%in% genekitr::ensOrg_name$latin_full_name]
-    if (org == "hg" | org == "human" | org == "hsa" | org == "hs") org <- "Homo sapiens"
-    if (org == "mm" | org == "mouse") org <- "Mus musculus"
-    if (org == "rn" | org == "rat") org <- "Rattus norvegicus"
-    if (org == "dm" | org == "fly") org <- "Drosophila melanogaster"
-    if (org == "dr" | org == "zebrafish") org <- "Danio rerio"
+    if (org == "Hg" | org == "Human" | org == "Hsa" | org == "Hs") org <- "Homo sapiens"
+    if (org == "Mm" | org == "Mouse") org <- "Mus musculus"
+    if (org == "Rn" | org == "Rat") org <- "Rattus norvegicus"
+    if (org == "Dm" | org == "Fly") org <- "Drosophila melanogaster"
+    if (org == "Dr" | org == "Zebrafish") org <- "Danio rerio"
 
     if (!org %in% all_org)  stop(paste0('WikiPathways enrichment analysis supports organism: \n',paste(sort(all_org),collapse = ' | ')))
   }
@@ -310,6 +311,7 @@ genORA <- function(id,
         dplyr::relocate(Cluster,.before = dplyr::everything()) %>%
         `rownames<-`(seq_len(nrow(.)))
     }
+
     if (nrow(as.data.frame(ora)) == 0) {
       stop("No terms enriched ...")
     }else{

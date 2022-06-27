@@ -10,7 +10,7 @@ genORA(
   org = "human",
   pAdjustMethod = "BH",
   pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05,
+  qvalueCutoff = 0.15,
   minGSSize = 10,
   maxGSSize = 500,
   group_list = NULL,
@@ -55,9 +55,9 @@ Gene ORA enrichment analysis for other data sets
 data(geneList, package = "genekitr")
 id <- names(geneList)[abs(geneList) > 1]
 # Disease ontology (DO)
-edo <- genORA(id, type = "do")
+edo <- genORA(id = c('BCC7','PD1','PDL1','TET2'), type = "do")
 # Network of Cancer Gene (NCG)
-encg <- genORA(names(geneList), type = "ncg")
+encg <- genORA(id = c('BCC7','PD1','PDL1','TET2'), type = "ncg")
 # DisGeNET (DGN)
 edgn <- genORA(id, type = "dgn", pvalueCutoff = 0.01, qvalueCutoff = 0.01)
 # WikiPathways (wiki)

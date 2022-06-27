@@ -10,7 +10,7 @@ genGO(
   ont,
   pAdjustMethod = "BH",
   pvalueCutoff = 0.05,
-  qvalueCutoff = 0.05,
+  qvalueCutoff = 0.15,
   minGSSize = 10,
   maxGSSize = 500,
   group_list = NULL,
