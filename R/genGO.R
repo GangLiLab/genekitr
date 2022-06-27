@@ -101,8 +101,15 @@ genGO <- function(id,
   } else {
     ## WITH GROUP INFO
     df <- as.data.frame(group_list) %>% dplyr::mutate(id = id)
+    if(ncol(df) >2 ){
+      df <- df %>%
+        dplyr::mutate(Cluster = apply(df[,1:(ncol(df)-1)],1,paste,collapse="."))
+    }else{
+      df <- df %>%
+        dplyr::mutate(Cluster = .[[1]])
+    }
+
     ego <- df %>%
-      dplyr::mutate(Cluster = apply(df[,1:(ncol(df)-1)],1,paste,collapse=".")) %>%
       dplyr::select(id, Cluster) %>%
       split(.$Cluster) %>%
       lapply(function(x) x %>% dplyr::pull(id)) %>%
