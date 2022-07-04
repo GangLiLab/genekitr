@@ -1,6 +1,6 @@
 #' Simplitify GO enrichment result
 #'
-#' @param enrich_df Enrichment analysis `data.frame` result.
+#' @param enrich_df GO enrichment analysis of `genORA()` result.
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
 #' "Lin", "Rel", "Jiang" , "Wang" methods.
 #' @param org  Organism name from `biocOrg_name`.

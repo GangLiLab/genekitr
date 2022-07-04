@@ -207,11 +207,22 @@ get_symbol <- function(id,org){
 }
 
 replace_id <- function(dat, id){
-  stringr::str_split(id, "\\/") %>%
-    lapply(., function(x) {
-      dat %>% dplyr::filter(.[[2]]%in%x) %>% dplyr::pull(1) %>%
-        paste0(.,collapse = '/')
-    }) %>%  do.call(rbind,.) %>% as.character()
+  new_id <- stringr::str_split(id, "\\/") %>% unlist()
+  check <- any(new_id%in%dat[,2])
+  if(check){
+    stringr::str_split(id, "\\/") %>%
+      lapply(., function(x) {
+        dat %>% dplyr::filter(.[[2]]%in%x) %>% dplyr::pull(1) %>%
+          paste0(.,collapse = '/')
+      }) %>%  do.call(rbind,.) %>% as.character()
+  }else{
+    stringr::str_split(id, "\\/") %>%
+      lapply(., function(x) {
+        dat %>% dplyr::filter(.[[1]]%in%x) %>% dplyr::pull(2) %>%
+          paste0(.,collapse = '/')
+      }) %>%  do.call(rbind,.) %>% as.character()
+  }
+
 }
 
 

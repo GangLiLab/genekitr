@@ -70,6 +70,10 @@ genGO <- function(id,
   bioc_org <- mapBiocOrg(org)
   org <- mapEnsOrg(org)
   pkg <- paste0("org.", bioc_org, ".eg.db")
+  if (!requireNamespace(pkg, quietly = TRUE)) {
+    BiocManager::install(pkg)
+  }
+
   keyType <- gentype(id = id, org = org)
 
   # here we convert all symbol and alias to symbol

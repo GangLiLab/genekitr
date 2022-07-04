@@ -144,8 +144,9 @@ importCP <- function(object,
   }
 
   #---- IMPORT OTHER ---#
-  # e.g. KEGG/DOSE
+  # e.g. KEGG/DO/WikiPathways
   if(type == 'other'){
+    if(is.null(object@organism)) object@organism = 'human'
     ens_org <- mapEnsOrg(object@organism)
     keg <- as.data.frame(object)
     id <- strsplit(keg$geneID,'\\/') %>% unlist() %>% unique()
