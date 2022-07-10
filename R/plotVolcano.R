@@ -86,7 +86,7 @@ plotVolcano <- function(deg_df,
     )))
 
   #--- plot ---#
-  xlim_range <- max(max(plot_df$logFC), abs(min(plot_df$logFC))) %>% ceiling()
+  xlim_range <- ceiling(max(max(plot_df$logFC), abs(min(plot_df$logFC))))
   p <- ggplot(data = plot_df, aes(x = logFC, y = -log10(stat), color = change)) +
     geom_point(alpha = 0.4, size = dot_size) +
     scale_color_manual(values = c(down_color, "black", up_color)) +

@@ -80,7 +80,8 @@ genInfo <- function(id = NULL,
       # if has entrezid and ensembl column: with exact symbol > minimal entrezid > assembled chr
       if (all(c("entrezid", "chr") %in% colnames(gene_info))) {
         uniq_order <- sapply(tomany_id, function(x) {
-          # x = tomany_id[3]
+          # x = 'GPR1-AS'
+          # print(x)
           res <- c()
           check <- which(sub$input_id == x)
 
@@ -93,7 +94,7 @@ genInfo <- function(id = NULL,
           }
 
           if(is.null(res)){
-            n_ent <- as.numeric(sub[check, "entrezid"])
+            n_ent <- as.numeric(sub[check, "entrezid"]) %>% na.omit() %>% as.numeric()
             if (!max(n_ent) == min(n_ent)) {
               min_n <- which(n_ent %in% min(n_ent))
               res <- check[min_n]

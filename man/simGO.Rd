@@ -12,7 +12,7 @@ simGO(
 )
 }
 \arguments{
-\item{enrich_df}{Enrichment analysis `data.frame` result.}
+\item{enrich_df}{GO enrichment analysis of `genORA()` result.}
 
 \item{sim_method}{Method of calculating the similarity between nodes, one of one of "Resnik",
 "Lin", "Rel", "Jiang" , "Wang" methods.}
