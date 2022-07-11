@@ -128,15 +128,19 @@ plotEnrich <- function(enrich_df,
   if (missing(layout)) layout <- "nicely"
 
   compare_group <- any(grepl("cluster", colnames(enrich_df), ignore.case = T))
-  all_go <- any(grepl("ONTOLOGY", colnames(enrich_df), ignore.case = T))
-
   if (compare_group) plot_type <- "dot"
-  if (all_go & !plot_type %in% c("bar", "wego")) {
-    warning(paste0(
-      'If you want to plot all ontologies data, please choose "plot_type" from "bar","wego"',
-      "\nInstead, bar plot will be plotted..."
-    ))
+
+  all_go <-any(grepl("ONTOLOGY", colnames(enrich_df), ignore.case = T))
+  if(all_go){
+    colnames(enrich_df)[tolower(colnames(enrich_df))%in%'ontology'] = 'ONTOLOGY'
   }
+
+  # if (all_go & !plot_type %in% c("bar", "wego")) {
+  #   warning(paste0(
+  #     'If you want to plot all ontologies data, please choose "plot_type" from "bar","wego"',
+  #     "\nInstead, bar plot will be plotted..."
+  #   ))
+  # }
 
   types <- c("GeneRatio", "Count", "FoldEnrich", "RichFactor")
   legends <- c("p.adjust", "pvalue", "qvalue")
@@ -627,8 +631,8 @@ plotEnrich <- function(enrich_df,
   #--- GO: wego plot ---#
   ## WEGO plot show all ontologies
   if (plot_type == "wego") {
-    if (!"ONTOLOGY" %in% colnames(enrich_df)) {
-      stop("WEGO plot only supports data with all three ontologies, please try other types...")
+    if (!"ontology" %in% tolower(colnames(enrich_df))) {
+      stop("WEGO plot needs a column named 'ontology' which infers ontology type of 'bp', 'cc' or 'mf'...")
     }
 
     if(missing(n_term)) n_term = 5
@@ -636,7 +640,7 @@ plotEnrich <- function(enrich_df,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     wego <- enrich_df %>%
-      dplyr::select(1:3, "Count", "GeneRatio") %>%
+      dplyr::select("ID",'Description', "Count", "GeneRatio", "ONTOLOGY") %>%
       dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
       dplyr::group_by(ONTOLOGY) %>%
       dplyr::top_n(n_term, GeneRatio) %>%
@@ -644,9 +648,9 @@ plotEnrich <- function(enrich_df,
       dplyr::arrange(ONTOLOGY, GeneRatio) %>%
       dplyr::mutate(Position = dplyr::n():1) %>%
       dplyr::mutate(ONTOLOGY = dplyr::case_when(
-        ONTOLOGY == "BP" ~ "Biological Process",
-        ONTOLOGY == "CC" ~ "Cellular Component",
-        ONTOLOGY == "MF" ~ "Molecular Function"
+        tolower(ONTOLOGY) == "bp" ~ "Biological Process",
+        tolower(ONTOLOGY) == "cc" ~ "Cellular Component",
+        tolower(ONTOLOGY) == "mf" ~ "Molecular Function"
       ))
 
     normalizer <- max(wego$Count) / max(wego$GeneRatio)
