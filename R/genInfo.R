@@ -94,7 +94,7 @@ genInfo <- function(id = NULL,
           }
 
           if(is.null(res)){
-            n_ent <- as.numeric(sub[check, "entrezid"]) %>% na.omit() %>% as.numeric()
+            n_ent <- as.numeric(sub[check, "entrezid"]) %>% stats::na.omit() %>% as.numeric()
             if (!max(n_ent) == min(n_ent)) {
               min_n <- which(n_ent %in% min(n_ent))
               res <- check[min_n]

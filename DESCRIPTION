@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit in R
-Version: 0.9.7
+Version: 1.0.0
 Authors@R: 
     c(person(given = "Yunze",
              family = "Liu",
@@ -21,13 +21,15 @@ Description: An analysis toolkit focused on genes. It mainly includes five
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 4.0)
+Depends: 
+    R (>= 3.6)
 Imports: 
     clusterProfiler,
     dplyr,
     DOSE,
     europepmc,
     fst,
+    geneset,
     ggplot2,
     ggraph,
     igraph,

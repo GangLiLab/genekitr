@@ -2,66 +2,57 @@
 % Please edit documentation in R/genORA.R
 \name{genORA}
 \alias{genORA}
-\title{Gene ORA enrichment analysis for other data sets}
+\title{Gene Over-Representation enrichment Analysis (ORA method)}
 \usage{
 genORA(
   id,
-  type = c("do", "ncg", "dgn", "wiki"),
-  org = "human",
-  pAdjustMethod = "BH",
-  pvalueCutoff = 0.05,
-  qvalueCutoff = 0.15,
-  minGSSize = 10,
-  maxGSSize = 500,
+  geneset,
   group_list = NULL,
+  padj_method = "BH",
+  p_cutoff = 0.05,
+  q_cutoff = 0.15,
+  min_gset_size = 10,
+  max_gset_size = 500,
   universe
 )
 }
 \arguments{
 \item{id}{A vector of gene id which can be entrezid, ensembl, symbol or uniprot.}
 
-\item{type}{ORA analyse type, choose one from "do" (Disease Ontology), "ncg" (Network of Cancer Gene),
-"dgn" (DisGeNET) and "wiki" (WikiPathways)}
+\item{geneset}{Gene set is a two-column data.frame with term id and gene id.
+Please use package `geneset` to select available gene set or make new one.}
 
-\item{org}{human as default}
+\item{group_list}{A list of gene group information, default is NULL.}
 
-\item{pAdjustMethod}{One of "holm", "hochberg", "hommel", "bonferroni", "BH",
-"BY", "fdr", "none".}
+\item{padj_method}{One of "BH", "BY", "bonferroni","fdr","hochberg",
+"holm", "hommel", "none"}
 
-\item{pvalueCutoff}{Numberic of pvalue cutoff, default is 0.05.}
+\item{p_cutoff}{Numeric of cutoff for both unadjusted and adjusted pvalue, default is 0.05.}
 
-\item{qvalueCutoff}{Numberic of adjusted pvalue cutoff, default is 0.05.}
+\item{q_cutoff}{Numeric of cutoff for qvalue, default is 0.15.}
 
-\item{minGSSize}{Numberic of minimal size of each geneSet for analyzing,
+\item{min_gset_size}{Numeric of minimal size of each geneset for analyzing,
 default is 10.}
 
-\item{maxGSSize}{Numberic of maximal size of each geneSet for analyzing,
+\item{max_gset_size}{Numeric of maximal size of each geneset for analyzing,
 default is 500.}
 
-\item{group_list}{A list of gene id groups, default is NULL.}
-
-\item{universe}{Background genes. If missing, the orgdb all gene list will be
-used as background.}
+\item{universe}{Character of background genes. If missing, all genes in
+geneset will be used as background.}
 }
 \value{
 A `data.frame`.
 }
 \description{
-Gene ORA enrichment analysis for other data sets
+Gene Over-Representation enrichment Analysis (ORA method)
 }
 \examples{
 \dontrun{
 # only gene ids
 data(geneList, package = "genekitr")
 id <- names(geneList)[abs(geneList) > 1]
-# Disease ontology (DO)
-edo <- genORA(id = c('BCC7','PD1','PDL1','TET2'), type = "do")
-# Network of Cancer Gene (NCG)
-encg <- genORA(id = c('BCC7','PD1','PDL1','TET2'), type = "ncg")
-# DisGeNET (DGN)
-edgn <- genORA(id, type = "dgn", pvalueCutoff = 0.01, qvalueCutoff = 0.01)
-# WikiPathways (wiki)
-ewiki <- genORA(id, type = "wiki", org = "human")
+gs <- geneset::getGO(org = "human",ont = "mf")
+ora <- genORA(id, geneset = gs)
 
 # gene id with groups
 id <- c(head(names(geneList), 100), tail(names(geneList), 100))
@@ -69,7 +60,7 @@ group <- list(
   group1 = c(rep("up", 100), rep("down", 100)),
   group2 = c(rep("A", 130), rep("B", 70))
 )
-gedo <- genORA(id, type = "do",group_list = group)
+gora <- genORA(id, geneset = gs, group_list = group)
 
 }
 }

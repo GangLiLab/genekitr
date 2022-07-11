@@ -2,53 +2,53 @@
 % Please edit documentation in R/genGSEA.R
 \name{genGSEA}
 \alias{genGSEA}
-\title{GSEA for a gene list with decreasing logFC value}
+\title{Gene Set Enrichment Analysis (FCS method)}
 \usage{
 genGSEA(
   genelist,
-  org,
-  category = c("C1", "C2", "C3", "C4", "C5", "C6", "C7", "C8", "H"),
-  subcategory = NULL,
-  minGSSize = 10,
-  maxGSSize = 500,
-  pvalueCutoff = 0.05,
-  ...
+  geneset,
+  padj_method = "BH",
+  p_cutoff = 0.05,
+  min_gset_size = 10,
+  max_gset_size = 500,
+  set_seed = FALSE
 )
 }
 \arguments{
 \item{genelist}{Order ranked genelist in decreasing order, gene can be
 entrez, ensembl or symbol.}
 
-\item{org}{Organism name from `msig_org`.}
+\item{geneset}{Gene set is a two-column data.frame with term id and gene id.
+Please use package `geneset` to select available gene set or make new one.}
 
-\item{category}{MSigDB collection abbreviation, one of C1','C2','C3',
-'C4','C5','C6','C7','C8','H'.}
+\item{padj_method}{One of "BH", "BY", "bonferroni","fdr","hochberg",
+"holm", "hommel", "none"}
 
-\item{subcategory}{MSigDB sub-collection abbreviation, choose from
-`msig_category`.}
+\item{p_cutoff}{Numeric of cutoff for both unadjusted and adjusted pvalue, default is 0.05.}
 
-\item{minGSSize}{Minimal size of each geneSet for analyzing, default is 10.}
+\item{min_gset_size}{Numeric of minimal size of each geneset for analyzing,
+default is 10.}
 
-\item{maxGSSize}{Maximal size of each geneSet for analyzing, default is 500.}
+\item{max_gset_size}{Numeric of maximal size of each geneset for analyzing,
+default is 500.}
 
-\item{pvalueCutoff}{pvalue cutoff, default is 0.05.}
-
-\item{...}{Other argument to `GSEA` function}
+\item{set_seed}{GSEA permutations are performed using random reordering,
+which causes slightly difference results after every time running.
+If user want to get same result every time for same input,
+please set `set_seed = TRUE` or `set.seed()` prior to running.}
 }
 \value{
-GSEA list
+A `data.frame`.
 }
 \description{
-GSEA for a gene list with decreasing logFC value
+Gene Set Enrichment Analysis (FCS method)
 }
 \examples{
-\donttest{
+\dontrun{
+# only gene ids
 data(geneList, package = "genekitr")
-gse <- genGSEA(
-  genelist = geneList,
-  org = "human",
-  category = "H"
-)
-}
+gs <- geneset::getGO(org = "human",ont = "mf")
+gse <- genGSEA(genelist = geneList, geneset = gs)
 
+}
 }

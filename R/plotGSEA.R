@@ -10,7 +10,7 @@
 #' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
 #' @param ... other arguments transfer to `plot_theme` function
 #'
-#' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline
+#' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline expansion
 #' element_blank element_rect margin geom_linerange scale_y_continuous geom_segment geom_bar
 #' scale_fill_manual geom_hline element_line geom_line scale_colour_manual guide_colourbar
 #' @importFrom dplyr filter arrange slice_head select rename group_by summarise case_when mutate
@@ -23,19 +23,18 @@
 #' library(ggplot2)
 #' ## get GSEA result
 #' data(geneList, package = "genekitr")
-#' gse <- genGSEA(
-#'   genelist = geneList, org = "human",
-#'   category = "H", use_symbol = TRUE, pvalueCutoff = 0.05
-#' )
+#' gs <- geneset::getMsigdb(org = "human",category = "H")
+#' gse <- genGSEA(genelist = geneList, geneset = gs)
+#'
 #' ## volcano plot
 #' # get top3 of up and down pathways
 #' plotGSEA(gse, plot_type = "volcano", show_pathway = 3)
 #' # choose pathway by character
-#' pathways <- c("HALLMARK_P53_PATHWAY", "HALLMARK_GLYCOLYSIS", "HALLMARK_DNA_REPAIR")
+#' pathways <- c('HALLMARK_KRAS_SIGNALING_UP','HALLMARK_P53_PATHWAY','HALLMARK_GLYCOLYSIS')
 #' plotGSEA(gse, plot_type = "volcano", show_pathway = pathways)
 #'
 #' ## classic pathway plot
-#' genes <- c("MET", "TP53", "PMM2")
+#' genes <- c('ENG','TP53','MET')
 #' plotGSEA(gse, plot_type = "classic", show_pathway = pathways, show_gene = genes)
 #'
 #' ## fgsea table plot
@@ -68,6 +67,9 @@ plotGSEA <- function(gsea_list,
   stopifnot(is.list(gsea_list))
   plot_type <- match.arg(plot_type)
   stats_metric <- match.arg(stats_metric)
+  gsea_df <- gsea_list$gsea_df
+  geneset <- gsea_list$geneset
+  gl <- gsea_list$genelist
 
   legends <- c("p.adjust", "pvalue", "qvalue")
   if (!stats_metric %in% colnames(gsea_list$gsea_df)) {
@@ -90,7 +92,6 @@ plotGSEA <- function(gsea_list,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
     if(is.null(show_pathway)) show_pathway = 3
 
-    gsea_df <- gsea_list$gsea_df
     gsea_df <- gsea_df[order(gsea_df$NES, decreasing = TRUE), ]
     plot_df <- gsea_df
     if (is.numeric(show_pathway)) {
@@ -125,9 +126,6 @@ plotGSEA <- function(gsea_list,
   #--- classic plot ---#
   # GSEA rank list
   if (plot_type == "classic") {
-    gsea_df <- gsea_list$gsea_df
-    geneset <- gsea_list$geneset
-    gl = gsea_list$genelist
     gl1 = gl[,2]
     names(gl1) = gl[,1]
     genelist = gl1
@@ -270,10 +268,9 @@ plotGSEA <- function(gsea_list,
   if (plot_type == "fgsea") {
     if(is.null(show_pathway)) show_pathway = 3
 
-    geneset_list <- gsea_list$geneset %>%
-      split(.$gs_name) %>%
+    geneset_list <- geneset %>%
+      split(.[[1]]) %>%
       lapply("[[", 2)
-    gl = gsea_list$genelist
     gl1 = gl[,2]
     names(gl1) = gl[,1]
     genelist = gl1
@@ -309,7 +306,6 @@ plotGSEA <- function(gsea_list,
   if (plot_type == "ridge") {
     if(is.null(show_pathway)) show_pathway = 3
 
-    gsea_df <- gsea_list$gsea_df
     if (is.numeric(show_pathway)) {
       if (length(show_pathway) > 1) {
         show_pathway <- gsea_df$ID[show_pathway, ]
@@ -365,7 +361,7 @@ plotGSEA <- function(gsea_list,
   #--- two-side barplot ---#
   ## bar with p.adjust>0.05 showed grey
   if (plot_type == "bar") {
-    gsea_df <- gsea_list$gsea_df %>%
+    gsea_df <- gsea_df %>%
       dplyr::select(ID, NES, "p.adjust") %>%
       dplyr::mutate(
         padj.group = cut(.$p.adjust, breaks = c(-Inf, 0.05, Inf), labels = c(1, 0)),
@@ -398,6 +394,21 @@ plotGSEA <- function(gsea_list,
       coord_flip()
 
     pos_new <- sum(gsea_df$NES>0); neg_nes <- sum(gsea_df$NES<0)
+    if(neg_nes == 0 & pos_new != 0 ){
+      p <- p +
+        geom_text(
+          data = subset(gsea_df, NES > 0),
+          aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+          size = lst$main_text_size / 3.6, hjust = "outward"
+        )
+    }else if(neg_nes != 0 & pos_new == 0 ){
+      p <- p +
+        geom_text(
+          data = subset(gsea_df, NES < 0),
+          aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+          size = lst$main_text_size / 3.6, hjust = "inward"
+        )
+    }
 
     if(pos_new<=neg_nes){
       p <- p +
@@ -412,7 +423,7 @@ plotGSEA <- function(gsea_list,
           aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
           size = lst$main_text_size / 3.6, hjust = "outward"
         )
-    }else{
+    }else if (pos_new > neg_nes){
       p <- p +
         geom_text(
           data = subset(gsea_df, NES > 0),
@@ -426,6 +437,7 @@ plotGSEA <- function(gsea_list,
           size = lst$main_text_size / 3.6, hjust = "inward"
         )
     }
+
     p <- p +
       scale_colour_manual(values = c("black", colour[3])) +
       labs(x = "", y = "Normalized enrichment score") +
@@ -439,8 +451,8 @@ plotGSEA <- function(gsea_list,
 calcScore <- function(geneset, genelist, item, exponent, fortify = TRUE, org) {
   genelist <- genelist[!duplicated(names(genelist))]
   geneset <- geneset %>%
-    dplyr::filter(gs_name %in% item) %>%
-    dplyr::pull("entrez_gene") %>%
+    dplyr::filter(.[[1]] %in% item) %>%
+    dplyr::pull(2) %>%
     as.character()
   geneset <- intersect(geneset, names(genelist))
   L <- length(genelist)

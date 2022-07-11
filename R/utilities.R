@@ -407,74 +407,110 @@ getOrder <- function(org, keytype, version) {
   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
 }
 
-#--- wikipathways data ---#
-# wget -r -np -nH -R index.html https://wikipathways-data.wmcloud.org/20220610/gmt
-getWiki <- function(org) {
-  date = '20220610'
-  data_dir <- tools::R_user_dir("genekitr", which = "data")
-  data_dir <- paste0(data_dir, "/wikipathways")
-  destfile <- paste0(data_dir, "/",  gsub(' ','_',org), ".gmt")
 
-  if (!dir.exists(data_dir)) {
-    tryCatch(
-      {
-        dir.create(data_dir, recursive = TRUE)
-      },
-      error = function(e) {
-        message(paste0(
-          "Seems like you cannot access dir: ", data_dir,
-          "\nPlease spefify a valid dir to save data..."
-        ))
-        data_dir <- readline(prompt = "Enter directory: ")
-        dir.create(data_dir, recursive = TRUE)
-      }
-    )
-  }
+#--- functions in enrichment analysis ---#
+get_symbol <- function(id,org){
+  ori_id <- stringr::str_split(id, "\\/") %>% unlist() %>% unique()
+  id_all <- suppressMessages(transId(ori_id, "symbol", org, unique = T))
 
-  url <- paste0("http://112.74.191.19/genekitr/wikipathways", "/wikipathways-",date,'-gmt-', gsub(' ','_',org),  ".gmt")
-  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
-    strsplit("\r\n") %>%
-    unlist() %>%
-    stringr::str_extract("Content-Length.*[0-9]") %>%
-    stringr::str_remove_all("Content-Length: ") %>%
-    stringi::stri_remove_empty_na() %>%
-    as.numeric()
-  local_f_size <- file.size(destfile)
-
-  if (!file.exists(destfile)) {
-    # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  } else if (web_f_size != local_f_size) {
-    # message('Detected new version data, updating...')
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  }
-
-  dat <- suppressMessages(clusterProfiler::read.gmt.wp(destfile))
-  return(dat)
-  # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
-  # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
+  new_geneID <- stringr::str_split(id, "\\/") %>%
+    lapply(., function(x) {
+      id_all %>%
+        dplyr::filter(input_id %in% x) %>%
+        dplyr::arrange(match(input_id, x)) %>%
+        dplyr::pull(symbol)
+    }) %>%
+    sapply(., paste0, collapse = "/")
+  return(new_geneID)
 }
 
+replace_id <- function(dat, id){
+  new_id <- stringr::str_split(id, "\\/") %>% unlist()
+  check <- any(new_id%in%dat[,2])
+  if(check){
+    stringr::str_split(id, "\\/") %>%
+      lapply(., function(x) {
+        dat %>% dplyr::filter(.[[2]]%in%x) %>% dplyr::pull(1) %>%
+          paste0(.,collapse = '/')
+      }) %>%  do.call(rbind,.) %>% as.character()
+  }else{
+    stringr::str_split(id, "\\/") %>%
+      lapply(., function(x) {
+        dat %>% dplyr::filter(.[[1]]%in%x) %>% dplyr::pull(2) %>%
+          paste0(.,collapse = '/')
+      }) %>%  do.call(rbind,.) %>% as.character()
+  }
+}
+
+
+# #--- wikipathways data ---#
+# # wget -r -np -nH -R index.html https://wikipathways-data.wmcloud.org/20220610/gmt
+# getWiki <- function(org) {
+#   date = '20220610'
+#   data_dir <- tools::R_user_dir("genekitr", which = "data")
+#   data_dir <- paste0(data_dir, "/wikipathways")
+#   destfile <- paste0(data_dir, "/",  gsub(' ','_',org), ".gmt")
+#
+#   if (!dir.exists(data_dir)) {
+#     tryCatch(
+#       {
+#         dir.create(data_dir, recursive = TRUE)
+#       },
+#       error = function(e) {
+#         message(paste0(
+#           "Seems like you cannot access dir: ", data_dir,
+#           "\nPlease spefify a valid dir to save data..."
+#         ))
+#         data_dir <- readline(prompt = "Enter directory: ")
+#         dir.create(data_dir, recursive = TRUE)
+#       }
+#     )
+#   }
+#
+#   url <- paste0("http://112.74.191.19/genekitr/wikipathways", "/wikipathways-",date,'-gmt-', gsub(' ','_',org),  ".gmt")
+#   web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
+#     strsplit("\r\n") %>%
+#     unlist() %>%
+#     stringr::str_extract("Content-Length.*[0-9]") %>%
+#     stringr::str_remove_all("Content-Length: ") %>%
+#     stringi::stri_remove_empty_na() %>%
+#     as.numeric()
+#   local_f_size <- file.size(destfile)
+#
+#   if (!file.exists(destfile)) {
+#     # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
+#     tryCatch(
+#       {
+#         utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
+#       },
+#       error = function(e) {
+#         message(paste0(
+#           "Auto download failed...\nPlease download via: ", url,
+#           "\nThen save to: ", data_dir, "\n"
+#         ))
+#       }
+#     )
+#   } else if (web_f_size != local_f_size) {
+#     # message('Detected new version data, updating...')
+#     tryCatch(
+#       {
+#         utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
+#       },
+#       error = function(e) {
+#         message(paste0(
+#           "Auto download failed...\nPlease download via: ", url,
+#           "\nThen save to: ", data_dir, "\n"
+#         ))
+#       }
+#     )
+#   }
+#
+#   dat <- suppressMessages(clusterProfiler::read.gmt.wp(destfile))
+#   return(dat)
+#   # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
+#   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
+# }
+#
 
 
 # web_download <- function(url, destfile, try_time = 2L, ...) {
@@ -512,5 +548,5 @@ utils::globalVariables(c(
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis", "everything", "gene", "coord_flip",
   "expansion", "index", "nes.group", "padj.group", "change", "label", "logFC", "stat", "pvalue",
-  "cluster","Cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id"
+  "cluster","Cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id","entrezid"
 ))
