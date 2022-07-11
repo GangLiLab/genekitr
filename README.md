@@ -1,6 +1,6 @@
 <img src="https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-043213.png" align="left" width="200"/>
 
-[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-0.9.7-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
+[![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-1.0.0-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
 
 ![Alt](https://repobeats.axiom.co/api/embed/e42ba06d30de893670c70324f19398ef0a7c26fa.svg "Repobeats analytics image")
 
@@ -15,7 +15,7 @@
 - **Search**: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
 - **Convert**: ID conversion among `Symbol & Alias`, `NCBI Entrez`, `Ensembl` ,`Uniprot` and `  Microarray probe`
 
-- **Analysis**: gene enrichment analysis including ORA (GO/ KEGG/ DO/ NCG/ DisGeNET/ WikiPathways) and GSEA which also supports multi-group comparison
+- **Analysis**: user could select interested gene set from hundreds of gene sets for both model and non-model species, including [GO](http://geneontology.org/) (BP, CC and MF), [KEGG](https://www.kegg.jp/kegg/) (pathway, module, enzyme, network, drug and disease), [WikiPathway](https://wikipathways.org/), [MsigDb](https://www.gsea-msigdb.org/gsea/msigdb/), [EnrichrDb](https://maayanlab.cloud/Enrichr/), [Reactome](https://reactome.org/), [MeSH](https://www.ncbi.nlm.nih.gov/mesh/), [DisGeNET](https://www.disgenet.org/), [Disease Ontology](https://disease-ontology.org/) (DO), [Network of Cancer Gene](http://ncg.kcl.ac.uk/) (NCG) (version 6 and v7) and [COVID-19](https://maayanlab.cloud/covid19/). Gene enrichment analysis (GSA) contains both over representation analysis (ORA) and gene set enrichment analysis (GSEA) methods. ORA could support multi-group comparison.
 
 - **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. All plot function input is dataframe format and supports GeneOntology web result. Feel free to make your own plots.
 - **Export**: easily export multiple data sets as various sheets in one excel file
@@ -23,7 +23,7 @@
 #### Supported organisms:
 
 - Search & ID conversion:  **195** vertebrate species, **120** plant species and **2** bacteria species
-- Enrichment analysis: GO supports **18** species, KEGG supports **7254** species and GSEA supports **20** species
+- Enrichment analysis: GO supports **143** species, KEGG supports **8213** species, MeSH supports **71** species, MsigDb supports **20** species, WikiPahtwaysupports **16** species, and Reactome supports **11** species.
 
 
 
