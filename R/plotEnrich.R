@@ -52,10 +52,8 @@
 #' id <- names(geneList)[abs(geneList) > 1.5]
 #' logfc <- geneList[id]
 #'
-#' ego <- genGO(id,
-#'   org = "human", ont = "bp", pvalueCutoff = 0.01,
-#'   qvalueCutoff = 0.01
-#' )
+#' gs <- geneset::getGO(org = "human",ont = "bp")
+#' ego <- genORA(id, geneset = gs)
 #' ego <- ego[1:10, ]
 #' all_ego <- genGO(id,
 #'   org = "human", ont = "all", pvalueCutoff = 0.01,
@@ -419,25 +417,24 @@ plotEnrich <- function(enrich_df,
     id_df <- data.frame(geneID = id, geneID_symbol = id_symbol) %>%
       dplyr::distinct()
 
-    if (all(show_gene == "all")) {
-      plot_df <- enrich_df %>%
-        dplyr::select(Description, geneID_symbol) %>%
-        tidyr::separate_rows(geneID_symbol, sep = "\\/") %>%
-        dplyr::rename(geneID = geneID_symbol)
-    } else {
-      # if show_gene is not symbol, first extract matching symbol
-      if (all(show_gene %in% id)) {
-        show_gene <- id_df %>%
-          dplyr::filter(geneID %in% show_gene) %>%
-          dplyr::pull(geneID_symbol)
-      }
-
-      plot_df <- enrich_df %>%
-        dplyr::select(Description, geneID_symbol) %>%
-        tidyr::separate_rows(geneID_symbol, sep = "\\/") %>%
-        dplyr::filter(geneID_symbol %in% show_gene) %>%
-        dplyr::rename(geneID = geneID_symbol)
+    # if show_gene is not symbol, first extract matching symbol
+    if(all(show_gene == 'all')) stop('Please specify gene name to "show_gene"...')
+    if (all(show_gene %in% id)) {
+      show_gene <- id_df %>%
+        dplyr::filter(geneID %in% show_gene) %>%
+        dplyr::pull(geneID_symbol)
     }
+    if (all(show_gene %in% id_symbol)) {
+      show_gene <- id_df %>%
+        dplyr::filter(geneID_symbol %in% show_gene) %>%
+        dplyr::pull(geneID_symbol)
+    }
+
+    plot_df <- enrich_df %>%
+      dplyr::select(Description, geneID_symbol) %>%
+      tidyr::separate_rows(geneID_symbol, sep = "\\/") %>%
+      dplyr::filter(geneID_symbol %in% show_gene) %>%
+      dplyr::rename(geneID = geneID_symbol)
 
     # define color
     my_cols <- c(
@@ -532,7 +529,8 @@ plotEnrich <- function(enrich_df,
       }
     }))
 
-    id <- enrich_df[, 1]
+
+    id <- enrich_df[,grepl("^id",colnames(enrich_df),ignore.case = T)]
     enrichGenes <- strsplit(enrich_df$geneID, "\\/") %>% setNames(id)
 
     # kegg result just use JC method
@@ -923,7 +921,7 @@ get_JC_data <- function(enrich_df) {
 }
 
 get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
-  org_name <- genekitr::biocOrg_name
+  org_name <- genekitr::biocOrg_name$short_name
 
   if (is.null(org)) {
     tryCatch(
@@ -932,11 +930,11 @@ get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
         org <- nm[1]
       },
       error = function(e) {
-        message("Please give the organism short name from genekitr::biocOrg_name!")
+        message("Please rename the ID column with organism short name from genekitr::biocOrg_name!\nOR you can use 'JC' method")
       }
     )
   } else if (!tolower(org) %in% org_name) {
-    stop("Please give the organism short name from genekitr::biocOrg_name!")
+    stop("Please rename the ID column with organism short name from genekitr::biocOrg_name!\nOR you can use 'JC' method.")
   }
 
   if (is.null(ont)) {
@@ -946,11 +944,11 @@ get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
         ont <- nm[2]
       },
       error = function(e) {
-        message('Please give the ontology name from "BP", "CC" and "MF"!')
+        message('Please rename the ID column with ontology of "BP", "CC" and "MF"!\nOR you can use "JC" method.')
       }
     )
   } else if (!tolower(ont) %in% c("bp", "cc", "mf")) {
-    stop('Please give the ontology name from "BP", "CC" and "MF"!')
+    stop('Please rename the ID column with ontology of "BP", "CC" and "MF"!\nOR you can use "JC" method.')
   }
 
   ont <- toupper(ont)

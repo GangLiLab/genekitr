@@ -57,7 +57,7 @@ genORA <- function(id,
   if(missing(geneset)) stop('Please provide gene set...\nWe recommend to use package `geneset` to select available gene set or make new one.')
 
   genesetType <- geneset$type
-  transToSym <- ifelse(genesetType %in% c("enrichrdb","go","covid19"), TRUE, FALSE)
+  transToSym <- ifelse(genesetType %in% c("enrichrdb","bp","mf","cc","covid19"), TRUE, FALSE)
 
   org <- geneset$organism
   ens_org <- mapEnsOrg(org)
@@ -200,6 +200,16 @@ genORA <- function(id,
     calcFoldEnrich() %>%
     as.enrichdat() %>%
     dplyr::mutate(RichFactor = Count / as.numeric(sub("/\\d+", "", BgRatio)))
+
+  ## modify id column name for GO
+  bioc_org <- ensOrg_name %>%
+    dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
+    dplyr::pull(bioc_name) %>%
+    stringr::str_to_sentence()
+
+  if(genesetType %in% c('bp','cc','mf')){
+    colnames(new_ora)[1] = paste0(bioc_org,'_',toupper(genesetType),'_ID')
+  }
 
   return(new_ora)
 

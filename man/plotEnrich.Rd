@@ -86,10 +86,8 @@ data(geneList, package = "genekitr")
 id <- names(geneList)[abs(geneList) > 1.5]
 logfc <- geneList[id]
 
-ego <- genGO(id,
-  org = "human", ont = "bp", pvalueCutoff = 0.01,
-  qvalueCutoff = 0.01
-)
+gs <- geneset::getGO(org = "human",ont = "bp")
+ego <- genORA(id, geneset = gs)
 ego <- ego[1:10, ]
 all_ego <- genGO(id,
   org = "human", ont = "all", pvalueCutoff = 0.01,

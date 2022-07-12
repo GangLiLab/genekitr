@@ -46,7 +46,7 @@ genGSEA <- function(genelist,
   if(missing(geneset)) stop('Please provide gene set...\nWe recommend to use package `geneset` to select available gene set or make new one.')
 
   genesetType <- geneset$type
-  transToSym <- ifelse(genesetType %in% c("enrichrdb","go","covid19"), TRUE, FALSE)
+  transToSym <- ifelse(genesetType %in% c("enrichrdb","bp",'mf','cc',"covid19"), TRUE, FALSE)
 
   org <- geneset$organism
   ens_org <- tryCatch( mapEnsOrg(org), error = function(e) NULL)
