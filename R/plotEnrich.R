@@ -638,7 +638,7 @@ plotEnrich <- function(enrich_df,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     wego <- enrich_df %>%
-      dplyr::select("ID",'Description', "Count", "GeneRatio", "ONTOLOGY") %>%
+      dplyr::select(1,'Description', "Count", "GeneRatio", "ONTOLOGY") %>%
       dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
       dplyr::group_by(ONTOLOGY) %>%
       dplyr::top_n(n_term, GeneRatio) %>%

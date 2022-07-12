@@ -308,32 +308,43 @@ plotGSEA <- function(gsea_list,
 
     if (is.numeric(show_pathway)) {
       if (length(show_pathway) > 1) {
-        show_pathway <- gsea_df$ID[show_pathway, ]
+        show_pathway <- gsea_df$ID[show_pathway]
       } else {
         show_pathway <- gsea_df$ID[1:show_pathway]
       }
     }
-    new_gsea_df <- gsea_df %>%
-      dplyr::filter(ID %in% show_pathway) %>%
-      dplyr::select(ID, dplyr::all_of(stats_metric), geneID) %>%
-      tidyr::separate_rows(geneID, sep = "\\/")
 
-    # if gsea has no entrezid, transID first
-    if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
-      id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
-      new_gsea_df <- merge(new_gsea_df, id_map,
-        by.x = "geneID", by.y = "input_id",
-        all.x = T, all.y = F
-      )
-    } else {
-      new_gsea_df <- new_gsea_df %>% dplyr::rename(entrezid = geneID)
+    check_gset_type <- suppressWarnings(ifelse(all(is.na(as.numeric(head(geneset[,2])))),'symbol','entrez'))
+    if(check_gset_type == 'symbol'){
+      new_gsea_df <- gsea_df %>%
+        dplyr::filter(ID %in% show_pathway) %>%
+        dplyr::select(ID, dplyr::all_of(stats_metric), geneID_symbol) %>%
+        tidyr::separate_rows(geneID_symbol, sep = "\\/") %>%
+        dplyr::rename(geneID = geneID_symbol)
+    }else{
+      new_gsea_df <- gsea_df %>%
+        dplyr::filter(ID %in% show_pathway) %>%
+        dplyr::select(ID, dplyr::all_of(stats_metric), geneID) %>%
+        tidyr::separate_rows(geneID, sep = "\\/")
     }
 
-    logfc <- gsea_list$genelist %>% dplyr::rename(entrezid = ID)
 
 
-    plot_df <- merge(new_gsea_df, logfc, by = "entrezid") %>%
-      dplyr::select(-entrezid)
+    # if gsea has no entrezid, transID first
+    # if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
+    #   id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
+    #   new_gsea_df <- merge(new_gsea_df, id_map,
+    #     by.x = "geneID", by.y = "input_id",
+    #     all.x = T, all.y = F
+    #   )
+    # } else {
+    #   new_gsea_df <- new_gsea_df %>% dplyr::rename(entrezid = geneID)
+    # }
+
+    logfc <- gsea_list$genelist
+
+    plot_df <- merge(new_gsea_df, logfc, by.x = "geneID", by.y = "ID") %>%
+      dplyr::select(-geneID)
 
     term_order <- plot_df %>%
       dplyr::group_by(ID) %>%

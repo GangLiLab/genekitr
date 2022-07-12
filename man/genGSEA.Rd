@@ -9,6 +9,7 @@ genGSEA(
   geneset,
   padj_method = "BH",
   p_cutoff = 0.05,
+  q_cutoff = 0.05,
   min_gset_size = 10,
   max_gset_size = 500,
   set_seed = FALSE
@@ -25,6 +26,8 @@ Please use package `geneset` to select available gene set or make new one.}
 "holm", "hommel", "none"}
 
 \item{p_cutoff}{Numeric of cutoff for both unadjusted and adjusted pvalue, default is 0.05.}
+
+\item{q_cutoff}{Numeric of cutoff for qvalue, default is 0.05.}
 
 \item{min_gset_size}{Numeric of minimal size of each geneset for analyzing,
 default is 10.}

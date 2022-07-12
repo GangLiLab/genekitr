@@ -7,6 +7,7 @@
 #' @param padj_method One of "BH", "BY", "bonferroni","fdr","hochberg",
 #' "holm", "hommel", "none"
 #' @param p_cutoff Numeric of cutoff for both unadjusted and adjusted pvalue, default is 0.05.
+#' @param q_cutoff Numeric of cutoff for qvalue, default is 0.05.
 #' @param min_gset_size Numeric of minimal size of each geneset for analyzing,
 #'   default is 10.
 #' @param max_gset_size Numeric of maximal size of each geneset for analyzing,
@@ -37,6 +38,7 @@ genGSEA <- function(genelist,
                     geneset,
                     padj_method = "BH",
                     p_cutoff = 0.05,
+                    q_cutoff = 0.05,
                     min_gset_size = 10,
                     max_gset_size = 500,
                     set_seed = FALSE){
@@ -97,7 +99,8 @@ genGSEA <- function(genelist,
     fcs <- fcs %>%
       as.data.frame() %>%
       as.enrichdat() %>%
-      dplyr::select(-GeneRatio)
+      dplyr::select(-GeneRatio) %>%
+      dplyr::filter(qvalue < q_cutoff)
   }
 
   ## transToSym means geneset in "enrichrdb","go" and "covid19"
@@ -142,6 +145,16 @@ genGSEA <- function(genelist,
       new_fcs <- fcs
     }
 
+  }
+
+  ## modify id column name for GO
+  bioc_org <- ensOrg_name %>%
+    dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
+    dplyr::pull(bioc_name) %>%
+    stringr::str_to_sentence()
+
+  if(genesetType %in% c('bp','cc','mf')){
+    colnames(new_fcs)[1] = paste0(bioc_org,'_',toupper(genesetType),'_ID')
   }
 
   ## save as list
