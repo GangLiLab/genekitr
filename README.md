@@ -22,6 +22,8 @@
 
 #### Supported organisms:
 
+> For more details, please refer to [this site](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/genekitr-species/species.html)
+
 - Search & ID conversion:  **195** vertebrate species, **120** plant species and **2** bacteria species
 - Enrichment analysis: GO supports **143** species, KEGG supports **8213** species, MeSH supports **71** species, MsigDb supports **20** species, WikiPahtwaysupports **16** species, and Reactome supports **11** species.
 
