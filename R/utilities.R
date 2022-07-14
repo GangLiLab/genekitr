@@ -1,3 +1,46 @@
+#############################
+### Part I: organism name & pbobe platform name
+#############################
+
+#---  get msigdb org ---#
+msigdb_org_data <- function() {
+  utils::data(list = "msig_org", package = "genekitr")
+  get("msig_org", envir = .GlobalEnv)
+}
+
+#---  get msigdb org ---#
+msigdb_category_data <- function() {
+  utils::data(list = "msig_category", package = "genekitr")
+  get("msig_category", envir = .GlobalEnv)
+}
+
+#--- bioc org name data ---#
+biocOrg_name_data <- function() {
+  utils::data(list = "biocOrg_name", package = "genekitr")
+  get("biocOrg_name", envir = .GlobalEnv)
+}
+
+#---  kegg org name data ---#
+keggOrg_name_data <- function() {
+  utils::data(list = "keggOrg_name", package = "genekitr")
+  get("keggOrg_name", envir = .GlobalEnv)
+}
+
+#--- ensembl org name data ---#
+ensOrg_name_data <- function() {
+  utils::data(list = "ensOrg_name", package = "genekitr")
+  get("ensOrg_name", envir = .GlobalEnv)
+}
+
+#--- probe platform data ---#
+hsapiens_probe_data <- function() {
+  utils::data(list = "hsapiens_probe_platform", package = "genekitr")
+  get("hsapiens_probe_platform", envir = .GlobalEnv)
+}
+
+#############################
+### Part II:  match organism
+#############################
 #---  get organism Bioconductor shortname ---#
 mapBiocOrg <- function(organism) {
   # organism <- tolower(organism)
@@ -117,6 +160,169 @@ mapEnsOrg <- function(organism) {
   return(org)
 }
 
+#############################
+### Part III: data query
+#############################
+web.url <- "https://genekitr-china.oss-accelerate.aliyuncs.com"
+
+#--- ensembl anno data ---#
+# options(geneset.download.method = "wininet")
+ensAnno <- function(org, download.method = NULL) {
+  org <- mapEnsOrg(tolower(org))
+
+  data_dir <- tools::R_user_dir("genekitr", which = "data")
+  sub_dir <- "/info/gene/"
+  data_dir <- paste0(data_dir, sub_dir)
+  make_dir(data_dir)
+
+  url <- paste0(web.url, sub_dir, org, "_anno.fst")
+  destfile <- paste0(data_dir, "/", org, "_anno.fst")
+  web_f_size <- check_web_size(url)
+  local_f_size <- file.size(destfile)
+  if(is.na(local_f_size)) local_f_size = 0
+
+  genekitr_download(url, destfile, method = download.method,
+                   data_dir, web_f_size, local_f_size)
+
+  dat <- suppressMessages(fst::read.fst(destfile))
+  invisible(dat)
+
+}
+
+#--- probe anno data ---#
+probAnno <- function(org, download.method = NULL) {
+  if (org == "hg" | org == "human" | org == "hsa" | org == "hs") org <- "hsapiens"
+  if (org == "mm" | org == "mouse") org <- "mmusculus"
+  if (org == "rn" | org == "rat") org <- "rnorvegicus"
+  if (!org %in% c("hsapiens", "mmusculus", "rnorvegicus")) stop('We only support "human", "mouse" and "rat".')
+
+  data_dir <- tools::R_user_dir("genekitr", which = "data")
+  sub_dir <- "/info/probe/"
+  data_dir <- paste0(data_dir, sub_dir)
+  make_dir(data_dir)
+
+  url <- paste0(web.url, sub_dir, org, "_probe.fst")
+  destfile <- paste0(data_dir, "/", org, "_anno.fst")
+  web_f_size <- check_web_size(url)
+  local_f_size <- file.size(destfile)
+  if(is.na(local_f_size)) local_f_size = 0
+
+  genekitr_download(url, destfile, method = download.method,
+                   data_dir, web_f_size, local_f_size)
+
+  dat <- suppressMessages(fst::read.fst(destfile))
+  invisible(dat)
+}
+
+#--- keytype order data ---#
+getOrder <- function(org, keytype, download.method = NULL) {
+  org <- mapEnsOrg(tolower(org))
+
+  data_dir <- tools::R_user_dir("genekitr", which = "data")
+  sub_dir <- "/info/gene/"
+  data_dir <- paste0(data_dir, sub_dir)
+  make_dir(data_dir)
+
+  url <- paste0(web.url, sub_dir, org, "_", keytype, "_order.fst")
+  destfile <- paste0(data_dir, "/", org, "_", keytype, "_order.fst")
+  web_f_size <- check_web_size(url)
+  local_f_size <- file.size(destfile)
+  if(is.na(local_f_size)) local_f_size = 0
+
+  genekitr_download(url, destfile, method = download.method,
+                    data_dir, web_f_size, local_f_size)
+
+  dat <- suppressMessages(fst::read.fst(destfile))
+  invisible(dat)
+}
+
+#############################
+### Part IV: function of geninfo
+#############################
+make_dir <- function(data_dir){
+  if (!dir.exists(data_dir)) {
+    tryCatch(
+      {
+        dir.create(data_dir, recursive = TRUE)
+      },
+      error = function(e) {
+        message(paste0(
+          "Seems like you cannot access dir: ", data_dir,
+          "\nPlease spefify a valid dir to save data..."
+        ))
+        data_dir <- readline(prompt = "Enter directory: ")
+        dir.create(data_dir, recursive = TRUE)
+      }
+    )
+  }
+}
+
+#--- get web server file size ---#
+check_web_size <- function(url){
+  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
+    strsplit("\r\n") %>%
+    unlist() %>%
+    stringr::str_extract("Content-Length.*[0-9]") %>%
+    stringr::str_remove_all("Content-Length: ") %>%
+    stringi::stri_remove_empty_na() %>%
+    as.numeric()
+  return(web_f_size)
+}
+
+#--- download function ---#
+# url: web url
+# destfile: local file name
+# data_dir: destfile directory
+# method: "auto" (default), "wininet" (for windows)
+# web_f_size: file size on webserver
+# local_f_size: file size in local
+genekitr_download <- function(url, destfile,data_dir,
+                             method, web_f_size, local_f_size){
+  if (!file.exists(destfile)) {
+    # message("Initializing, please wait (just once)...")
+    if (is.null(method)) method <- getOption("genekitr.download.method")
+
+    if (!is.null(method) && method != "auto") {
+      tryCatch(utils::download.file(url, destfile, quiet = TRUE, method = method, mode = "wb"),
+               error = function(e) {
+                 message(paste0(
+                   "Auto download failed...\nPlease download via: ", url,
+                   "\nThen save to: ", data_dir, "\n"
+                 ))
+               })
+    }else{
+      tryCatch(utils::download.file(url, destfile, quiet = TRUE,method = 'auto', mode = "wb"),
+               error = function(e) {
+                 message(paste0(
+                   "Auto download failed...\nPlease download manually via: ", url,
+                   "\nThen save to: ", data_dir, "\n"
+                 ))
+               }
+      )
+    }
+  } else if (web_f_size != local_f_size) {
+    message("Detected new version data, updating...")
+    if (!is.null(method) && method != "auto") {
+      tryCatch(utils::download.file(url, destfile, quiet = TRUE, method = method, mode = "wb"),
+               error = function(e) {
+                 message(paste0(
+                   "Auto download failed...\nPlease download manually via: ", url,
+                   "\nThen save to: ", data_dir, "\n"
+                 ))
+               })
+    }else{
+      tryCatch(utils::download.file(url, destfile, quiet = TRUE,method = 'auto', mode = "wb"),
+               error = function(e) {
+                 message(paste0(
+                   "Auto download failed...\nPlease download manually via: ", url,
+                   "\nThen save to: ", data_dir, "\n"
+                 ))
+               }
+      )
+    }
+  }
+}
+
 #---  decide gene id type ---#
 gentype <- function(id, data = NULL, org) {
   org <- mapEnsOrg(org)
@@ -176,7 +382,11 @@ gentype <- function(id, data = NULL, org) {
   return(typ)
 }
 
-#---calc fold enrichment ---#
+
+#############################
+### Part V: function of enrichment analysis
+#############################
+
 calcFoldEnrich <- function(df) {
   if (any(grepl("[gene|bg]ratio", tolower(colnames(df))))) {
     check_gr <- which(grepl(".*gene.*ratio", tolower(colnames(df))))
@@ -189,226 +399,6 @@ calcFoldEnrich <- function(df) {
   return(df)
 }
 
-#---  get msigdb org ---#
-msigdb_org_data <- function() {
-  utils::data(list = "msig_org", package = "genekitr")
-  get("msig_org", envir = .GlobalEnv)
-}
-
-#---  get msigdb org ---#
-msigdb_category_data <- function() {
-  utils::data(list = "msig_category", package = "genekitr")
-  get("msig_category", envir = .GlobalEnv)
-}
-
-#--- bioc org name data ---#
-biocOrg_name_data <- function() {
-  utils::data(list = "biocOrg_name", package = "genekitr")
-  get("biocOrg_name", envir = .GlobalEnv)
-}
-
-#---  kegg org name data ---#
-keggOrg_name_data <- function() {
-  utils::data(list = "keggOrg_name", package = "genekitr")
-  get("keggOrg_name", envir = .GlobalEnv)
-}
-
-#--- ensembl org name data ---#
-ensOrg_name_data <- function() {
-  utils::data(list = "ensOrg_name", package = "genekitr")
-  get("ensOrg_name", envir = .GlobalEnv)
-}
-
-#--- probe platform data ---#
-hsapiens_probe_data <- function() {
-  utils::data(list = "hsapiens_probe_platform", package = "genekitr")
-  get("hsapiens_probe_platform", envir = .GlobalEnv)
-}
-
-#--- ensembl anno data ---#
-ensAnno <- function(org, version) {
-  if (missing(version)) version <- 106
-  org <- mapEnsOrg(tolower(org))
-  # data_dir = rappdirs::user_data_dir(appname = 'genekitr')
-  data_dir <- tools::R_user_dir("genekitr", which = "data")
-  data_dir <- paste0(data_dir, "/v", version)
-  destfile <- paste0(data_dir, "/", org, "_anno.fst")
-
-  if (!dir.exists(data_dir)) {
-    tryCatch(
-      {
-        dir.create(data_dir, recursive = TRUE)
-      },
-      error = function(e) {
-        message(paste0(
-          "Seems like you cannot access dir: ", data_dir,
-          "\nPlease spefify a valid dir to save data..."
-        ))
-        data_dir <- readline(prompt = "Enter directory: ")
-        dir.create(data_dir, recursive = TRUE)
-      }
-    )
-  }
-
-  url <- paste0("http://112.74.191.19/genekitr/v", version, "/", org, "_anno.fst")
-  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
-    strsplit("\r\n") %>%
-    unlist() %>%
-    stringr::str_extract("Content-Length.*[0-9]") %>%
-    stringr::str_remove_all("Content-Length: ") %>%
-    stringi::stri_remove_empty_na() %>%
-    as.numeric()
-  local_f_size <- file.size(destfile)
-
-  if (!file.exists(destfile)) {
-    message("We need to download some data, please wait (just once)...")
-    # web_download(url, paste0(data_dir, "/", org, "_anno.fst"),  mode = "wb", quiet = TRUE)
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  } else if (web_f_size != local_f_size) {
-    message("Detected new version data, updating...")
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  }
-
-  dat <- suppressMessages(fst::read.fst(destfile))
-  invisible(dat)
-
-  #   load(paste0(data_dir, "/", org, "_anno.rda"), envir = .GlobalEnv)
-  #   get(paste0(org, "_anno"), envir = .GlobalEnv)
-}
-
-#--- probe anno data ---#
-probAnno <- function(org, version) {
-  if (missing(version)) version <- 106
-  if (org == "hg" | org == "human" | org == "hsa" | org == "hs") org <- "hsapiens"
-  if (org == "mm" | org == "mouse") org <- "mmusculus"
-  if (org == "rn" | org == "rat") org <- "rnorvegicus"
-
-  if (!org %in% c("hsapiens", "mmusculus", "rnorvegicus")) stop('We only support "human", "mouse" and "rat".')
-
-  data_dir <- tools::R_user_dir("genekitr", which = "data")
-  data_dir <- paste0(data_dir, "/v", version)
-  destfile <- paste0(data_dir, "/", org, "_probe.fst")
-
-  url <- paste0("http://112.74.191.19/genekitr/v", version, "/", org, "_probe.fst")
-  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
-    strsplit("\r\n") %>%
-    unlist() %>%
-    stringr::str_extract("Content-Length.*[0-9]") %>%
-    stringr::str_remove_all("Content-Length: ") %>%
-    stringi::stri_remove_empty_na() %>%
-    as.numeric()
-  local_f_size <- file.size(destfile)
-
-  if (!file.exists(destfile)) {
-    message("We need to download some data, please wait (just once)...")
-    # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  } else if (web_f_size != local_f_size) {
-    message("Detected new version data, updating...")
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  }
-
-  dat <- suppressMessages(fst::read.fst(destfile))
-  invisible(dat)
-  # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
-  # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
-}
-
-#--- keytype order data ---#
-getOrder <- function(org, keytype, version) {
-  if (missing(version)) version <- 106
-
-  org <- mapEnsOrg(tolower(org))
-  data_dir <- tools::R_user_dir("genekitr", which = "data")
-  data_dir <- paste0(data_dir, "/v", version)
-  destfile <- paste0(data_dir, "/", org, "_", keytype, "_order.fst")
-
-  url <- paste0("http://112.74.191.19/genekitr/v", version, "/", org, "_", keytype, "_order.fst")
-  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
-    strsplit("\r\n") %>%
-    unlist() %>%
-    stringr::str_extract("Content-Length.*[0-9]") %>%
-    stringr::str_remove_all("Content-Length: ") %>%
-    stringi::stri_remove_empty_na() %>%
-    as.numeric()
-  local_f_size <- file.size(destfile)
-
-  if (!file.exists(destfile)) {
-    # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  } else if (web_f_size != local_f_size) {
-    # message('Detected new version data, updating...')
-    tryCatch(
-      {
-        utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-      },
-      error = function(e) {
-        message(paste0(
-          "Auto download failed...\nPlease download via: ", url,
-          "\nThen save to: ", data_dir, "\n"
-        ))
-      }
-    )
-  }
-
-  dat <- suppressMessages(fst::read.fst(destfile))
-  invisible(dat)
-  # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
-  # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
-}
-
-
-#--- functions in enrichment analysis ---#
 get_symbol <- function(id,org){
   ori_id <- stringr::str_split(id, "\\/") %>% unlist() %>% unique()
   id_all <- suppressMessages(transId(ori_id, "symbol", org, unique = T))
@@ -443,100 +433,9 @@ replace_id <- function(dat, id){
 }
 
 
-# #--- wikipathways data ---#
-# # wget -r -np -nH -R index.html https://wikipathways-data.wmcloud.org/20220610/gmt
-# getWiki <- function(org) {
-#   date = '20220610'
-#   data_dir <- tools::R_user_dir("genekitr", which = "data")
-#   data_dir <- paste0(data_dir, "/wikipathways")
-#   destfile <- paste0(data_dir, "/",  gsub(' ','_',org), ".gmt")
-#
-#   if (!dir.exists(data_dir)) {
-#     tryCatch(
-#       {
-#         dir.create(data_dir, recursive = TRUE)
-#       },
-#       error = function(e) {
-#         message(paste0(
-#           "Seems like you cannot access dir: ", data_dir,
-#           "\nPlease spefify a valid dir to save data..."
-#         ))
-#         data_dir <- readline(prompt = "Enter directory: ")
-#         dir.create(data_dir, recursive = TRUE)
-#       }
-#     )
-#   }
-#
-#   url <- paste0("http://112.74.191.19/genekitr/wikipathways", "/wikipathways-",date,'-gmt-', gsub(' ','_',org),  ".gmt")
-#   web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
-#     strsplit("\r\n") %>%
-#     unlist() %>%
-#     stringr::str_extract("Content-Length.*[0-9]") %>%
-#     stringr::str_remove_all("Content-Length: ") %>%
-#     stringi::stri_remove_empty_na() %>%
-#     as.numeric()
-#   local_f_size <- file.size(destfile)
-#
-#   if (!file.exists(destfile)) {
-#     # web_download(url, paste0(data_dir, "/", org,'_',keytype,'_order.fst'),  mode = "wb", quiet = TRUE)
-#     tryCatch(
-#       {
-#         utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-#       },
-#       error = function(e) {
-#         message(paste0(
-#           "Auto download failed...\nPlease download via: ", url,
-#           "\nThen save to: ", data_dir, "\n"
-#         ))
-#       }
-#     )
-#   } else if (web_f_size != local_f_size) {
-#     # message('Detected new version data, updating...')
-#     tryCatch(
-#       {
-#         utils::download.file(url, destfile, quiet = TRUE, mode = "wb")
-#       },
-#       error = function(e) {
-#         message(paste0(
-#           "Auto download failed...\nPlease download via: ", url,
-#           "\nThen save to: ", data_dir, "\n"
-#         ))
-#       }
-#     )
-#   }
-#
-#   dat <- suppressMessages(clusterProfiler::read.gmt.wp(destfile))
-#   return(dat)
-#   # load(paste0(data_dir, "/",org,'_',keytype,'_order.rda'), envir = .GlobalEnv)
-#   # get(paste0(org,'_',keytype, "_order"), envir = .GlobalEnv)
-# }
-#
-
-
-# web_download <- function(url, destfile, try_time = 2L, ...) {
-#   Sys.sleep(0.01)
-#   tryCatch(
-#     {
-#       if (abs(try_time - 3L) > 1) {
-#         message(abs(try_time - 3L),' attempt ...')
-#       }
-#
-#       utils::download.file(url, destfile, quiet = TRUE,...)
-#
-#     },
-#     error = function(e) {
-#       if (try_time == 0) {
-#         message("Failed after 2 attempts, please check internet connection!")
-#         invisible(NULL)
-#       } else {
-#         web_download(url, destfile, try_time = try_time - 1L, quiet = TRUE,...)
-#       }
-#     }
-#   )
-# }
-
-
-#--- add global variables ---#
+#############################
+### Part VI: add global variables
+#############################
 utils::globalVariables(c(
   ".", "data_dir", "biocOrg_name", "full_name", "short_name", "keggOrg_name", "item", "type", "sets",
   "count", "theme_classic", "input_id", "ensOrg_name", "latin_short_name", "ES", "pathway",
@@ -548,5 +447,5 @@ utils::globalVariables(c(
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis", "everything", "gene", "coord_flip",
   "expansion", "index", "nes.group", "padj.group", "change", "label", "logFC", "stat", "pvalue",
-  "cluster","Cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id","entrezid"
+  "cluster","Cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id","entrezid","bioc_name"
 ))

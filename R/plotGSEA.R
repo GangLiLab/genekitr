@@ -314,7 +314,7 @@ plotGSEA <- function(gsea_list,
       }
     }
 
-    check_gset_type <- suppressWarnings(ifelse(all(is.na(as.numeric(head(geneset[,2])))),'symbol','entrez'))
+    check_gset_type <- suppressWarnings(ifelse(all(is.na(as.numeric(dplyr::slice_head(geneset,n=2) %>% dplyr::pull(2)))),'symbol','entrez'))
     if(check_gset_type == 'symbol'){
       new_gsea_df <- gsea_df %>%
         dplyr::filter(ID %in% show_pathway) %>%
