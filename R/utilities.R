@@ -1,41 +1,52 @@
 #############################
 ### Part I: organism name & pbobe platform name
 #############################
+.initial <- function() {
+  pos <- 1
+  envir <- as.environment(pos)
+  assign(".genekitrEnv", new.env(), envir = envir)
+}
 
 #---  get msigdb org ---#
 msigdb_org_data <- function() {
-  utils::data(list = "msig_org", package = "genekitr")
-  get("msig_org", envir = .GlobalEnv)
+  .initial()
+  utils::data(list = "msig_org", package = "genekitr",envir = .genekitrEnv)
+  get("msig_org", envir = .genekitrEnv)
 }
 
 #---  get msigdb org ---#
 msigdb_category_data <- function() {
-  utils::data(list = "msig_category", package = "genekitr")
-  get("msig_category", envir = .GlobalEnv)
+  .initial()
+  utils::data(list = "msig_category", package = "genekitr",envir = .genekitrEnv)
+  get("msig_category", envir = .genekitrEnv)
 }
 
 #--- bioc org name data ---#
 biocOrg_name_data <- function() {
-  utils::data(list = "biocOrg_name", package = "genekitr")
-  get("biocOrg_name", envir = .GlobalEnv)
+  .initial()
+  utils::data(list = "biocOrg_name", package = "genekitr",envir = .genekitrEnv)
+  get("biocOrg_name", envir = .genekitrEnv)
 }
 
 #---  kegg org name data ---#
 keggOrg_name_data <- function() {
-  utils::data(list = "keggOrg_name", package = "genekitr")
-  get("keggOrg_name", envir = .GlobalEnv)
+  .initial()
+  utils::data(list = "keggOrg_name", package = "genekitr",envir = .genekitrEnv)
+  get("keggOrg_name", envir = .genekitrEnv)
 }
 
 #--- ensembl org name data ---#
 ensOrg_name_data <- function() {
-  utils::data(list = "ensOrg_name", package = "genekitr")
-  get("ensOrg_name", envir = .GlobalEnv)
+  .initial()
+  utils::data(list = "ensOrg_name", package = "genekitr",envir = .genekitrEnv)
+  get("ensOrg_name", envir = .genekitrEnv)
 }
 
 #--- probe platform data ---#
 hsapiens_probe_data <- function() {
-  utils::data(list = "hsapiens_probe_platform", package = "genekitr")
-  get("hsapiens_probe_platform", envir = .GlobalEnv)
+  .initial()
+  utils::data(list = "hsapiens_probe_platform", package = "genekitr",envir = .genekitrEnv)
+  get("hsapiens_probe_platform", envir = .genekitrEnv)
 }
 
 #############################
@@ -50,7 +61,7 @@ mapBiocOrg <- function(organism) {
 
   # support organisms: http://bioconductor.org/packages/release/BiocViews.html#___OrgDb
   biocorg <- biocOrg_name_data()
-  rm(biocOrg_name, envir = .GlobalEnv)
+  rm(biocOrg_name, envir = .genekitrEnv)
 
   if (organism %in% biocorg$short_name) {
     org <- organism
@@ -83,7 +94,7 @@ mapKeggOrg <- function(organism) {
 
   # support organisms: https://www.genome.jp/kegg/catalog/org_list.html
   kgorg <- keggOrg_name_data()
-  rm(keggOrg_name, envir = .GlobalEnv)
+  rm(keggOrg_name, envir = .genekitrEnv)
 
   if ((organism %in% kgorg$short_name && !is.common)) {
     org <- organism
@@ -120,7 +131,7 @@ mapKeggOrg <- function(organism) {
 getKeggLatin <- function(organism) {
   organism <- tolower(organism)
   kgorg <- keggOrg_name_data()
-  rm(keggOrg_name, envir = .GlobalEnv)
+  rm(keggOrg_name, envir = .genekitrEnv)
 
   latin <- kgorg[kgorg$short_name %in% organism, "full_name"] %>%
     gsub(" \\(.*\\)$", "", .)
@@ -145,7 +156,7 @@ mapEnsOrg <- function(organism) {
 
   # ensembl organisms: https://asia.ensembl.org/info/about/species.html
   ensorg <- ensOrg_name_data()
-  rm(ensOrg_name, envir = .GlobalEnv)
+  rm(ensOrg_name, envir = .genekitrEnv)
 
   check_all <- apply(ensorg, 2, function(x) organism %in% x)
 
@@ -447,5 +458,5 @@ utils::globalVariables(c(
   "FoldEnrich", "GeneRatio", "fct_reorder", "geom_col", "scale_fill_discrete",
   "scale_size", "scale_x_continuous", "sec_axis", "everything", "gene", "coord_flip",
   "expansion", "index", "nes.group", "padj.group", "change", "label", "logFC", "stat", "pvalue",
-  "cluster","Cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id","entrezid","bioc_name"
+  "cluster","Cluster", "go", "Bioc_anno", "Platform", "ensembl", "ensembl_id", "probe_id", "hsapiens_probe_platform", "new_x","old_id","entrezid","bioc_name",".genekitrEnv"
 ))
