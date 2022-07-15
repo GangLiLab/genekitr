@@ -25,7 +25,7 @@
 > For more details, please refer to [this site](https://genekitr.online/docs/species.html).
 
 - Search & ID conversion:  **195** vertebrate species, **120** plant species and **2** bacteria species
-- Enrichment analysis: GO supports **143** species, KEGG supports **8213** species, MeSH supports **71** species, MsigDb supports **20** species, WikiPahtwaysupports **16** species, and Reactome supports **11** species.
+- Enrichment analysis: GO supports **143** species, KEGG supports **8213** species, MeSH supports **71** species, MsigDb supports **20** species, WikiPahtwaysupports **16** species, Reactome supports **11** species, EnrichrDB supports 5 species and **human-specific** gene sets (DO, NCG, DisGeNET and COVID-19)
 
 
 
