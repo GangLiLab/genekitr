@@ -97,7 +97,7 @@ Doodle finished the bubble plot at last and sent it to PI. After 15 minutes, PI 
 
 ### Scene 6: limited plot types
 
-Once Doodle got the GO enrichment analysis result, PI let him think about how to show them nicely. Doodle found that every tool has its specific plot. For example, [WEGO](https://wego.genomics.cn/) could compare BP, CC, and MF terms; [GOplot](https://wencke.github.io/) has a chord plot to show the relationship of gene and GO terms; [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html) support enriched map and network, which could explore the relationship among enrich terms. One big problem is that their input data is not compatible, so it is inconvenient to plot WEGO plots using clusterProfiler objects. 
+Once Doodle got the GO enrichment analysis result, PI let him think about how to show them nicely. Doodle found that every tool has its specific plot. For example, [WEGO](https://academic.oup.com/nar/article/46/W1/W71/4999241) could compare BP, CC, and MF terms; [GOplot](https://wencke.github.io/) has a chord plot to show the relationship of gene and GO terms; [clusterProfiler](https://bioconductor.org/packages/release/bioc/html/clusterProfiler.html) support enriched map and network, which could explore the relationship among enrich terms. One big problem is that their input data is not compatible, so it is inconvenient to plot WEGO plots using clusterProfiler objects. 
 
 <b style='color:#486CBE'>**Doodle wonder if there is any method that could involve beautiful plots from different tools with one universal data format?**</b>
 
