@@ -84,7 +84,7 @@ transProbe <- function(id,
     tidyr::fill(-probe_id, .direction = "downup") %>%
     dplyr::distinct()
 
-  if (org == "hsapiens") rm(hsapiens_probe_platform, envir = .GlobalEnv)
+  if (org == "hsapiens") rm(hsapiens_probe_platform, envir = .genekitrEnv)
 
   # trans to other types
   if (any(transTo %in% c("entrezid", "symbol", "uniprot"))) {
