@@ -178,7 +178,7 @@ web.url <- "https://genekitr-china.oss-accelerate.aliyuncs.com"
 
 #--- ensembl anno data ---#
 # options(geneset.download.method = "wininet")
-ensAnno <- function(org, web.url=web.url, download.method = NULL) {
+ensAnno <- function(org, download.method = NULL) {
   org <- mapEnsOrg(tolower(org))
 
   data_dir <- tools::R_user_dir("genekitr", which = "data")
@@ -201,7 +201,7 @@ ensAnno <- function(org, web.url=web.url, download.method = NULL) {
 }
 
 #--- probe anno data ---#
-probAnno <- function(org,web.url=web.url,  download.method = NULL) {
+probAnno <- function(org, download.method = NULL) {
   if (org == "hg" | org == "human" | org == "hsa" | org == "hs") org <- "hsapiens"
   if (org == "mm" | org == "mouse") org <- "mmusculus"
   if (org == "rn" | org == "rat") org <- "rnorvegicus"
@@ -226,7 +226,7 @@ probAnno <- function(org,web.url=web.url,  download.method = NULL) {
 }
 
 #--- keytype order data ---#
-getOrder <- function(org, keytype, web.url=web.url, download.method = NULL) {
+getOrder <- function(org, keytype, download.method = NULL) {
   org <- mapEnsOrg(tolower(org))
 
   data_dir <- tools::R_user_dir("genekitr", which = "data")
