@@ -4,7 +4,7 @@
 #' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea', 'ridge' or 'bar'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param show_pathway Select plotting pathways by number (will choose top N pathways)
-#' or pathway name.
+#' or pathway name (choose from ID column).
 #' @param show_gene Select genes to show. Default is "all". Used in "classic" plot.
 #' @param colour Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.
 #' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
@@ -79,6 +79,11 @@ plotGSEA <- function(gsea_list,
     )
   }
 
+  if(!'geneID_symbol' %in% colnames(gsea_df)){
+    gsea_df <- gsea_df %>% dplyr::mutate(geneID_symbol = geneID)
+  }
+
+
   #--- codes ---#
   ## set labels
   stats_metric_label <- ifelse(stats_metric == "pvalue", "Pvalue",
@@ -97,9 +102,9 @@ plotGSEA <- function(gsea_list,
     if (is.numeric(show_pathway)) {
       plot_df$group <- c(rep("Up", show_pathway), rep("ignore", nrow(plot_df) - 2 * show_pathway), rep("Down", show_pathway))
     } else {
-      nes <- plot_df[plot_df$Description %in% show_pathway, "NES"]
+      nes <- plot_df[plot_df$ID %in% show_pathway, "NES"]
       plot_df$group <- "ignore"
-      plot_df[plot_df$Description %in% show_pathway, "group"] <- sapply(nes, function(x) ifelse(x > 0, "Up", "Down"))
+      plot_df[plot_df$ID %in% show_pathway, "group"] <- sapply(nes, function(x) ifelse(x > 0, "Up", "Down"))
     }
 
     if (is.null(colour)) {
@@ -112,7 +117,7 @@ plotGSEA <- function(gsea_list,
       ylab(paste0("-log10(", stats_metric_label, ")")) +
       ggrepel::geom_text_repel(
         data = plot_df[plot_df$group != "ignore", ],
-        aes(label = Description),
+        aes(label = ID),
         size = (lst$main_text_size/4),
         color = "black",
         show.legend = F
@@ -329,17 +334,14 @@ plotGSEA <- function(gsea_list,
     }
 
 
-
     # if gsea has no entrezid, transID first
-    # if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
-    #   id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
-    #   new_gsea_df <- merge(new_gsea_df, id_map,
-    #     by.x = "geneID", by.y = "input_id",
-    #     all.x = T, all.y = F
-    #   )
-    # } else {
-    #   new_gsea_df <- new_gsea_df %>% dplyr::rename(entrezid = geneID)
-    # }
+    if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
+      id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
+      new_gsea_df <- merge(new_gsea_df, id_map,
+        by.x = "geneID", by.y = "input_id",
+        all.x = T, all.y = F
+      ) %>% dplyr::select(-geneID) %>% dplyr::rename(geneID = entrezid)
+    }
 
     logfc <- gsea_list$genelist
 
@@ -419,34 +421,35 @@ plotGSEA <- function(gsea_list,
           aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
           size = lst$main_text_size / 3.6, hjust = "inward"
         )
-    }
+    }else{
 
-    if(pos_new<=neg_nes){
-      p <- p +
-        geom_text(
-          data = subset(gsea_df, NES > 0),
-          aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
-          size = lst$main_text_size / 3.6,
-          hjust = "inward"
-        ) +
-        geom_text(
-          data = subset(gsea_df, NES < 0),
-          aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
-          size = lst$main_text_size / 3.6, hjust = "outward"
-        )
-    }else if (pos_new > neg_nes){
-      p <- p +
-        geom_text(
-          data = subset(gsea_df, NES > 0),
-          aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
-          size = lst$main_text_size / 3.6,
-          hjust = "outward"
-        ) +
-        geom_text(
-          data = subset(gsea_df, NES < 0),
-          aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
-          size = lst$main_text_size / 3.6, hjust = "inward"
-        )
+      if(pos_new<=neg_nes){
+        p <- p +
+          geom_text(
+            data = subset(gsea_df, NES > 0),
+            aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
+            size = lst$main_text_size / 3.6,
+            hjust = "inward"
+          ) +
+          geom_text(
+            data = subset(gsea_df, NES < 0),
+            aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+            size = lst$main_text_size / 3.6, hjust = "outward"
+          )
+      }else if (pos_new > neg_nes){
+        p <- p +
+          geom_text(
+            data = subset(gsea_df, NES > 0),
+            aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
+            size = lst$main_text_size / 3.6,
+            hjust = "outward"
+          ) +
+          geom_text(
+            data = subset(gsea_df, NES < 0),
+            aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
+            size = lst$main_text_size / 3.6, hjust = "inward"
+          )
+      }
     }
 
     p <- p +

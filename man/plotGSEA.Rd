@@ -23,7 +23,7 @@ plotGSEA(
 \item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
 \item{show_pathway}{Select plotting pathways by number (will choose top N pathways)
-or pathway name.}
+or pathway name (choose from ID column).}
 
 \item{show_gene}{Select genes to show. Default is "all". Used in "classic" plot.}
 
