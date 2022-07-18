@@ -31,6 +31,8 @@
 
 ## 🛠 Installation
 
+> New features are available for `version > 1.0.0`
+
 #### Install stable version from CRAN:
 
 ```R
