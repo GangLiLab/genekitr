@@ -32,6 +32,10 @@
 ## 🛠 Installation
 
 > New features are available for `version > 1.0.0`
+> ```R
+> # check current version
+> packageVersion('genekitr') 
+> ```
 
 #### Install stable version from CRAN:
 
