@@ -18,15 +18,15 @@ Steps to reproduce the behavior:
 4. See error
 
 **Expected behavior**
-A brief description of what you expected to happen.
+A brief description of your expectation.
 
 **Screenshots**
-If applicable, add screenshots to help explain your problem.
+Attach screenshots if possible.
 
 **Desktop (please complete the following information):**
  - OS: [e.g. macOS]
+ - Version [e.g. 11.6 ]
  - Browser [e.g. chrome, safari]
- - Version [e.g. 22]
 
 **Additional context**
-Add any other context about the problem here.
+Any other supplements?
