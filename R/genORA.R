@@ -56,6 +56,7 @@ genORA <- function(id,
   if (missing(universe)) universe <- NULL
   if(missing(geneset)) stop('Please provide gene set...\nWe recommend to use package `geneset` to select available gene set or make new one.')
 
+  # some gene sets are made of gene symbol, so input genes should be converted to symbol
   genesetType <- geneset$type
   transToSym <- ifelse(genesetType %in% c("enrichrdb","bp","mf","cc","covid19"), TRUE, FALSE)
 
@@ -181,18 +182,28 @@ genORA <- function(id,
 
   # part 2
   }else{
-    # part 2-1
-    if(keyType != "SYMBOL" ){
-      old_geneID <- replace_id(id_dat,ora$geneID)
-      new_ora <- ora %>%
-        dplyr::mutate(geneID_symbol = geneID) %>%
-        dplyr::mutate(geneID = old_geneID) %>%
-        dplyr::relocate(geneID_symbol, .after = geneID)
-    }else{
-      # part 2-2
-      new_ora <- ora
-    }
+    # # part 2-1
+    # if(keyType != "SYMBOL" ){
+    #   old_geneID <- replace_id(id_dat,ora$geneID)
+    #   new_ora <- ora %>%
+    #     dplyr::mutate(geneID_symbol = geneID) %>%
+    #     dplyr::mutate(geneID = old_geneID) %>%
+    #     dplyr::relocate(geneID_symbol, .after = geneID)
+    # }else{
+    #   # part 2-2
+    #   new_ora <- ora
+    # }
+    old_geneID <- replace_id(id_dat,ora$geneID)
+    new_ora <- ora %>%
+      dplyr::mutate(geneID_symbol = geneID) %>%
+      dplyr::mutate(geneID = old_geneID) %>%
+      dplyr::relocate(geneID_symbol, .after = geneID)
 
+  }
+
+  # if symbol has no alias
+  if(identical(new_ora$geneID,new_ora$geneID_symbol)){
+    new_ora <- new_ora %>% dplyr::select(-geneID_symbol)
   }
 
   ## add fold enrcih/rich factor
