@@ -631,6 +631,8 @@ plotEnrich <- function(enrich_df,
   if (plot_type == "wego") {
     if (!"ontology" %in% tolower(colnames(enrich_df))) {
       stop("WEGO plot needs a column named 'ontology' which infers ontology type of 'bp', 'cc' or 'mf'...")
+    }else{
+      colnames(enrich_df)[grep("ontology", colnames(enrich_df), ignore.case = T)] <- "Ontology"
     }
 
     if(missing(n_term)) n_term = 5
@@ -638,24 +640,24 @@ plotEnrich <- function(enrich_df,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     wego <- enrich_df %>%
-      dplyr::select(1,'Description', "Count", "GeneRatio", "ONTOLOGY") %>%
+      dplyr::select(1,'Description', "Count", "GeneRatio", "Ontology") %>%
       dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
-      dplyr::group_by(ONTOLOGY) %>%
+      dplyr::group_by(Ontology) %>%
       dplyr::top_n(n_term, GeneRatio) %>%
       dplyr::ungroup() %>%
-      dplyr::arrange(ONTOLOGY, GeneRatio) %>%
+      dplyr::arrange(Ontology, GeneRatio) %>%
       dplyr::mutate(Position = dplyr::n():1) %>%
-      dplyr::mutate(ONTOLOGY = dplyr::case_when(
-        tolower(ONTOLOGY) == "bp" ~ "Biological Process",
-        tolower(ONTOLOGY) == "cc" ~ "Cellular Component",
-        tolower(ONTOLOGY) == "mf" ~ "Molecular Function"
+      dplyr::mutate(Ontology = dplyr::case_when(
+        tolower(Ontology) == "bp" ~ "Biological Process",
+        tolower(Ontology) == "cc" ~ "Cellular Component",
+        tolower(Ontology) == "mf" ~ "Molecular Function"
       ))
 
     normalizer <- max(wego$Count) / max(wego$GeneRatio)
 
     p <- ggplot(data = wego, aes(
       x = forcats::fct_reorder(Description, sort(Position)),
-      y = GeneRatio, fill = ONTOLOGY
+      y = GeneRatio, fill = Ontology
     )) +
       ggsci::scale_fill_nejm() +
       geom_col(data = wego, aes(
@@ -672,7 +674,7 @@ plotEnrich <- function(enrich_df,
       scale_x_discrete(labels = text_wraper(wrap_length)) +
       xlab(NULL) +
       ylab("Gene Ratio(%)") +
-      facet_grid(. ~ ONTOLOGY, scales = "free") +
+      facet_grid(. ~ Ontology, scales = "free") +
       theme(
         axis.text.x = element_text(angle = 70, hjust = 1),
         strip.text.x = element_text(size = lst$main_text_size)
