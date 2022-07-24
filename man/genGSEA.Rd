@@ -16,7 +16,7 @@ genGSEA(
 )
 }
 \arguments{
-\item{genelist}{Order ranked genelist in decreasing order, gene can be
+\item{genelist}{Pre-ranked genelist with decreasing order, gene can be
 entrez, ensembl or symbol.}
 
 \item{geneset}{Gene set is a two-column data.frame with term id and gene id.

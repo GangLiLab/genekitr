@@ -141,7 +141,7 @@ genORA <- function(id,
           as.data.frame()) %>%
       do.call(rbind,.) %>%
       dplyr::mutate(Cluster = gsub("\\.[^\\.]*$", "", rownames(.), perl=TRUE)) %>%
-      dplyr::relocate(Cluster,.before = dplyr::everything()) %>%
+      dplyr::relocate(Cluster,.after = ID) %>%
       `rownames<-`(seq_len(nrow(.)))
   }
 
