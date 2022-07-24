@@ -36,7 +36,8 @@ plotEnrichAdv <- function(up_enrich_df,
       is.data.frame(up_enrich_df) | is.data.frame(down_enrich_df)
   )
   plot_type <- match.arg(plot_type)
-  if(any(grepl("nes",colnames(enrich_df),ignore.case = T))) term_metric <- "Count"
+  if(any(grepl("nes",colnames(up_enrich_df),ignore.case = T))) term_metric <- "Count"
+  if(any(grepl("nes",colnames(down_enrich_df),ignore.case = T))) term_metric <- "Count"
 
   #--- codes ---#
   tryCatch(
