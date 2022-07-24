@@ -9,8 +9,8 @@ plotVolcano(
   stat_metric = c("p.adjust", "pvalue"),
   stat_cutoff = 0.05,
   logFC_cutoff = 1,
-  up_color = "red",
-  down_color = "blue",
+  up_color = "#E31A1C",
+  down_color = "#1F78B4",
   show_gene = NULL,
   dot_size = 1.75,
   ...
@@ -25,9 +25,9 @@ plotVolcano(
 
 \item{logFC_cutoff}{Log2 fold change cutoff, default is 1 which is actually 2 fold change.}
 
-\item{up_color}{Color of up-regulated genes, default is "red".}
+\item{up_color}{Color of up-regulated genes, default is "dark red".}
 
-\item{down_color}{Color of down-regulated genes, default is "blue".}
+\item{down_color}{Color of down-regulated genes, default is "dark blue".}
 
 \item{show_gene}{Select genes to show, default is no genes to show.}
 

@@ -133,6 +133,8 @@ plotEnrich <- function(enrich_df,
     colnames(enrich_df)[tolower(colnames(enrich_df))%in%'ontology'] = 'ONTOLOGY'
   }
 
+  if(any(grepl("nes",colnames(enrich_df),ignore.case = T))) term_metric <- "Count"
+
   # if (all_go & !plot_type %in% c("bar", "wego")) {
   #   warning(paste0(
   #     'If you want to plot all ontologies data, please choose "plot_type" from "bar","wego"',
@@ -419,16 +421,16 @@ plotEnrich <- function(enrich_df,
 
     # if show_gene is not symbol, first extract matching symbol
     if(all(show_gene == 'all')) stop('Please specify gene name to "show_gene"...')
-    if (all(show_gene %in% id)) {
+    if (length(show_gene %in% id) > length(show_gene %in% id_symbol)) {
       show_gene <- id_df %>%
         dplyr::filter(geneID %in% show_gene) %>%
         dplyr::pull(geneID_symbol)
-    }
-    if (all(show_gene %in% id_symbol)) {
+    }else{
       show_gene <- id_df %>%
         dplyr::filter(geneID_symbol %in% show_gene) %>%
         dplyr::pull(geneID_symbol)
     }
+
 
     plot_df <- enrich_df %>%
       dplyr::select(Description, geneID_symbol) %>%

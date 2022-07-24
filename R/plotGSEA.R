@@ -68,6 +68,7 @@ plotGSEA <- function(gsea_list,
   plot_type <- match.arg(plot_type)
   stats_metric <- match.arg(stats_metric)
   gsea_df <- gsea_list$gsea_df
+  colnames(gsea_df)[1] = "ID"
   geneset <- gsea_list$geneset
   gl <- gsea_list$genelist
 
@@ -335,13 +336,13 @@ plotGSEA <- function(gsea_list,
 
 
     # if gsea has no entrezid, transID first
-    if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
-      id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
-      new_gsea_df <- merge(new_gsea_df, id_map,
-        by.x = "geneID", by.y = "input_id",
-        all.x = T, all.y = F
-      ) %>% dplyr::select(-geneID) %>% dplyr::rename(geneID = entrezid)
-    }
+    # if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
+    #   id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
+    #   new_gsea_df <- merge(new_gsea_df, id_map,
+    #     by.x = "geneID", by.y = "input_id",
+    #     all.x = T, all.y = F
+    #   ) %>% dplyr::select(-geneID) %>% dplyr::rename(geneID = entrezid)
+    # }
 
     logfc <- gsea_list$genelist
 

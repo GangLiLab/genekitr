@@ -4,8 +4,8 @@
 #' @param stat_metric Statistic metric from "pvalue" or "p.adjust".
 #' @param stat_cutoff Statistic cutoff, default is 0.05.
 #' @param logFC_cutoff Log2 fold change cutoff, default is 1 which is actually 2 fold change.
-#' @param up_color Color of up-regulated genes, default is "red".
-#' @param down_color Color of down-regulated genes, default is "blue".
+#' @param up_color Color of up-regulated genes, default is "dark red".
+#' @param down_color Color of down-regulated genes, default is "dark blue".
 #' @param show_gene Select genes to show, default is no genes to show.
 #' @param dot_size Volcano dot size, default is 1.75.
 #' @param ... other arguments from `plot_theme` function
@@ -32,8 +32,8 @@ plotVolcano <- function(deg_df,
                         stat_metric = c("p.adjust", "pvalue"),
                         stat_cutoff = 0.05,
                         logFC_cutoff = 1,
-                        up_color = "red",
-                        down_color = "blue",
+                        up_color = "#E31A1C",
+                        down_color = "#1F78B4",
                         show_gene = NULL,
                         dot_size = 1.75,
                         ...) {
