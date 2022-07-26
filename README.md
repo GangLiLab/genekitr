@@ -17,7 +17,7 @@
 
 - **Analysis**: user could select interested gene set from hundreds of gene sets for both model and non-model species, including [GO](http://geneontology.org/) (BP, CC and MF), [KEGG](https://www.kegg.jp/kegg/) (pathway, module, enzyme, network, drug and disease), [WikiPathways](https://wikipathways.org/), [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb/), [EnrichrDB](https://maayanlab.cloud/Enrichr/), [Reactome](https://reactome.org/), [MeSH](https://www.ncbi.nlm.nih.gov/mesh/), [DisGeNET](https://www.disgenet.org/), [Disease Ontology](https://disease-ontology.org/) (DO), [Network of Cancer Gene](http://ncg.kcl.ac.uk/) (NCG) (version 6 and v7) and [COVID-19](https://maayanlab.cloud/covid19/). Gene enrichment analysis (GSA) contains both over representation analysis (ORA) and gene set enrichment analysis (GSEA) methods. ORA could support multi-group comparison.
 
-- **Plot**: 14 GO plots, 7 KEGG plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. All plot function input is dataframe format and supports GeneOntology web result. Feel free to make your own plots.
+- **Plot**: 13 ORA plots, 5 GSEA plots, 2 Venn plots  and 1 Volcano plot with flexible modification on text, color, border, axis and legend. All plot function input is dataframe format and supports GeneOntology web result. Feel free to make your own plots.
 - **Export**: easily export multiple data sets as various sheets in one excel file
 
 #### Supported organisms:
