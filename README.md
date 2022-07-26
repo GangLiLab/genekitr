@@ -10,6 +10,8 @@
 
 > **Genekitr** is a **gene** analysis tool**kit** based on **R**. 
 
+![overview](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-07-26-142024.png)
+
 #### Five core features:
 
 - **Search**: gene-related information (exp. location, gene name, GC content, gene biotype ...) and PubMed records
