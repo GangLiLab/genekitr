@@ -2,7 +2,7 @@
 % Please edit documentation in R/importPanther.R
 \name{importPanther}
 \alias{importPanther}
-\title{Import Panther web result}
+\title{Import 'Panther' web result}
 \usage{
 importPanther(panther_file)
 }
@@ -13,5 +13,5 @@ importPanther(panther_file)
 `data.frame`
 }
 \description{
-Import Panther web result
+Import 'Panther' web result
 }

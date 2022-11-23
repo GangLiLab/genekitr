@@ -381,8 +381,6 @@ gentype <- function(id, data = NULL, org) {
     n_ala <- 0L
   }
 
-  # rm(list = paste0(org, "_anno"), envir = .GlobalEnv)
-
   if (sum(n_sym, n_ens, n_ent, n_uni, n_ala) == 0) {
     stop("Wrong organism or input id has no match!")
   } else {

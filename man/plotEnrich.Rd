@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotEnrich.R
 \name{plotEnrich}
 \alias{plotEnrich}
-\title{Plot for GO and KEGG enrichment analysis}
+\title{Plot for gene enrichment analysis of ORA method}
 \usage{
 plotEnrich(
   enrich_df,
@@ -74,10 +74,12 @@ Used in "map","goheat","gotangram","wordcloud".}
 A ggplot object
 }
 \description{
-Plot for GO and KEGG enrichment analysis
+Over-representation analysis (ORA) is a simple method for objectively deciding whether a set of variables of
+known or suspected biological relevance, such as a gene set or pathway, is more prevalent in a set of variables
+of interest than we expect by chance.
 }
 \examples{
-\dontrun{
+\donttest{
 ## example data
 library(ggplot2)
 library(igraph)
@@ -89,10 +91,6 @@ logfc <- geneList[id]
 gs <- geneset::getGO(org = "human",ont = "bp")
 ego <- genORA(id, geneset = gs)
 ego <- ego[1:10, ]
-all_ego <- genGO(id,
-  org = "human", ont = "all", pvalueCutoff = 0.01,
-  qvalueCutoff = 0.01
-)
 
 ## example plots
 plotEnrich(ego, plot_type = "dot")
@@ -100,8 +98,6 @@ plotEnrich(ego, plot_type = "dot")
 plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
 
 plotEnrich(ego, plot_type = "bar")
-
-plotEnrich(all_ego, plot_type = "wego")
 
 plotEnrich(ego,
   plot_type = "lollipop",

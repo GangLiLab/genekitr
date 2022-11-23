@@ -2,7 +2,7 @@
 % Please edit documentation in R/getPubmed.R
 \name{getPubmed}
 \alias{getPubmed}
-\title{Get pubmed paper records by searching abstract}
+\title{Get 'PubMed' paper records by searching abstract}
 \usage{
 getPubmed(term, add_term = NULL, num = 100)
 }
@@ -17,7 +17,8 @@ getPubmed(term, add_term = NULL, num = 100)
 A list of `tibble` for pubmed records
 }
 \description{
-Get pubmed paper records by searching abstract
+PubMed<https://pubmed.ncbi.nlm.nih.gov/> is a free search engine accessing primarily the database of references
+and abstracts on life ciences and biomedical topics.
 }
 \examples{
 \donttest{
@@ -25,7 +26,6 @@ term <- c("Tp53", "Brca1", "Tet2")
 add_term <- c("stem cell", "mouse")
 l <- getPubmed(term, add_term, num = 30)
 # very easy to output
-expoSheet(l, data_name = term, filename = "test.xlsx", dir = tempdir())
+expoSheet(l, data_name = term, filename = "test.xlsx", dir = tempfile())
 }
-
 }

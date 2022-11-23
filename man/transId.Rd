@@ -2,12 +2,12 @@
 % Please edit documentation in R/transID.R
 \name{transId}
 \alias{transId}
-\title{Transform gene id among symbol, entrezid,  ensembl and uniprot.}
+\title{Transform id among symbol, entrezid,  ensembl and uniprot.}
 \usage{
 transId(id, transTo, org = "hs", unique = FALSE, keepNA = FALSE)
 }
 \arguments{
-\item{id}{Gene ids.}
+\item{id}{Gene ids or protein ids.}
 
 \item{transTo}{Transform to what type. User could select one or more from
 "symbol", "entrez", "ensembl" or "uniprot."}
@@ -22,10 +22,10 @@ transId(id, transTo, org = "hs", unique = FALSE, keepNA = FALSE)
 data frame, first column is input id and others are converted id.
 }
 \description{
-Transform gene id among symbol, entrezid,  ensembl and uniprot.
+Transform id among symbol, entrezid,  ensembl and uniprot.
 }
 \examples{
-\dontrun{
+\donttest{
 # example1:
 transId(
   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),

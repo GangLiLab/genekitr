@@ -1,5 +1,5 @@
-#' Transform gene id among symbol, entrezid,  ensembl and uniprot.
-#' @param id Gene ids.
+#' Transform id among symbol, entrezid,  ensembl and uniprot.
+#' @param id Gene ids or protein ids.
 #' @param transTo Transform to what type. User could select one or more from
 #' "symbol", "entrez", "ensembl" or "uniprot."
 #' @param org Latin organism shortname from `ensOrg_name`. Default is human.
@@ -12,7 +12,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # example1:
 #' transId(
 #'   id = c("Cyp2c23", "Fhit", "Gal3st2b", "Trp53", "Tp53"),

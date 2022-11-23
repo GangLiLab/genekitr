@@ -2,7 +2,7 @@
 % Please edit documentation in R/importCP.R
 \name{importCP}
 \alias{importCP}
-\title{Import clusterProfiler result}
+\title{Import 'clusterProfiler' result}
 \usage{
 importCP(object, type = c("go", "gsea", "other"))
 }
@@ -15,5 +15,5 @@ importCP(object, type = c("go", "gsea", "other"))
 `data.frame`
 }
 \description{
-Import clusterProfiler result
+Import 'clusterProfiler' result
 }

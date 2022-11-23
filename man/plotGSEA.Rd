@@ -2,7 +2,7 @@
 % Please edit documentation in R/plotGSEA.R
 \name{plotGSEA}
 \alias{plotGSEA}
-\title{GSEA plot}
+\title{Plot for gene enrichment analysis of GSEA method}
 \usage{
 plotGSEA(
   gsea_list,
@@ -37,10 +37,11 @@ or pathway name (choose from ID column).}
 A ggplot object
 }
 \description{
-GSEA plot
+Gene Set Enrichment Analysis (GSEA) is a computational method that determines whether an a priori defined set of
+genes shows statistically significant, concordant differences between two biological states (e.g. phenotypes).
 }
 \examples{
-\dontrun{
+\donttest{
 library(ggplot2)
 ## get GSEA result
 data(geneList, package = "genekitr")

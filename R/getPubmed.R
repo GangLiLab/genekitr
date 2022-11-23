@@ -1,4 +1,7 @@
-#' Get pubmed paper records by searching abstract
+#' Get 'PubMed' paper records by searching abstract
+#'
+#' PubMed<https://pubmed.ncbi.nlm.nih.gov/> is a free search engine accessing primarily the database of references
+#' and abstracts on life ciences and biomedical topics.
 #'
 #' @param term query terms e.g. gene id, GO/KEGG pathway
 #' @param add_term other searching terms Default is NULL
@@ -12,9 +15,8 @@
 #' add_term <- c("stem cell", "mouse")
 #' l <- getPubmed(term, add_term, num = 30)
 #' # very easy to output
-#' expoSheet(l, data_name = term, filename = "test.xlsx", dir = tempdir())
+#' expoSheet(l, data_name = term, filename = "test.xlsx", dir = tempfile())
 #' }
-#'
 getPubmed <- function(term, add_term = NULL, num = 100) {
   if (!requireNamespace("europepmc", quietly = TRUE)) {
     utils::install.packages("europepmc")

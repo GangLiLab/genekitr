@@ -1,4 +1,4 @@
-#' Gene Over-Representation enrichment Analysis (ORA method)
+#' Gene Over-Representation Enrichment Analysis
 #'
 #' @param id A vector of gene id which can be entrezid, ensembl, symbol or uniprot.
 #' @param geneset Gene set is a two-column data.frame with term id and gene id.
@@ -24,7 +24,7 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' # only gene ids
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[abs(geneList) > 1]

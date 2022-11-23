@@ -17,6 +17,7 @@
 #' id <- deg$probe_id
 #' transProbe(id, transTo = "symbol")
 #' }
+
 transProbe <- function(id,
                        transTo,
                        org = "human",
@@ -118,7 +119,9 @@ get_bioc_probe <- function(id, to_type, bioc_pkg) {
   }) %>% as.character()
 
   if (!requireNamespace(bioc_pkg, quietly = TRUE)) {
-    BiocManager::install(bioc_pkg)
+    # BiocManager::install(bioc_pkg)
+    message(paste0('Please firstly install ',bioc_pkg,':\n',
+                   'BiocManager::install("',bioc_pkg,'")'))
     # pacman::p_load(bioc_pkg, character.only = TRUE)
   }
 

@@ -1,4 +1,4 @@
-#' Import Panther web result
+#' Import 'Panther' web result
 #'
 #' @param panther_file Panther result file.
 #'

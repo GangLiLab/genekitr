@@ -2,7 +2,7 @@
 % Please edit documentation in R/genORA.R
 \name{genORA}
 \alias{genORA}
-\title{Gene Over-Representation enrichment Analysis (ORA method)}
+\title{Gene Over-Representation Enrichment Analysis}
 \usage{
 genORA(
   id,
@@ -44,10 +44,10 @@ geneset will be used as background.}
 A `data.frame`.
 }
 \description{
-Gene Over-Representation enrichment Analysis (ORA method)
+Gene Over-Representation Enrichment Analysis
 }
 \examples{
-\dontrun{
+\donttest{
 # only gene ids
 data(geneList, package = "genekitr")
 id <- names(geneList)[abs(geneList) > 1]

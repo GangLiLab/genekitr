@@ -2,8 +2,7 @@
 % Please edit documentation in R/plotEnrichAdv.R
 \name{plotEnrichAdv}
 \alias{plotEnrichAdv}
-\title{Advanced Plot for GO and KEGG enrichment analysis
-Both up and down regulated pathways could be plotted in one figure as two-side barplot}
+\title{Advanced Plot for  gene enrichment analysis of ORA method}
 \usage{
 plotEnrichAdv(
   up_enrich_df,
@@ -45,6 +44,10 @@ together; "two" represents up and down are plotted seperately.}
 A ggplot object
 }
 \description{
-Advanced Plot for GO and KEGG enrichment analysis
+Over-representation analysis (ORA) is a simple method for objectively deciding whether a set of variables of
+known or suspected biological relevance, such as a gene set or pathway, is more prevalent in a set of variables
+of interest than we expect by chance.
+}
+\details{
 Both up and down regulated pathways could be plotted in one figure as two-side barplot
 }

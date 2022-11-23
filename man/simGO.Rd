@@ -2,7 +2,7 @@
 % Please edit documentation in R/simGO.R
 \name{simGO}
 \alias{simGO}
-\title{Simplitify GO enrichment result}
+\title{Simplify GO enrichment result}
 \usage{
 simGO(
   enrich_df,
@@ -25,5 +25,6 @@ simGO(
 A `data.frame` contains simplified GO terms.
 }
 \description{
-Simplitify GO enrichment result
+The Gene Ontology (GO) is a major bioinformatics initiative to unify the representation of gene and gene product
+attributes across all species.
 }

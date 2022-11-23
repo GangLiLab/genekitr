@@ -1,4 +1,7 @@
-#' Simplitify GO enrichment result
+#' Simplify GO enrichment result
+#'
+#' The Gene Ontology (GO) is a major bioinformatics initiative to unify the representation of gene and gene product
+#' attributes across all species.
 #'
 #' @param enrich_df GO enrichment analysis of `genORA()` result.
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",

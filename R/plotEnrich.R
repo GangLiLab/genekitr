@@ -1,4 +1,8 @@
-#' Plot for GO and KEGG enrichment analysis
+#' Plot for gene enrichment analysis of ORA method
+#'
+#' Over-representation analysis (ORA) is a simple method for objectively deciding whether a set of variables of
+#' known or suspected biological relevance, such as a gene set or pathway, is more prevalent in a set of variables
+#' of interest than we expect by chance.
 #'
 #' @param enrich_df Enrichment analysis `data.frame` result.
 #' @param fold_change Fold change or logFC values with gene IDs as names. Used in "heat" and "chord"
@@ -43,7 +47,7 @@
 #' @return A ggplot object
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' ## example data
 #' library(ggplot2)
 #' library(igraph)
@@ -55,10 +59,6 @@
 #' gs <- geneset::getGO(org = "human",ont = "bp")
 #' ego <- genORA(id, geneset = gs)
 #' ego <- ego[1:10, ]
-#' all_ego <- genGO(id,
-#'   org = "human", ont = "all", pvalueCutoff = 0.01,
-#'   qvalueCutoff = 0.01
-#' )
 #'
 #' ## example plots
 #' plotEnrich(ego, plot_type = "dot")
@@ -66,8 +66,6 @@
 #' plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
 #'
 #' plotEnrich(ego, plot_type = "bar")
-#'
-#' plotEnrich(all_ego, plot_type = "wego")
 #'
 #' plotEnrich(ego,
 #'   plot_type = "lollipop",
@@ -712,7 +710,7 @@ plotEnrich <- function(enrich_df,
     uanc <- uanc[!uanc %in% anc1]
 
     # get plot edge and nodes data
-    utils::data("gotbl", package = "GOSemSim")
+    gotbl <- get_gosim_data()
     edge <- gotbl[gotbl$go_id %in% unique(c(id, uanc)), ] %>%
       dplyr::select(c(5, 1, 4))
     node <- gotbl %>%
@@ -723,7 +721,7 @@ plotEnrich <- function(enrich_df,
         color = enrich_df[go_id, stats_metric],
         size = sapply(enrichGenes[go_id], length)
       )
-    rm(gotbl, envir = .GlobalEnv)
+    rm(gotbl, envir = .genekitrEnv)
 
     # only show top nodes/id-related parent and child nodes
     show_node_top <- table(edge$parent) %>%
@@ -1026,3 +1024,10 @@ loadOrgdb <- function(orgdb) {
   }
   eval(parse(text = paste0(orgdb, "::", orgdb)))
 }
+
+get_gosim_data <- function(){
+  .initial()
+  utils::data("gotbl", package = "GOSemSim",envir = .genekitrEnv)
+  gotbl <- get("gotbl", envir = .genekitrEnv)
+}
+

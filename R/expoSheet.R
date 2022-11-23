@@ -1,4 +1,4 @@
-#' Export list of datasets into different Excel sheets
+#' Export list of data sets into different 'Excel' sheets
 #'
 #' @param data_list List of datasets.
 #' @param data_name Character of data names.
@@ -12,14 +12,12 @@
 #' @return An Excel file.
 #' @export
 #' @examples
-#' \dontrun{
 #' library(openxlsx)
 #' expoSheet(
 #'   data_list = list(mtcars, ToothGrowth),
 #'   data_name = c("mtcars", "tooth"),
-#'   filename = "test.xlsx", dir = tempdir()
+#'   filename = "test.xlsx", dir = tempfile()
 #' )
-#' }
 expoSheet <- function(data_list,
                       data_name,
                       filename = NULL,

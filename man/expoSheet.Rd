@@ -2,7 +2,7 @@
 % Please edit documentation in R/expoSheet.R
 \name{expoSheet}
 \alias{expoSheet}
-\title{Export list of datasets into different Excel sheets}
+\title{Export list of data sets into different 'Excel' sheets}
 \usage{
 expoSheet(
   data_list,
@@ -27,15 +27,13 @@ expoSheet(
 An Excel file.
 }
 \description{
-Export list of datasets into different Excel sheets
+Export list of data sets into different 'Excel' sheets
 }
 \examples{
-\dontrun{
 library(openxlsx)
 expoSheet(
   data_list = list(mtcars, ToothGrowth),
   data_name = c("mtcars", "tooth"),
-  filename = "test.xlsx", dir = tempdir()
+  filename = "test.xlsx", dir = tempfile()
 )
-}
 }

@@ -1,5 +1,7 @@
-#' GSEA plot
+#' Plot for gene enrichment analysis of GSEA method
 #'
+#' Gene Set Enrichment Analysis (GSEA) is a computational method that determines whether an a priori defined set of
+#' genes shows statistically significant, concordant differences between two biological states (e.g. phenotypes).
 #' @param gsea_list GSEA result from `genGSEA` function
 #' @param plot_type GSEA plot type, one of 'volcano', 'classic', 'fgsea', 'ridge' or 'bar'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
@@ -19,7 +21,7 @@
 #' @return A ggplot object
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(ggplot2)
 #' ## get GSEA result
 #' data(geneList, package = "genekitr")

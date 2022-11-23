@@ -1,4 +1,4 @@
-#' Import clusterProfiler result
+#' Import 'clusterProfiler' result
 #'
 #' @param object clusterProfiler object.
 #' @param type object type from "go", "gsea" and "other". "other" includes ORA (over-representation analysis) of KEGG, DOSE,...

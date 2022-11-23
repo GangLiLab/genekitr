@@ -2,7 +2,7 @@
 % Please edit documentation in R/genGSEA.R
 \name{genGSEA}
 \alias{genGSEA}
-\title{Gene Set Enrichment Analysis (FCS method)}
+\title{Gene Set Enrichment Analysis}
 \usage{
 genGSEA(
   genelist,
@@ -44,10 +44,10 @@ please set `set_seed = TRUE` or `set.seed()` prior to running.}
 A `data.frame`.
 }
 \description{
-Gene Set Enrichment Analysis (FCS method)
+Gene Set Enrichment Analysis
 }
 \examples{
-\dontrun{
+\donttest{
 # only gene ids
 data(geneList, package = "genekitr")
 gs <- geneset::getGO(org = "human",ont = "mf")

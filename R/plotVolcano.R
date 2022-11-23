@@ -16,14 +16,14 @@
 #' @return A ggplot object
 #' @export
 #' @examples
-#' \dontrun{
+#' \donttest{
 #' library(ggplot2)
 #' data(deg, package = "genekitr")
-#' plotVolcano(deg, "p.adjust", remove_legend = T, dot_size = 3)
+#' plotVolcano(deg, "p.adjust", remove_legend = TRUE, dot_size = 3)
 #'
 #' # show some genes
 #' plotVolcano(deg, "p.adjust",
-#'   remove_legend = T,
+#'   remove_legend = TRUE,
 #'   show_gene = c("CD36", "DUSP6", "IER3","CDH7")
 #' )
 #' }
