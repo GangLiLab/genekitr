@@ -5,5 +5,4 @@
 docs
 inst/doc
 .github
-.gitignore
 .Rbuildignore
