@@ -962,7 +962,14 @@ get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
   #     org =  nm[1]; ont = nm[2]
   #   }
 
-  orgdb <- paste0("org.", stringr::str_to_title(org), ".eg.db")
+  if(tolower(org) == 'at'){
+    orgdb <- 'org.At.tair.db'
+  } else if (tolower(org) == 'sc') {
+    orgdb <- 'org.Sc.sgd.db'
+  }else{
+    orgdb <- paste0("org.", stringr::str_to_title(org), ".eg.db")
+  }
+
   id <- enrich_df[, 1]
   # save godata is saving time
   data_dir <- tools::R_user_dir("genekitr", which = "data")
@@ -993,7 +1000,12 @@ get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
   out <- apply(m, 2, function(x) all(is.na(x)))
   m <- m[!out, !out]
   # reduce redundant terms
-  scores <- setNames(-log10(enrich_df$qvalue), enrich_df[, 1])
+  if(NA%in%enrich_df$qvalue){
+    scores <- setNames(-log10(enrich_df$p.adjust), enrich_df[, 1])
+  }else{
+    scores <- setNames(-log10(enrich_df$qvalue), enrich_df[, 1])
+  }
+
   r <- rrvgo::reduceSimMatrix(m, scores, orgdb = orgdb)
   return(list(m = m, r = r))
 }
