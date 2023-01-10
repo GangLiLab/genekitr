@@ -4,4 +4,6 @@
 .Ruserdata
 docs
 inst/doc
-.github/
+.github
+.gitignore
+.Rbuildignore
