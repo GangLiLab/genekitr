@@ -88,7 +88,15 @@ genInfo <- function(id = NULL,
           if( keytype == 'symbol' && 'symbol' %in% colnames(gene_info) ){
             sym <- sub[check, "symbol"]
             if(any(sym%in%x)){
-              res <- check[which(sym%in%x)]
+              # if id has summary info, it is firstly considered
+              if('summary' %in% colnames(sub)){
+                res <- which(!is.na(sub$summary[check]))
+                if(length(res) >1) res <- check[which(sym%in%x)]
+              }else{
+
+                res <- check[which(sym%in%x)]
+              }
+
               if(length(res) >1) res <- c()
             }
           }
