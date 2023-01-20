@@ -340,8 +340,10 @@ gentype <- function(id, data = NULL, org) {
   if (is.null(data)) data <- ensAnno(org)
 
   if ("symbol" %in% colnames(data)) {
-    data_symbol <- data$symbol %>% stringi::stri_remove_empty_na()
-    n_sym <- sum(id %in% data_symbol)
+    data_symbol_normal <- data$symbol %>% stringi::stri_remove_empty_na()
+    data_symbol_lower <- tolower(data_symbol_normal)
+    data_symbol_upper <- toupper(data_symbol_normal)
+    n_sym <- sum(id %in% data_symbol_normal | id %in% data_symbol_lower | id %in% data_symbol_upper)
   } else {
     n_sym <- 0L
   }
