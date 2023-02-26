@@ -1000,7 +1000,7 @@ get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
   out <- apply(m, 2, function(x) all(is.na(x)))
   m <- m[!out, !out]
   # reduce redundant terms
-  if(NA%in%enrich_df$qvalue){
+  if(all(enrich_df$qvalue%in%NA)){
     scores <- setNames(-log10(enrich_df$p.adjust), enrich_df[, 1])
   }else{
     scores <- setNames(-log10(enrich_df$qvalue), enrich_df[, 1])

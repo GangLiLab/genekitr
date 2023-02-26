@@ -36,7 +36,8 @@ genInfo <- function(id = NULL,
     gene_info <- ensAnno(org)
   } else {
     all <- ensAnno(org)
-
+    # if id has ensembl version, remove them
+    if(all(id %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_remove_all(id,'\\.[0-9]')
     id <- replace_greek(id)
     keytype <- gentype(id = id, data = all, org = org) %>% tolower()
 
