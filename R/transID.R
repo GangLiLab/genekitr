@@ -38,7 +38,7 @@ transId <- function(id,
   #--- args ---#
   org <- mapEnsOrg(organism = tolower(org))
   # if id has ensembl version, remove them
-  if(all(id %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_remove_all(id,'\\.[0-9]')
+  # if(all(all %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
 
   transTo <- sapply(tolower(transTo), function(x) {
     if (grepl(x, "entrezid")) x <- "entrezid"
