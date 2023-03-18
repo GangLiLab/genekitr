@@ -32,10 +32,10 @@
 #' ora <- genORA(id, geneset = gs)
 #'
 #' # gene id with groups
-#' id <- c(head(names(geneList), 100), tail(names(geneList), 100))
+#' id <- c(head(names(geneList), 50), tail(names(geneList), 50))
 #' group <- list(
-#'   group1 = c(rep("up", 100), rep("down", 100)),
-#'   group2 = c(rep("A", 130), rep("B", 70))
+#'   group1 = c(rep("up", 50), rep("down", 50)),
+#'   group2 = c(rep("A", 20), rep("B", 30))
 #' )
 #' gora <- genORA(id, geneset = gs, group_list = group)
 #'
