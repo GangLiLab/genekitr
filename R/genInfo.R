@@ -90,16 +90,22 @@ genInfo <- function(id = NULL,
           if( keytype == 'symbol' && 'symbol' %in% colnames(gene_info) ){
             sym <- sub[check, "symbol"]
             if(any(sym%in%x)){
-              # if id has summary info, it is firstly considered
-              if('summary' %in% colnames(sub)){
-                res <- which(!is.na(sub$summary[check]))
-                if(length(res) >1) res <- check[which(sym%in%x)]
-              }else{
+              # first reserve the identical id
+              res <- check[which(sym%in%x)]
 
-                res <- check[which(sym%in%x)]
+              # if res length >1
+              if(length(res) >1){
+                # if id has summary info, it is firstly considered
+                if('summary' %in% colnames(sub)){
+                  res <- which(!is.na(sub$summary[check]))
+                  if(length(res) >1) res <- check[which(sym%in%x)]
+                }else{
+                  res <- check[which(sym%in%x)]
+                }
+
+                if(length(res) >1) res <- c()
               }
 
-              if(length(res) >1) res <- c()
             }
           }
 
@@ -206,20 +212,20 @@ replace_back <-function(id){
   id <- stringr::str_replace_all(id, 'sigma',  "\\u03c3" )
 }
 
-imerge <- function(x,y,by){
-  dat = fuzzyjoin::regex_inner_join(x,y,by = by,ignore_case =TRUE)
-  if(is.null(names(by))){
-    i = which(colnames(x)==by)
-  }else{
-    i = which(colnames(x)==names(by))
-  }
-  j = which(colnames(y)==by)+ncol(x)
-  k = apply(dat,1,function(z){
-    pracma::strcmpi(z[i],z[j])
-  })
-  dat = dat[k,]
-  return(dat)
-}
+# imerge <- function(x,y,by){
+#   dat = fuzzyjoin::regex_inner_join(x,y,by = by,ignore_case =TRUE)
+#   if(is.null(names(by))){
+#     i = which(colnames(x)==by)
+#   }else{
+#     i = which(colnames(x)==names(by))
+#   }
+#   j = which(colnames(y)==by)+ncol(x)
+#   k = apply(dat,1,function(z){
+#     pracma::strcmpi(z[i],z[j])
+#   })
+#   dat = dat[k,]
+#   return(dat)
+# }
 
 utils::globalVariables(c(":=", "symbol", "uniprot", "input_id", "symbol", "chr", "start", "end",
                          "strcmpi", "symbol.x", "symbol.y", "symbol_lower", "symbol_upper"))
