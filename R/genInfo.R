@@ -41,47 +41,22 @@ genInfo <- function(id = NULL,
     id <- replace_greek(id)
     keytype <- gentype(id = id, data = all, org = org) %>% tolower()
 
-    ## get ensembl/entrez/uniprot/symbol order (if keytype is symbol, consider its case for mm or rat)
-    ## e.g. consider tp53/TP53/Tp53 for mouse
-    if(keytype != 'symbol'){
-      order_dat <- getOrder(org, all_of(keytype)) %>%
-        dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
-        dplyr::mutate(!!keytype := factor(.[[keytype]], levels = unique(id))) %>%
-        dplyr::arrange(.[[keytype]])
+    ## get ensembl/entrez/uniprot/symbol order
+    order_dat <- getOrder(org, all_of(keytype)) %>%
+      dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
+      dplyr::mutate(!!keytype := factor(.[[keytype]], levels = unique(id))) %>%
+      dplyr::arrange(.[[keytype]])
 
-      ## extract info from all data frame
-      gene_info <- all[order_dat$rnum, ] %>%
-        dplyr::mutate(input_id = order_dat[[keytype]]) %>%
-        dplyr::relocate("input_id", .before = everything()) %>%
-        merge(., as.data.frame(id),
-              by.x = "input_id", by.y = "id",
-              all.y = T
-        ) %>%
-        # dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
-        dplyr::arrange(input_id)
-    }else{
-      order_dat <- getOrder(org, 'symbol') %>%
-        dplyr::mutate(symbol_lower = tolower(symbol)) %>%
-        dplyr::mutate(symbol_upper = toupper(symbol)) %>%
-        dplyr::filter(symbol %in% id | symbol_lower%in% id | symbol_upper%in% id) %>%
-        dplyr::select(-c(symbol_lower,symbol_upper)) %>%
-        imerge(.,data.frame(symbol = id),by = "symbol") %>%
-        dplyr::rename(symbol = symbol.x) %>%
-        dplyr::rename(input_id = symbol.y) %>%
-        dplyr::mutate(!!'input_id' := factor(.[['input_id']], levels = unique(id))) %>%
-        dplyr::arrange(.[['input_id']])
-
-      ## extract info from all data frame
-      gene_info <- all[order_dat$rnum, ] %>%
-        dplyr::mutate(input_id = order_dat[['input_id']]) %>%
-        dplyr::relocate("input_id", .before = everything()) %>%
-        merge(., as.data.frame(id),
-              by.x = "input_id", by.y = "id",
-              all.y = T
-        ) %>%
-        # dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
-        dplyr::arrange(input_id)
-    }
+    ## extract info from all data frame
+    gene_info <- all[order_dat$rnum, ] %>%
+      dplyr::mutate(input_id = order_dat[[keytype]]) %>%
+      dplyr::relocate("input_id", .before = everything()) %>%
+      merge(., as.data.frame(id),
+            by.x = "input_id", by.y = "id",
+            all.y = T
+      ) %>%
+      # dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
+      dplyr::arrange(input_id)
 
 
     ## check one-to-many match
