@@ -49,6 +49,7 @@
 #' @examples
 #' \donttest{
 #' ## example data
+#' ## More examples please refer to https://www.genekitr.fun/plot-ora-1.html
 #' library(ggplot2)
 #' library(igraph)
 #' library(ggraph)
@@ -75,23 +76,6 @@
 #'
 #' plotEnrich(ego, plot_type = "geneheat")
 #'
-#' show_gene <- c("BRCA2", "CDK1", "JUN", "MCM8", "TIPIN")
-#' plotEnrich(ego, plot_type = "geneheat", show_gene = show_gene)
-#' plotEnrich(ego, fold_change = logfc, plot_type = "geneheat", show_gene = show_gene)
-#'
-#' plotEnrich(ego, fold_change = logfc, plot_type = "genechord", show_gene = show_gene)
-#'
-#' plotEnrich(ego, plot_type = "network", scale_ratio = 0.5)
-#'
-#' plotEnrich(ego, plot_type = "gomap", wrap_length = 25)
-#'
-#' plotEnrich(ego, plot_type = "goheat", sim_method = "Rel")
-#'
-#' plotEnrich(ego, plot_type = "gotangram", sim_method = "Rel")
-#'
-#' plotEnrich(ego, plot_type = "wordcloud")
-#'
-#' plotEnrich(ego, plot_type = "upset",main_text_size = 15,legend_text_size = 8)
 #' }
 #'
 plotEnrich <- function(enrich_df,
