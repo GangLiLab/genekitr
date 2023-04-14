@@ -7,6 +7,7 @@
 #'   option is upsetplot for large list.
 #' @param color Colors for gene lists, default is NULL.
 #' @param alpha_degree Alpha transparency of each circle's area, default is 0.3.
+#' @param venn_percent Logical to show both number and percentage in venn plot.
 #' @param ... other arguments transfer to `plot_theme` function
 #' @return  A ggplot object
 #' @importFrom VennDiagram venn.diagram
@@ -31,7 +32,8 @@
 #'   color = ggsci::pal_lancet()(3),
 #'   alpha_degree = 1,
 #'   main_text_size = 1.5,
-#'   border_thick = 0
+#'   border_thick = 0,
+#'   venn_percent = TRUE
 #' )
 #' plotVenn(la_gene_list,
 #'   use_venn = FALSE,
@@ -43,6 +45,7 @@ plotVenn <- function(venn_list,
                      use_venn = TRUE,
                      color = NULL,
                      alpha_degree = 0.3,
+                     venn_percent = FALSE,
                      ...) {
 
   #--- args ---#
@@ -73,6 +76,11 @@ plotVenn <- function(venn_list,
       }
     }
 
+    if(venn_percent){
+      print_mode <- c('raw','percent')
+    }else{
+      print_mode <- 'raw'
+    }
     if(is.null(names(venn_list))) names(venn_list) = paste0('group',1:length(venn_list))
 
     p <- VennDiagram::venn.diagram(
@@ -86,7 +94,13 @@ plotVenn <- function(venn_list,
       lwd =  lst$border_thick,
       col = color,
       cat.col = color,
-      fill = sapply(color, function(x) scales::alpha(x, alpha_degree))
+      fill = sapply(color, function(x) scales::alpha(x, alpha_degree)),
+      ext.text = F,
+      cat.pos = rep(0,length(venn_list)),
+      print.mode= print_mode,
+      sigdigs = 2,
+      disable.logging = TRUE,
+      scaled = FALSE
     ) %>%
       cowplot::as_grob() %>%
       ggplotify::as.ggplot()

@@ -4,7 +4,14 @@
 \alias{plotVenn}
 \title{Venn plot for groups of genes}
 \usage{
-plotVenn(venn_list, use_venn = TRUE, color = NULL, alpha_degree = 0.3, ...)
+plotVenn(
+  venn_list,
+  use_venn = TRUE,
+  color = NULL,
+  alpha_degree = 0.3,
+  venn_percent = FALSE,
+  ...
+)
 }
 \arguments{
 \item{venn_list}{A list of gene id.}
@@ -15,6 +22,8 @@ option is upsetplot for large list.}
 \item{color}{Colors for gene lists, default is NULL.}
 
 \item{alpha_degree}{Alpha transparency of each circle's area, default is 0.3.}
+
+\item{venn_percent}{Logical to show both number and percentage in venn plot.}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }
@@ -41,7 +50,8 @@ plotVenn(sm_gene_list,
   color = ggsci::pal_lancet()(3),
   alpha_degree = 1,
   main_text_size = 1.5,
-  border_thick = 0
+  border_thick = 0,
+  venn_percent = TRUE
 )
 plotVenn(la_gene_list,
   use_venn = FALSE,
