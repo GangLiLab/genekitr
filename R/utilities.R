@@ -178,8 +178,13 @@ web.url <- "https://genekitr-china.oss-accelerate.aliyuncs.com"
 
 #--- ensembl anno data ---#
 # options(geneset.download.method = "wininet")
-ensAnno <- function(org, download.method = NULL) {
-  org <- mapEnsOrg(tolower(org))
+ensAnno <- function(org, download.method = NULL, hgVersion) {
+  if(hgVersion == 'v38'){
+    org <- mapEnsOrg(tolower(org))
+  }else{
+    org <- mapEnsOrg(tolower(org))
+    org <- paste0(org,'_v19')
+  }
 
   data_dir <- tools::R_user_dir("genekitr", which = "data")
   sub_dir <- "/info/gene/"
@@ -187,13 +192,13 @@ ensAnno <- function(org, download.method = NULL) {
   make_dir(data_dir)
 
   url <- paste0(web.url, sub_dir, org, "_anno.fst")
-  destfile <- paste0(data_dir, "/", org, "_anno.fst")
+  destfile <- paste0(data_dir, org, "_anno.fst")
   web_f_size <- check_web_size(url)
   local_f_size <- file.size(destfile)
   if(is.na(local_f_size)) local_f_size = 0
 
   genekitr_download(url, destfile, method = download.method,
-                   data_dir, web_f_size, local_f_size)
+                    data_dir, web_f_size, local_f_size)
 
   dat <- suppressMessages(fst::read.fst(destfile))
   invisible(dat)
@@ -226,8 +231,14 @@ probAnno <- function(org, download.method = NULL) {
 }
 
 #--- keytype order data ---#
-getOrder <- function(org, keytype, download.method = NULL) {
-  org <- mapEnsOrg(tolower(org))
+getOrder <- function(org, keytype, download.method = NULL, hgVersion) {
+  if(hgVersion == 'v38'){
+    org <- mapEnsOrg(tolower(org))
+  }else{
+    org <- mapEnsOrg(tolower(org))
+    org <- paste0(org,'_v19')
+  }
+
 
   data_dir <- tools::R_user_dir("genekitr", which = "data")
   sub_dir <- "/info/gene/"
@@ -335,9 +346,9 @@ genekitr_download <- function(url, destfile,data_dir,
 }
 
 #---  decide gene id type ---#
-gentype <- function(id, data = NULL, org) {
+gentype <- function(id, data = NULL, org, hgVersion='v38') {
   org <- mapEnsOrg(org)
-  if (is.null(data)) data <- ensAnno(org)
+  if (is.null(data)) data <- ensAnno(org,hgVersion = hgVersion)
 
   if ("symbol" %in% colnames(data)) {
     data_symbol_normal <- data$symbol %>% stringi::stri_remove_empty_na()

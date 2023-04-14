@@ -4,7 +4,13 @@
 \alias{genInfo}
 \title{Get gene related information}
 \usage{
-genInfo(id = NULL, org = "hs", unique = FALSE, keepNA = TRUE)
+genInfo(
+  id = NULL,
+  org = "hs",
+  unique = FALSE,
+  keepNA = TRUE,
+  hgVersion = "v38"
+)
 }
 \arguments{
 \item{id}{Gene id (symbol, ensembl or entrez id) or uniprot id. If this argument is NULL, return all gene info.}
@@ -14,6 +20,8 @@ genInfo(id = NULL, org = "hs", unique = FALSE, keepNA = TRUE)
 \item{unique}{Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.}
 
 \item{keepNA}{If some id has no match at all, keep it or not. Default is TRUE.}
+
+\item{hgVersion}{Select human genome build version from "v38" (default) and "v19".}
 }
 \value{
 A `data.frame`.
@@ -35,4 +43,6 @@ genInfo(org = "hs") \%>\%
     table(.$gene_biotype)
   }
 }
+# example3: use hg19 data
+x <- genInfo(id = c("TP53","BCC7"), hgVersion = "v19")
 }

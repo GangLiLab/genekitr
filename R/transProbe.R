@@ -90,7 +90,7 @@ transProbe <- function(id,
   # trans to other types
   if (any(transTo %in% c("entrezid", "symbol", "uniprot"))) {
     type2 <- transTo[transTo %in% c("entrezid", "symbol", "uniprot")]
-    new_dat <- suppressMessages(transId(ens_res$ensembl,
+    new_dat <- suppressMessages(transId(stats::na.omit(ens_res$ensembl),
       transTo = type2,
       org = org, unique = T, keepNA = T
     )) %>%

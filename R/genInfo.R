@@ -4,6 +4,7 @@
 #' @param org Latin organism shortname from `ensOrg_name`. Default is human.
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @param keepNA If some id has no match at all, keep it or not. Default is TRUE.
+#' @param hgVersion Select human genome build version from "v38" (default) and "v19".
 #' @importFrom dplyr filter mutate arrange relocate select filter_at vars any_vars
 #' @importFrom rlang .data
 #'
@@ -24,25 +25,28 @@
 #'     table(.$gene_biotype)
 #'   }
 #' }
+#' # example3: use hg19 data
+#' x <- genInfo(id = c("TP53","BCC7"), hgVersion = "v19")
 genInfo <- function(id = NULL,
                     org = "hs",
                     unique = FALSE,
-                    keepNA = TRUE) {
+                    keepNA = TRUE,
+                    hgVersion = "v38") {
   #--- args ---#
   org <- mapEnsOrg(org)
 
   #--- code ---#
   if (is.null(id)) {
-    gene_info <- ensAnno(org)
+    gene_info <- ensAnno(org,hgVersion = hgVersion)
   } else {
-    all <- ensAnno(org)
+    all <- ensAnno(org,hgVersion = hgVersion)
     # if id has ensembl version, remove them
     if(all(id %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
     id <- replace_greek(id)
-    keytype <- gentype(id = id, data = all, org = org) %>% tolower()
+    keytype <- gentype(id = id, data = all, org = org,hgVersion=hgVersion) %>% tolower()
 
     ## get ensembl/entrez/uniprot/symbol order
-    order_dat <- getOrder(org, all_of(keytype)) %>%
+    order_dat <- getOrder(org, all_of(keytype),hgVersion = hgVersion) %>%
       dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
       dplyr::mutate(!!keytype := factor(.[[keytype]], levels = unique(id))) %>%
       dplyr::arrange(.[[keytype]])

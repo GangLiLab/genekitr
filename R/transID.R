@@ -5,6 +5,7 @@
 #' @param org Latin organism shortname from `ensOrg_name`. Default is human.
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @param keepNA If some id has no match at all, keep it or not. Default is FALSE.
+#' @param hgVersion Select human genome build version from "v38" (default) and "v19".
 #' @importFrom dplyr filter pull select distinct arrange all_of filter_at vars any_vars
 #' @importFrom rlang .data
 #'
@@ -33,7 +34,8 @@ transId <- function(id,
                     transTo,
                     org = "hs",
                     unique = FALSE,
-                    keepNA = FALSE) {
+                    keepNA = FALSE,
+                    hgVersion = "v38") {
 
   #--- args ---#
   org <- mapEnsOrg(organism = tolower(org))
@@ -55,7 +57,13 @@ transId <- function(id,
   #--- codes ---#
   tryCatch(
     {
-      res <- genInfo(id, org, unique, keepNA) %>%
+      all <- ensAnno(org,hgVersion = hgVersion)
+      if(all(id %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
+      id <- replace_greek(id)
+      keytype <- gentype(id = id, data = all, org = org) %>% tolower()
+
+      res <- genInfo(id, org, unique, keepNA,hgVersion) %>%
+        dplyr::mutate( !! keytype := input_id) %>%
         dplyr::select(input_id, all_of(transTo)) %>%
         distinct()
     },
