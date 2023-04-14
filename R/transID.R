@@ -62,10 +62,17 @@ transId <- function(id,
       id <- replace_greek(id)
       keytype <- gentype(id = id, data = all, org = org) %>% tolower()
 
-      res <- genInfo(id, org, unique, keepNA,hgVersion) %>%
-        dplyr::mutate( !! keytype := input_id) %>%
-        dplyr::select(input_id, all_of(transTo)) %>%
-        distinct()
+      if(keytype != 'symbol'){
+        res <- genInfo(id, org, unique, keepNA,hgVersion) %>%
+          dplyr::mutate( !! keytype := input_id) %>%
+          dplyr::select(input_id, all_of(transTo)) %>%
+          distinct()
+      }else{
+        res <- genInfo(id, org, unique, keepNA,hgVersion) %>%
+          dplyr::select(input_id, all_of(transTo)) %>%
+          distinct()
+      }
+
     },
     error = function(e) {
       message('Maybe your "trans_to" argument is wrong, please check again...')
