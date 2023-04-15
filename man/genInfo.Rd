@@ -42,7 +42,12 @@ genInfo(org = "hs") \%>\%
   {
     table(.$gene_biotype)
   }
-}
+
 # example3: use hg19 data
 x <- genInfo(id = c("TP53","BCC7"), hgVersion = "v19")
+
+# example4: search genes with case-insensitive
+x <- genInfo(id = c("tp53","nc886","FAke","EZh2"), org = "hs", unique = TRUE)
+}
+
 }

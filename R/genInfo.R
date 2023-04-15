@@ -24,9 +24,14 @@
 #'   {
 #'     table(.$gene_biotype)
 #'   }
-#' }
+#'
 #' # example3: use hg19 data
 #' x <- genInfo(id = c("TP53","BCC7"), hgVersion = "v19")
+#'
+#' # example4: search genes with case-insensitive
+#' x <- genInfo(id = c("tp53","nc886","FAke","EZh2"), org = "hs", unique = TRUE)
+#' }
+#'
 genInfo <- function(id = NULL,
                     org = "hs",
                     unique = FALSE,
@@ -45,22 +50,44 @@ genInfo <- function(id = NULL,
     id <- replace_greek(id)
     keytype <- gentype(id = id, data = all, org = org,hgVersion=hgVersion) %>% tolower()
 
-    ## get ensembl/entrez/uniprot/symbol order
-    order_dat <- getOrder(org, all_of(keytype),hgVersion = hgVersion) %>%
-      dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
-      dplyr::mutate(!!keytype := factor(.[[keytype]], levels = unique(id))) %>%
-      dplyr::arrange(.[[keytype]])
+    if(keytype == 'symbol'){
+      input_df <- data.frame(input_id = id)
+      id2 <- tolower(id)
 
-    ## extract info from all data frame
-    gene_info <- all[order_dat$rnum, ] %>%
-      dplyr::mutate(input_id = order_dat[[keytype]]) %>%
-      dplyr::relocate("input_id", .before = everything()) %>%
-      merge(., as.data.frame(id),
-            by.x = "input_id", by.y = "id",
-            all.y = T
-      ) %>%
-      # dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
-      dplyr::arrange(input_id)
+      ## get ensembl/entrez/uniprot/symbol order
+      order_dat <- getOrder(org, keytype,hgVersion = hgVersion) %>%
+        dplyr::mutate(!!keytype := tolower(.[[keytype]])) %>%
+        dplyr::filter(eval(parse(text = keytype)) %in% id2) %>%
+        dplyr::arrange(.[[keytype]])
+
+      input_df <- input_df %>%
+        dplyr::mutate(rep = tolower(input_id)) %>%
+        merge(.,order_dat,by.x = 'rep',by.y = keytype,all.x = T)
+
+      ## extract info from all data frame
+      gene_info <- all[input_df$rnum, ] %>%
+        dplyr::mutate(input_id = input_df$input_id) %>%
+        dplyr::relocate("input_id", .before = everything()) %>%
+        dplyr::arrange(match(input_id, id))
+    }else{
+      ## get ensembl/entrez/uniprot/symbol order
+      order_dat <- getOrder(org, all_of(keytype),hgVersion = hgVersion) %>%
+        dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
+        dplyr::mutate(!!keytype := factor(.[[keytype]], levels = unique(id))) %>%
+        dplyr::arrange(.[[keytype]])
+
+      ## extract info from all data frame
+      gene_info <- all[order_dat$rnum, ] %>%
+        dplyr::mutate(input_id = order_dat[[keytype]]) %>%
+        dplyr::relocate("input_id", .before = everything()) %>%
+        merge(., as.data.frame(id),
+              by.x = "input_id", by.y = "id",
+              all.y = T
+        ) %>%
+        # dplyr::filter(!duplicated(cbind(input_id, symbol,chr,start,end))) %>%
+        dplyr::arrange(input_id)
+    }
+
 
 
     ## check one-to-many match
@@ -85,14 +112,14 @@ genInfo <- function(id = NULL,
 
       # if has entrezid and ensembl column: with exact symbol > minimal entrezid > assembled chr
       if (all(c("entrezid", "chr") %in% colnames(gene_info))) {
-        uniq_order <- sapply(tomany_id, function(x) {
+        uniq_order <- sapply(tolower(tomany_id), function(x) {
           # x = 'GPR1-AS'
           # print(x)
           res <- c()
-          check <- which(sub$input_id == x)
+          check <- which(tolower(sub$input_id) == x)
 
           if( keytype == 'symbol' && 'symbol' %in% colnames(gene_info) ){
-            sym <- sub[check, "symbol"]
+            sym <- tolower(sub[check, "symbol"])
             if(any(sym%in%x)){
               # first reserve the identical id
               res <- check[which(sym%in%x)]
@@ -120,13 +147,13 @@ genInfo <- function(id = NULL,
               res <- check[min_n]
               if (length(min_n) > 1) {
                 # if entrez is same, then check chr
-                if (any(grepl("^[0-9].*$", sub[check, "chr"]))) {
-                  real_chr <- which(grepl("^[0-9].*$", sub[check, "chr"]))
+                if (any(grepl("^[0-9].*$", sub[res, "chr"]))) {
+                  real_chr <- which(grepl("^[0-9].*$", sub[res, "chr"]))
                   if (length(real_chr) > 1) real_chr <- real_chr[1]
                 } else {
-                  real_chr <- check[1]
+                  real_chr <- res[1]
                 }
-                res <- check[real_chr]
+                res <- res[real_chr]
               }
             } else {
               if (any(grepl("^[0-9].*$", sub[check, "chr"]))) {
@@ -159,7 +186,7 @@ genInfo <- function(id = NULL,
           return(res)
         }) %>% as.character()
       }
-
+      row.names(sub) <- NULL
       gene_info <- rbind(other, sub[uniq_order, ])
       gene_info <- gene_info[match(id, gene_info$input_id), ]
     } else {
@@ -190,7 +217,7 @@ genInfo <- function(id = NULL,
 
   # convert factor to character
   gene_info[] <- lapply(gene_info, as.character)
-
+  rownames(gene_info) <- NULL
   return(gene_info)
 }
 
@@ -216,20 +243,6 @@ replace_back <-function(id){
   id <- stringr::str_replace_all(id, 'sigma',  "\\u03c3" )
 }
 
-# imerge <- function(x,y,by){
-#   dat = fuzzyjoin::regex_inner_join(x,y,by = by,ignore_case =TRUE)
-#   if(is.null(names(by))){
-#     i = which(colnames(x)==by)
-#   }else{
-#     i = which(colnames(x)==names(by))
-#   }
-#   j = which(colnames(y)==by)+ncol(x)
-#   k = apply(dat,1,function(z){
-#     pracma::strcmpi(z[i],z[j])
-#   })
-#   dat = dat[k,]
-#   return(dat)
-# }
 
 utils::globalVariables(c(":=", "symbol", "uniprot", "input_id", "symbol", "chr", "start", "end",
                          "strcmpi", "symbol.x", "symbol.y", "symbol_lower", "symbol_upper"))

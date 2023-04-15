@@ -28,6 +28,9 @@
 #'
 #' # example3: auto-recognize ensembl version number
 #' transId("ENSG00000141510.11", "symbol")
+#'
+#' # example4: search genes with case-insensitive
+#' transId(c('nc886','ezh2','TP53'),transTo = "ensembl",org = 'hs',unique = TRUE)
 #' }
 #'
 transId <- function(id,
