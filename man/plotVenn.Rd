@@ -48,8 +48,8 @@ la_gene_list <- list(
 plotVenn(sm_gene_list,
   use_venn = TRUE,
   color = ggsci::pal_lancet()(3),
-  alpha_degree = 1,
-  main_text_size = 1.5,
+  alpha_degree = 0.5,
+  main_text_size = 3,
   border_thick = 0,
   venn_percent = TRUE
 )

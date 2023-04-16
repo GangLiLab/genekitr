@@ -10,7 +10,7 @@
 #' @param venn_percent Logical to show both number and percentage in venn plot.
 #' @param ... other arguments transfer to `plot_theme` function
 #' @return  A ggplot object
-#' @importFrom VennDiagram venn.diagram
+#' @importFrom ggvenn ggvenn
 #' @importFrom ggplot2 ggplot geom_bar aes geom_text after_stat theme
 #'   element_blank scale_y_continuous geom_segment geom_point element_text
 #' @importFrom rlang .data
@@ -30,8 +30,8 @@
 #' plotVenn(sm_gene_list,
 #'   use_venn = TRUE,
 #'   color = ggsci::pal_lancet()(3),
-#'   alpha_degree = 1,
-#'   main_text_size = 1.5,
+#'   alpha_degree = 0.5,
+#'   main_text_size = 3,
 #'   border_thick = 0,
 #'   venn_percent = TRUE
 #' )
@@ -61,8 +61,10 @@ plotVenn <- function(venn_list,
   #--- codes ---#
   ## Venn Diagram
   if (use_venn) {
-    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 1
+    # if (!"label_text_size" %in% names(lst)) lst$label_text_size <- 6
+    if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 3
     if (!"border_thick" %in% names(lst)) lst$border_thick <- 1
+    # if (!"digits" %in% names(lst)) lst$digits <- 2
     # suppress venn.diagram log
     futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
 
@@ -83,27 +85,43 @@ plotVenn <- function(venn_list,
     }
     if(is.null(names(venn_list))) names(venn_list) = paste0('group',1:length(venn_list))
 
-    p <- VennDiagram::venn.diagram(
-      x = venn_list,
-      filename = NULL,
-      category.names = names(venn_list),
-      output = TRUE,
-      cat.cex = lst$main_text_size,
-      main.cex = lst$main_text_size,
-      cex = lst$main_text_size,
-      lwd =  lst$border_thick,
-      col = color,
-      cat.col = color,
-      fill = sapply(color, function(x) scales::alpha(x, alpha_degree)),
-      ext.text = F,
-      cat.pos = rep(0,length(venn_list)),
-      print.mode= print_mode,
-      sigdigs = 2,
-      disable.logging = TRUE,
-      scaled = FALSE
-    ) %>%
-      cowplot::as_grob() %>%
-      ggplotify::as.ggplot()
+    p <- ggvenn(venn_list,
+           show_elements = F,
+           show_percentage = venn_percent,
+           digits = 2,
+           label_sep = "\n",
+           fill_color = color,
+           # stroke_color = color,
+           # set_name_color = color,
+           fill_alpha = alpha_degree,
+           text_size = lst$main_text_size ,
+           set_name_size = lst$main_text_size,
+           stroke_size = lst$border_thick
+    )
+
+    # p <- VennDiagram::venn.diagram(
+    #   x = venn_list,
+    #   filename = NULL,
+    #   category.names = names(venn_list),
+    #   output = TRUE,
+    #   cat.cex = lst$main_text_size,
+    #   main.cex = lst$main_text_size,
+    #   cex = lst$main_text_size,
+    #   lwd =  lst$border_thick,
+    #   fontfamily = 'Arial',
+    #   cat.fontfamily = 'Arial',
+    #   col = color,
+    #   cat.col = color,
+    #   fill = sapply(color, function(x) scales::alpha(x, alpha_degree)),
+    #   ext.text = F,
+    #   cat.pos = 0,
+    #   print.mode= print_mode,
+    #   sigdigs = 2,
+    #   disable.logging = TRUE,
+    #   scaled = FALSE
+    # ) %>%
+    #   cowplot::as_grob() %>%
+    #   ggplotify::as.ggplot()
 
     } else {
      ## ComplexUpset Diagram

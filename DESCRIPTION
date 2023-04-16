@@ -31,13 +31,13 @@ Imports:
     geneset,
     ggplot2,
     ggraph,
+    ggvenn,
     igraph,
     magrittr,
     openxlsx,
     stringr,
     stringi,
     tidyr,
-    VennDiagram,
     rlang
 Suggests:
     AnnotationDbi,
