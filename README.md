@@ -1,4 +1,4 @@
-<img src="https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-05-24-043213.png" align="left" width="200"/>
+<img src="https://github.com/GangLiLab/genekitr/assets/34302878/644d5058-2e77-4f7c-850a-ae539ca2595e" align="left" width="200"/>
 
 [![CRANstatus](https://www.r-pkg.org/badges/version/genekitr)](https://cran.r-project.org/package=genekitr) [![](https://img.shields.io/badge/devel%20version-1.1.9-green.svg)](https://github.com/GangLiLab/genekitr) [![](https://cranlogs.r-pkg.org/badges/grand-total/genekitr?color=orange)](https://cran.r-project.org/package=genekitr) [![lifecycle](https://img.shields.io/badge/lifecycle-stable-blue.svg)](https://lifecycle.r-lib.org/articles/stages.html) 
 
@@ -10,7 +10,7 @@
 
 > **Genekitr** is a **gene** analysis tool**kit** based on **R**. 
 
-![overview](https://jieandze1314-1255603621.cos.ap-guangzhou.myqcloud.com/blog/2022-07-26-142024.png)
+<img width="1328" alt="image" src="https://github.com/GangLiLab/genekitr/assets/34302878/348056da-b5e2-4145-b990-5999524544a6">
 
 #### Five core features:
 
