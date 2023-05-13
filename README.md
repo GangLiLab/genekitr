@@ -1,4 +1,4 @@
-<img src="https://github.com/GangLiLab/genekitr/assets/34302878/644d5058-2e77-4f7c-850a-ae539ca2595e" align="left" width="200"/>
+<img src="https://github.com/GangLiLab/genekitr/assets/34302878/b7337c2c-076a-46e8-9777-b2dfb742d613" align="left" width="200"/>
 
 
 
