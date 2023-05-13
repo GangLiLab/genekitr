@@ -12,7 +12,7 @@
 
 > **Genekitr** is a **gene** analysis tool**kit** based on **R**. 
 
-<img width="1328" alt="image" src="https://github.com/GangLiLab/genekitr/assets/34302878/348056da-b5e2-4145-b990-5999524544a6">
+<img width="1328" alt="image" src="https://github.com/GangLiLab/genekitr/assets/34302878/c60a5fb0-d2da-4a56-8c58-8204b6769adb">
 
 #### Five core features:
 
