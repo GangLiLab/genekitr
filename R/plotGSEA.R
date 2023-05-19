@@ -495,8 +495,14 @@ calcScore <- function(geneset, genelist, item, exponent, fortify = TRUE, org) {
     position = as.integer(hits)
   )
 
-  df$gene <- suppressMessages(transId(names(genelist), "symbol", org, keepNA = T, unique = T) %>%
-    dplyr::pull(symbol))
+
+  if(org %in% c('hsapiens','mmusculus','rnorvegicus')){
+    df$gene <- suppressMessages(transId(names(genelist), "symbol", org, keepNA = T, unique = T) %>%
+                                  dplyr::pull(symbol))
+  }else{
+    df$gene <- names(genelist)
+  }
+
 
   df$ymin <- 0
   df$ymax <- 0
