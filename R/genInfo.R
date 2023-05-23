@@ -36,9 +36,10 @@ genInfo <- function(id = NULL,
                     org = "hs",
                     unique = FALSE,
                     keepNA = TRUE,
-                    hgVersion = "v38") {
+                    hgVersion = c("v38","v19")) {
   #--- args ---#
   org <- mapEnsOrg(org)
+  hgVersion <- match.arg(hgVersion)
 
   #--- code ---#
   if (is.null(id)) {
@@ -89,22 +90,21 @@ genInfo <- function(id = NULL,
     }
 
 
-
-    ## check one-to-many match
-    tomany_id <- names(table(gene_info$input_id))[table(gene_info$input_id) > 1]
-    tomany_id <- tomany_id[!tomany_id %in% id[duplicated(id)]]
-    if (length(tomany_id) > 0 & length(tomany_id) < 3) {
-      message(paste0(
-        'Some ID occurs one-to-many match, like "', paste0(tomany_id, collapse = ", "), '"\n'
-      ))
-    } else if (length(tomany_id) > 3) {
-      message(paste0(
-        'Some ID occurs one-to-many match, like "', paste0(tomany_id[1:3], collapse = ", "), '"...\n'
-      ))
+    if(!is.null(id)){
+      ## check one-to-many match
+      tomany_id <- names(table(gene_info$input_id))[table(gene_info$input_id) > 1]
+      tomany_id <- tomany_id[!tomany_id %in% id[duplicated(id)]]
+      if (length(tomany_id) > 0 & length(tomany_id) < 3) {
+        message(paste0(
+          'Some ID occurs one-to-many match, like "', paste0(tomany_id, collapse = ", "), '"\n'
+        ))
+      } else if (length(tomany_id) > 3) {
+        message(paste0(
+          'Some ID occurs one-to-many match, like "', paste0(tomany_id[1:3], collapse = ", "), '"...\n'
+        ))
+      }
     }
-  }
 
-  if (!is.null(id)) {
     # if only keep one, choose the one with minimum NA
     if (unique & length(tomany_id) != 0) {
       sub <- gene_info %>% dplyr::filter(input_id %in% tomany_id)
@@ -128,38 +128,51 @@ genInfo <- function(id = NULL,
               if(length(res) >1){
                 # if id has summary info, it is firstly considered
                 if('summary' %in% colnames(sub)){
-                  res <- which(!is.na(sub$summary[check]))
-                  if(length(res) >1) res <- check[which(sym%in%x)]
+                  res <- which(!is.na(sub$summary[res]))
+                  if(length(res) >1){
+                    res <- NULL
+                  } else{
+                    res = check[res]
+                  }
                 }else{
-                  res <- check[which(sym%in%x)]
+                  res <- NULL
                 }
-
-                if(length(res) >1) res <- c()
               }
-
+            }else{
+              res <- NULL
             }
           }
 
           if(is.null(res)){
             n_ent <- as.numeric(sub[check, "entrezid"]) %>% stats::na.omit() %>% as.numeric()
+
             if (!max(n_ent) == min(n_ent)) {
               min_n <- which(n_ent %in% min(n_ent))
               res <- check[min_n]
               if (length(min_n) > 1) {
                 # if entrez is same, then check chr
-                if (any(grepl("^[0-9].*$", sub[res, "chr"]))) {
-                  real_chr <- which(grepl("^[0-9].*$", sub[res, "chr"]))
-                  if (length(real_chr) > 1) real_chr <- real_chr[1]
+                if (any(grepl("^[0-9]|X|Y.*$", sub[res, "chr"]))) {
+                  real_chr <- which(grepl("^[0-9]|X|Y.*$", sub[res, "chr"]))
+                  if (length(real_chr) > 1){
+                    res <- res[1]
+                  }else{
+                    res <- res[real_chr]
+                  }
+
                 } else {
-                  real_chr <- res[1]
+                  res <- res[1]
                 }
-                res <- res[real_chr]
+
               }
             } else {
-              if (any(grepl("^[0-9].*$", sub[check, "chr"]))) {
-                real_chr <- which(grepl("^[0-9].*$", sub[check, "chr"]))
-                if (length(real_chr) > 1) real_chr <- real_chr[1]
-                res <- check[real_chr]
+              if (any(grepl("^[0-9]|X|Y.*$", sub[res, "chr"]))) {
+                real_chr <- which(grepl("^[0-9]|X|Y.*$", sub[res, "chr"]))
+                if (length(real_chr) > 1){
+                  res <- res[1]
+                }else{
+                  res <- res[real_chr]
+                }
+
               } else {
                 res <- check[1]
               }
@@ -167,7 +180,7 @@ genInfo <- function(id = NULL,
           }
 
           return(res)
-        }) %>% as.character()
+        }) %>% as.numeric()
       } else {
         # if no entrez or ensembl, then check minimal NA
         uniq_order <- sapply(tomany_id, function(x) {
@@ -184,9 +197,12 @@ genInfo <- function(id = NULL,
             res <- check[which.min(n_na)]
           }
           return(res)
-        }) %>% as.character()
+        }) %>% as.numeric()
       }
+
+
       row.names(sub) <- NULL
+
       gene_info <- rbind(other, sub[uniq_order, ])
       gene_info <- gene_info[match(id, gene_info$input_id), ]
     } else {
@@ -194,14 +210,16 @@ genInfo <- function(id = NULL,
       gene_info$input_id <- factor(gene_info$input_id, ordered = T, levels = unique(id))
       gene_info <- gene_info[order(gene_info$input_id), ]
     }
+    }
 
-    # reorder column
-    if (!is.null(id)) {
-      if (keytype %in% c("ensembl", "entrezid", "uniprot")) {
-        gene_info <- gene_info %>% dplyr::select(!all_of(keytype))
-      } else {
-        gene_info <- gene_info %>% dplyr::relocate(symbol, .after = input_id)
-      }
+
+
+  # reorder column
+  if (!is.null(id)) {
+    if (keytype %in% c("ensembl", "entrezid", "uniprot")) {
+      gene_info <- gene_info %>% dplyr::select(!all_of(keytype))
+    } else {
+      gene_info <- gene_info %>% dplyr::relocate(symbol, .after = input_id)
     }
   }
 

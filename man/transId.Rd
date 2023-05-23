@@ -10,7 +10,7 @@ transId(
   org = "hs",
   unique = FALSE,
   keepNA = FALSE,
-  hgVersion = "v38"
+  hgVersion = c("v38", "v19")
 )
 }
 \arguments{

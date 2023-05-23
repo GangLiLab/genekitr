@@ -9,7 +9,7 @@ genInfo(
   org = "hs",
   unique = FALSE,
   keepNA = TRUE,
-  hgVersion = "v38"
+  hgVersion = c("v38", "v19")
 )
 }
 \arguments{

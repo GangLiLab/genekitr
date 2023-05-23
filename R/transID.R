@@ -38,10 +38,11 @@ transId <- function(id,
                     org = "hs",
                     unique = FALSE,
                     keepNA = FALSE,
-                    hgVersion = "v38") {
+                    hgVersion = c("v38","v19")) {
 
   #--- args ---#
   org <- mapEnsOrg(organism = tolower(org))
+  hgVersion <- match.arg(hgVersion)
   # if id has ensembl version, remove them
   # if(all(all %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
 

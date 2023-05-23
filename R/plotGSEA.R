@@ -10,6 +10,8 @@
 #' @param show_gene Select genes to show. Default is "all". Used in "classic" plot.
 #' @param colour Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.
 #' @param wrap_length Numeric, wrap text if longer than this length. Default is NULL.
+#' @param label_by Select which column as the label. If user wants to modify labels in plot,
+#' please modify the "Description" column and set the argument as "description". Default is by 'id'.
 #' @param ... other arguments transfer to `plot_theme` function
 #'
 #' @importFrom ggplot2 ggplot aes aes_ geom_point xlab ylab scale_color_manual geom_hline expansion
@@ -62,6 +64,7 @@ plotGSEA <- function(gsea_list,
                      show_gene = NULL,
                      colour = NULL,
                      wrap_length = NULL,
+                     label_by = c('id','description'),
                      ...) {
 
   #--- args ---#
@@ -69,6 +72,7 @@ plotGSEA <- function(gsea_list,
   stopifnot(is.list(gsea_list))
   plot_type <- match.arg(plot_type)
   stats_metric <- match.arg(stats_metric)
+  label_by <- match.arg(label_by)
   gsea_df <- gsea_list$gsea_df
   colnames(gsea_df)[1] = "ID"
   geneset <- gsea_list$geneset
@@ -114,17 +118,35 @@ plotGSEA <- function(gsea_list,
       message('"colour" is NULL, now using "red","grey" and "green"...')
       colour <- c( "red","darkgreen", "grey66")
     }
-    p <- ggplot(plot_df, aes(x = NES, y = -log10(eval(parse(text = stats_metric))), color = group)) +
-      geom_point(alpha = 0.6, size = 3.5) +
-      xlab("NES") +
-      ylab(paste0("-log10(", stats_metric_label, ")")) +
-      ggrepel::geom_text_repel(
-        data = plot_df[plot_df$group != "ignore", ],
-        aes(label = ID),
-        size = (lst$main_text_size/4),
-        color = "black",
-        show.legend = F
-      ) +
+
+    if(label_by == 'id'){
+      p <- ggplot(plot_df, aes(x = NES, y = -log10(eval(parse(text = stats_metric))), color = group)) +
+        geom_point(alpha = 0.6, size = 3.5) +
+        xlab("NES") +
+        ylab(paste0("-log10(", stats_metric_label, ")")) +
+        ggrepel::geom_text_repel(
+          data = plot_df[plot_df$group != "ignore", ],
+          aes(label = ID),
+          size = (lst$main_text_size/4),
+          color = "black",
+          show.legend = F
+        )
+    }else{
+      p <- ggplot(plot_df, aes(x = NES, y = -log10(eval(parse(text = stats_metric))), color = group)) +
+        geom_point(alpha = 0.6, size = 3.5) +
+        xlab("NES") +
+        ylab(paste0("-log10(", stats_metric_label, ")")) +
+        ggrepel::geom_text_repel(
+          data = plot_df[plot_df$group != "ignore", ],
+          aes(label = Description),
+          size = (lst$main_text_size/4),
+          color = "black",
+          show.legend = F
+        )
+    }
+
+
+    p = p +
       xlab("Normalized enrichment score")+
       ylim(0,NA)+
       scale_color_manual(breaks = c("Up", "Down"),values = colour,name = '')+
@@ -160,12 +182,24 @@ plotGSEA <- function(gsea_list,
     plot_df <- do.call(rbind, lapply(show_pathway, function(x) {
       calcScore(geneset, genelist, x, exponent, fortify = TRUE, org)
     }))
+
+    if(label_by != 'id'){
+      gsea_df <- gsea_list$gsea_df
+      colnames(gsea_df)[1] = "ID"
+
+      plot_df = merge(plot_df,gsea_df,by.x = 'Description',by.y = 'ID',all.y = F) %>%
+        dplyr::select(2:9) %>%
+        dplyr::rename(Description = Description.y)
+
+    }
+
     description_color <- table(plot_df$Description) %>% names() # match pathway and color
     names(description_color) <- colour[seq_along(description_color)]
 
+
     p1 <- ggplot(plot_df, aes_(x = ~x)) +
       xlab(NULL) +
-      geom_line(aes_(y = ~runningScore, color = ~Description), size = 1) +
+      geom_line(aes_(y = ~runningScore, color = ~Description), linewidth = 1) +
       scale_color_manual(values = names(description_color)) +
       geom_hline(yintercept = 0, lty = "longdash", lwd = 0.2) +
       ylab("Enrichment\n Score") +
@@ -358,6 +392,17 @@ plotGSEA <- function(gsea_list,
       dplyr::arrange(desc(logfc2))
     plot_df$ID <- factor(plot_df$ID, levels = rev(term_order$ID))
 
+    if(label_by != 'id'){
+      gsea_df <- gsea_list$gsea_df
+      colnames(gsea_df)[1] = "ID"
+
+      plot_df = merge(plot_df,gsea_df,by = 'ID',all.y = F) %>%
+        dplyr::select(4,2,3)
+      colnames(plot_df)[1] = 'ID'
+      colnames(plot_df)[2] = stats_metric
+
+    }
+
     if(is.null(colour)){
       colour = c("#E31A1C","#1F78B4")
     }
@@ -378,20 +423,41 @@ plotGSEA <- function(gsea_list,
   #--- two-side barplot ---#
   ## bar with p.adjust>0.05 showed grey
   if (plot_type == "bar") {
-    gsea_df <- gsea_df %>%
-      dplyr::select(ID, NES, "p.adjust") %>%
-      dplyr::mutate(
-        padj.group = cut(.$p.adjust, breaks = c(-Inf, 0.05, Inf), labels = c(1, 0)),
-        nes.group = cut(.$NES, breaks = c(-Inf, 0, Inf), labels = c(0, 1)),
-        comb.group = paste0(padj.group, nes.group)
-      ) %>%
-      dplyr::mutate(group = dplyr::case_when(
-        comb.group == "10" ~ "A", # A is nes<0 & p<0.05
-        comb.group == "11" ~ "B", # B is nes>0 & p<0.05
-        TRUE ~ "C"
-      )) %>% # C is grey
-      dplyr::arrange(NES) %>%
-      dplyr::mutate(index = 1:dplyr::n())
+
+    if(label_by == 'id'){
+      gsea_df <- gsea_df %>%
+        dplyr::select(ID, NES, "p.adjust") %>%
+        dplyr::mutate(
+          padj.group = cut(.$p.adjust, breaks = c(-Inf, 0.05, Inf), labels = c(1, 0)),
+          nes.group = cut(.$NES, breaks = c(-Inf, 0, Inf), labels = c(0, 1)),
+          comb.group = paste0(padj.group, nes.group)
+        ) %>%
+        dplyr::mutate(group = dplyr::case_when(
+          comb.group == "10" ~ "A", # A is nes<0 & p<0.05
+          comb.group == "11" ~ "B", # B is nes>0 & p<0.05
+          TRUE ~ "C"
+        )) %>% # C is grey
+        dplyr::arrange(NES) %>%
+        dplyr::mutate(index = 1:dplyr::n())
+
+    }else{
+      gsea_df <- gsea_df %>%
+        dplyr::select(Description, NES, "p.adjust") %>%
+        dplyr::rename(ID = Description) %>%
+        dplyr::mutate(
+          padj.group = cut(.$p.adjust, breaks = c(-Inf, 0.05, Inf), labels = c(1, 0)),
+          nes.group = cut(.$NES, breaks = c(-Inf, 0, Inf), labels = c(0, 1)),
+          comb.group = paste0(padj.group, nes.group)
+        ) %>%
+        dplyr::mutate(group = dplyr::case_when(
+          comb.group == "10" ~ "A", # A is nes<0 & p<0.05
+          comb.group == "11" ~ "B", # B is nes>0 & p<0.05
+          TRUE ~ "C"
+        )) %>% # C is grey
+        dplyr::arrange(NES) %>%
+        dplyr::mutate(index = 1:dplyr::n())
+    }
+
 
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
@@ -446,12 +512,12 @@ plotGSEA <- function(gsea_list,
             data = subset(gsea_df, NES > 0),
             aes(x = index, y = 0, label = paste0(ID, "  "), color = padj.group),
             size = lst$main_text_size / 3.6,
-            hjust = "outward"
+            hjust = "inward"
           ) +
           geom_text(
             data = subset(gsea_df, NES < 0),
             aes(x = index, y = 0, label = paste0("  ", ID), color = padj.group),
-            size = lst$main_text_size / 3.6, hjust = "inward"
+            size = lst$main_text_size / 3.6, hjust = "outward"
           )
       }
     }
@@ -517,4 +583,4 @@ calcScore <- function(geneset, genelist, item, exponent, fortify = TRUE, org) {
 }
 
 
-utils::globalVariables(c("NES", "qvalue", "group", "Description", "geom_line", "x", "y", "desc", "geneID", "geom_tile", "logfc2"))
+utils::globalVariables(c("NES", "qvalue", "group", "Description", "geom_line", "x", "y", "desc", "geneID", "geom_tile", "logfc2","Description.y"))

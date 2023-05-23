@@ -12,6 +12,7 @@ plotGSEA(
   show_gene = NULL,
   colour = NULL,
   wrap_length = NULL,
+  label_by = c("id", "description"),
   ...
 )
 }
@@ -30,6 +31,9 @@ or pathway name (choose from ID column).}
 \item{colour}{Colour vector. Deafault is NULL. Used in volcano, ridge and bar plot.}
 
 \item{wrap_length}{Numeric, wrap text if longer than this length. Default is NULL.}
+
+\item{label_by}{Select which column as the label. If user wants to modify labels in plot,
+please modify the "Description" column and set the argument as "description". Default is by 'id'.}
 
 \item{...}{other arguments transfer to `plot_theme` function}
 }
