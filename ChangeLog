@@ -1,5 +1,5 @@
 ### 2023-05-23 v1.2.2
 
-- Support users modify enrichment plot labels by adding `label_by`
+- Support users modify enrichment plot labels by adding `label_by` in `plotGSEA`
 - Update backend data for `genInfo`
 - Fix bug in `genInfo` for one-to-many mapping
