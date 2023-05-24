@@ -129,21 +129,11 @@ Doodle has finished differential expression analysis and GO/KEGG enrichment anal
 
 ## 🔖 Citation
 
-> For now, the paper is peer-reviewed. 
-> If you like it, you could choose to cite the cran package "genekitr" as below.
+> **For now, the paper is published. Please cite:**
 
-Yunze Liu (2023). genekitr: Gene Analysis Toolkit. R package version 1.1.5. https://cran.r-project.org/web/packages/genekitr/index.html
+Liu, Y., Li, G. Empowering biologists to decode omics data: the Genekitr R package and web server. BMC Bioinformatics 24, 214 (2023). https://doi.org/10.1186/s12859-023-05342-9
 
-> A BibTeX entry for LaTeX users is:
 
-```latex
-@Manual{,
-title = {genekitr: Gene Analysis Toolkit},
-author = {Yunze Liu},
-note = {R package version 1.1.5},
-url = {https://cran.r-project.org/web/packages/genekitr/index.html/},
-}
-```
 
 
 
