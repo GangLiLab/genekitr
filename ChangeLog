@@ -1,3 +1,7 @@
+### 2023-05-24 v1.2.2
+
+- Add citation information
+
 ### 2023-05-23 v1.2.2
 
 - Support users modify enrichment plot labels by adding `label_by` in `plotGSEA`
