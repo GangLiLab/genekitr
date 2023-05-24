@@ -14,8 +14,12 @@
 
 .onAttach <- function(libname, pkgname) {
   pkgVersion <- packageDescription(pkgname, fields = "Version")
-  msg <- paste0("Welcome to use ", pkgname, "!\n",
-                "Vignette: https://www.genekitr.fun")
+  welcome_message <- paste0("Welcome to use ", pkgname, "! (",
+                "Vignette: https://www.genekitr.fun)\n")
+  citation <- paste0("Citation for ", pkgname, ":\n",
+                     "Liu, Y., Li, G. ",
+                     "Empowering biologists to decode omics data: the Genekitr R package and web server. ",
+                     "BMC Bioinformatics 24, 214 (2023). https://doi.org/10.1186/s12859-023-05342-9")
 
-  packageStartupMessage(paste0(msg))
+  packageStartupMessage(paste0(welcome_message,citation))
 }
