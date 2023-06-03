@@ -166,12 +166,22 @@ plotEnrich <- function(enrich_df,
 
   ## set pathway as factor
   if (!compare_group & !all_go) {
+    if(any(duplicated(enrich_df$Description))){
+      dup_term <- enrich_df$Description[duplicated(enrich_df$Description)]
+      warning(paste('Checked duplicated terms in Description column, such as:',
+                    paste0(head(dup_term,3),collapse = '|'),'\n','please make them unique then plot'))
+    }
     enrich_df <- enrich_df %>%
       dplyr::arrange(eval(parse(text = term_metric))) %>%
-      dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T))
+      dplyr::mutate(Description = factor(.$Description, levels = unique(.$Description), ordered = T))
   } else if (!compare_group & all_go) {
+    if(any(duplicated(enrich_df$Description))){
+      dup_term <- enrich_df$Description[duplicated(enrich_df$Description)]
+      warning(paste('Checked duplicated terms exist in Description column, such as:',
+                    paste0(head(dup_term,3),collapse = '|','\n','please make them unique then plot')))
+    }
     enrich_df <- enrich_df %>%
-      dplyr::mutate(Description = factor(.$Description, levels = .$Description, ordered = T)) %>%
+      dplyr::mutate(Description = factor(.$Description, levels = unique(.$Description), ordered = T)) %>%
       dplyr::group_by(ONTOLOGY) %>%
       dplyr::arrange(eval(parse(text = term_metric)), .by_group = T)
   }
