@@ -1,3 +1,7 @@
+### 2023-05-24 v1.2.3
+
+- Minor update for `plotEnrich` to check for duplicated terms
+
 ### 2023-05-24 v1.2.2
 
 - Add citation information
