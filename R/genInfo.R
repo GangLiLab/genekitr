@@ -118,7 +118,17 @@ genInfo <- function(id = NULL,
           res <- c()
           check <- which(tolower(sub$input_id) == x)
 
-          if( keytype == 'symbol' && 'symbol' %in% colnames(gene_info) ){
+          # FIRST, check NA number
+          n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
+          if (min(n_na) != max(n_na)) {
+            res <- check[which.min(n_na)]
+          }else{
+            res <- NULL
+          }
+
+
+          # SECOND, check symbol
+          if( keytype == 'symbol' && 'symbol' %in% colnames(gene_info) && is.null(res) ){
             sym <- tolower(sub[check, "symbol"])
             if(any(sym%in%x)){
               # first reserve the identical id
@@ -143,7 +153,8 @@ genInfo <- function(id = NULL,
             }
           }
 
-          if(is.null(res)){
+          # SECOND, check entrez & ensembl
+          if(is.null(res) | length(res) == 0){
             n_ent <- as.numeric(sub[check, "entrezid"]) %>% stats::na.omit() %>% as.numeric()
 
             if (!max(n_ent) == min(n_ent)) {
@@ -165,10 +176,11 @@ genInfo <- function(id = NULL,
 
               }
             } else {
-              if (any(grepl("^[0-9]|X|Y.*$", sub[res, "chr"]))) {
+              res <- check
+              if (any(grepl("^[0-9]|X|Y.*$", sub[res,"chr"]))) {
                 real_chr <- which(grepl("^[0-9]|X|Y.*$", sub[res, "chr"]))
                 if (length(real_chr) > 1){
-                  res <- res[1]
+                  res <- res[real_chr[1]]
                 }else{
                   res <- res[real_chr]
                 }
@@ -183,16 +195,15 @@ genInfo <- function(id = NULL,
         }) %>% as.numeric()
       } else {
         # if no entrez or ensembl, then check minimal NA
-        uniq_order <- sapply(tomany_id, function(x) {
+        uniq_order <- sapply(tolower(tomany_id), function(x) {
           res <- c()
-          check <- which(sub$input_id == x)
-
+          check <- which(tolower(sub$input_id) == x)
 
           n_na <- apply(sub[check, ], 1, function(x) sum(is.na(x)))
           if (min(n_na) == max(n_na) & keytype != "entrezid") {
-            res <- check[order(as.numeric(sub$entrezid[check])) == 1]
+            res <- check[order(as.numeric(tolower(sub$entrezid)[check])) == 1]
           } else if (min(n_na) == max(n_na) & keytype == "entrezid") {
-            res <- check[order(as.numeric(sub$input_id[check])) == 1]
+            res <- check[order(as.numeric(tolower(sub$input_id)[check])) == 1]
           } else if (min(n_na) != max(n_na)) {
             res <- check[which.min(n_na)]
           }
