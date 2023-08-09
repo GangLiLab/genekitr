@@ -61,36 +61,50 @@ genORA <- function(id,
   transToSym <- ifelse(genesetType %in% c("enrichrdb","bp","mf","cc","covid19"), TRUE, FALSE)
 
   org <- geneset$organism
-  ens_org <- mapEnsOrg(org)
-  keyType <- gentype(id = id, org = ens_org)
-  if(!is.null(universe)) UnikeyType <- gentype(id = universe, org = ens_org)
+  rareOrg <- TRUE
 
-  #--- initialize ---#
-  # input id must be symbol or entrezid for id_dat gene sets
+  tryCatch(
+    {
+      ens_org <- mapEnsOrg(org)
+      keyType <- gentype(id = id, org = ens_org)
+      if(!is.null(universe)) UnikeyType <- gentype(id = universe, org = ens_org)
+      rareOrg <- FALSE
 
-  if(transToSym){
-    id_dat <- suppressMessages(transId(id, "symbol", ens_org, unique = T))
-    id <- id_dat$symbol
-    if (!is.null(universe) ) {
-      if(UnikeyType != "SYMBOL")
-        universe <- suppressMessages(transId(universe, transTo = "symbol", ens_org, unique = T)) %>% dplyr::pull(symbol)
+      #--- initialize ---#
+      # input id must be symbol or entrezid for id_dat gene sets
+
+      if(transToSym){
+        id_dat <- suppressMessages(transId(id, "symbol", ens_org, unique = T))
+        id <- id_dat$symbol
+        if (!is.null(universe) ) {
+          if(UnikeyType != "SYMBOL")
+            universe <- suppressMessages(transId(universe, transTo = "symbol", ens_org, unique = T)) %>% dplyr::pull(symbol)
+        }
+      }else if(keyType != "ENTREZID"){
+        id_dat <- suppressMessages(transId(id, "entrezid", ens_org, unique = T))
+        id <- id_dat$entrezid
+        if (!is.null(universe) ) {
+          if(UnikeyType != "ENTREZID")
+            universe <- suppressMessages(transId(universe, transTo = "entrezid", ens_org, unique = T)) %>% dplyr::pull(entrezid)
+        }
+      }else if(keyType == "ENTREZID"){
+        id_dat <- suppressMessages(transId(id, "symbol", ens_org, unique = T)) %>%
+          dplyr::relocate(input_id,.after = symbol)
+        id <- id_dat$input_id
+        if (!is.null(universe) ) {
+          if(UnikeyType != "ENTREZID")
+            universe <- suppressMessages(transId(universe, transTo = "entrezid", ens_org, unique = T)) %>% dplyr::pull(entrezid)
+        }
+      }
+    },
+    error = function(e) {
+      ens_org <- org
+      transToSym <- FALSE
+
     }
-  }else if(keyType != "ENTREZID"){
-    id_dat <- suppressMessages(transId(id, "entrezid", ens_org, unique = T))
-    id <- id_dat$entrezid
-    if (!is.null(universe) ) {
-      if(UnikeyType != "ENTREZID")
-        universe <- suppressMessages(transId(universe, transTo = "entrezid", ens_org, unique = T)) %>% dplyr::pull(entrezid)
-    }
-  }else if(keyType == "ENTREZID"){
-    id_dat <- suppressMessages(transId(id, "symbol", ens_org, unique = T)) %>%
-      dplyr::relocate(input_id,.after = symbol)
-    id <- id_dat$input_id
-    if (!is.null(universe) ) {
-      if(UnikeyType != "ENTREZID")
-        universe <- suppressMessages(transId(universe, transTo = "entrezid", ens_org, unique = T)) %>% dplyr::pull(entrezid)
-    }
-  }
+  )
+
+
 
   #--- analyse ---#
   if (is.null(group_list)) {
@@ -153,7 +167,7 @@ genORA <- function(id,
   }
 
   ## transToSym means geneset in "enrichrdb","go" and "covid19"
-  if(!transToSym){
+  if(!transToSym && !rareOrg){
     # part 1-1
     if(keyType != "SYMBOL"){
       # part 1-1-1
@@ -171,7 +185,7 @@ genORA <- function(id,
           dplyr::mutate(geneID = old_geneID) %>%
           dplyr::relocate(geneID_symbol, .after = geneID)
       }
-    # part 1-2
+      # part 1-2
     }else{
       # new_ora <- ora
       old_geneID <- replace_id(id_dat,ora$geneID)
@@ -180,8 +194,8 @@ genORA <- function(id,
         dplyr::mutate(geneID = old_geneID)
     }
 
-  # part 2
-  }else{
+    # part 2
+  }else if(!rareOrg){
     # # part 2-1
     # if(keyType != "SYMBOL" ){
     #   old_geneID <- replace_id(id_dat,ora$geneID)
@@ -199,10 +213,12 @@ genORA <- function(id,
       dplyr::mutate(geneID = old_geneID) %>%
       dplyr::relocate(geneID_symbol, .after = geneID)
 
+  }else{
+    new_ora <- ora
   }
 
   # if symbol has no alias
-  if(identical(new_ora$geneID,new_ora$geneID_symbol)){
+  if(identical(new_ora$geneID,new_ora$geneID_symbol) && !rareOrg){
     new_ora <- new_ora %>% dplyr::select(-geneID_symbol)
   }
 
@@ -213,13 +229,17 @@ genORA <- function(id,
     dplyr::mutate(RichFactor = Count / as.numeric(sub("/\\d+", "", BgRatio)))
 
   ## modify id column name for GO
-  bioc_org <- ensOrg_name %>%
-    dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
-    dplyr::pull(bioc_name) %>%
-    stringr::str_to_sentence()
+  if(!rareOrg){
+    bioc_org <- ensOrg_name %>%
+      dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
+      dplyr::pull(bioc_name) %>%
+      stringr::str_to_sentence()
+  }
 
-  if(genesetType %in% c('bp','cc','mf')){
+  if(genesetType %in% c('bp','cc','mf') && !rareOrg){
     colnames(new_ora)[1] = paste0(bioc_org,'_',toupper(genesetType),'_ID')
+  }else if(genesetType %in% c('bp','cc','mf') && rareOrg){
+    colnames(new_ora)[1] = paste0(org,'_',toupper(genesetType),'_ID')
   }
 
   return(new_ora)

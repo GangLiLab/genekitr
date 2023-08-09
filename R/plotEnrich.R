@@ -169,7 +169,7 @@ plotEnrich <- function(enrich_df,
     if(any(duplicated(enrich_df$Description))){
       dup_term <- enrich_df$Description[duplicated(enrich_df$Description)]
       warning(paste('Checked duplicated terms in Description column, such as:',
-                    paste0(head(dup_term,3),collapse = '|'),'\n','please make them unique then plot'))
+                    paste0(utils::head(dup_term,3),collapse = '|'),'\n','please make them unique then plot'))
     }
     enrich_df <- enrich_df %>%
       dplyr::arrange(eval(parse(text = term_metric))) %>%
@@ -178,7 +178,7 @@ plotEnrich <- function(enrich_df,
     if(any(duplicated(enrich_df$Description))){
       dup_term <- enrich_df$Description[duplicated(enrich_df$Description)]
       warning(paste('Checked duplicated terms exist in Description column, such as:',
-                    paste0(head(dup_term,3),collapse = '|','\n','please make them unique then plot')))
+                    paste0(utils::head(dup_term,3),collapse = '|','\n','please make them unique then plot')))
     }
     enrich_df <- enrich_df %>%
       dplyr::mutate(Description = factor(.$Description, levels = unique(.$Description), ordered = T)) %>%
