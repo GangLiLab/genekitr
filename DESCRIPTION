@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit
-Version: 1.2.5
+Version: 1.2.6
 Authors@R: 
     c(person(given = "Yunze",
              family = "Liu",
@@ -11,13 +11,7 @@ Authors@R:
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://www.genekitr.fun/
 BugReports: https://github.com/GangLiLab/genekitr/issues
-Description: An analysis toolkit focused on genes. It mainly includes five
-    features (search, convert, analysis, plot, and export).
-    The user just needs to input feature id ('entrez', 'symbol', 'ensembl' or
-    'uniprot') to retrieve feature information and 'PubMed'<https://pubmed.ncbi.nlm.nih.gov/> records, 
-    to convert id types, to easily handle gene enrichment analysis and publication-level figures, 
-    to plot group interaction and export results as sheets in one 'excel'
-    file to easily share and communicate with others.
+Description: Provides features for searching, converting, analyzing, plotting, and exporting data effortlessly by inputting feature IDs. Enables easy retrieval of feature information, PubMed (<https://pubmed.ncbi.nlm.nih.gov/>) records, conversion of ID types, gene enrichment analysis, publication-level figures, group interaction plotting, and result export in one Excel file for seamless sharing and communication.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
@@ -41,38 +35,28 @@ Imports:
     rlang
 Suggests:
     AnnotationDbi,
-    BiocManager,
     cowplot,
     ComplexUpset,
-    data.table,
-    fuzzyjoin,
     forcats,
     fgsea,
     futile.logger,
     ggplotify,
     ggsci,
-    ggupset,
     ggrepel,
     ggridges,
     ggnewscale,
     GOplot,
     GOSemSim,
     labeling,
-    msigdbr,
     pheatmap,
-    pracma,
     tm,
     treemap,
     RColorBrewer,
-    rappdirs,
     RCurl,
     reshape2,
     rio,
     rrvgo,
-    scales,
-    stats,
     testthat (>= 3.0.0),
-    tibble,
     wordcloud,
     knitr,
     rmarkdown,

@@ -66,6 +66,10 @@ importCP <- function(object,
 
   #--- IMPORT GSEA ---#
   if(type == 'gsea'){
+    if(!requireNamespace("reshape2",quietly = TRUE))
+      stop("Package \"reshape2\" needed for this function to work.
+         Please install it by install.packages('reshape2')",call. = FALSE)
+
     egmt <- object
     ens_org <- mapEnsOrg(object@organism)
     exponent <- egmt@params[["exponent"]]

@@ -17,6 +17,7 @@
 #' @export
 #' @examples
 #' \donttest{
+#' if(requireNamespace("ggrepel",quietly = T)){
 #' library(ggplot2)
 #' data(deg, package = "genekitr")
 #' plotVolcano(deg, "p.adjust", remove_legend = TRUE, dot_size = 3)
@@ -26,6 +27,7 @@
 #'   remove_legend = TRUE,
 #'   show_gene = c("CD36", "DUSP6", "IER3","CDH7")
 #' )
+#' }
 #' }
 #'
 plotVolcano <- function(deg_df,

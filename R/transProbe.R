@@ -11,12 +11,6 @@
 #'
 #' @return data frame, first column is probe id and others are converted id.
 #' @export
-#' @examples
-#' \dontrun{
-#' data(deg, package = "genekitr")
-#' id <- deg$probe_id
-#' transProbe(id, transTo = "symbol")
-#' }
 
 transProbe <- function(id,
                        transTo,

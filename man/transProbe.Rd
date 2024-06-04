@@ -22,10 +22,3 @@ data frame, first column is probe id and others are converted id.
 \description{
 Transform probe id to symbol, entrezid,  ensembl or uniprot.
 }
-\examples{
-\dontrun{
-data(deg, package = "genekitr")
-id <- deg$probe_id
-transProbe(id, transTo = "symbol")
-}
-}

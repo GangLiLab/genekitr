@@ -24,6 +24,11 @@
 #' @export
 #' @examples
 #' \donttest{
+#' k1 = requireNamespace("cowplot",quietly = TRUE)
+#' k2 = requireNamespace("fgsea",quietly = TRUE)
+#' k3 = requireNamespace("ggplotify",quietly = TRUE)
+#' k4 = requireNamespace("ggridges",quietly = TRUE)
+#' if(k1&k2&k3&k4){
 #' library(ggplot2)
 #' ## get GSEA result
 #' data(geneList, package = "genekitr")
@@ -55,6 +60,7 @@
 #'   plot_type = "bar", main_text_size = 8,
 #'   colour = c("navyblue", "orange")
 #' )
+#' }
 #' }
 #'
 plotGSEA <- function(gsea_list,

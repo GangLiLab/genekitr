@@ -34,6 +34,11 @@ A ggplot object
 If gene group over 4, plot will be visulized using UpSet plot.
 }
 \examples{
+k1 = requireNamespace("ComplexUpset",quietly = TRUE)
+k2 = requireNamespace("futile.logger",quietly = TRUE)
+k3 = requireNamespace("ggsci",quietly = TRUE)
+k4 = requireNamespace("RColorBrewer",quietly = TRUE)
+if(k1&k2&k3&k4){
 library(ggplot2)
 set1 <- paste0(rep("gene", 30), sample(1:1000, 30))
 set2 <- paste0(rep("gene", 40), sample(1:1000, 40))
@@ -47,7 +52,6 @@ la_gene_list <- list(
 )
 plotVenn(sm_gene_list,
   use_venn = TRUE,
-  color = ggsci::pal_lancet()(3),
   alpha_degree = 0.5,
   main_text_size = 3,
   border_thick = 0,
@@ -59,4 +63,6 @@ plotVenn(la_gene_list,
   legend_text_size = 8,
   legend_position = 'left'
 )
+}
+
 }

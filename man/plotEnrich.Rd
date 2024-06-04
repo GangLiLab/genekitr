@@ -83,30 +83,20 @@ of interest than we expect by chance.
 ## example data
 ## More examples please refer to https://www.genekitr.fun/plot-ora-1.html
 library(ggplot2)
-library(igraph)
-library(ggraph)
 data(geneList, package = "genekitr")
 id <- names(geneList)[abs(geneList) > 1.5]
 logfc <- geneList[id]
 
-gs <- geneset::getGO(org = "human",ont = "bp")
+gs <- geneset::getGO(org = "human",ont = "bp",data_dir = tempdir())
 ego <- genORA(id, geneset = gs)
 ego <- ego[1:10, ]
 
 ## example plots
 plotEnrich(ego, plot_type = "dot")
 
-plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
+#plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
 
-plotEnrich(ego, plot_type = "bar")
-
-plotEnrich(ego,
-  plot_type = "lollipop",
-  down_color = "#325CAC", up_color = "#E69056",
-  wrap_length = 25, scale_ratio = 0.4
-)
-
-plotEnrich(ego, plot_type = "geneheat")
+#plotEnrich(ego, plot_type = "bar")
 
 }
 

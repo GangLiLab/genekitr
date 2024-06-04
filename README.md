@@ -17,7 +17,7 @@
 - **Search**: gene-related information (exp. gene functional summary, gene name, location,  GC content, gene biotype ...) and PubMed records
 - **Convert**: ID conversion among `Symbol & Alias`, `NCBI Entrez`, `Ensembl` ,`Uniprot` and `  human microarray probe`
 
-- **Analysis**: users could select interested gene set from hundreds of gene sets for both model and non-model species, including [GO](http://geneontology.org/) (BP, CC and MF), [KEGG](https://www.kegg.jp/kegg/) (pathway, module, enzyme, network, drug and disease), [WikiPathways](https://www.wikipathways.org/), [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb/), [EnrichrDB](https://maayanlab.cloud/Enrichr/), [Reactome](https://reactome.org/), [MeSH](https://www.ncbi.nlm.nih.gov/mesh/), [DisGeNET](https://www.disgenet.org/), [Disease Ontology](https://www.disease-ontology.org/) (DO), Network of Cancer Gene (NCG) (version 6 and v7) and [COVID-19](https://maayanlab.cloud/covid19/). Gene enrichment analysis (GSA) contains both over representation analysis (ORA) and gene set enrichment analysis (GSEA) methods. ORA is capable of supporting multi-group comparisons.
+- **Analysis**: users could select interested gene set from hundreds of gene sets for both model and non-model species, including [GO](https://geneontology.org/) (BP, CC and MF), [KEGG](https://www.kegg.jp/kegg/) (pathway, module, enzyme, network, drug and disease), [WikiPathways](https://www.wikipathways.org/), [MSigDB](https://www.gsea-msigdb.org/gsea/msigdb/), [EnrichrDB](https://maayanlab.cloud/Enrichr/), [Reactome](https://reactome.org/), [MeSH](https://www.ncbi.nlm.nih.gov/mesh/), [DisGeNET](https://www.disgenet.org/), [Disease Ontology](https://www.disease-ontology.org/) (DO), Network of Cancer Gene (NCG) (version 6 and v7) and [COVID-19](https://maayanlab.cloud/covid19/). Gene enrichment analysis (GSA) contains both over representation analysis (ORA) and gene set enrichment analysis (GSEA) methods. ORA is capable of supporting multi-group comparisons.
 
 - **Plot**: easily generate 13 ORA plots, 5 GSEA plots, 2 Venn plots, and 1 Volcano plot with customizable features such as text, color, border, axis, and legend. The function is capable of accepting a dataframe as input and supports GeneOntology website results based on [PantherDB](http://www.pantherdb.org/)..
 - **Export**: quickly export numerous datasets as different sheets within a single Excel file.
@@ -106,7 +106,7 @@ Mr. Doodle realized that he was using an outdated org.Hs.eg.db v3.15 annotation 
 
 ### Scene 4: imcompatible format 
 
-PI did some fancy enrichment analysis all by himself on a website called [GeneOntology](http://geneontology.org/).  He then asked Mr.Doodle to help him make a pretty picture of the results. . "Can you make a bubble plot for me and show the FoldEnrichment on the x-axis?" he asked with a smile. Doodle tried to use a fancy R package called clusterProfiler, but it wouldn't work with the data. So, he bravely coded it himself using ggplot2.
+PI did some fancy enrichment analysis all by himself on a website called [GeneOntology](https://geneontology.org/).  He then asked Mr.Doodle to help him make a pretty picture of the results. . "Can you make a bubble plot for me and show the FoldEnrichment on the x-axis?" he asked with a smile. Doodle tried to use a fancy R package called clusterProfiler, but it wouldn't work with the data. So, he bravely coded it himself using ggplot2.
 
 <b style='color:#486CBE'>**Doodle wondered why there isn't a tool that supports easy data frames.**</b>
 

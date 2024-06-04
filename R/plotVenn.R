@@ -16,6 +16,11 @@
 #' @importFrom rlang .data
 #' @export
 #' @examples
+#' k1 = requireNamespace("ComplexUpset",quietly = TRUE)
+#' k2 = requireNamespace("futile.logger",quietly = TRUE)
+#' k3 = requireNamespace("ggsci",quietly = TRUE)
+#' k4 = requireNamespace("RColorBrewer",quietly = TRUE)
+#' if(k1&k2&k3&k4){
 #' library(ggplot2)
 #' set1 <- paste0(rep("gene", 30), sample(1:1000, 30))
 #' set2 <- paste0(rep("gene", 40), sample(1:1000, 40))
@@ -29,7 +34,6 @@
 #' )
 #' plotVenn(sm_gene_list,
 #'   use_venn = TRUE,
-#'   color = ggsci::pal_lancet()(3),
 #'   alpha_degree = 0.5,
 #'   main_text_size = 3,
 #'   border_thick = 0,
@@ -41,6 +45,8 @@
 #'   legend_text_size = 8,
 #'   legend_position = 'left'
 #' )
+#' }
+#'
 plotVenn <- function(venn_list,
                      use_venn = TRUE,
                      color = NULL,
@@ -52,10 +58,10 @@ plotVenn <- function(venn_list,
   lst <- list(...) # store outside arguments in list
 
   if (!requireNamespace("futile.logger", quietly = TRUE)) {
-    warning("Package futile.logger needed for this function to work. Installing...",
+    warning("Package futile.logger needed for this function to work. Install first...",
       call. = FALSE
     )
-    utils::install.packages("futile.logger")
+    # utils::install.packages("futile.logger")
   }
 
   #--- codes ---#
@@ -125,9 +131,9 @@ plotVenn <- function(venn_list,
 
     } else {
      ## ComplexUpset Diagram
-    if (!requireNamespace("ComplexUpset", quietly = TRUE)) {
-      utils::install.packages("ComplexUpset")
-    }
+    # if (!requireNamespace("ComplexUpset", quietly = TRUE)) {
+    #   utils::install.packages("ComplexUpset")
+    # }
 
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 10
     if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8

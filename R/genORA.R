@@ -28,7 +28,7 @@
 #' # only gene ids
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[abs(geneList) > 1]
-#' gs <- geneset::getGO(org = "human",ont = "mf")
+#' gs <- geneset::getGO(org = "human",ont = "mf",data_dir = tempdir())
 #' ora <- genORA(id, geneset = gs)
 #'
 #' # gene id with groups
@@ -39,7 +39,7 @@
 #' )
 #' gora <- genORA(id, geneset = gs, group_list = group)
 #'
-#' }
+#'}
 
 genORA <- function(id,
                    geneset,

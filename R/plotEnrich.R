@@ -42,7 +42,7 @@
 #' geom_node_label
 #' @importFrom igraph graph.data.frame delete.edges
 #' @importFrom igraph V "V<-"
-##' @importFrom igraph E "E<-"
+#' @importFrom igraph E "E<-"
 #'
 #' @return A ggplot object
 #' @export
@@ -51,30 +51,20 @@
 #' ## example data
 #' ## More examples please refer to https://www.genekitr.fun/plot-ora-1.html
 #' library(ggplot2)
-#' library(igraph)
-#' library(ggraph)
 #' data(geneList, package = "genekitr")
 #' id <- names(geneList)[abs(geneList) > 1.5]
 #' logfc <- geneList[id]
 #'
-#' gs <- geneset::getGO(org = "human",ont = "bp")
+#' gs <- geneset::getGO(org = "human",ont = "bp",data_dir = tempdir())
 #' ego <- genORA(id, geneset = gs)
 #' ego <- ego[1:10, ]
 #'
 #' ## example plots
 #' plotEnrich(ego, plot_type = "dot")
 #'
-#' plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
+#' #plotEnrich(ego, plot_type = "bubble", scale_ratio = 0.4)
 #'
-#' plotEnrich(ego, plot_type = "bar")
-#'
-#' plotEnrich(ego,
-#'   plot_type = "lollipop",
-#'   down_color = "#325CAC", up_color = "#E69056",
-#'   wrap_length = 25, scale_ratio = 0.4
-#' )
-#'
-#' plotEnrich(ego, plot_type = "geneheat")
+#' #plotEnrich(ego, plot_type = "bar")
 #'
 #' }
 #'
@@ -396,9 +386,9 @@ plotEnrich <- function(enrich_df,
   #--- GO/KEGG: genechord plot ---#
   ## chord plot to show interaction between go term and gene id
   if (plot_type == "genechord") {
-    if (!requireNamespace("GOplot", quietly = TRUE)) {
-      utils::install.packages("GOplot")
-    }
+    # if (!requireNamespace("GOplot", quietly = TRUE)) {
+    #   utils::install.packages("GOplot")
+    # }
 
     id <- enrich_df %>%
       dplyr::pull(geneID) %>%
@@ -516,12 +506,12 @@ plotEnrich <- function(enrich_df,
   ## mutually overlapping gene sets are tend to cluster together
   if (plot_type == "network") {
     if (missing(scale_ratio)) scale_ratio <- 1
-    pkgs <- c("ggnewscale", "ggraph", "igraph")
-    invisible(sapply(pkgs, function(x) {
-      if (!requireNamespace(x, quietly = TRUE)) {
-        utils::install.packages(x)
-      }
-    }))
+    # pkgs <- c("ggnewscale", "ggraph", "igraph")
+    # invisible(sapply(pkgs, function(x) {
+    #   if (!requireNamespace(x, quietly = TRUE)) {
+    #     utils::install.packages(x)
+    #   }
+    # }))
 
 
     id <- enrich_df[,grepl("^id",colnames(enrich_df),ignore.case = T)]
@@ -593,9 +583,9 @@ plotEnrich <- function(enrich_df,
 
   #--- GO/KEGG: wordcloud ---#
   if (plot_type == 'wordcloud'){
-    if (!requireNamespace("wordcloud", quietly = TRUE)) {
-      utils::install.packages("wordcloud")
-    }
+    # if (!requireNamespace("wordcloud", quietly = TRUE)) {
+    #   utils::install.packages("wordcloud")
+    # }
 
     mypal <- RColorBrewer::brewer.pal(9, "Paired")
     dat <- data.frame(term = enrich_df$Description)
@@ -679,12 +669,12 @@ plotEnrich <- function(enrich_df,
   ## show enriched terms structure (its parents and children terms)
   if (plot_type == "gomap") {
     if (missing(scale_ratio)) scale_ratio <- 1
-    if (!requireNamespace("ggraph", quietly = TRUE)) {
-      utils::install.packages("ggraph")
-    }
-    if (!requireNamespace("igraph", quietly = TRUE)) {
-      utils::install.packages("igraph")
-    }
+    # if (!requireNamespace("ggraph", quietly = TRUE)) {
+    #   utils::install.packages("ggraph")
+    # }
+    # if (!requireNamespace("igraph", quietly = TRUE)) {
+    #   utils::install.packages("igraph")
+    # }
 
     requireNamespace("ggraph", quietly = T)
     requireNamespace("igraph", quietly = T)

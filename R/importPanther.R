@@ -9,8 +9,10 @@
 #' @export
 
 importPanther <- function(panther_file) {
-  if (!requireNamespace("rio", quietly = TRUE)) {
-    utils::install.packages("rio")
+ if (!requireNamespace("rio", quietly = TRUE)) {
+   stop("Package \"rio\" needed for this function to work.
+         Please install it by install.packages('rio')",call. = FALSE)
+
   }
 
   # unmodified panther result (should be txt file)

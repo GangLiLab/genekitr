@@ -48,10 +48,11 @@ Gene Set Enrichment Analysis
 }
 \examples{
 \donttest{
+if(requireNamespace("geneset",quietly = TRUE)){
 # only gene ids
 data(geneList, package = "genekitr")
-gs <- geneset::getGO(org = "human",ont = "mf")
+gs <- geneset::getGO(org = "human",ont = "mf",data_dir = tempdir())
 gse <- genGSEA(genelist = geneList, geneset = gs)
-
+  }
 }
 }

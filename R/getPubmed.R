@@ -18,9 +18,6 @@
 #' expoSheet(l, data_name = term, filename = "test.xlsx", dir = tempfile())
 #' }
 getPubmed <- function(term, add_term = NULL, num = 100) {
-  if (!requireNamespace("europepmc", quietly = TRUE)) {
-    utils::install.packages("europepmc")
-  }
   if (!is.null(add_term)) {
     supp <- paste0("AND ABSTRACT:", add_term) %>% paste(collapse = " ")
   } else {
@@ -42,9 +39,6 @@ getPubmed <- function(term, add_term = NULL, num = 100) {
 
 #--- sub function for plotting ---#
 getPubmedTrend <- function(term, add_term = NULL, period) {
-  if (!requireNamespace("europepmc", quietly = TRUE)) {
-    utils::install.packages("europepmc")
-  }
   if (!is.null(add_term)) {
     supp <- paste0("AND ABSTRACT:", add_term) %>% paste(collapse = " ")
   } else {

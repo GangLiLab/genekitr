@@ -25,9 +25,6 @@ expoSheet <- function(data_list,
                       overwrite = TRUE) {
 
   #--- args ---#
-  if (!requireNamespace("openxlsx", quietly = TRUE)) {
-    utils::install.packages("openxlsx")
-  }
   if (!"wb" %in% ls()) wb <- openxlsx::createWorkbook()
 
   if (length(data_list) != length(data_name)) {

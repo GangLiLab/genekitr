@@ -10,7 +10,8 @@
 
 importShinygo <- function(shinygo_file) {
   if (!requireNamespace("rio", quietly = TRUE)) {
-    utils::install.packages("rio")
+    stop("Package \"rio\" needed for this function to work.
+         Please install it by install.packages('rio')",call. = FALSE)
   }
 
   shinygo <- rio::import(shinygo_file)
