@@ -1,7 +1,7 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit
-Version: 1.2.6
+Version: 1.2.7
 Authors@R: 
     c(person(given = "Yunze",
              family = "Liu",
@@ -11,7 +11,7 @@ Authors@R:
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://www.genekitr.fun/
 BugReports: https://github.com/GangLiLab/genekitr/issues
-Description: Provides features for searching, converting, analyzing, plotting, and exporting data effortlessly by inputting feature IDs. Enables easy retrieval of feature information, PubMed (<https://pubmed.ncbi.nlm.nih.gov/>) records, conversion of ID types, gene enrichment analysis, publication-level figures, group interaction plotting, and result export in one Excel file for seamless sharing and communication.
+Description: Provides features for searching, converting, analyzing, plotting, and exporting data effortlessly by inputting feature IDs. Enables easy retrieval of feature information, conversion of ID types, gene enrichment analysis, publication-level figures, group interaction plotting, and result export in one Excel file for seamless sharing and communication.
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
