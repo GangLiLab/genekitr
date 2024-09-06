@@ -430,8 +430,14 @@ calcFoldEnrich <- function(df) {
     check_bg <- which(grepl(".*bg*ratio", tolower(colnames(df))))
     to_calc <- paste0("(", df[, check_gr], ")/(", df[, check_bg], ")")
 
-    df <- df %>%
-      dplyr::mutate(FoldEnrich = sapply(to_calc, function(x) eval(parse(text = x))))
+    if(any(grepl("foldenrich", colnames(df),ignore.case = T))){
+      colnames(df)[grepl("foldenrich", colnames(df),ignore.case = T)] = 'FoldEnrich'
+    }else{
+      df <- df %>%
+        dplyr::mutate(FoldEnrich = sapply(to_calc, function(x) eval(parse(text = x))))
+    }
+
+
   }
   return(df)
 }

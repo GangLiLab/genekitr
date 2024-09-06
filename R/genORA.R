@@ -15,7 +15,7 @@
 #' @param universe Character of background genes. If missing, all genes in
 #' geneset will be used as background.
 #' @importFrom dplyr pull filter arrange mutate relocate
-#' @importFrom stringr str_split
+#' @importFrom stringr str_split str_to_sentence
 #' @importFrom geneset getEnrichrdb getGO getHgDisease getKEGG getMesh getMsigdb getReactome getWiki
 #' @importFrom clusterProfiler enricher
 #' @importFrom rlang .data
@@ -227,6 +227,7 @@ genORA <- function(id,
     calcFoldEnrich() %>%
     as.enrichdat() %>%
     dplyr::mutate(RichFactor = Count / as.numeric(sub("/\\d+", "", BgRatio)))
+
 
   ## modify id column name for GO
   if(!rareOrg){
