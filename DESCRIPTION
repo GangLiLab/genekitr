@@ -6,8 +6,7 @@ Authors@R:
     c(person(given = "Yunze",
              family = "Liu",
              role = c("aut", "cre"),
-             email = "jieandze1314@gmail.com",
-             comment = c(ORCID = "0000-0002-7414-8556")))
+             email = "jieandze1314@gmail.com"))
 Maintainer: Yunze Liu <jieandze1314@gmail.com>
 URL: https://www.genekitr.fun/
 BugReports: https://github.com/GangLiLab/genekitr/issues
