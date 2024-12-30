@@ -11,8 +11,10 @@ plotVolcano(
   logFC_cutoff = 1,
   up_color = "#E31A1C",
   down_color = "#1F78B4",
+  other_color = "black",
   show_gene = NULL,
   dot_size = 1.75,
+  alpha = 0.4,
   ...
 )
 }
@@ -29,9 +31,13 @@ plotVolcano(
 
 \item{down_color}{Color of down-regulated genes, default is "dark blue".}
 
+\item{other_color}{Color of other genes, default is "black".}
+
 \item{show_gene}{Select genes to show, default is no genes to show.}
 
 \item{dot_size}{Volcano dot size, default is 1.75.}
+
+\item{alpha}{Volcano alpha degree, default is 0.4}
 
 \item{...}{other arguments from `plot_theme` function}
 }

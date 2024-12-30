@@ -6,8 +6,10 @@
 #' @param logFC_cutoff Log2 fold change cutoff, default is 1 which is actually 2 fold change.
 #' @param up_color Color of up-regulated genes, default is "dark red".
 #' @param down_color Color of down-regulated genes, default is "dark blue".
+#' @param other_color Color of other genes, default is "black".
 #' @param show_gene Select genes to show, default is no genes to show.
 #' @param dot_size Volcano dot size, default is 1.75.
+#' @param alpha Volcano alpha degree, default is 0.4
 #' @param ... other arguments from `plot_theme` function
 #'
 #' @importFrom dplyr mutate filter
@@ -36,8 +38,10 @@ plotVolcano <- function(deg_df,
                         logFC_cutoff = 1,
                         up_color = "#E31A1C",
                         down_color = "#1F78B4",
+                        other_color = "black",
                         show_gene = NULL,
                         dot_size = 1.75,
+                        alpha = 0.4,
                         ...) {
 
   #--- args ---#
@@ -90,8 +94,8 @@ plotVolcano <- function(deg_df,
   #--- plot ---#
   xlim_range <- ceiling(max(max(plot_df$logFC), abs(min(plot_df$logFC))))
   p <- ggplot(data = plot_df, aes(x = logFC, y = -log10(stat), color = change)) +
-    geom_point(alpha = 0.4, size = dot_size) +
-    scale_color_manual(values = c(down_color, "black", up_color)) +
+    geom_point(alpha = alpha, size = dot_size) +
+    scale_color_manual(values = c(down_color, other_color, up_color)) +
     geom_hline(yintercept = -log10(stat_cutoff), lty = 4, lwd = 0.6, alpha = 1) +
     geom_vline(xintercept = c(logFC_cutoff, -logFC_cutoff), lty = 4, lwd = 0.6, alpha = 1) +
     labs(x = "Log2 (fold change)", y = paste0("-Log10 (", stat_metric_label, ")")) +
