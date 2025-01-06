@@ -179,6 +179,22 @@ genGSEA <- function(genelist,
     colnames(new_fcs)[1] = paste0(org,'_',toupper(genesetType),'_ID')
   }
 
+  geneAll <- sapply(1:nrow(new_fcs),function(x){
+    gset_nm <- new_fcs$ID[x]
+    # gset_gene <- geneset$geneset %>% filter(.[[1]] == gset_nm) %>% pull(2)
+    gset_gene <- geneset$geneset[geneset$geneset[,1] %in% gset_nm,2]
+    ov_genes <- intersect(gset_gene, names(genelist)) %>% paste0(.,collapse = '/')
+    ov_genes_len <- length(ov_genes)
+    return(ov_genes)
+  })
+
+  geneAll_len <- sapply(1:length(geneAll), function(x){
+    gl <- geneAll[x] %>% strsplit('\\/') %>% unlist() %>% length()
+  })
+
+  new_fcs <- new_fcs %>% dplyr::rename(core_enriched_geneID = geneID, core_enriched_count = Count) %>%
+    mutate(all_enriched_geneID = geneAll, all_enriched_count = geneAll_len)
+
   ## save as list
   genelist_df = data.frame(ID = names(genelist), logfc = genelist)
   exponent = data.frame(exponent = exponent)

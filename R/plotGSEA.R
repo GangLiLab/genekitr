@@ -93,7 +93,7 @@ plotGSEA <- function(gsea_list,
   }
 
   if(!'geneID_symbol' %in% colnames(gsea_df)){
-    gsea_df <- gsea_df %>% dplyr::mutate(geneID_symbol = geneID)
+    gsea_df <- gsea_df %>% dplyr::mutate(geneID_symbol = core_enriched_geneID)
   }
 
 
@@ -369,28 +369,28 @@ plotGSEA <- function(gsea_list,
         dplyr::filter(ID %in% show_pathway) %>%
         dplyr::select(ID, dplyr::all_of(stats_metric), geneID_symbol) %>%
         tidyr::separate_rows(geneID_symbol, sep = "\\/") %>%
-        dplyr::rename(geneID = geneID_symbol)
+        dplyr::rename(core_enriched_geneID = geneID_symbol)
     }else{
       new_gsea_df <- gsea_df %>%
         dplyr::filter(ID %in% show_pathway) %>%
-        dplyr::select(ID, dplyr::all_of(stats_metric), geneID) %>%
-        tidyr::separate_rows(geneID, sep = "\\/")
+        dplyr::select(ID, dplyr::all_of(stats_metric), core_enriched_geneID) %>%
+        tidyr::separate_rows(core_enriched_geneID, sep = "\\/")
     }
 
 
     # if gsea has no entrezid, transID first
-    # if (!all(sapply(new_gsea_df$geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
-    #   id_map <- suppressMessages(transId(new_gsea_df$geneID, "entrezid", gsea_list$org))
+    # if (!all(sapply(new_gsea_df$core_enriched_geneID, function(x) grepl("^[0-9].*[0-9]$", x, perl = T)))) {
+    #   id_map <- suppressMessages(transId(new_gsea_df$core_enriched_geneID, "entrezid", gsea_list$org))
     #   new_gsea_df <- merge(new_gsea_df, id_map,
-    #     by.x = "geneID", by.y = "input_id",
+    #     by.x = "core_enriched_geneID", by.y = "input_id",
     #     all.x = T, all.y = F
-    #   ) %>% dplyr::select(-geneID) %>% dplyr::rename(geneID = entrezid)
+    #   ) %>% dplyr::select(-core_enriched_geneID) %>% dplyr::rename(core_enriched_geneID = entrezid)
     # }
 
     logfc <- gsea_list$genelist
 
-    plot_df <- merge(new_gsea_df, logfc, by.x = "geneID", by.y = "ID") %>%
-      dplyr::select(-geneID)
+    plot_df <- merge(new_gsea_df, logfc, by.x = "core_enriched_geneID", by.y = "ID") %>%
+      dplyr::select(-core_enriched_geneID)
 
     term_order <- plot_df %>%
       dplyr::group_by(ID) %>%
@@ -589,4 +589,4 @@ calcScore <- function(geneset, genelist, item, exponent, fortify = TRUE, org) {
 }
 
 
-utils::globalVariables(c("NES", "qvalue", "group", "Description", "geom_line", "x", "y", "desc", "geneID", "geom_tile", "logfc2","Description.y"))
+utils::globalVariables(c("NES", "qvalue", "group", "Description", "geom_line", "x", "y", "desc", "core_enriched_geneID", "geom_tile", "logfc2","Description.y"))

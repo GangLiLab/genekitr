@@ -219,5 +219,5 @@ importCP <- function(object,
 }
 
 utils::globalVariables(c(
-  "genelist", "geneset", "gs_name"
+  "genelist", "geneset", "gs_name","geneID"
 ))
