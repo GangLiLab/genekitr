@@ -53,7 +53,7 @@ genGSEA <- function(genelist,
   transToSym <- ifelse(genesetType %in% c("enrichrdb","bp",'mf','cc',"covid19"), TRUE, FALSE)
 
   org <- geneset$organism
-  rareOrg <- TRUE
+  ens_org <- NULL
 
   tryCatch(
     {
@@ -130,68 +130,34 @@ genGSEA <- function(genelist,
     if (nrow(fcs) == 0) stop("No terms enriched after qvalue filtering ...")
   }
 
-  ## transToSym means geneset in "enrichrdb","go" and "covid19"
-  if(!transToSym && !rareOrg){
-    # part 1-1
-    if(keyType != "SYMBOL"){
-      # part 1-1-1
-      if(keyType == 'ENTREZID'){
-        new_geneID <- get_symbol(fcs$geneID,ens_org)
-        new_fcs <- fcs %>%
-          dplyr::mutate(geneID_symbol = new_geneID) %>%
-          dplyr::relocate(geneID_symbol, .after = geneID)
-      }else{
-        # part 1-1-2
-        old_geneID <- replace_id(id_dat,fcs$geneID)
-        new_geneID <- get_symbol(fcs$geneID,ens_org)
-        new_fcs <- fcs %>%
-          dplyr::mutate(geneID_symbol = new_geneID) %>%
-          dplyr::mutate(geneID = old_geneID) %>%
-          dplyr::relocate(geneID_symbol, .after = geneID)
-      }
-      # part 1-2
-    }else{
-      # new_fcs <- fcs
-      old_geneID <- replace_id(id_dat,fcs$geneID)
-      # new_geneID <- get_symbol(fcs$geneID,ens_org)
-      new_fcs <- fcs %>%
-        dplyr::mutate(geneID = old_geneID)
-    }
-
-    # part 2
-  }else if(!rareOrg){
-    # part 2-1
-    if(keyType != "SYMBOL" ){
-      old_geneID <- replace_id(id_dat,fcs$geneID)
-      new_fcs <- fcs %>%
-        dplyr::mutate(geneID_symbol = geneID) %>%
-        dplyr::mutate(geneID = old_geneID) %>%
-        dplyr::relocate(geneID_symbol, .after = geneID)
-    }else{
-      # part 2-2
-      new_fcs <- fcs
-    }
-
+  ## gene ids are kept in the same type as the gene set (e.g. entrez for KEGG/MSigDB, symbol for GO);
+  ## for entrez-based gene sets, add "geneID_symbol" for easier interpretation and gene plots in plotEnrich()
+  if(!transToSym && !is.null(ens_org)){
+    new_fcs <- tryCatch(
+      fcs %>%
+        dplyr::mutate(geneID_symbol = get_symbol(geneID, ens_org)) %>%
+        dplyr::relocate(geneID_symbol, .after = geneID),
+      error = function(e) fcs
+    )
   }else{
     new_fcs <- fcs
   }
 
-  ## modify id column name for GO
-  if(!rareOrg){
+  ## modify id column name for GO (same style as genORA, e.g. "Hs_BP_ID", so that simGO() and GO plots work)
+  if(genesetType %in% c('bp','cc','mf')){
     bioc_org <- ensOrg_name_data() %>%
-      dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
+      dplyr::filter(tolower(latin_short_name) %in% tolower(org)) %>%
       dplyr::pull(bioc_name) %>%
       stringr::str_to_sentence()
-  }
-
-  if(genesetType %in% c('bp','cc','mf') && !rareOrg){
-    colnames(new_fcs)[1] = paste0(bioc_org,'_',toupper(genesetType),'_ID')
-  }else if(genesetType %in% c('bp','cc','mf') && rareOrg){
-    colnames(new_fcs)[1] = paste0(org,'_',toupper(genesetType),'_ID')
+    if(length(bioc_org) == 1 && !is.na(bioc_org)){
+      colnames(new_fcs)[1] = paste0(bioc_org,'_',toupper(genesetType),'_ID')
+    }else{
+      colnames(new_fcs)[1] = paste0(org,'_',toupper(genesetType),'_ID')
+    }
   }
 
   geneAll <- sapply(seq_len(nrow(new_fcs)),function(x){
-    gset_nm <- new_fcs$ID[x]
+    gset_nm <- new_fcs[[1]][x]
     # gset_gene <- geneset$geneset %>% filter(.[[1]] == gset_nm) %>% pull(2)
     gset_gene <- geneset$geneset[geneset$geneset[,1] %in% gset_nm,2]
     ov_genes <- intersect(gset_gene, names(genelist)) %>% paste0(.,collapse = '/')

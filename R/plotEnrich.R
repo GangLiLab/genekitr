@@ -112,6 +112,10 @@ plotEnrich <- function(enrich_df,
   if (!"geneID" %in% colnames(enrich_df) && "core_enriched_geneID" %in% colnames(enrich_df)) {
     enrich_df <- enrich_df %>% dplyr::rename(geneID = "core_enriched_geneID")
   }
+  ## results without alias conversion (e.g. official symbols as input, GO GSEA result) have no "geneID_symbol"
+  if (!"geneID_symbol" %in% colnames(enrich_df) && "geneID" %in% colnames(enrich_df)) {
+    enrich_df <- enrich_df %>% dplyr::mutate(geneID_symbol = geneID)
+  }
   if(any(grepl("nes",colnames(enrich_df),ignore.case = T))) term_metric <- "Count"
 
   # if (all_go & !plot_type %in% c("bar", "wego")) {
