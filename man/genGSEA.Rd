@@ -17,7 +17,8 @@ genGSEA(
 }
 \arguments{
 \item{genelist}{Pre-ranked genelist with decreasing order, gene can be
-entrez, ensembl or symbol.}
+entrez, ensembl or symbol. If several ids are mapped to the same gene after
+id conversion (e.g. alias symbols), only the first (highest ranked) one is kept.}
 
 \item{geneset}{Gene set is a two-column data.frame with term id and gene id.
 Please use package `geneset` to select available gene set or make new one.}

@@ -5,7 +5,7 @@
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @param keepNA If some id has no match at all, keep it or not. Default is TRUE.
 #' @param hgVersion Select human genome build version from "v38" (default) and "v19".
-#' @importFrom dplyr filter mutate arrange relocate select filter_at vars any_vars
+#' @importFrom dplyr filter mutate arrange relocate select all_of if_any everything
 #' @importFrom rlang .data
 #'
 #' @return A `data.frame`.
@@ -47,7 +47,7 @@ genInfo <- function(id = NULL,
   } else {
     all <- ensAnno(org,hgVersion = hgVersion)
     # if id has ensembl version, remove them
-    if(all(id %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
+    if(all(id %>% stringr::str_detect(.,'ENS'), na.rm = TRUE)) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
     id <- replace_greek(id)
     keytype <- gentype(id = id, data = all, org = org,hgVersion=hgVersion) %>% tolower()
 
@@ -58,7 +58,7 @@ genInfo <- function(id = NULL,
       ## get ensembl/entrez/uniprot/symbol order
       order_dat <- getOrder(org, keytype,hgVersion = hgVersion) %>%
         dplyr::mutate(!!keytype := tolower(.[[keytype]])) %>%
-        dplyr::filter(eval(parse(text = keytype)) %in% id2) %>%
+        dplyr::filter(.data[[keytype]] %in% id2) %>%
         dplyr::arrange(.[[keytype]])
 
       input_df <- input_df %>%
@@ -72,8 +72,8 @@ genInfo <- function(id = NULL,
         dplyr::arrange(match(input_id, id))
     }else{
       ## get ensembl/entrez/uniprot/symbol order
-      order_dat <- getOrder(org, all_of(keytype),hgVersion = hgVersion) %>%
-        dplyr::filter(eval(parse(text = keytype)) %in% id) %>%
+      order_dat <- getOrder(org, keytype,hgVersion = hgVersion) %>%
+        dplyr::filter(.data[[keytype]] %in% id) %>%
         dplyr::mutate(!!keytype := factor(.[[keytype]], levels = unique(id))) %>%
         dplyr::arrange(.[[keytype]])
 
@@ -98,7 +98,7 @@ genInfo <- function(id = NULL,
         message(paste0(
           'Some ID occurs one-to-many match, like "', paste0(tomany_id, collapse = ", "), '"\n'
         ))
-      } else if (length(tomany_id) > 3) {
+      } else if (length(tomany_id) >= 3) {
         message(paste0(
           'Some ID occurs one-to-many match, like "', paste0(tomany_id[1:3], collapse = ", "), '"...\n'
         ))
@@ -236,7 +236,7 @@ genInfo <- function(id = NULL,
 
   if (!keepNA) {
     gene_info <- gene_info %>%
-      filter_at(vars(!input_id), any_vars(!is.na(.)))
+      dplyr::filter(dplyr::if_any(-input_id, ~ !is.na(.x)))
   }
 
   # replace back greek letter

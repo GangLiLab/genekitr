@@ -4,7 +4,7 @@
   invisible(suppressPackageStartupMessages(
     sapply(c(
       "stringi", "stringr",
-      "ggplot2", "dplyr", "devtools"
+      "ggplot2", "dplyr"
     ),
     requireNamespace,
     quietly = TRUE

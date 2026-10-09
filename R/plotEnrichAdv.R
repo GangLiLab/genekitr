@@ -18,8 +18,8 @@
 #' @param color Plot colors.
 #' @param ... other arguments from `plot_theme` function
 #' @importFrom ggplot2 ggplot scale_y_discrete scale_x_reverse theme element_blank geom_bar aes
-#' scale_fill_manual coord_flip ylim scale_x_discrete scale_y_continuous element_blank ylab guides guide_legend
-#' @importFrom dplyr arrange mutate group_by top_n ungroup select case_when distinct rename pull
+#'   scale_fill_manual coord_flip ylim scale_x_discrete scale_y_continuous element_blank ylab guides guide_legend
+#' @importFrom dplyr arrange mutate group_by slice_max ungroup select case_when distinct rename pull
 #' @importFrom rlang .data
 #' @importFrom stringr str_wrap str_replace
 #' @return A ggplot object
@@ -41,6 +41,8 @@ plotEnrichAdv <- function(up_enrich_df,
       is.data.frame(up_enrich_df) | is.data.frame(down_enrich_df)
   )
   plot_type <- match.arg(plot_type)
+  term_metric <- match.arg(term_metric)
+  stats_metric <- match.arg(stats_metric)
   if(any(grepl("nes",colnames(up_enrich_df),ignore.case = T))) term_metric <- "Count"
   if(any(grepl("nes",colnames(down_enrich_df),ignore.case = T))) term_metric <- "Count"
 
@@ -76,7 +78,8 @@ plotEnrichAdv <- function(up_enrich_df,
       scale_x_reverse() +
       theme(
         axis.title.y = element_blank(),
-        legend.position = c(0.2, 0.8)
+        legend.position = "inside",
+        legend.position.inside = c(0.2, 0.8)
       ))
 
     right <- suppressMessages(plotEnrich(down_enrich_df,
@@ -88,7 +91,8 @@ plotEnrichAdv <- function(up_enrich_df,
       scale_y_discrete(position = "right") +
       theme(
         axis.title.y = element_blank(),
-        legend.position = c(0.8, 0.2)
+        legend.position = "inside",
+        legend.position.inside = c(0.8, 0.2)
       ))
 
     p <- cowplot::plot_grid(left, right, ncol = 2)
@@ -99,7 +103,7 @@ plotEnrichAdv <- function(up_enrich_df,
     up_go <- dplyr::mutate(up_enrich_df, change = "up")
     down_go <- dplyr::mutate(down_enrich_df, change = "down")
     df <- rbind(up_go, down_go) %>%
-      dplyr::mutate(new_x = ifelse(change == "up", -log10(eval(parse(text = stats_metric))), log10(eval(parse(text = stats_metric))))) %>%
+      dplyr::mutate(new_x = ifelse(change == "up", -log10(.data[[stats_metric]]), log10(.data[[stats_metric]]))) %>%
       dplyr::arrange(change, new_x) %>%
       dplyr::mutate(Description = factor(Description,
         levels = unique(Description),

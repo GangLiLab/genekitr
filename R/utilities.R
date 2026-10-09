@@ -1,50 +1,41 @@
 #############################
 ### Part I: organism name & pbobe platform name
 #############################
-.initial <- function() {
-  pos <- 1
-  envir <- as.environment(pos)
-  assign(".genekitrEnv", new.env(), envir = envir)
-}
+# package-level environment to hold internal data (do not write to the global environment)
+.genekitrEnv <- new.env(parent = emptyenv())
 
 #---  get msigdb org ---#
 msigdb_org_data <- function() {
-  .initial()
   utils::data(list = "msig_org", package = "genekitr",envir = .genekitrEnv)
   get("msig_org", envir = .genekitrEnv)
 }
 
 #---  get msigdb org ---#
 msigdb_category_data <- function() {
-  .initial()
   utils::data(list = "msig_category", package = "genekitr",envir = .genekitrEnv)
   get("msig_category", envir = .genekitrEnv)
 }
 
 #--- bioc org name data ---#
 biocOrg_name_data <- function() {
-  .initial()
   utils::data(list = "biocOrg_name", package = "genekitr",envir = .genekitrEnv)
   get("biocOrg_name", envir = .genekitrEnv)
 }
 
 #---  kegg org name data ---#
 keggOrg_name_data <- function() {
-  .initial()
   utils::data(list = "keggOrg_name", package = "genekitr",envir = .genekitrEnv)
   get("keggOrg_name", envir = .genekitrEnv)
 }
 
 #--- ensembl org name data ---#
 ensOrg_name_data <- function() {
-  .initial()
   utils::data(list = "ensOrg_name", package = "genekitr",envir = .genekitrEnv)
   get("ensOrg_name", envir = .genekitrEnv)
 }
 
 #--- probe platform data ---#
 hsapiens_probe_data <- function() {
-  .initial()
   utils::data(list = "hsapiens_probe_platform", package = "genekitr",envir = .genekitrEnv)
   get("hsapiens_probe_platform", envir = .genekitrEnv)
 }
@@ -161,8 +152,9 @@ mapEnsOrg <- function(organism) {
   check_all <- apply(ensorg, 2, function(x) organism %in% x)
 
   if (any(check_all)) {
+    check_col <- colnames(ensorg)[check_all][1]
     org <- ensorg %>%
-      dplyr::filter(eval(parse(text = colnames(.)[check_all])) %in% organism) %>%
+      dplyr::filter(.data[[check_col]] %in% organism) %>%
       dplyr::pull(latin_short_name)
   } else {
     stop("\nCheck the latin_short_name in `genekitr::ensOrg_name`")
@@ -280,14 +272,25 @@ make_dir <- function(data_dir){
 }
 
 #--- get web server file size ---#
+# use base R curlGetHeaders() instead of RCurl;
+# return NA if the server is not accessible (e.g. offline), then local data will be used directly
 check_web_size <- function(url){
-  web_f_size <- RCurl::getURL(url, nobody = 1L, header = 1L) %>%
-    strsplit("\r\n") %>%
-    unlist() %>%
-    stringr::str_extract("Content-Length.*[0-9]") %>%
-    stringr::str_remove_all("Content-Length: ") %>%
-    stringi::stri_remove_empty_na() %>%
-    as.numeric()
+  web_f_size <- tryCatch(
+    {
+      h <- curlGetHeaders(url, redirect = TRUE, timeout = 30L)
+      if (attr(h, "status") != 200) {
+        NA_real_
+      } else {
+        h %>%
+          stringr::str_extract("(?i)^Content-Length:\\s*[0-9]+") %>%
+          stringi::stri_remove_empty_na() %>%
+          stringr::str_remove_all("(?i)Content-Length:\\s*") %>%
+          as.numeric()
+      }
+    },
+    error = function(e) NA_real_
+  )
+  if (length(web_f_size) != 1) web_f_size <- NA_real_
   return(web_f_size)
 }
 
@@ -322,7 +325,7 @@ genekitr_download <- function(url, destfile,data_dir,
                }
       )
     }
-  } else if (web_f_size != local_f_size) {
+  } else if (!is.na(web_f_size) && web_f_size != local_f_size) {
     message("Detected new version data, updating...")
     if (!is.null(method) && method != "auto") {
       tryCatch(utils::download.file(url, destfile, quiet = TRUE, method = method, mode = "wb"),
@@ -342,6 +345,12 @@ genekitr_download <- function(url, destfile,data_dir,
                }
       )
     }
+  }
+
+  if (!file.exists(destfile)) {
+    stop("Data file not found: ", destfile,
+         "\nPlease download manually via: ", url,
+         "\nThen save to: ", data_dir, call. = FALSE)
   }
 }
 
@@ -457,19 +466,20 @@ get_symbol <- function(id,org){
   return(new_geneID)
 }
 
+# keep the same gene order as the input "id" (e.g. "geneID" and "geneID_symbol" columns are aligned)
 replace_id <- function(dat, id){
   new_id <- stringr::str_split(id, "\\/") %>% unlist()
   check <- any(new_id%in%dat[,2])
   if(check){
     stringr::str_split(id, "\\/") %>%
       lapply(., function(x) {
-        dat %>% dplyr::filter(.[[2]]%in%x) %>% dplyr::pull(1) %>%
+        dat %>% dplyr::filter(.[[2]]%in%x) %>% dplyr::arrange(match(.[[2]], x)) %>% dplyr::pull(1) %>%
           paste0(.,collapse = '/')
       }) %>%  do.call(rbind,.) %>% as.character()
   }else{
     stringr::str_split(id, "\\/") %>%
       lapply(., function(x) {
-        dat %>% dplyr::filter(.[[1]]%in%x) %>% dplyr::pull(2) %>%
+        dat %>% dplyr::filter(.[[1]]%in%x) %>% dplyr::arrange(match(.[[1]], x)) %>% dplyr::pull(2) %>%
           paste0(.,collapse = '/')
       }) %>%  do.call(rbind,.) %>% as.character()
   }

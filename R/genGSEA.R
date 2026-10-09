@@ -1,7 +1,8 @@
 #' Gene Set Enrichment Analysis
 #'
 #' @param genelist Pre-ranked genelist with decreasing order, gene can be
-#'   entrez, ensembl or symbol.
+#'   entrez, ensembl or symbol. If several ids are mapped to the same gene after
+#'   id conversion (e.g. alias symbols), only the first (highest ranked) one is kept.
 #' @param geneset Gene set is a two-column data.frame with term id and gene id.
 #' Please use package `geneset` to select available gene set or make new one.
 #' @param padj_method One of "BH", "BY", "bonferroni","fdr","hochberg",
@@ -66,11 +67,11 @@ genGSEA <- function(genelist,
       if(transToSym){
         id_dat <- suppressMessages(transId(id, "symbol", ens_org, unique = T))
         genelist <- genelist[names(genelist)%in%id_dat$input_id]
-        names(genelist) <- id_dat$symbol
+        names(genelist) <- id_dat$symbol[match(names(genelist), id_dat$input_id)]
       }else if(keyType != "ENTREZID"){
         id_dat <- suppressMessages(transId(id, "entrezid", ens_org, unique = T))
         genelist <- genelist[names(genelist)%in%id_dat$input_id]
-        names(genelist) <- id_dat$entrezid
+        names(genelist) <- id_dat$entrezid[match(names(genelist), id_dat$input_id)]
       }else if(keyType == "ENTREZID"){
         id_dat <- suppressMessages(transId(id, "symbol", ens_org, unique = T)) %>%
           dplyr::relocate(input_id,.after = symbol)
@@ -85,6 +86,16 @@ genGSEA <- function(genelist,
 
     }
   )
+
+  #--- remove duplicated genes after id conversion ---#
+  # e.g. alias symbols are mapped to the same entrez id, GSEA does not allow duplicated gene names;
+  # genelist is pre-ranked, so the first (highest ranked) one is kept
+  genelist <- genelist[!is.na(names(genelist))]
+  if(any(duplicated(names(genelist)))){
+    message(sum(duplicated(names(genelist))),
+            " gene ids are mapped to the same gene after id conversion, only the first one of each is kept...")
+    genelist <- genelist[!duplicated(names(genelist))]
+  }
 
 
 
@@ -102,8 +113,7 @@ genGSEA <- function(genelist,
       exponent = 1,
       eps  = 0,
       verbose = FALSE,
-      seed = set_seed,
-      by = 'fgsea'
+      seed = set_seed
     ))
 
 
@@ -117,6 +127,7 @@ genGSEA <- function(genelist,
       as.enrichdat() %>%
       dplyr::select(-GeneRatio) %>%
       dplyr::filter(qvalue < q_cutoff)
+    if (nrow(fcs) == 0) stop("No terms enriched after qvalue filtering ...")
   }
 
   ## transToSym means geneset in "enrichrdb","go" and "covid19"
@@ -167,7 +178,7 @@ genGSEA <- function(genelist,
 
   ## modify id column name for GO
   if(!rareOrg){
-    bioc_org <- ensOrg_name %>%
+    bioc_org <- ensOrg_name_data() %>%
       dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
       dplyr::pull(bioc_name) %>%
       stringr::str_to_sentence()
@@ -179,7 +190,7 @@ genGSEA <- function(genelist,
     colnames(new_fcs)[1] = paste0(org,'_',toupper(genesetType),'_ID')
   }
 
-  geneAll <- sapply(1:nrow(new_fcs),function(x){
+  geneAll <- sapply(seq_len(nrow(new_fcs)),function(x){
     gset_nm <- new_fcs$ID[x]
     # gset_gene <- geneset$geneset %>% filter(.[[1]] == gset_nm) %>% pull(2)
     gset_gene <- geneset$geneset[geneset$geneset[,1] %in% gset_nm,2]
@@ -188,7 +199,7 @@ genGSEA <- function(genelist,
     return(ov_genes)
   })
 
-  geneAll_len <- sapply(1:length(geneAll), function(x){
+  geneAll_len <- sapply(seq_along(geneAll), function(x){
     gl <- geneAll[x] %>% strsplit('\\/') %>% unlist() %>% length()
   })
 

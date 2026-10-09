@@ -231,7 +231,7 @@ genORA <- function(id,
 
   ## modify id column name for GO
   if(!rareOrg){
-    bioc_org <- ensOrg_name %>%
+    bioc_org <- ensOrg_name_data() %>%
       dplyr::filter(tolower(latin_short_name) %in% geneset$organism) %>%
       dplyr::pull(bioc_name) %>%
       stringr::str_to_sentence()

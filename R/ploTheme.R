@@ -55,8 +55,8 @@ plot_theme <- function(main_text_size = 8,
       color = "black",
       size = legend_text_size, family = font_type
     ),
-    panel.border = element_rect(colour = "black", size = border_thick),
-    axis.ticks = element_line(colour = "black", size = as.numeric(border_thick) / 3),
+    panel.border = element_rect(colour = "black", linewidth = border_thick),
+    axis.ticks = element_line(colour = "black", linewidth = as.numeric(border_thick) / 3),
     axis.ticks.length = unit(.1, "cm")
   )
 
@@ -73,7 +73,7 @@ plot_theme <- function(main_text_size = 8,
   # remove border line
   if (remove_border) {
     bod_theme <- theme(
-      panel.border = element_blank(),
+      panel.border = element_blank()
     )
   } else {
     bod_theme <- NULL
@@ -85,7 +85,7 @@ plot_theme <- function(main_text_size = 8,
       axis.text.x = element_blank(),
       axis.text.y = element_blank(),
       axis.title.x = element_blank(),
-      axis.title.y = element_blank(),
+      axis.title.y = element_blank()
     )
   } else {
     main_txt_theme <- NULL

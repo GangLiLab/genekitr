@@ -7,7 +7,7 @@
 #' @param overwrite If TRUE, overwrite any existing file.
 #' @importFrom rlang .data
 #' @importFrom openxlsx createWorkbook addWorksheet writeData createStyle addStyle setColWidths
-#' saveWorkbook
+#'   saveWorkbook
 #'
 #' @return An Excel file.
 #' @export
@@ -57,5 +57,6 @@ expoSheet <- function(data_list,
 
   }))
 
-  openxlsx::saveWorkbook(wb, paste0(dir, filename), overwrite)
+  if (!dir.exists(dir)) dir.create(dir, recursive = TRUE)
+  openxlsx::saveWorkbook(wb, file.path(dir, filename), overwrite)
 }

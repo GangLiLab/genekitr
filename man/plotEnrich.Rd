@@ -41,7 +41,7 @@ plot.}
 \item{stats_metric}{Statistic metric from one of "pvalue", "p.adjust", "qvalue".}
 
 \item{sim_method}{Method of calculating the similarity between nodes, one of one of "Resnik",
-"Lin", "Rel", "Jiang" , "Wang" or "JC" (Jaccard’s similarity index). Only "JC" supports KEGG data.
+"Lin", "Rel", "Jiang" , "Wang" or "JC" (Jaccard's similarity index). Only "JC" supports KEGG data.
 Used in "map","goheat","gotangram","wordcloud".}
 
 \item{up_color}{Color of higher statistical power (e.g. Pvalue 0.01) or higher logFC, default is "red".}

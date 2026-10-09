@@ -10,3 +10,6 @@
 ^cran-comments\.md$
 .github
 ^\.github$
+^\.DS_Store$
+\.DS_Store$
+^\.Rhistory$

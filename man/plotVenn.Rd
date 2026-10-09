@@ -35,10 +35,9 @@ If gene group over 4, plot will be visulized using UpSet plot.
 }
 \examples{
 k1 = requireNamespace("ComplexUpset",quietly = TRUE)
-k2 = requireNamespace("futile.logger",quietly = TRUE)
-k3 = requireNamespace("ggsci",quietly = TRUE)
-k4 = requireNamespace("RColorBrewer",quietly = TRUE)
-if(k1&k2&k3&k4){
+k2 = requireNamespace("ggsci",quietly = TRUE)
+k3 = requireNamespace("RColorBrewer",quietly = TRUE)
+if(k1&k2&k3){
 library(ggplot2)
 set1 <- paste0(rep("gene", 30), sample(1:1000, 30))
 set2 <- paste0(rep("gene", 40), sample(1:1000, 40))

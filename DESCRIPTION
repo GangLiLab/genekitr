@@ -1,8 +1,8 @@
 Package: genekitr
 Type: Package
 Title: Gene Analysis Toolkit
-Version: 1.2.9
-Authors@R: 
+Version: 1.3.0
+Authors@R:
     c(person(given = "Yunze",
              family = "Liu",
              role = c("aut", "cre"),
@@ -14,15 +14,15 @@ Description: Provides features for searching, converting, analyzing, plotting, a
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
-Depends: 
-    R (>= 3.6)
-Imports: 
+Depends:
+    R (>= 4.0.0)
+Imports:
     clusterProfiler,
-    dplyr,
+    dplyr (>= 1.1.0),
     europepmc,
     fst,
     geneset,
-    ggplot2,
+    ggplot2 (>= 3.5.0),
     ggraph,
     ggvenn,
     igraph,
@@ -38,7 +38,6 @@ Suggests:
     ComplexUpset,
     forcats,
     fgsea,
-    futile.logger,
     ggplotify,
     ggsci,
     ggrepel,
@@ -51,15 +50,8 @@ Suggests:
     tm,
     treemap,
     RColorBrewer,
-    RCurl,
     reshape2,
     rio,
     rrvgo,
-    testthat (>= 3.0.0),
-    wordcloud,
-    knitr,
-    rmarkdown,
-    XML,
-    xml2,
-    httr
-RoxygenNote: 7.3.2
+    wordcloud
+Config/roxygen2/version: 8.1.0

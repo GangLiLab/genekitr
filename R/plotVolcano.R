@@ -14,7 +14,7 @@
 #'
 #' @importFrom dplyr mutate filter
 #' @importFrom ggplot2 ggplot geom_point scale_color_manual geom_hline geom_vline labs  xlim guides
-#' guide_legend aes unit
+#'   guide_legend aes unit
 #' @return A ggplot object
 #' @export
 #' @examples

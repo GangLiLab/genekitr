@@ -17,10 +17,9 @@
 #' @export
 #' @examples
 #' k1 = requireNamespace("ComplexUpset",quietly = TRUE)
-#' k2 = requireNamespace("futile.logger",quietly = TRUE)
-#' k3 = requireNamespace("ggsci",quietly = TRUE)
-#' k4 = requireNamespace("RColorBrewer",quietly = TRUE)
-#' if(k1&k2&k3&k4){
+#' k2 = requireNamespace("ggsci",quietly = TRUE)
+#' k3 = requireNamespace("RColorBrewer",quietly = TRUE)
+#' if(k1&k2&k3){
 #' library(ggplot2)
 #' set1 <- paste0(rep("gene", 30), sample(1:1000, 30))
 #' set2 <- paste0(rep("gene", 40), sample(1:1000, 40))
@@ -57,13 +56,6 @@ plotVenn <- function(venn_list,
   #--- args ---#
   lst <- list(...) # store outside arguments in list
 
-  if (!requireNamespace("futile.logger", quietly = TRUE)) {
-    warning("Package futile.logger needed for this function to work. Install first...",
-      call. = FALSE
-    )
-    # utils::install.packages("futile.logger")
-  }
-
   #--- codes ---#
   ## Venn Diagram
   if (use_venn) {
@@ -71,8 +63,6 @@ plotVenn <- function(venn_list,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 3
     if (!"border_thick" %in% names(lst)) lst$border_thick <- 1
     # if (!"digits" %in% names(lst)) lst$digits <- 2
-    # suppress venn.diagram log
-    futile.logger::flog.threshold(futile.logger::ERROR, name = "VennDiagramLogger")
 
     # choose color
     if (is.null(color) | length(color) != length(venn_list)) {
@@ -176,7 +166,7 @@ plotVenn <- function(venn_list,
                       axis.title.x=element_blank(),
                       axis.title.y=element_blank(),
                       axis.text.y = element_text(size = (lst$legend_text_size + 3)),
-                      panel.border =element_rect(colour = "black", size = lst$border_thick))
+                      panel.border =element_rect(colour = "black", linewidth = lst$border_thick))
             )
           ),
           matrix=ComplexUpset::intersection_matrix(
@@ -185,7 +175,7 @@ plotVenn <- function(venn_list,
               size=3,
               stroke=0.5
             ),
-            segment = geom_segment(size = 0.7,color = 'grey46')
+            segment = geom_segment(linewidth = 0.7,color = 'grey46')
           ),
           set_sizes=(
             ComplexUpset::upset_set_size(geom=geom_bar(width=0.5),
@@ -198,7 +188,7 @@ plotVenn <- function(venn_list,
             )
           ),
           stripes=ComplexUpset::upset_stripes(
-            geom=ggplot2::geom_segment(size=5),
+            geom=ggplot2::geom_segment(linewidth=5),
             colors=c('grey95', 'white')
           ),
           sort_sets='ascending',

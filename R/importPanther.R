@@ -17,12 +17,14 @@ importPanther <- function(panther_file) {
 
   # unmodified panther result (should be txt file)
   if (getExtension(panther_file) == "txt") {
-    system(paste0(
-      "cat ", panther_file, ' | grep "\\S" | ',
-      "awk '!/Analysis Type|Annotation Version|Analyzed List|Reference List|Test Type|Correction/' > ", tempdir(), "/panther_tmp.txt"
-    ))
+    # remove blank lines and header lines in base R (shell commands are not available on Windows)
+    panther_lines <- readLines(panther_file, warn = FALSE)
+    panther_lines <- panther_lines[grepl("[^[:space:]]", panther_lines)]
+    panther_lines <- panther_lines[!grepl("Analysis Type|Annotation Version|Analyzed List|Reference List|Test Type|Correction", panther_lines)]
+    panther_tmp <- file.path(tempdir(), "panther_tmp.txt")
+    writeLines(panther_lines, panther_tmp)
 
-    dat <- rio::import(paste0(tempdir(), "/panther_tmp.txt")) %>%
+    dat <- rio::import(panther_tmp) %>%
       as.enrichdat()
   } else {
     dat <- rio::import(panther_file, col_names = F)
@@ -63,6 +65,7 @@ importPanther <- function(panther_file) {
 
 
 getExtension <- function(file) {
-  ex <- strsplit(basename(file), split = "\\.")[[1]]
-  return(ex[-1])
+  # only keep the last extension (e.g. "result.v2.txt" -> "txt")
+  ex <- tolower(tools::file_ext(file))
+  return(ex)
 }

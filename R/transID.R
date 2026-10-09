@@ -6,7 +6,7 @@
 #' @param unique Logical, if one-to-many mapping occurs, only keep one record with fewest NA. Default is FALSE.
 #' @param keepNA If some id has no match at all, keep it or not. Default is FALSE.
 #' @param hgVersion Select human genome build version from "v38" (default) and "v19".
-#' @importFrom dplyr filter pull select distinct arrange all_of filter_at vars any_vars
+#' @importFrom dplyr filter pull select distinct arrange all_of if_any
 #' @importFrom rlang .data
 #'
 #' @return data frame, first column is input id and others are converted id.
@@ -62,7 +62,7 @@ transId <- function(id,
   tryCatch(
     {
       all <- ensAnno(org,hgVersion = hgVersion)
-      if(all(id %>% stringr::str_detect(.,'ENS'))) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
+      if(all(id %>% stringr::str_detect(.,'ENS'), na.rm = TRUE)) id <- stringr::str_split(id, "\\.", simplify = T)[, 1]
       id <- replace_greek(id)
       keytype <- gentype(id = id, data = all, org = org) %>% tolower()
 
@@ -79,14 +79,15 @@ transId <- function(id,
 
     },
     error = function(e) {
-      message('Maybe your "trans_to" argument is wrong, please check again...')
+      stop(conditionMessage(e),
+           "\nPlease check the input id, 'org' and 'transTo' arguments...", call. = FALSE)
     }
   )
 
 
   if (!keepNA) {
     res <- res %>%
-      filter_at(vars(!input_id), any_vars(!is.na(.)))
+      dplyr::filter(dplyr::if_any(-input_id, ~ !is.na(.x)))
   }
 
   # replace back greek letter

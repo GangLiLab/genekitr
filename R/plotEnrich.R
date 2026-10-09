@@ -13,7 +13,7 @@
 #' 'RichFactor'.
 #' @param stats_metric Statistic metric from one of "pvalue", "p.adjust", "qvalue".
 #' @param sim_method Method of calculating the similarity between nodes, one of one of "Resnik",
-#' "Lin", "Rel", "Jiang" , "Wang" or "JC" (Jaccard’s similarity index). Only "JC" supports KEGG data.
+#' "Lin", "Rel", "Jiang" , "Wang" or "JC" (Jaccard's similarity index). Only "JC" supports KEGG data.
 #' Used in "map","goheat","gotangram","wordcloud".
 #' @param up_color Color of higher statistical power (e.g. Pvalue 0.01) or higher logFC, default is "red".
 #' @param down_color Color of lower statistical power (e.g. Pvalue 1) or lower logFC, default is
@@ -30,17 +30,17 @@
 #' @param n_term Number of terms (used in WEGO plot)
 #' @param ... other arguments from `plot_theme` function
 #'
-#' @importFrom ggplot2 ggplot aes aes_string aes_ facet_grid element_text element_blank labs geom_point
-#' geom_segment geom_bar geom_col geom_tile guide_colorbar guides scale_color_continuous
-#' scale_size_continuous scale_x_discrete scale_y_discrete scale_x_continuous scale_size
-#' scale_fill_discrete scale_fill_continuous scale_y_continuous sec_axis theme xlab ylab xlim
-#' @importFrom dplyr arrange mutate group_by top_n ungroup select case_when distinct rename pull
+#' @importFrom ggplot2 ggplot aes facet_grid element_text element_blank element_rect labs geom_point
+#'   geom_segment geom_bar geom_col geom_tile guide_colorbar guides scale_color_continuous
+#'   scale_size_continuous scale_x_discrete scale_y_discrete scale_x_continuous scale_size
+#'   scale_fill_discrete scale_fill_continuous scale_y_continuous sec_axis theme xlab ylab xlim
+#' @importFrom dplyr arrange mutate group_by slice_max ungroup select case_when distinct rename pull
 #' @importFrom stringr str_replace str_split
 #' @importFrom rlang .data
 #' @importFrom stats setNames
 #' @importFrom ggraph ggraph geom_node_text geom_edge_link circle geom_node_point
-#' geom_node_label
-#' @importFrom igraph graph.data.frame delete.edges
+#'   geom_node_label
+#' @importFrom igraph graph_from_data_frame delete_edges
 #' @importFrom igraph V "V<-"
 #' @importFrom igraph E "E<-"
 #'
@@ -105,6 +105,13 @@ plotEnrich <- function(enrich_df,
     colnames(enrich_df)[tolower(colnames(enrich_df))%in%'ontology'] = 'ONTOLOGY'
   }
 
+  ## genGSEA result (since v1.2.9) uses "core_enriched_count"/"core_enriched_geneID" column names
+  if (!"Count" %in% colnames(enrich_df) && "core_enriched_count" %in% colnames(enrich_df)) {
+    enrich_df <- enrich_df %>% dplyr::rename(Count = "core_enriched_count")
+  }
+  if (!"geneID" %in% colnames(enrich_df) && "core_enriched_geneID" %in% colnames(enrich_df)) {
+    enrich_df <- enrich_df %>% dplyr::rename(geneID = "core_enriched_geneID")
+  }
   if(any(grepl("nes",colnames(enrich_df),ignore.case = T))) term_metric <- "Count"
 
   # if (all_go & !plot_type %in% c("bar", "wego")) {
@@ -162,7 +169,7 @@ plotEnrich <- function(enrich_df,
                     paste0(utils::head(dup_term,3),collapse = '|'),'\n','please make them unique then plot'))
     }
     enrich_df <- enrich_df %>%
-      dplyr::arrange(eval(parse(text = term_metric))) %>%
+      dplyr::arrange(.data[[term_metric]]) %>%
       dplyr::mutate(Description = factor(.$Description, levels = unique(.$Description), ordered = T))
   } else if (!compare_group & all_go) {
     if(any(duplicated(enrich_df$Description))){
@@ -173,7 +180,7 @@ plotEnrich <- function(enrich_df,
     enrich_df <- enrich_df %>%
       dplyr::mutate(Description = factor(.$Description, levels = unique(.$Description), ordered = T)) %>%
       dplyr::group_by(ONTOLOGY) %>%
-      dplyr::arrange(eval(parse(text = term_metric)), .by_group = T)
+      dplyr::arrange(.data[[term_metric]], .by_group = T)
   }
 
   #--- GO/KEGG: dot plot ---#
@@ -181,10 +188,10 @@ plotEnrich <- function(enrich_df,
     ## no group
     if (missing(scale_ratio)) scale_ratio <- 0.3
     if (!compare_group) {
-      p <- ggplot(enrich_df, aes_string(x = term_metric, y = "Description")) +
-        geom_point(aes_string(
-          color = stats_metric,
-          size = "Count"
+      p <- ggplot(enrich_df, aes(x = .data[[term_metric]], y = .data$Description)) +
+        geom_point(aes(
+          color = .data[[stats_metric]],
+          size = .data$Count
         )) +
         scale_size(range = c(min(enrich_df$Count) / 2, max(enrich_df$Count) / 2) * scale_ratio) +
         scale_color_continuous(
@@ -210,10 +217,10 @@ plotEnrich <- function(enrich_df,
         as.data.frame()
 
       xtick_lab <- paste0(as.character(calc[,1]), "\n(", calc[,2], ")")
-      p <- ggplot(enrich_df, aes_string(x = "Cluster", y = "Description")) +
-        geom_point(aes_string(
-          color = stats_metric,
-          size = term_metric
+      p <- ggplot(enrich_df, aes(x = .data$Cluster, y = .data$Description)) +
+        geom_point(aes(
+          color = .data[[stats_metric]],
+          size = .data[[term_metric]]
         )) +
         scale_size(range = c(min(enrich_df$Count) / 2, max(enrich_df$Count) / 2) * scale_ratio) +
         scale_color_continuous(
@@ -242,8 +249,8 @@ plotEnrich <- function(enrich_df,
     if (!"main_text_size" %in% names(lst)) lst$main_text_size <- 8
 
     mapping <- aes(
-      x = -log10(eval(parse(text = stats_metric))),
-      y = FoldEnrich
+      x = -log10(.data[[stats_metric]]),
+      y = .data$FoldEnrich
     )
     p <- ggplot(enrich_df, mapping) +
       geom_point(aes(size = Count, fill = Description), alpha = 2, shape = 21) +
@@ -264,7 +271,7 @@ plotEnrich <- function(enrich_df,
 
   #--- GO/KEGG: bar plot ---#
   if (plot_type == "bar") {
-    p <- ggplot(data = enrich_df, aes_string(x = term_metric, y = "Description", fill = stats_metric)) +
+    p <- ggplot(data = enrich_df, aes(x = .data[[term_metric]], y = .data$Description, fill = .data[[stats_metric]])) +
       geom_bar(stat = "identity") +
       scale_fill_continuous(
         low = up_color, high = down_color, name = stats_metric_label,
@@ -272,7 +279,6 @@ plotEnrich <- function(enrich_df,
         labels = function(x) format(x, scientific = T)
       ) +
       xlab(term_metric_label) +
-      labs(color = stats_metric) +
       xlim(xlim_left, xlim_right) +
       plot_theme(...)
 
@@ -288,15 +294,15 @@ plotEnrich <- function(enrich_df,
     p <- ggplot(
       data = enrich_df,
       aes(
-        eval(parse(text = term_metric)),
-        forcats::fct_reorder(Description, eval(parse(text = term_metric)))
+        .data[[term_metric]],
+        forcats::fct_reorder(.data$Description, .data[[term_metric]])
       )
     ) +
-      geom_segment(aes_string(
-        xend = 0, yend = "Description",
-        colour = stats_metric, size = 2 * scale_ratio
-      ), show.legend = F) +
-      geom_point(aes_string(color = stats_metric, size = "Count")) +
+      geom_segment(aes(
+        xend = 0, yend = .data$Description,
+        colour = .data[[stats_metric]]
+      ), linewidth = 2 * scale_ratio, show.legend = F) +
+      geom_point(aes(color = .data[[stats_metric]], size = .data$Count)) +
       theme(legend.key = element_rect(fill = "transparent")) +
       scale_size_continuous(name = "Count", range = c(min(enrich_df$Count) / 2, max(enrich_df$Count) / 2) * scale_ratio) +
       scale_color_continuous(
@@ -346,7 +352,7 @@ plotEnrich <- function(enrich_df,
 
 
     if (is.null(fold_change)) {
-      p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
+      p <- ggplot(plot_df, aes(.data$geneID, .data$Description)) +
         geom_tile(color = "white") +
         xlab(NULL) +
         ylab(NULL) +
@@ -367,8 +373,8 @@ plotEnrich <- function(enrich_df,
         plot_df <- merge(plot_df, fold_change, by.x = "geneID")
       }
 
-      p <- ggplot(plot_df, aes_(~geneID, ~Description)) +
-        geom_tile(aes_(fill = ~logfc), color = "white") +
+      p <- ggplot(plot_df, aes(.data$geneID, .data$Description)) +
+        geom_tile(aes(fill = .data$logfc), color = "white") +
         xlab(NULL) +
         ylab(NULL) +
         plot_theme(border_thick = 0, ...) +
@@ -403,7 +409,7 @@ plotEnrich <- function(enrich_df,
 
     # if show_gene is not symbol, first extract matching symbol
     if(all(show_gene == 'all')) stop('Please specify gene name to "show_gene"...')
-    if (length(show_gene %in% id) > length(show_gene %in% id_symbol)) {
+    if (sum(show_gene %in% id) > sum(show_gene %in% id_symbol)) {
       show_gene <- id_df %>%
         dplyr::filter(geneID %in% show_gene) %>%
         dplyr::pull(geneID_symbol)
@@ -533,10 +539,10 @@ plotEnrich <- function(enrich_df,
     mm <- mm[mm[, 1] != mm[, 2], ]
     mm <- mm[!is.na(mm[, 3]), ]
     # construct igraph
-    g <- graph.data.frame(mm[, -3], directed = FALSE)
+    g <- graph_from_data_frame(mm[, -3], directed = FALSE)
     E(g)$width <- sqrt(mm[, 3] * 5) * scale_ratio
     E(g)$weight <- mm[, 3]
-    g <- delete.edges(g, E(g)[mm[, 3] < 0.2])
+    g <- delete_edges(g, E(g)[mm[, 3] < 0.2])
     id_order <- unlist(sapply(V(g)$name, function(x) which(x == enrich_df$Description)))
     id_genes <- sapply(enrichGenes[id_order], length)
     V(g)$size <- id_genes
@@ -549,14 +555,14 @@ plotEnrich <- function(enrich_df,
     # igraph to ggplot
     p <- ggraph(g, layout) +
       geom_edge_link(
-        alpha = .8, aes_(width = ~ I(width)),
+        alpha = .8, aes(width = I(.data$width)),
         colour = "darkgrey"
       ) +
       ggnewscale::new_scale_fill() +
-      geom_point(shape = 21, aes_(
-        x = ~x, y = ~y,
-        fill = ~color,
-        size = ~size
+      geom_point(shape = 21, aes(
+        x = .data$x, y = .data$y,
+        fill = .data$color,
+        size = .data$size
       )) +
       scale_size_continuous(
         name = "Number of genes",
@@ -568,7 +574,7 @@ plotEnrich <- function(enrich_df,
         name = stats_metric_label
       ) +
       theme(panel.background = element_blank()) +
-      geom_node_text(aes_(label = ~name),
+      geom_node_text(aes(label = .data$name),
         data = NULL,
         size = lst$main_text_size,
         bg.color = "white",
@@ -627,7 +633,7 @@ plotEnrich <- function(enrich_df,
       dplyr::select(1,'Description', "Count", "GeneRatio", "Ontology") %>%
       dplyr::mutate(GeneRatio = GeneRatio * 100) %>%
       dplyr::group_by(Ontology) %>%
-      dplyr::top_n(n_term, GeneRatio) %>%
+      dplyr::slice_max(GeneRatio, n = n_term) %>%
       dplyr::ungroup() %>%
       dplyr::arrange(Ontology, GeneRatio) %>%
       dplyr::mutate(Position = dplyr::n():1) %>%
@@ -649,7 +655,7 @@ plotEnrich <- function(enrich_df,
         y = Count / normalizer
       )) +
       scale_y_continuous(sec.axis = sec_axis(
-        trans = ~ . * normalizer, name = "Number of genes",
+        transform = ~ . * normalizer, name = "Number of genes",
         labels = function(b) {
           round(b, 0)
         }
@@ -731,7 +737,7 @@ plotEnrich <- function(enrich_df,
       ))
 
 
-    g <- igraph::graph.data.frame(edge, directed = TRUE, vertices = sub_node)
+    g <- igraph::graph_from_data_frame(edge, directed = TRUE, vertices = sub_node)
     E(g)$Relationship <- edge[, 3]
 
     # default main and lengend text size
@@ -739,17 +745,17 @@ plotEnrich <- function(enrich_df,
     if (!"legend_text_size" %in% names(lst)) lst$legend_text_size <- 8
 
     p <- ggraph(g, layout = "sugiyama") +
-      geom_edge_link(aes_(linetype = ~Relationship),
+      geom_edge_link(aes(linetype = .data$Relationship),
         arrow = grid::arrow(length = unit(1, "mm")),
         end_cap = circle(1, "mm"),
         colour = "darkgrey"
       ) +
-      geom_node_point(size = 3 * scale_ratio, aes_(color = ~color)) +
+      geom_node_point(size = 3 * scale_ratio, aes(color = .data$color)) +
       scale_color_continuous(
         low = up_color, high = down_color, name = stats_metric_label,
         guide = guide_colorbar(reverse = TRUE)
       ) +
-      geom_node_label(aes_(label = ~Term, color = ~color),
+      geom_node_label(aes(label = .data$Term, color = .data$color),
         size = lst$main_text_size,
         repel = TRUE, segment.size = 0.2,
         max.overlaps = 16
@@ -907,7 +913,7 @@ get_JC_data <- function(enrich_df) {
 }
 
 get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
-  org_name <- genekitr::biocOrg_name$short_name
+  org_name <- biocOrg_name_data()$short_name
 
   if (is.null(org)) {
     tryCatch(
@@ -1022,7 +1028,6 @@ loadOrgdb <- function(orgdb) {
 }
 
 get_gosim_data <- function(){
-  .initial()
   utils::data("gotbl", package = "GOSemSim",envir = .genekitrEnv)
   gotbl <- get("gotbl", envir = .genekitrEnv)
 }

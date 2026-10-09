@@ -91,7 +91,7 @@ as.enrichdat <- function(enrich_df) {
         as.numeric() %>%
         min()
       enrich_df <- enrich_df %>% dplyr::mutate(GeneRatio = as.numeric(Count) / setsize)
-    } else if (apply(enrich_df, 2, function(x) length(unique(x)) == 1)) {
+    } else if (any(apply(enrich_df, 2, function(x) length(unique(x)) == 1))) {
       setsize <- enrich_df[1, apply(enrich_df, 2, function(x) length(unique(x)) == 1)] %>%
         stringr::str_remove("0") %>%
         as.numeric() %>%

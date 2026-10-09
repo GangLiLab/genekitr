@@ -53,9 +53,9 @@ transProbe <- function(id,
   }
 
   # first get ensembl probe data
-  ens_res <- probe_dat[, c("ensembl", dplyr::all_of(platform))] %>%
+  ens_res <- probe_dat[, c("ensembl", platform)] %>%
     tidyr::separate_rows(dplyr::all_of(platform), sep = "; ") %>%
-    dplyr::filter(eval(parse(text = dplyr::all_of(platform))) %in% id) %>%
+    dplyr::filter(.data[[platform]] %in% id) %>%
     dplyr::select(ensembl, dplyr::all_of(platform)) %>%
     stats::setNames(c("ensembl", "probe_id")) %>%
     dplyr::relocate(probe_id, .before = dplyr::everything())
@@ -63,23 +63,31 @@ transProbe <- function(id,
   ens_res <- merge(data.frame(probe_id = id), ens_res, by = "probe_id", all.x = T)
   ens_res <- ens_res[match(id, ens_res$probe_id), ]
 
-  # for those nomatched ids
-  if (org == "hsapiens") prob_plats <- hsapiens_probe_data()
+  # for those nomatched ids, try bioconductor annotation package (human only)
+  if (org == "hsapiens") {
+    prob_plats <- hsapiens_probe_data()
+    bioc_pkg <- prob_plats %>%
+      dplyr::filter(Platform %in% platform) %>%
+      dplyr::pull(Bioc_anno)
+    rm(hsapiens_probe_platform, envir = .genekitrEnv)
 
-  bioc_pkg <- prob_plats %>%
-    dplyr::filter(Platform %in% platform) %>%
-    dplyr::pull(Bioc_anno)
+    na_id <- ens_res[is.na(ens_res$ensembl), "probe_id"]
+    if (length(na_id) > 0 && length(bioc_pkg) == 1 && !is.na(bioc_pkg)) {
+      if (requireNamespace("AnnotationDbi", quietly = TRUE) && requireNamespace(bioc_pkg, quietly = TRUE)) {
+        add_res <- get_bioc_probe(na_id, to_type = "ensembl", bioc_pkg) %>%
+          dplyr::rename(ensembl = ensembl_id)
 
-  na_id <- ens_res[is.na(ens_res$ensembl), "probe_id"]
-  add_res <- get_bioc_probe(na_id, to_type = "ensembl", bioc_pkg) %>%
-    dplyr::rename(ensembl = ensembl_id)
-
-  ens_res <- suppressMessages(dplyr::full_join(ens_res, add_res)) %>%
-    dplyr::group_by(probe_id) %>%
-    tidyr::fill(-probe_id, .direction = "downup") %>%
-    dplyr::distinct()
-
-  if (org == "hsapiens") rm(hsapiens_probe_platform, envir = .genekitrEnv)
+        ens_res <- suppressMessages(dplyr::full_join(ens_res, add_res)) %>%
+          dplyr::group_by(probe_id) %>%
+          tidyr::fill(-probe_id, .direction = "downup") %>%
+          dplyr::distinct() %>%
+          dplyr::ungroup()
+      } else {
+        message(paste0(length(na_id), ' probe ids have no match, please install "', bioc_pkg,
+                       '" to get more matches:\nBiocManager::install("', bioc_pkg, '")'))
+      }
+    }
+  }
 
   # trans to other types
   if (any(transTo %in% c("entrezid", "symbol", "uniprot"))) {
@@ -113,10 +121,8 @@ get_bioc_probe <- function(id, to_type, bioc_pkg) {
   }) %>% as.character()
 
   if (!requireNamespace(bioc_pkg, quietly = TRUE)) {
-    # BiocManager::install(bioc_pkg)
-    message(paste0('Please firstly install ',bioc_pkg,':\n',
-                   'BiocManager::install("',bioc_pkg,'")'))
-    # pacman::p_load(bioc_pkg, character.only = TRUE)
+    stop(paste0('Please firstly install ',bioc_pkg,':\n',
+                'BiocManager::install("',bioc_pkg,'")'), call. = FALSE)
   }
 
   bioc_dat <- AnnotationDbi::toTable(
