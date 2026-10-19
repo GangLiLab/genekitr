@@ -5,6 +5,7 @@
 - `plotEnrich()` accepts `genGSEA()` results again (recognises `core_enriched_count`/`core_enriched_geneID` columns)
 - `genGSEA`: the GO id column is now named like in `genORA` (e.g. `Hs_BP_ID` instead of `hsapiens_BP_ID`) so that `simGO()` and the GO plots of `plotEnrich()` work on GSEA results; a `geneID_symbol` column is added for entrez-based gene sets (KEGG, MSigDB, ...); `all_enriched_geneID` of GO results is no longer empty
 - `plotEnrich`: gene plots (`geneheat`, `genechord`) no longer fail on results without a `geneID_symbol` column (e.g. official symbols as input)
+- `plotEnrich(plot_type = "gomap")` works with GOSemSim >= 2.38, whose `getAncestors()` now returns a plain list instead of an AnnDbBimap, and no longer needs ggraph to be attached (explicit edge linetype scale)
 - `genGSEA`: ids mapped to the same gene after id conversion (e.g. alias symbols) are now de-duplicated (first, i.e. highest ranked, one is kept) instead of failing with "Duplicate values in names(stats)" or being counted twice (#32, #34)
 - `plotGSEA(plot_type = "bar")`: pathway labels are now always placed on the opposite side of the bars (zero centred) instead of depending on the panel centre (#32)
 - `transId`/`genInfo` no longer fail with "object 'res' not found" when the data server is temporarily unreachable; the real error message is shown instead (#30)

@@ -694,11 +694,20 @@ plotEnrich <- function(enrich_df,
     enrichGenes <- strsplit(enrich_df$geneID, "\\/") %>% setNames(id)
 
     # get all id ancestors
+    # GOSemSim >= 2.38 returns a plain list, older versions return an AnnDbBimap
     GOANCESTOR <- get_ancestor_data(enrich_df, ont = NULL)
-    id_anc <- AnnotationDbi::mget(id, GOANCESTOR)
+    if (is.list(GOANCESTOR)) {
+      id_anc <- GOANCESTOR[id]
+    } else {
+      id_anc <- AnnotationDbi::mget(id, GOANCESTOR, ifnotfound = NA)
+    }
+    id_anc <- id_anc[!sapply(id_anc, function(x) is.null(x) || all(is.na(x)))]
+    if (length(id_anc) == 0) stop("None of the GO ids is found in the GO ancestor data, please check the ID column...")
     anc1 <- id_anc[[1]]
-    for (i in 2:length(id_anc)) {
-      anc1 <- intersect(anc1, id_anc[[i]])
+    if (length(id_anc) > 1) {
+      for (i in 2:length(id_anc)) {
+        anc1 <- intersect(anc1, id_anc[[i]])
+      }
     }
     uanc <- unique(unlist(id_anc))
     uanc <- uanc[!uanc %in% anc1]
@@ -754,6 +763,8 @@ plotEnrich <- function(enrich_df,
         end_cap = circle(1, "mm"),
         colour = "darkgrey"
       ) +
+      # explicit edge scale, otherwise ggplot2 cannot find it unless ggraph is attached
+      ggraph::scale_edge_linetype(name = "Relationship") +
       geom_node_point(size = 3 * scale_ratio, aes(color = .data$color)) +
       scale_color_continuous(
         low = up_color, high = down_color, name = stats_metric_label,
@@ -982,11 +993,17 @@ get_sim_data <- function(enrich_df, org = NULL, ont = NULL, sim_method) {
   id <- unique(id)
   found <- id %in% names(semdata@IC)
   getAncestors <- utils::getFromNamespace("getAncestors", "GOSemSim")
-  hasAncestor <- !is.na(sapply(id, function(x) {
-    tryCatch(getAncestors(ont)[x],
-      error = function(e) NA
-    )
-  }))
+  anc <- getAncestors(ont)
+  if (is.list(anc)) {
+    # GOSemSim >= 2.38 returns a plain list
+    hasAncestor <- id %in% names(anc)
+  } else {
+    hasAncestor <- !is.na(sapply(id, function(x) {
+      tryCatch(anc[x],
+        error = function(e) NA
+      )
+    }))
+  }
   id <- id[found & hasAncestor]
   m <- suppressMessages(matrix(GOSemSim::goSim(id, id, semData = semdata, measure = sim_method),
     ncol = length(id), dimnames = list(id, id)
