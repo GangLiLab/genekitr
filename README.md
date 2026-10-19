@@ -143,7 +143,7 @@ Annotation and gene set retrieval need an internet connection on first use. Gene
 
 ## Gene sets and supported organisms
 
-Gene set collections are provided by the companion **geneset** package:
+Gene set collections are provided by the companion **[geneset](https://github.com/GangLiLab/geneset)** package:
 
 | Collection | Retrieval function |
 | --- | --- |
